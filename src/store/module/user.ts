@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { loginApi, loginDto } from "@/api/module/sys/user.ts";
 import router from "@/router/index.ts";
-import { computed, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 
 export const useUserStore = defineStore('userStore', () => {
@@ -12,11 +12,11 @@ export const useUserStore = defineStore('userStore', () => {
     loginApi(user).then(({res}) => {
       if (res.code === 200) {
         token.value = res.data.token
-        ifLogin.value=true
+        ifLogin.value = true
         Object.keys(res.data.user).forEach(key => {
           userinfo[key] = res.data.user[key]
         })
-        ElMessage.success('登陆成功。')
+        ElMessage.success('登录成功。')
         router.push('/')
       } else {
         ElMessage.warning(res.msg)
@@ -25,7 +25,7 @@ export const useUserStore = defineStore('userStore', () => {
   }
   const removeToken = () => {
     token.value = ''
-    ifLogin.value=false
+    ifLogin.value = false
     Object.keys(userinfo).forEach(key => {
       userinfo[key] = ''
     })

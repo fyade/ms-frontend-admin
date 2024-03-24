@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue"
+import { computed, reactive, ref, watch } from "vue"
 import { cascaderProps2, final, finalT, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -83,35 +83,14 @@ const state = reactive<State>({
   //   name: [{ required: true, trigger: 'blur' }],
   //   ...
   // }
-  dFormRules: {
-    label: [{required: true, trigger: 'blur'}],
-    type: [{required: true, trigger: 'blur'}],
-    path: [{required: true, trigger: 'blur'}],
-    parent_id: [{required: true, trigger: 'blur'}],
-    component: [{required: true, trigger: 'blur'}],
-    icon: [{required: true, trigger: 'blur'}],
-    perms: [{required: true, trigger: 'blur'}],
-  } as FormRules,
+  dFormRules: {} as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
   //   name: '名字',
   //   ...
   // }
-  dict: {
-    ...publicDict,
-    label: '菜单名',
-    type: '菜单类型',
-    path: '菜单路径',
-    parent_id: '父级菜单',
-    component: '组件路径',
-    icon: '图标',
-    if_link: '是否外链',
-    if_visible: '是否显示',
-    if_disabled: '是否禁用',
-    if_public: '是否公共接口',
-    perms: '权限标识',
-  },
+  dict: {},
   // 筛选表单
   // 格式: {
   //   name: '',
@@ -138,6 +117,38 @@ const config: t_config = reactive({
   pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   tableInlineOperate: true // 允许表格行内操作，默认true
+})
+
+const menuTypeDict = {
+  [T_MENU]: '菜单',
+  [T_COMP]: '组件',
+  [T_Inter]: '接口'
+};
+watch(() => state.dialogForm.type, () => {
+  state.dFormRules = {
+    label: [{required: true, trigger: 'blur'}],
+    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    parent_id: [{required: true, trigger: 'blur'}],
+    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+  }
+  state.dict = {
+    ...publicDict,
+    label: `${menuTypeDict[state.dialogForm.type]}名`,
+    type: '菜单类型',
+    path: '菜单路径',
+    parent_id: '父级菜单',
+    component: '组件路径',
+    icon: '图标',
+    if_link: '是否外链',
+    if_visible: '是否显示',
+    if_disabled: '是否禁用',
+    if_public: '是否公共接口',
+    perms: '权限标识',
+  }
+}, {
+  immediate: true,
 })
 
 const func: t_FuncMap = {
@@ -214,6 +225,9 @@ const checkVisible = (a: tType, b: tType[]): boolean => {
 const tabledata2 = computed(() => {
   return arr2ToDiguiObj(state.list)
 })
+const tabledata3 = computed(() => {
+  return arr2ToDiguiObj(state.list.filter(item => checkVisible(item.type, [T_MENU])))
+})
 </script>
 
 <template>
@@ -249,7 +263,7 @@ const tabledata2 = computed(() => {
           <el-form-item :label="state.dict['parent_id']" prop="parent_id">
             <el-cascader
                 v-model="state.dialogForm['parent_id']"
-                :options="tabledata2"
+                :options="tabledata3"
                 :props="cascaderProps2"
             />
           </el-form-item>
@@ -259,9 +273,9 @@ const tabledata2 = computed(() => {
         <el-col :span="24">
           <el-form-item :label="state.dict['type']" prop="type">
             <el-radio-group v-model="state.dialogForm['type']">
-              <el-radio :label="T_MENU">菜单</el-radio>
-              <el-radio :label="T_COMP">组件</el-radio>
-              <el-radio :label="T_Inter">接口</el-radio>
+              <el-radio :label="T_MENU">{{ menuTypeDict[T_MENU] }}</el-radio>
+              <el-radio :label="T_COMP">{{ menuTypeDict[T_COMP] }}</el-radio>
+              <el-radio :label="T_Inter">{{ menuTypeDict[T_Inter] }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -289,9 +303,7 @@ const tabledata2 = computed(() => {
         <el-col :span="12">
           <el-form-item :label="state.dict['if_link']" prop="if_link">
             <template #label>
-              <tooltip content="若选是，则点击会跳转至外部链接。">
-                <span>{{ state.dict['if_link'] }}</span>
-              </tooltip>
+              <tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['if_link'] }}</tooltip>
             </template>
             <el-radio-group v-model="state.dialogForm['if_link']">
               <el-radio :label="final.Y">是</el-radio>
@@ -301,6 +313,9 @@ const tabledata2 = computed(() => {
         </el-col>
         <el-col :span="12">
           <el-form-item :label="state.dict['path']" prop="path">
+            <template #label>
+              <tooltip content="这里填写路由地址。">{{ state.dict['path'] }}</tooltip>
+            </template>
             <el-input v-model="state.dialogForm['path']" :placeholder="state.dict['path']"/>
           </el-form-item>
         </el-col>
@@ -323,19 +338,23 @@ const tabledata2 = computed(() => {
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row v-show="checkVisible(state.dialogForm['type'], [T_COMP])">
-        <el-col :span="12">
+      <el-row>
+        <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP])">
           <el-form-item :label="state.dict['component']" prop="component">
+            <template #label>
+              <tooltip content="这里填写项目文件夹中的路径。">{{ state.dict['component'] }}</tooltip>
+            </template>
             <el-input v-model="state.dialogForm['component']" :placeholder="state.dict['component']"/>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP,T_Inter])">
           <el-form-item :label="state.dict['perms']" prop="perms">
+            <template #label>
+              <tooltip content="与后端配合。">{{ state.dict['perms'] }}</tooltip>
+            </template>
             <el-input v-model="state.dialogForm['perms']" :placeholder="state.dict['perms']"/>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row v-show="checkVisible(state.dialogForm['type'], [T_COMP,T_Inter])">
         <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_Inter])">
           <el-form-item :label="state.dict['if_public']" prop="if_public">
             <el-radio-group v-model="state.dialogForm['if_public']">
@@ -344,9 +363,11 @@ const tabledata2 = computed(() => {
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+      </el-row>
+      <el-row>
+        <el-col :span="24">
           <el-form-item :label="state.dict['remark']" prop="remark">
-            <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -428,7 +449,6 @@ const tabledata2 = computed(() => {
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="200"/>
-    <el-table-column prop="type" :label="state.dict['type']" width="120"/>
     <el-table-column prop="path" :label="state.dict['path']" width="120"/>
     <el-table-column prop="component" :label="state.dict['component']" width="120"/>
     <el-table-column prop="icon" :label="state.dict['icon']" width="120"/>

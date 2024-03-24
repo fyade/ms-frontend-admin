@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import Header from "@/layout/admin/header.vue";
-import Aside from "@/layout/admin/aside.vue";
-import { RouteRecordRaw, useRoute } from "vue-router";
-import { useAdminRouterStore } from "@/store/module/adminRouter.ts";
-import { Ref, ref, VueElement } from "vue";
-import { routePathsPrefixs, routerPinList } from "@/router";
+import Header from "@/layout/sys/header.vue";
+import Aside from "@/layout/sys/aside.vue";
+import { useRoute } from "vue-router";
+import { useRouterStore } from "@/store/module/router.ts";
+import { Ref, ref } from "vue";
+import { homerouter, routerPinList } from "@/router";
 
 const route = useRoute()
-const adminRouterStore = useAdminRouterStore();
+const routerStore = useRouterStore();
 const aside: Ref<InstanceType<typeof Aside> | null> = ref<InstanceType<typeof Aside> | null>(null)
 
 const gotoMenu = (path: string) => {
   aside.value && aside.value.gotoMenu(path)
 }
 const deleteMenu = (index: number) => {
-  if (route.path === `${routePathsPrefixs.admin}/${adminRouterStore.getMenuList()[index].path}`) {
-    aside.value && aside.value.gotoMenu(`${routePathsPrefixs.admin}/home`)
+  if (route.path === routerStore.getMenuList()[index].path) {
+    aside.value && aside.value.gotoMenu(homerouter)
   }
-  adminRouterStore.deleteMenu(index)
+  routerStore.deleteMenu(index)
 }
 
-const contextMenu = (info: RouteRecordRaw, index: number) => [
+const contextMenu = (info: any, index: number) => [
   [
     {
       label: '关闭此标签页',
       operate: () => {
-        if (routerPinList.indexOf(`${routePathsPrefixs.admin}/${info.path}`) > -1) {
+        if (routerPinList.indexOf(info.path) > -1) {
           return
         }
         deleteMenu(index)
@@ -34,28 +34,28 @@ const contextMenu = (info: RouteRecordRaw, index: number) => [
     {
       label: '关闭左侧标签页',
       operate: () => {
-        if (adminRouterStore.getMenuList().slice(0, index).findIndex(item => `${routePathsPrefixs.admin}/${item.path}` === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(`${routePathsPrefixs.admin}/home`)
+        if (routerStore.getMenuList().slice(0, index).findIndex(item => item.path === route.path) > -1) {
+          aside.value && aside.value.gotoMenu(homerouter)
         }
-        adminRouterStore.deleteLeftMenu(index)
+        routerStore.deleteLeftMenu(index)
       }
     },
     {
       label: '关闭右侧标签页',
       operate: () => {
-        if (adminRouterStore.getMenuList().slice(index + 1, adminRouterStore.getMenuList().length).findIndex(item => `${routePathsPrefixs.admin}/${item.path}` === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(`${routePathsPrefixs.admin}/home`)
+        if (routerStore.getMenuList().slice(index + 1, routerStore.getMenuList().length).findIndex(item => item.path === route.path) > -1) {
+          aside.value && aside.value.gotoMenu(homerouter)
         }
-        adminRouterStore.deleteRightMenu(index)
+        routerStore.deleteRightMenu(index)
       }
     },
     {
       label: '关闭其他标签页',
       operate: () => {
-        if (route.path !== `${routePathsPrefixs.admin}/${info.path}`) {
-          aside.value && aside.value.gotoMenu(`${routePathsPrefixs.admin}/home`)
+        if (route.path !== info.path) {
+          aside.value && aside.value.gotoMenu(homerouter)
         }
-        adminRouterStore.deleteOtherMenu(index, routerPinList.indexOf(`${routePathsPrefixs.admin}/${info.path}`) > -1)
+        routerStore.deleteOtherMenu(index, routerPinList.indexOf(info.path) > -1)
       }
     }
   ]
@@ -64,7 +64,7 @@ const contextMenu = (info: RouteRecordRaw, index: number) => [
 
 <template>
   <RightClickMenu style="height: 100%;">
-    <div class="layout-admin">
+    <div class="layout-sys">
       <el-container>
         <el-header style="padding: 0;height: 50px;">
           <Header/>
@@ -76,14 +76,14 @@ const contextMenu = (info: RouteRecordRaw, index: number) => [
           <el-main class="content">
             <div class="header">
               <RightClickMenu
-                  v-for="(item,index) in adminRouterStore.getMenuList()"
+                  v-for="(item,index) in routerStore.getMenuList()"
                   :key="item.name"
                   :menus="contextMenu(item,index)">
                 <el-tag
                     type="info"
-                    :effect="`${routePathsPrefixs.admin}/${item.path}`===route.path?'light':'plain'"
-                    :closable="routerPinList.indexOf(`${routePathsPrefixs.admin}/${item.path}`)===-1"
-                    @click="gotoMenu(`${routePathsPrefixs.admin}/${item.path}`)"
+                    :effect="item.path===route.path?'light':'plain'"
+                    :closable="routerPinList.indexOf(item.path)===-1"
+                    @click="gotoMenu(item.path)"
                     @close="deleteMenu(index)"
                     style="cursor: pointer;"
                 >
@@ -93,7 +93,7 @@ const contextMenu = (info: RouteRecordRaw, index: number) => [
             </div>
             <div class="main">
               <router-view #default="{Component}">
-                <keep-alive :include="adminRouterStore.getMenuListNames()">
+                <keep-alive :include="routerStore.getMenuListNames()">
                   <component :is="Component" :key="route.path"/>
                 </keep-alive>
               </router-view>
@@ -106,7 +106,7 @@ const contextMenu = (info: RouteRecordRaw, index: number) => [
 </template>
 
 <style scoped lang="scss">
-.layout-admin {
+.layout-sys {
   width: 100%;
   height: 100%;
 

@@ -2,55 +2,52 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/module/user.ts";
 import { usePageStore } from "@/store/module/page.ts";
 
-export const routePathsPrefixs = {
-  admin: '/admin'
-}
+export const homerouter = '/index'
 export const routerPinList = [
-  '/admin/home'
+  homerouter
 ]
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/admin'
-  },
-  {
-    path: '/admin',
-    name: '管理',
-    component: () => import('@/layout/admin/index.vue'),
+    name: '首页',
+    redirect: 'index',
+    component: () => import('@/layout/sys/index.vue'),
     children: [
       {
-        path: '',
-        redirect: 'admin/home'
+        path: 'index',
+        name: '总览',
+        component: () => import('@/views/sys/home/index.vue')
       },
       {
-        path: 'home',
-        name: '概述',
-        component: () => import('@/views/admin/home/index.vue')
-      },
-      {
-        path: 'menu',
-        name: '菜单',
-        component: () => import('@/views/admin/menu/index.vue')
-      },
-      {
-        path: 'role',
-        name: '角色',
-        component: () => import('@/views/admin/role/index.vue')
-      },
-      {
-        path: 'permission',
-        name: '权限',
-        component: () => import('@/views/admin/permission/index.vue')
-      },
-      {
-        path: 'user-role',
-        name: '用户角色',
-        component: () => import('@/views/admin/user-role/index.vue')
-      },
-      {
-        path: 'role-permission',
-        name: '角色权限',
-        component: () => import('@/views/admin/role-permission/index.vue')
+        path: 'sys',
+        name: '系统管理',
+        children: [
+          {
+            path: 'menu',
+            name: '菜单',
+            component: () => import('@/views/sys/menu/index.vue')
+          },
+          {
+            path: 'role',
+            name: '角色',
+            component: () => import('@/views/sys/role/index.vue')
+          },
+          {
+            path: 'permission',
+            name: '权限',
+            component: () => import('@/views/sys/permission/index.vue')
+          },
+          {
+            path: 'user-role',
+            name: '用户角色',
+            component: () => import('@/views/sys/user-role/index.vue')
+          },
+          {
+            path: 'role-permission',
+            name: '角色权限',
+            component: () => import('@/views/sys/role-permission/index.vue')
+          }
+        ]
       }
     ]
   },

@@ -73,13 +73,15 @@ eventBus.on('right-click-close', hiddenRightClick)
 .right-click-container {
   > .right-container {
     position: fixed;
-    z-index: 100;
+    z-index: 5000;
     box-shadow: 0 2px 10px 3px #ddd;
     background-color: #fff;
     border-radius: 4px;
     overflow: hidden;
 
     > div {
+      padding: 6px 0;
+
       > .line {
         margin: 4px 0;
         height: 2px;
@@ -88,8 +90,8 @@ eventBus.on('right-click-close', hiddenRightClick)
 
       > .menu {
         padding: 0 10px;
-        height: 30px;
-        line-height: 30px;
+        height: 24px;
+        line-height: 24px;
         cursor: pointer;
         font-size: 14px;
 

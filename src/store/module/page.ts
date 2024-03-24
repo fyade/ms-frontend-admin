@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { PAGINATION } from '@/utils/base.ts';
 
-export const usePageStore = defineStore('page', () => {
+export const usePageStore = defineStore('pageStore', () => {
   let pageNumRef = ref(PAGINATION.pageNum);
   let pageSizeRef = ref(PAGINATION.pageSize);
 

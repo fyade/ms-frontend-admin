@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { final, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import {
   rolePermissionDel,
   rolePermissionIns,

@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { final, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { final, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import {
-  permissionDel,
-  permissionIns,
-  permissionSel,
-  permissionSelById,
-  permissionUpd
-} from "@/api/module/sys/permission.ts";
+import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sys/role.ts";
 
 const state = reactive({
   dialogType: {
@@ -30,7 +24,6 @@ const state = reactive({
   dialogForm: {
     id: '',
     label: '',
-    menu_id: 0,
     order_num: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
@@ -49,7 +42,6 @@ const state = reactive({
   dict: {
     ...publicDict,
     label: '权限名',
-    menu_id: '菜单id',
   },
   // 筛选表单
   // 格式: {
@@ -85,35 +77,35 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return permissionSel(params)
+    return roleSel(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    return permissionSelById(id)
+    return roleSelById(id)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    return permissionIns(obj)
+    return roleIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    return permissionUpd(obj)
+    return roleUpd(obj)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    return permissionDel(ids)
+    return roleDel(ids)
   }
 }
 
@@ -175,14 +167,11 @@ const {
       <el-form-item :label="state.dict['label']" prop="label">
         <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
       </el-form-item>
-      <el-form-item :label="state.dict['menu_id']" prop="menu_id">
-        <el-input v-model="state.dialogForm['menu_id']" :placeholder="state.dict['menu_id']"/>
+      <el-form-item :label="state.dict['remark']" prop="remark">
+        <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
       </el-form-item>
       <el-form-item :label="state.dict['order_num']" prop="order_num">
-        <el-input v-model="state.dialogForm['order_num']" :placeholder="state.dict['order_num']"/>
-      </el-form-item>
-      <el-form-item :label="state.dict['remark']" prop="">
-        <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+        <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
       </el-form-item>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
@@ -261,7 +250,6 @@ const {
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="120"/>
-    <el-table-column prop="menu_id" :label="state.dict['menu_id']" width="120"/>
     <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->

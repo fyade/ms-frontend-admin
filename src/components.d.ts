@@ -32,7 +32,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Pagination: typeof import('./components/pagination/pagination.vue')['default']
-    RightClickMenu: typeof import('./components/rightClickMenu/index.vue')['default']
+    RightClickMenu: typeof import('./components/rightClickMenu/rightClickMenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TablePage: typeof import('./components/tablePage/tablePage.vue')['default']

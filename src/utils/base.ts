@@ -33,6 +33,15 @@ export const final: {
   DEFAULT_ORDER_NUM: 0,
 }
 
+export const Operate = {
+  success: '操作成功。'
+}
+
+export const shift_yes_no = {
+  Y: N,
+  N: Y
+}
+
 export const publicCascaderProps = {
   value: 'id',
   label: 'label',
@@ -54,13 +63,4 @@ export const cascaderProps2 = {
   expandTrigger: 'hover',
   emitPath: false, // 在选中节点改变时，是否返回由该节点所在的各级菜单的值所组成的数组，若设置 false，则只返回该节点的值
   checkStrictly: true // 是否严格的遵守父子节点不互相关联
-}
-
-export const Operate = {
-  success: '操作成功。'
-}
-
-export const shift_yes_no = {
-  Y: N,
-  N: Y
 }

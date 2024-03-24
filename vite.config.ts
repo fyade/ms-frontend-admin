@@ -1,17 +1,16 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { join } from "path";
+import path, { join } from "path";
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import compressPlugin from "vite-plugin-compression";
-import path from 'path'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Inspect from 'vite-plugin-inspect'
 
 // https://vitejs.dev/config/
-export default defineConfig(({command, mode}) => {
+export default defineConfig(({mode}) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
   const pathSrc = path.resolve(__dirname, 'src')

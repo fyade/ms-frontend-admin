@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { final, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { final, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { userRoleDel, userRoleIns, userRoleSel, userRoleSelById, userRoleUpd } from "@/api/module/sys/userRole.ts";
+import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import {
+  permissionDel,
+  permissionIns,
+  permissionSel,
+  permissionSelById,
+  permissionUpd
+} from "@/api/module/sys/permission.ts";
 
 const state = reactive({
   dialogType: {
@@ -23,8 +29,9 @@ const state = reactive({
   // }
   dialogForm: {
     id: '',
-    user_id: '',
-    role_id: 1,
+    label: '',
+    menu_id: 0,
+    order_num: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
   // 这个是弹出框表单校验
@@ -41,8 +48,8 @@ const state = reactive({
   // }
   dict: {
     ...publicDict,
-    user_id: '用户id',
-    role_id: '角色id',
+    label: '权限名',
+    menu_id: '菜单id',
   },
   // 筛选表单
   // 格式: {
@@ -78,35 +85,35 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return userRoleSel(params)
+    return permissionSel(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    return userRoleSelById(id)
+    return permissionSelById(id)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    return userRoleIns(obj)
+    return permissionIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    return userRoleUpd(obj)
+    return permissionUpd(obj)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    return userRoleDel(ids)
+    return permissionDel(ids)
   }
 }
 
@@ -165,13 +172,16 @@ const {
       ref="dialogFormInput1Ref"
       -->
       <!--在此下方添加表单项-->
-      <el-form-item :label="state.dict['user_id']" prop="user_id">
-        <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['user_id']" :placeholder="state.dict['user_id']"/>
+      <el-form-item :label="state.dict['label']" prop="label">
+        <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
       </el-form-item>
-      <el-form-item :label="state.dict['role_id']" prop="role_id">
-        <el-input v-model="state.dialogForm['role_id']" :placeholder="state.dict['role_id']"/>
+      <el-form-item :label="state.dict['menu_id']" prop="menu_id">
+        <el-input v-model="state.dialogForm['menu_id']" :placeholder="state.dict['menu_id']"/>
       </el-form-item>
-      <el-form-item :label="state.dict['remark']" prop="remark">
+      <el-form-item :label="state.dict['order_num']" prop="order_num">
+        <el-input v-model="state.dialogForm['order_num']" :placeholder="state.dict['order_num']"/>
+      </el-form-item>
+      <el-form-item :label="state.dict['remark']" prop="">
         <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
       </el-form-item>
       <!--在此上方添加表单项-->
@@ -250,8 +260,9 @@ const {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="user_id" :label="state.dict['user_id']" width="120"/>
-    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120"/>
+    <el-table-column prop="label" :label="state.dict['label']" width="120"/>
+    <el-table-column prop="menu_id" :label="state.dict['menu_id']" width="120"/>
+    <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->

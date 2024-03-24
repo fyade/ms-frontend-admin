@@ -29,7 +29,7 @@ request.interceptors.response.use(
     error => {
       if (error.response.status === 401) {
         useUserStore().removeToken()
-        ElMessage.error('登陆已过期，请重新登录。')
+        ElMessage.error('登录已过期，请重新登录。')
         window.location.href = '/login'
       } else if (error.response.status === 403) {
         ElMessage.error('无权限。')
