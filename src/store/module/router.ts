@@ -4,14 +4,15 @@ import { routerPinList, routes } from "@/router";
 import { diguiObjTo2Arr } from "@/utils/baseUtils.ts";
 
 export const useRouterStore = defineStore('routerStore', () => {
-  const allMenus = diguiObjTo2Arr(routes.filter(item => item.path === '/')).map(ar => {
+  const allMenus1: any[] = routes.filter(item => item.path === '/');
+  const allMenus2 = diguiObjTo2Arr(allMenus1).map(ar => {
     return {
       path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
       name: ar[ar.length - 1].name,
       ar: ar
     }
   });
-  const menuList: Ref<any[]> = ref(allMenus.filter(item => routerPinList.indexOf(item.path) > -1))
+  const menuList: Ref<any[]> = ref(allMenus2.filter(item => routerPinList.indexOf(item.path) > -1))
   const addMenu = (menu: any) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
       menuList.value.push(menu)
@@ -48,6 +49,7 @@ export const useRouterStore = defineStore('routerStore', () => {
     deleteOtherMenu,
     getMenuList,
     getMenuListNames,
-    allMenus
+    allMenus1,
+    allMenus2
   }
 })

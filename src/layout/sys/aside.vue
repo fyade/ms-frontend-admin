@@ -2,9 +2,10 @@
 import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
+import Menu from "@/layout/menu.vue";
 
 const go = (url: string) => {
-  const index = menuList.findIndex(item => item.path === url)
+  const index = allMenus2.findIndex(item => item.path === url)
   if (index > -1) {
     onselectmenu(index)
   } else {
@@ -14,12 +15,13 @@ const go = (url: string) => {
 
 const routerStore = useRouterStore();
 
-const menuList = routerStore.allMenus
+const allMenus1 = routerStore.allMenus1
+const allMenus2 = routerStore.allMenus2
 const route = useRoute()
 const router = useRouter()
 onMounted(() => {
   const path = route.path
-  const index = menuList.findIndex(item => item.path === path)
+  const index = allMenus2.findIndex(item => item.path === path)
   if (index > -1) {
     indexBgSelect.value = index
     indexBgHover.value = index
@@ -37,7 +39,7 @@ const onmouseenter = (i: number) => {
 const onselectmenu = (i: number) => {
   addToStore(i)
   indexBgSelect.value = i
-  router.push(menuList[i].path)
+  router.push(allMenus2[i].path)
 }
 const onmouseleave = () => {
   indexBgHover.value = indexBgSelect.value
@@ -52,14 +54,14 @@ const gotoMenu = (newPath: string) => {
   }
   router.push(newPath)
   const path = newPath
-  const index = menuList.findIndex(item => item.path === path)
+  const index = allMenus2.findIndex(item => item.path === path)
   if (index > -1) {
     indexBgSelect.value = index
     indexBgHover.value = index
   }
 }
 const addToStore = (i: number) => {
-  routerStore.addMenu(menuList[i])
+  routerStore.addMenu(allMenus2[i])
 }
 
 defineExpose({
@@ -67,13 +69,13 @@ defineExpose({
 })
 </script>
 <template>
-  <el-menu class="el">
-    <el-menu-item @click="go('/index')">index</el-menu-item>
-    <el-menu-item @click="go('/sys/menu')">sys/menu</el-menu-item>
-    <el-menu-item @click="go('/sys/role')">sys/role</el-menu-item>
-    <el-menu-item @click="go('/sys/permission')">sys/permission</el-menu-item>
-    <el-menu-item @click="go('/sys/user-role')">sys/user-role</el-menu-item>
-    <el-menu-item @click="go('/sys/role-permission')">sys/role-permission</el-menu-item>
+  <el-menu
+      class="el"
+  >
+    <Menu
+        :items="allMenus1[0].children"
+        @gotoMenu="go"
+    ></Menu>
   </el-menu>
 </template>
 

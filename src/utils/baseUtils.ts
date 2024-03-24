@@ -7,6 +7,14 @@ export function deepClone<T>(any: any): T {
 }
 
 /**
+ * 转换为path
+ * @param str
+ */
+export function toPath(...str: string[]): string {
+  return str.join('/').replace(/\/+/g, '/');
+}
+
+/**
  * 二维数组转递归对象
  * @param list
  * @param key

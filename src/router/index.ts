@@ -10,7 +10,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: '首页',
-    redirect: 'index',
+    redirect: '/index',
     component: () => import('@/layout/sys/index.vue'),
     children: [
       {
