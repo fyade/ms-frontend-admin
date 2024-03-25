@@ -3,11 +3,13 @@ import { loginApi, loginDto } from "@/api/module/sys/user.ts";
 import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
+import { useRoute } from "vue-router";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
   const userinfo: any = reactive({})
   const ifLogin = ref(false)
+  const route = useRoute()
   const login = (user: loginDto) => {
     loginApi(user).then(({res}) => {
       if (res.code === 200) {
@@ -17,7 +19,11 @@ export const useUserStore = defineStore('userStore', () => {
           userinfo[key] = res.data.user[key]
         })
         ElMessage.success('登录成功。')
-        router.push('/')
+        if (route.query?.redirect) {
+          router.push(route.query.redirect as string)
+        } else {
+          router.push('/')
+        }
       } else {
         ElMessage.warning(res.msg)
       }

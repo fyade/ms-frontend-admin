@@ -1,20 +1,20 @@
-import { nextTick, onMounted, Ref, VueElement, watch } from "vue"
+import { nextTick, onMounted, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { final, Operate, shift_yes_no } from "@/utils/base.ts"
+import { Operate } from "@/utils/base.ts"
 import { usePageStore } from "@/store/module/page.ts"
-import { t_config, t_FuncMap, t_funcTablePage_params } from "@/type/tablePage.ts";
+import { t_funcTablePage_params } from "@/type/tablePage.ts";
 
 export const funcTablePage = ({
                                 config,
                                 state,
-                                state2,
+                                // state2,
                                 dialogFormRef,
                                 dialogFormInput1Ref,
                                 filterFormRef,
                                 dialogVisible,
                                 dislogLoadingRef,
                                 tableLoadingRef,
-                                switchLoadingRef,
+                                // switchLoadingRef,
                                 func
                               }: t_funcTablePage_params) => {
   /**
@@ -23,9 +23,10 @@ export const funcTablePage = ({
   const getData = () => {
     tableLoadingRef.value = true
     state.list = []
-    let obj = {...usePageStore().getPage, ...state.filterForm, ...config?.selectParam}
+    const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
+    const obj = ifByPage ? {...usePageStore().getPage, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
     func.selectList(obj).then(({res}) => {
-      if (!Object.keys(config).includes('pageQuery') || config?.pageQuery !== false) {
+      if (ifByPage) {
         state.list = res.data.list
         state.total = res.data.total
       } else {
@@ -35,18 +36,18 @@ export const funcTablePage = ({
       tableLoadingRef.value = false
     })
   }
-  /**
-   * 查询单个
-   * @param id
-   */
-  const getDataById = (id: any) => {
-    // tableLoadingRef.value = true
-    // func.selectById(id).then(({res}) => {
-    //   state.list[state.list.findIndex((item: any) => item.id === id)] = res.data
-    // }).finally(() => {
-    //   tableLoadingRef.value = false
-    // })
-  }
+  // /**
+  //  * 查询单个
+  //  * @param id
+  //  */
+  // const getDataById = (id: any) => {
+  //   // tableLoadingRef.value = true
+  //   // func.selectById(id).then(({res}) => {
+  //   //   state.list[state.list.findIndex((item: any) => item.id === id)] = res.data
+  //   // }).finally(() => {
+  //   //   tableLoadingRef.value = false
+  //   // })
+  // }
   /**
    * 新增
    */
@@ -71,7 +72,7 @@ export const funcTablePage = ({
         ElMessage.success(Operate.success)
         dialogVisible.value = false
         getData()
-      }else{
+      } else {
         tableLoadingRef.value = false
       }
     })
@@ -85,7 +86,7 @@ export const funcTablePage = ({
       if (res.code === 200) {
         ElMessage.success(Operate.success)
         getData()
-      }else{
+      } else {
         tableLoadingRef.value = false
       }
     })
@@ -194,7 +195,6 @@ export const funcTablePage = ({
     ).then(() => {
       let arr: any[] = state.multipleSelection.map((item: any) => item.id)
       delData(...arr)
-    }).catch(err => {
     })
   }
   // 修改
@@ -227,7 +227,6 @@ export const funcTablePage = ({
         }
     ).then(() => {
       delData(id)
-    }).catch(err => {
     })
   }
   const handleSelectionChange = (val: any) => {

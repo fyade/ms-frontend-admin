@@ -33,11 +33,6 @@ export const routes: RouteRecordRaw[] = [
             component: () => import('@/views/sys/role/index.vue')
           },
           {
-            path: 'permission',
-            name: '权限',
-            component: () => import('@/views/sys/permission/index.vue')
-          },
-          {
             path: 'user-role',
             name: '用户角色',
             component: () => import('@/views/sys/user-role/index.vue')
@@ -76,7 +71,7 @@ router.beforeEach((to, from, next) => {
   let pageStore = usePageStore();
   pageStore.init()
   if (!userStore.ifLogin && whitelist.indexOf(to.path) === -1) {
-    next('/login')
+    next(`/login?redirect=${to.path}`)
   } else {
     next()
   }

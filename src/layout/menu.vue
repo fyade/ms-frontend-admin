@@ -23,7 +23,7 @@ const menuclick = (item: any) => {
   >
     <template v-if="item.children && item.children?.length > 0">
       <el-sub-menu
-          :index="''"
+          :index="`${props.parentPath}/${item.path}`"
       >
         <template #title>
           {{ item.name }}

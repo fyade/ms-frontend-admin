@@ -114,41 +114,9 @@ const switchLoadingRef = ref(false)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
+  pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   tableInlineOperate: true // 允许表格行内操作，默认true
-})
-
-const menuTypeDict = {
-  [T_MENU]: '菜单',
-  [T_COMP]: '组件',
-  [T_Inter]: '接口'
-};
-watch(() => state.dialogForm.type, () => {
-  state.dFormRules = {
-    label: [{required: true, trigger: 'blur'}],
-    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    parent_id: [{required: true, trigger: 'blur'}],
-    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-  }
-  state.dict = {
-    ...publicDict,
-    label: `${menuTypeDict[state.dialogForm.type]}名`,
-    type: '菜单类型',
-    path: '菜单路径',
-    parent_id: '父级菜单',
-    component: '组件路径',
-    icon: '图标',
-    if_link: '是否外链',
-    if_visible: '是否显示',
-    if_disabled: '是否禁用',
-    if_public: '是否公共接口',
-    perms: '权限标识',
-  }
-}, {
-  immediate: true,
 })
 
 const func: t_FuncMap = {
@@ -218,6 +186,66 @@ const {
   func
 })
 
+const menuTypeDict = {
+  [T_MENU]: '菜单',
+  [T_COMP]: '组件',
+  [T_Inter]: '接口'
+};
+const canChooseTypes = ref<tType[]>([])
+watch(() => state.dialogForm.type, () => {
+  state.dFormRules = {
+    label: [{required: true, trigger: 'blur'}],
+    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    parent_id: [{required: true, trigger: 'blur'}],
+    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+  }
+  state.dict = {
+    ...publicDict,
+    label: `${menuTypeDict[state.dialogForm.type]}名`,
+    type: '菜单类型',
+    path: '菜单路径',
+    parent_id: '父级菜单',
+    component: '组件路径',
+    icon: '图标',
+    if_link: '是否外链',
+    if_visible: '是否显示',
+    if_disabled: '是否禁用',
+    if_public: '是否公共接口',
+    perms: '权限标识',
+  }
+}, {
+  immediate: true,
+})
+watch(() => state.dialogForm.parent_id, () => {
+  if (state.dialogForm.parent_id === null) {
+    state.dialogForm.parent_id = final.DEFAULT_PARENT_ID
+  }
+  if (state.dialogForm.parent_id === final.DEFAULT_PARENT_ID) {
+    canChooseTypes.value = [T_MENU, T_COMP]
+  } else {
+    const data = state.list.find((item: any) => item.id === state.dialogForm.parent_id);
+    if (data) {
+      if (data.type === T_MENU) {
+        canChooseTypes.value = [T_MENU, T_COMP]
+      } else if (data.type === T_COMP) {
+        canChooseTypes.value = [T_Inter]
+      }
+    }
+  }
+  if (canChooseTypes.value.indexOf(state.dialogForm.type) === -1) {
+    state.dialogForm.type = canChooseTypes.value[0]
+  }
+}, {
+  immediate: true
+})
+
+const tIns = (id: number) => {
+  state.dialogForm.parent_id = id
+  gIns()
+}
+
 const checkVisible = (a: tType, b: tType[]): boolean => {
   return b.indexOf(a) > -1
 }
@@ -226,7 +254,7 @@ const tabledata2 = computed(() => {
   return arr2ToDiguiObj(state.list)
 })
 const tabledata3 = computed(() => {
-  return arr2ToDiguiObj(state.list.filter(item => checkVisible(item.type, [T_MENU])))
+  return arr2ToDiguiObj(state.list.filter(item => checkVisible(item.type, [T_MENU, T_COMP])))
 })
 </script>
 
@@ -265,6 +293,7 @@ const tabledata3 = computed(() => {
                 v-model="state.dialogForm['parent_id']"
                 :options="tabledata3"
                 :props="cascaderProps2"
+                clearable
             />
           </el-form-item>
         </el-col>
@@ -272,10 +301,21 @@ const tabledata3 = computed(() => {
       <el-row>
         <el-col :span="24">
           <el-form-item :label="state.dict['type']" prop="type">
+            <template #label>
+              <tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
+                {{ state.dict['type'] }}
+              </tooltip>
+            </template>
             <el-radio-group v-model="state.dialogForm['type']">
-              <el-radio :label="T_MENU">{{ menuTypeDict[T_MENU] }}</el-radio>
-              <el-radio :label="T_COMP">{{ menuTypeDict[T_COMP] }}</el-radio>
-              <el-radio :label="T_Inter">{{ menuTypeDict[T_Inter] }}</el-radio>
+              <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
+                {{ menuTypeDict[T_MENU] }}
+              </el-radio>
+              <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
+                {{ menuTypeDict[T_COMP] }}
+              </el-radio>
+              <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
+                {{ menuTypeDict[T_Inter] }}
+              </el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -442,6 +482,7 @@ const tabledata3 = computed(() => {
       v-loading="tableLoadingRef"
       :data="tabledata2"
       row-key="id"
+      default-expand-all
       @selection-change="handleSelectionChange"
   >
     <el-table-column fixed type="selection" width="55"/>
@@ -466,8 +507,9 @@ const tabledata3 = computed(() => {
     <el-table-column prop="update_time" :label="state.dict['update_time']" width="200"/>
     <el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>
     <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    <el-table-column fixed="right" label="操作" min-width="150">
       <template #default="{row}">
+        <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>

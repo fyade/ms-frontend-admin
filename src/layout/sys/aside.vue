@@ -71,6 +71,7 @@ defineExpose({
 <template>
   <el-menu
       class="el"
+      unique-opened
   >
     <Menu
         :items="allMenus1[0].children"
