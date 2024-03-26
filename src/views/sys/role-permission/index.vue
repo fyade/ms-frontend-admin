@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { publicDict } from "@/utils/base.ts"
+import { computed, reactive, ref, watch } from "vue"
+import { cascaderProps4, CONFIG, final, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -9,10 +9,20 @@ import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import {
   rolePermissionDel,
   rolePermissionIns,
-  rolePermissionSel,
+  rolePermissionSelAll,
   rolePermissionSelById,
   rolePermissionUpd
 } from "@/api/module/sys/rolePermission.ts";
+import { roleSelAll } from "@/api/module/sys/role.ts";
+import { menuSel } from "@/api/module/sys/menu.ts";
+import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+
+const T_MENU = 'm'
+const T_INTER = 'i'
+const menuTypeDict = {
+  [T_MENU]: '菜单',
+  [T_INTER]: '接口'
+}
 
 const state = reactive({
   dialogType: {
@@ -29,16 +39,21 @@ const state = reactive({
   // }
   dialogForm: {
     id: '',
-    role_id: 1,
-    permission_id: 1,
+    type: T_MENU,
+    role_id: '',
+    permission_id: [] as any[],
     remark: ''
   },
   // 这个是弹出框表单校验
   // 格式: {
-  //   name: [{ required: true, trigger: 'blur' }],
+  //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
-  dFormRules: {} as FormRules,
+  dFormRules: {
+    type: [{required: true, trigger: 'change'}],
+    role_id: [{required: true, trigger: 'change'}],
+    permission_id: [{required: true, trigger: 'change'}]
+  } as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
@@ -47,8 +62,9 @@ const state = reactive({
   // }
   dict: {
     ...publicDict,
-    role_id: '角色id',
-    permission_id: '权限id'
+    type: '权限类型',
+    role_id: '角色',
+    permission_id: '权限'
   },
   // 筛选表单
   // 格式: {
@@ -73,7 +89,7 @@ const switchLoadingRef = ref(false)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
+  pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   tableInlineOperate: true // 允许表格行内操作，默认true
 })
@@ -84,7 +100,7 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return rolePermissionSel(params)
+    return rolePermissionSelAll()
   },
   /**
    * 查询单个
@@ -144,12 +160,63 @@ const {
   switchLoadingRef,
   func
 })
+
+const allRoles = ref<any[]>([])
+roleSelAll().then(({res}) => {
+  allRoles.value = res.data
+})
+
+const allpermissions = ref<any[]>([])
+watch(() => state.dialogForm['type'], () => {
+  allpermissions.value = []
+  if (state.dialogForm['type'] === T_MENU) {
+    menuSel().then(({res}) => {
+      allpermissions.value = arr1GetDiguiRelation(res.data)
+    })
+  } else if (state.dialogForm['type'] === T_INTER) {
+  }
+}, {
+  immediate: true
+})
+const allpermissions2 = computed(() => {
+  return arr2ToDiguiObj(allpermissions.value)
+})
+let lastPermissionSelect: any[] = []
+const permissionSelectChange = (): void => {
+  const val = state.dialogForm['permission_id']
+  if (val.length > lastPermissionSelect.length) {
+    const zengids = val.filter(item => lastPermissionSelect.indexOf(item) === -1)
+    const notaddids: any[] = []
+    zengids.forEach(id1 => {
+      let id = id1
+      let stop = false
+      while (!stop) {
+        const item = allpermissions.value.find(item => item.id === id)
+        if (item.parent_id === final.DEFAULT_PARENT_ID || val.indexOf(item.parent_id) > -1) {
+          stop = true
+          break
+        }
+        id = item.parent_id
+        if (notaddids.indexOf(id) === -1) {
+          notaddids.push(id)
+        }
+      }
+    })
+    state.dialogForm['permission_id'].push(...notaddids)
+  }
+  if (val.length < lastPermissionSelect.length) {
+    const deleteids = lastPermissionSelect.filter(item => val.indexOf(item) === -1)
+    const notdeleteids = deleteids.map(id => allpermissions.value.find(item => item.id === id).children).flat()
+    state.dialogForm['permission_id'] = state.dialogForm['permission_id'].filter(item => notdeleteids.indexOf(item) === -1)
+  }
+  lastPermissionSelect = val
+}
 </script>
 
 <template>
   <!--弹框-->
   <el-dialog
-      width="75%"
+      :width="CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -159,27 +226,58 @@ const {
         ref="dialogFormRef"
         v-loading="dislogLoadingRef"
         :model="state.dialogForm"
-        label-width="120px"
-        :inline="true"
+        :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
-      <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
-        <span>{{ state.dialogForm['id'] }}</span>
-      </el-form-item>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
+            <span>{{ state.dialogForm['id'] }}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <!--
       第一个input添加如下属性
       ref="dialogFormInput1Ref"
       -->
       <!--在此下方添加表单项-->
-      <el-form-item :label="state.dict['role_id']" prop="role_id">
-        <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['role_id']" :placeholder="state.dict['role_id']"/>
-      </el-form-item>
-      <el-form-item :label="state.dict['permission_id']" prop="permission_id">
-        <el-input v-model="state.dialogForm['permission_id']" :placeholder="state.dict['permission_id']"/>
-      </el-form-item>
-      <el-form-item :label="state.dict['remark']" prop="remark">
-        <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['role_id']" prop="role_id">
+            <el-select v-model="state.dialogForm['role_id']" clearable filterable>
+              <el-option v-for="item in allRoles" :key="item.id" :label="item.label" :value="item.id"/>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['type']" prop="type">
+            <el-radio-group v-model="state.dialogForm['type']">
+              <el-radio :label="T_MENU">{{ menuTypeDict[T_MENU] }}</el-radio>
+              <el-radio :label="T_INTER">{{ menuTypeDict[T_INTER] }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['permission_id']" prop="permission_id">
+            <el-cascader
+                v-model="state.dialogForm['permission_id']"
+                :options="allpermissions2"
+                :props="cascaderProps4"
+                clearable
+            />
+            <!--@change="permissionSelectChange"-->
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item :label="state.dict['remark']" prop="remark">
+            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
       <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
@@ -256,6 +354,7 @@ const {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
+    <el-table-column prop="type" :label="state.dict['type']" width="120"/>
     <el-table-column prop="role_id" :label="state.dict['role_id']" width="120"/>
     <el-table-column prop="permission_id" :label="state.dict['permission_id']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>

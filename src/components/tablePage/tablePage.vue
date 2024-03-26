@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { final, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { CONFIG, final, publicDict, shift_yes_no } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -37,7 +37,7 @@ const state = reactive<State>({
   dialogForm: {},
   // 这个是弹出框表单校验
   // 格式: {
-  //   name: [{ required: true, trigger: 'blur' }],
+  //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
   dFormRules: {} as FormRules,
@@ -164,7 +164,7 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      width="800px"
+      :width="CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -174,7 +174,7 @@ const {
         ref="dialogFormRef"
         v-loading="dislogLoadingRef"
         :model="state.dialogForm"
-        label-width="120px"
+        :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
       <!--<el-row>-->

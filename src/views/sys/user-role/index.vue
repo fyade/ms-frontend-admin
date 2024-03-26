@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { publicDict } from "@/utils/base.ts"
+import { CONFIG, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -29,7 +29,7 @@ const state = reactive({
   },
   // 这个是弹出框表单校验
   // 格式: {
-  //   name: [{ required: true, trigger: 'blur' }],
+  //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
   dFormRules: {} as FormRules,
@@ -143,7 +143,7 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      width="75%"
+      :width="CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -153,27 +153,41 @@ const {
         ref="dialogFormRef"
         v-loading="dislogLoadingRef"
         :model="state.dialogForm"
-        label-width="120px"
-        :inline="true"
+        :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
-      <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
-        <span>{{ state.dialogForm['id'] }}</span>
-      </el-form-item>
+      <el-row v-if="state.dialogType.value!=='ins'">
+        <el-col :span="24">
+          <el-form-item :label="state.dict['id']" prop="id">
+            <span>{{ state.dialogForm['id'] }}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <!--
       第一个input添加如下属性
       ref="dialogFormInput1Ref"
       -->
       <!--在此下方添加表单项-->
-      <el-form-item :label="state.dict['user_id']" prop="user_id">
-        <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['user_id']" :placeholder="state.dict['user_id']"/>
-      </el-form-item>
-      <el-form-item :label="state.dict['role_id']" prop="role_id">
-        <el-input v-model="state.dialogForm['role_id']" :placeholder="state.dict['role_id']"/>
-      </el-form-item>
-      <el-form-item :label="state.dict['remark']" prop="remark">
-        <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['user_id']" prop="user_id">
+            <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['user_id']"
+                      :placeholder="state.dict['user_id']"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['role_id']" prop="role_id">
+            <el-input v-model="state.dialogForm['role_id']" :placeholder="state.dict['role_id']"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item :label="state.dict['remark']" prop="remark">
+            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
       <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->

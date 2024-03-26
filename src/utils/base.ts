@@ -1,5 +1,10 @@
 import { CascaderProps } from "element-plus";
 
+export const CONFIG = {
+  dialog_width: '800px',
+  dialog_form_label_width: '120px'
+}
+
 export const PAGINATION = {
   pageNum: 1,
   pageSize: 10
@@ -65,4 +70,9 @@ export const cascaderProps2 = {
   expandTrigger: 'hover',
   emitPath: false, // 在选中节点改变时，是否返回由该节点所在的各级菜单的值所组成的数组，若设置 false，则只返回该节点的值
   checkStrictly: true // 是否严格的遵守父子节点不互相关联
+} as CascaderProps
+// 可以选择任何层且支持多选
+export const cascaderProps4 = {
+  ...cascaderProps2,
+  multiple: true
 } as CascaderProps

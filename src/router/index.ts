@@ -23,14 +23,19 @@ export const routes: RouteRecordRaw[] = [
         name: '系统管理',
         children: [
           {
+            path: 'role',
+            name: '角色',
+            component: () => import('@/views/sys/role/index.vue')
+          },
+          {
             path: 'menu',
             name: '菜单',
             component: () => import('@/views/sys/menu/index.vue')
           },
           {
-            path: 'role',
-            name: '角色',
-            component: () => import('@/views/sys/role/index.vue')
+            path: 'interface',
+            name: '接口',
+            component: () => import('@/views/sys/interface/index.vue')
           },
           {
             path: 'user-role',

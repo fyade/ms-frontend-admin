@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { Ref, ref } from "vue";
 import { routerPinList, routes } from "@/router";
-import { diguiObjTo2Arr } from "@/utils/baseUtils.ts";
+import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
 
 export const useRouterStore = defineStore('routerStore', () => {
   const allMenus1: any[] = routes.filter(item => item.path === '/');
-  const allMenus2 = diguiObjTo2Arr(allMenus1).map(ar => {
+  const allMenus2 = diguiObjToArr2(allMenus1).map(ar => {
     return {
       path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
       name: ar[ar.length - 1].name,

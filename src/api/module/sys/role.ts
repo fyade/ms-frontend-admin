@@ -22,6 +22,13 @@ export function roleSel(params: roleSelDto) {
   })
 }
 
+export function roleSelAll() {
+  return request({
+    url: '/sys/role/all',
+    method: 'GET'
+  })
+}
+
 export function roleSelById(id: any) {
   return request({
     url: `/sys/role/${id}`,

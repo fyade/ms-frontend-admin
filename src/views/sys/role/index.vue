@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { final, publicDict } from "@/utils/base.ts"
+import { CONFIG, final, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -29,11 +29,11 @@ const state = reactive({
   },
   // 这个是弹出框表单校验
   // 格式: {
-  //   name: [{ required: true, trigger: 'blur' }],
+  //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
   dFormRules: {
-    label: [{required: true, trigger: 'blur'}]
+    label: [{required: true, trigger: 'change'}]
   } as FormRules,
   // 字典
   // 格式: {
@@ -144,7 +144,7 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      width="800px"
+      :width="CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -154,7 +154,7 @@ const {
         ref="dialogFormRef"
         v-loading="dislogLoadingRef"
         :model="state.dialogForm"
-        label-width="120px"
+        :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
       <el-row v-if="state.dialogType.value!=='ins'">

@@ -58,11 +58,11 @@ export function arr2ToDiguiObj(list: any[], key: string = 'parent_id', defaultPa
  * @param key
  * @param jumppaths
  */
-export function diguiObjTo2Arr(objs: any[], key: string = 'children', jumppaths = ['']) {
-  return diguiObjTo2Arr_(objs, key, [], [], jumppaths)
+export function diguiObjToArr2(objs: any[], key: string = 'children', jumppaths = ['']) {
+  return diguiObjToArr2_(objs, key, [], [], jumppaths)
 }
 
-function diguiObjTo2Arr_(objs: any[], key: string, ret: any[] = [], parents: any[] = [], jumppaths = ['']) {
+function diguiObjToArr2_(objs: any[], key: string, ret: any[] = [], parents: any[] = [], jumppaths = ['']) {
   for (let i = 0; i < objs.length; i++) {
     const obj = objs[i]
     if (jumppaths.indexOf(obj.path) > -1) {
@@ -70,10 +70,27 @@ function diguiObjTo2Arr_(objs: any[], key: string, ret: any[] = [], parents: any
     }
     if (obj[key] && obj[key].length > 0) {
       ret.push([...parents, obj])
-      diguiObjTo2Arr_(obj[key], key, ret, [...parents, obj])
+      diguiObjToArr2_(obj[key], key, ret, [...parents, obj])
     } else {
       ret.push([...parents, obj])
     }
   }
   return ret
+}
+
+/**
+ * 一维数组递归找关系
+ * @param objs
+ * @param key
+ */
+export function arr1GetDiguiRelation(objs: any[], key: string = 'parent_id') {
+  objs.forEach(obj => {
+    const childrens: any[][] = []
+    childrens.push(objs.filter(item => item[key] === obj.id))
+    while (childrens[childrens.length - 1].length > 0) {
+      childrens.push(objs.filter(item => childrens[childrens.length - 1].map(item => item.id).indexOf(item[key]) > -1))
+    }
+    obj.children = childrens.flat().map(item => item.id)
+  })
+  return objs
 }

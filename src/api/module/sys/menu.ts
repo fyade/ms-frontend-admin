@@ -24,7 +24,7 @@ export interface menuUpdDto extends menuInsDto {
   id: number
 }
 
-export function menuSel(params: menuSelDto) {
+export function menuSel(params?: menuSelDto) {
   return request({
     url: '/sys/menu',
     method: 'GET',

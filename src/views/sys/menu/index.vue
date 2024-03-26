@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
-import { cascaderProps2, final, finalT, publicDict } from "@/utils/base.ts"
+import { cascaderProps2, CONFIG, final, finalT, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -80,7 +80,7 @@ const state = reactive<State>({
   },
   // 这个是弹出框表单校验
   // 格式: {
-  //   name: [{ required: true, trigger: 'blur' }],
+  //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
   dFormRules: {} as FormRules,
@@ -194,12 +194,27 @@ const menuTypeDict = {
 const canChooseTypes = ref<tType[]>([])
 watch(() => state.dialogForm.type, () => {
   state.dFormRules = {
-    label: [{required: true, trigger: 'blur'}],
-    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    parent_id: [{required: true, trigger: 'blur'}],
-    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
-    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'blur'}],
+    type: [{required: true, trigger: 'change'}],
+    label: [{required: true, trigger: 'change'}],
+    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+    parent_id: [{required: true, trigger: 'change'}],
+    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+  }
+  if ([T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1) {
+    state.dFormRules = {
+      ...state.dFormRules,
+      if_link: [{required: true, trigger: 'change'}],
+      if_visible: [{required: true, trigger: 'change'}],
+      if_disabled: [{required: true, trigger: 'change'}],
+    }
+  }
+  if ([T_Inter].indexOf(state.dialogForm.type) > -1) {
+    state.dFormRules = {
+      ...state.dFormRules,
+      if_public: [{required: true, trigger: 'change'}],
+    }
   }
   state.dict = {
     ...publicDict,
@@ -261,7 +276,7 @@ const tabledata3 = computed(() => {
 <template>
   <!--弹框-->
   <el-dialog
-      width="800px"
+      :width="CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -271,7 +286,7 @@ const tabledata3 = computed(() => {
         ref="dialogFormRef"
         v-loading="dislogLoadingRef"
         :model="state.dialogForm"
-        label-width="120px"
+        :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
       <el-row v-show="state.dialogType.value!=='ins'">

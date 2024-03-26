@@ -14,11 +14,10 @@ export interface rolePermissionUpdDto extends rolePermissionInsDto {
   id: number
 }
 
-export function rolePermissionSel(params: rolePermissionSelDto) {
+export function rolePermissionSelAll() {
   return request({
-    url: '/sys/role-permission',
-    method: 'GET',
-    params: params
+    url: '/sys/role-permission/all',
+    method: 'GET'
   })
 }
 
