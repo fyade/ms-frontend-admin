@@ -183,33 +183,35 @@ const allpermissions2 = computed(() => {
 })
 let lastPermissionSelect: any[] = []
 const permissionSelectChange = (): void => {
+  if (!checked3.value) {
+    return
+  }
   const val = state.dialogForm['permission_id']
   if (val.length > lastPermissionSelect.length) {
     const zengids = val.filter(item => lastPermissionSelect.indexOf(item) === -1)
-    const notaddids: any[] = []
-    zengids.forEach(id1 => {
-      let id = id1
-      let stop = false
-      while (!stop) {
-        const item = allpermissions.value.find(item => item.id === id)
-        if (item.parent_id === final.DEFAULT_PARENT_ID || val.indexOf(item.parent_id) > -1) {
-          stop = true
-          break
-        }
-        id = item.parent_id
-        if (notaddids.indexOf(id) === -1) {
-          notaddids.push(id)
-        }
-      }
-    })
-    state.dialogForm['permission_id'].push(...notaddids)
+    const parentids = zengids.filter(id => allpermissions.value.find(item => item.children.indexOf(id) > -1))
+        .map(id => allpermissions.value.find(item => item.children.indexOf(id) > -1).id)
+        .filter(item => state.dialogForm['permission_id'].indexOf(item) === -1)
+    state.dialogForm['permission_id'] = [...state.dialogForm['permission_id'], ...parentids]
   }
   if (val.length < lastPermissionSelect.length) {
     const deleteids = lastPermissionSelect.filter(item => val.indexOf(item) === -1)
-    const notdeleteids = deleteids.map(id => allpermissions.value.find(item => item.id === id).children).flat()
-    state.dialogForm['permission_id'] = state.dialogForm['permission_id'].filter(item => notdeleteids.indexOf(item) === -1)
+    const chlidids = deleteids.map(id => allpermissions.value.find(item => item.id === id).children)
+        .flat()
+        .filter(item => state.dialogForm['permission_id'].indexOf(item) > -1)
+    state.dialogForm['permission_id'] = state.dialogForm['permission_id'].filter(item => chlidids.indexOf(item) === -1)
   }
-  lastPermissionSelect = val
+  lastPermissionSelect = state.dialogForm['permission_id']
+}
+
+const checked2 = ref(false)
+const checked3 = ref(true)
+const checked2change = () => {
+  if (checked2.value) {
+    state.dialogForm['permission_id'] = allpermissions.value.map(item => item.id)
+  } else {
+    state.dialogForm['permission_id'] = []
+  }
 }
 </script>
 
@@ -259,15 +261,30 @@ const permissionSelectChange = (): void => {
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item :label="state.dict['permission_id']" prop="permission_id">
-            <el-cascader
-                v-model="state.dialogForm['permission_id']"
-                :options="allpermissions2"
-                :props="cascaderProps4"
-                clearable
-            />
-            <!--@change="permissionSelectChange"-->
+            <div>
+              <el-row>
+                <el-col :span="24">
+                  <el-checkbox v-model="checked2" label="全选/全不选" size="large" @change="checked2change"/>
+                  <el-checkbox v-model="checked3" label="父子联动" size="large"/>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24">
+                  <el-cascader
+                      v-model="state.dialogForm['permission_id']"
+                      :options="allpermissions2"
+                      :props="cascaderProps4"
+                      clearable
+                      collapse-tags
+                      collapse-tags-tooltip
+                      :max-collapse-tags="0"
+                      @change="permissionSelectChange"
+                  />
+                </el-col>
+              </el-row>
+            </div>
           </el-form-item>
         </el-col>
       </el-row>
