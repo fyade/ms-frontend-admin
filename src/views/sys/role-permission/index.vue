@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue"
-import { cascaderProps4, CONFIG, final, publicDict } from "@/utils/base.ts"
+import { computed, nextTick, reactive, ref, watch } from "vue"
+import { cascaderProps4, CONFIG, final, Operate, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
-import type { FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import {
   rolePermissionDel,
@@ -16,6 +16,7 @@ import {
 import { roleSelAll } from "@/api/module/sys/role.ts";
 import { menuSel } from "@/api/module/sys/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { usePageStore } from "@/store/module/page.ts";
 
 const T_MENU = 'm'
 const T_INTER = 'i'
@@ -91,6 +92,13 @@ const config: t_config = reactive({
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
+  /**
+   * dialogVisible变化时的回调函数，可不传
+   * @param visible 变化后的值
+   */
+  dialogVisibleCallback: (visible?: boolean) => {
+    dialogVisibleChange()
+  },
   tableInlineOperate: true // 允许表格行内操作，默认true
 })
 
@@ -100,7 +108,7 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return rolePermissionSelAll()
+    return rolePermissionSelAll(params)
   },
   /**
    * 查询单个
@@ -206,12 +214,82 @@ const permissionSelectChange = (): void => {
 
 const checked2 = ref(false)
 const checked3 = ref(true)
+const dialogVisibleChange = () => {
+  checked2.value = false
+  checked3.value = true
+}
 const checked2change = () => {
   if (checked2.value) {
     state.dialogForm['permission_id'] = allpermissions.value.map(item => item.id)
   } else {
     state.dialogForm['permission_id'] = []
   }
+}
+
+// 修改
+const tUpd2 = (id: any) => {
+  state.dialogType.value = 'upd'
+  state.dialogType.label = '修改'
+  dialogVisible.value = true
+  nextTick(() => {
+    dislogLoadingRef.value = true
+    func.selectList({role_id: id}).then(({res}) => {
+      let obj = res.data[0]
+      Object.keys(state.dialogForm).forEach(item => {
+        state.dialogForm[item] = obj[item]
+      })
+    }).finally(() => {
+      dislogLoadingRef.value = false
+    })
+  })
+}
+// 删除
+const gDel2 = (delids?: any[]) => {
+  const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
+  console.log(permissionids)
+  if (permissionids.length === 0) {
+    return ElMessage.warning('请至少选择 1 条数据。')
+  }
+  ElMessageBox.confirm(
+      `此操作将删除选中的 ${permissionids.length} 条数据，且无法撤销，请确认是否继续？`,
+      '警告',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        draggable: true
+      }
+  ).then(() => {
+    let arr: any[] = state.multipleSelection.map((item: any) => item.id)
+    const ids = permissionids
+    tableLoadingRef.value = true
+    func.deleteList(...ids).then(({res}) => {
+      if (res.code === 200) {
+        ElMessage.success(Operate.success)
+        tableLoadingRef.value = true
+        state.list = []
+        const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
+        const obj = ifByPage ? {...usePageStore().getPage, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
+        func.selectList(obj).then(({res}) => {
+          if (ifByPage) {
+            state.list = res.data.list
+            state.total = res.data.total
+          } else {
+            state.list = res.data
+          }
+        }).finally(() => {
+          tableLoadingRef.value = false
+        })
+      } else {
+        tableLoadingRef.value = false
+      }
+    })
+  })
+}
+const tDel2 = (id: any) => {
+  const fined: any = state.list.find((item: any) => item.id === id);
+  const permissionids = fined && fined.permission_id ? fined.permission_id : []
+  gDel2(permissionids)
 }
 </script>
 
@@ -288,13 +366,13 @@ const checked2change = () => {
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="state.dict['remark']" prop="remark">
-            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <!--<el-row>-->
+      <!--  <el-col :span="24">-->
+      <!--    <el-form-item :label="state.dict['remark']" prop="remark">-->
+      <!--      <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>-->
+      <!--    </el-form-item>-->
+      <!--  </el-col>-->
+      <!--</el-row>-->
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
       <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
@@ -344,7 +422,7 @@ const checked2change = () => {
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel2()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -371,10 +449,26 @@ const checked2change = () => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="type" :label="state.dict['type']" width="120"/>
-    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120"/>
-    <el-table-column prop="permission_id" :label="state.dict['permission_id']" width="120"/>
-    <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
+    <el-table-column prop="type" :label="state.dict['type']" width="120">
+      <template #default="{row}">
+        <template v-if="row.type==='m'">菜单</template>
+        <template v-if="row.type==='i'">接口</template>
+      </template>
+    </el-table-column>
+    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120">
+      <template #default="{row}">
+        {{ row.role.label }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="permission_id" :label="state.dict['permission_id']" min-width="120">
+      <template #default="{row}">
+        <el-tree
+            :data="allpermissions2"
+            accordion
+        />
+      </template>
+    </el-table-column>
+    <!--<el-table-column prop="remark" :label="state.dict['remark']" width="120"/>-->
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
     <!--  <template #default="{row}">-->
@@ -424,8 +518,8 @@ const checked2change = () => {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+        <el-button link type="primary" size="small" @click="tUpd2(row.role_id)">修改</el-button>
+        <el-button link type="danger" size="small" @click="tDel2(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>

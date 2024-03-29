@@ -7,6 +7,7 @@ export interface t_config {
   getDataOnMounted: boolean
   pageQuery: boolean
   watchDialogVisible: boolean
+  dialogVisibleCallback?: Function
   tableInlineOperate: boolean
 }
 

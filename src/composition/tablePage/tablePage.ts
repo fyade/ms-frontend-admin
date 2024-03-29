@@ -107,6 +107,7 @@ export const funcTablePage = ({
         } else {
           dialogFormRef.value?.resetFields()
         }
+        config.dialogVisibleCallback && config.dialogVisibleCallback(newVal)
       })
     })
   }

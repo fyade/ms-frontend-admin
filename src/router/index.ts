@@ -23,6 +23,11 @@ export const routes: RouteRecordRaw[] = [
         name: '系统管理',
         children: [
           {
+            path: 'user',
+            name: '用户',
+            component: () => import('@/views/sys/user/index.vue')
+          },
+          {
             path: 'role',
             name: '角色',
             component: () => import('@/views/sys/role/index.vue')
