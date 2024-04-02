@@ -99,7 +99,7 @@ const config: t_config = reactive({
   dialogVisibleCallback: (visible?: boolean) => {
     dialogVisibleChange()
   },
-  tableInlineOperate: true // 允许表格行内操作，默认true
+  tableInlineOperate: true, // 允许表格行内操作，默认true
 })
 
 const func: t_FuncMap = {
@@ -246,7 +246,6 @@ const tUpd2 = (id: any) => {
 // 删除
 const gDel2 = (delids?: any[]) => {
   const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
-  console.log(permissionids)
   if (permissionids.length === 0) {
     return ElMessage.warning('请至少选择 1 条数据。')
   }

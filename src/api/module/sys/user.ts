@@ -18,8 +18,16 @@ export function registApi(data: registDto) {
 
 export function loginApi(data: loginDto) {
   return request({
-    url: '/sys/user/login',
+    url: '/sys/user/adminlogin',
     method: 'POST',
     data: data
+  })
+}
+
+export function userSelList(params: any) {
+  return request({
+    url: '/sys/user/page',
+    method: 'GET',
+    params: params
   })
 }

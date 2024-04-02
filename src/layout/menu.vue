@@ -7,6 +7,10 @@ const props = defineProps({
   parentPath: {
     type: String,
     default: ''
+  },
+  style: {
+    type: Object,
+    default: {}
   }
 });
 const emits = defineEmits(['gotoMenu']);
@@ -17,9 +21,10 @@ const menuclick = (item: any) => {
 </script>
 
 <template>
-  <template
+  <div
       v-for="(item, index) in props.items as any[]"
       :key="index"
+      :style="style"
   >
     <template v-if="item.children && item.children?.length > 0">
       <el-sub-menu
@@ -29,6 +34,7 @@ const menuclick = (item: any) => {
           {{ item.name }}
         </template>
         <Menu
+            :style="{backgroundColor: '#1f2d3d'}"
             :items="item.children"
             :parent-path="`${props.parentPath}/${item.path}`"
             @gotoMenu="menuclick"
@@ -43,7 +49,7 @@ const menuclick = (item: any) => {
         {{ item.name }}
       </el-menu-item>
     </template>
-  </template>
+  </div>
 </template>
 
 <style scoped>

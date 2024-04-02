@@ -4,7 +4,9 @@ import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import Menu from "@/layout/menu.vue";
 
+const defaultActive = ref('')
 const go = (url: string) => {
+  defaultActive.value = url
   const index = allMenus2.findIndex(item => item.path === url)
   if (index > -1) {
     onselectmenu(index)
@@ -26,6 +28,7 @@ onMounted(() => {
     indexBgSelect.value = index
     indexBgHover.value = index
     addToStore(index)
+    defaultActive.value = allMenus2[index].path
   }
 })
 
@@ -69,19 +72,31 @@ defineExpose({
 })
 </script>
 <template>
-  <el-menu
-      class="el"
-      unique-opened
-  >
-    <Menu
-        :items="allMenus1[0].children"
-        @gotoMenu="go"
-    ></Menu>
-  </el-menu>
+  <div class="el">
+    <el-menu
+        :default-active="defaultActive"
+        :collapse="false"
+        :unique-opened="true"
+        router
+        background-color="#304156"
+        text-color="#ffffff"
+    >
+      <Menu
+          v-for="(item, index) in allMenus1"
+          :key="index"
+          :items="item.children"
+          @gotoMenu="go"
+      ></Menu>
+    </el-menu>
+  </div>
 </template>
 
 <style scoped>
 .el {
   height: 100%;
+
+  > * {
+    height: 100%;
+  }
 }
 </style>
