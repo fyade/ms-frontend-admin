@@ -1,18 +1,5 @@
 import request from "@/api/request.ts";
-import { pageSelDto } from "@/type/tablePage.ts";
-
-export interface rolePermissionSelDto extends pageSelDto {
-}
-
-export interface rolePermissionInsDto {
-  role_id: number;
-  permission_id: number;
-  remark: string;
-}
-
-export interface rolePermissionUpdDto extends rolePermissionInsDto {
-  id: number
-}
+import { rolePermissionInsDto, rolePermissionUpdDto } from "@/type/api/sys/rolePermission.ts";
 
 export function rolePermissionSelAll(params: any) {
   return request({

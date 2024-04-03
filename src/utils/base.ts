@@ -1,4 +1,5 @@
 import { CascaderProps } from "element-plus";
+import { N, Y } from '@/type/utils/base.ts'
 
 export const CONFIG = {
   dialog_width: '800px',
@@ -25,9 +26,6 @@ export const publicDict = {
 
 const Y = 'Y'
 const N = 'N'
-type Y = 'Y'
-type N = 'N'
-export type finalT = Y | N
 export const final: {
   Y: Y
   N: N

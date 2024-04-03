@@ -2,7 +2,7 @@
 import { computed, nextTick, reactive, ref, watch } from "vue"
 import { cascaderProps4, CONFIG, final, Operate, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import { ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
@@ -17,6 +17,13 @@ import { roleSelAll } from "@/api/module/sys/role.ts";
 import { menuSel } from "@/api/module/sys/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { usePageStore } from "@/store/module/page.ts";
+
+const props = defineProps({
+  role_id: {
+    type: Number,
+    required: true
+  }
+})
 
 const T_MENU = 'm'
 const T_INTER = 'i'
@@ -41,7 +48,7 @@ const state = reactive({
   dialogForm: {
     id: '',
     type: T_MENU,
-    role_id: '',
+    role_id: 0,
     permission_id: [] as any[],
     remark: ''
   },
@@ -88,7 +95,9 @@ const dislogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
+  selectParam: {
+    role_id: props.role_id
+  }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
@@ -170,8 +179,9 @@ const {
 })
 
 const allRoles = ref<any[]>([])
-roleSelAll().then(({res}) => {
+roleSelAll({id: props.role_id}).then(({res}) => {
   allRoles.value = res.data
+  state.dialogForm['role_id'] = Number(props.role_id)
 })
 
 const allpermissions = ref<any[]>([])
@@ -323,7 +333,7 @@ const tDel2 = (id: any) => {
       <el-row>
         <el-col :span="12">
           <el-form-item :label="state.dict['role_id']" prop="role_id">
-            <el-select v-model="state.dialogForm['role_id']" clearable filterable>
+            <el-select v-model="state.dialogForm['role_id']" clearable filterable disabled>
               <el-option v-for="item in allRoles" :key="item.id" :label="item.label" :value="item.id"/>
             </el-select>
           </el-form-item>
@@ -332,7 +342,7 @@ const tDel2 = (id: any) => {
           <el-form-item :label="state.dict['type']" prop="type">
             <el-radio-group v-model="state.dialogForm['type']">
               <el-radio :label="T_MENU">{{ menuTypeDict[T_MENU] }}</el-radio>
-              <el-radio :label="T_INTER">{{ menuTypeDict[T_INTER] }}</el-radio>
+              <el-radio :label="T_INTER" disabled>{{ menuTypeDict[T_INTER] }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

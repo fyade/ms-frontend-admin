@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Menu from "@/layout/menu.vue";
 
 const defaultActive = ref('')
@@ -30,6 +30,9 @@ onMounted(() => {
     addToStore(index)
     defaultActive.value = allMenus2[index].path
   }
+})
+watch(route, () => {
+  defaultActive.value = route.path
 })
 
 const indexBgHover = ref(0)

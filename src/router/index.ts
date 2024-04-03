@@ -47,11 +47,11 @@ export const routes: RouteRecordRaw[] = [
             name: '用户角色',
             component: () => import('@/views/sys/user-role/index.vue')
           },
-          {
-            path: 'role-permission',
-            name: '角色权限',
-            component: () => import('@/views/sys/role-permission/index.vue')
-          }
+          // {
+          //   path: 'role-permission',
+          //   name: '角色权限',
+          //   component: () => import('@/views/sys/role-permission/index.vue')
+          // }
         ]
       }
     ]

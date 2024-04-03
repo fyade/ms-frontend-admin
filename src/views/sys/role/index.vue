@@ -7,6 +7,7 @@ import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sys/role.ts";
+import RolePermission from "@/views/sys/role/rolePermission.vue";
 
 const state = reactive({
   dialogType: {
@@ -139,9 +140,28 @@ const {
   switchLoadingRef,
   func
 })
+
+const setPermission = (id: any) => {
+  selectRoleId.value = id
+  drawer.value = true
+}
+const drawer = ref(false)
+const selectRoleId = ref(0)
 </script>
 
 <template>
+  <!--抽屉-->
+  <el-drawer
+      v-model="drawer"
+      size="80%"
+      destroy-on-close
+      title="分配权限"
+  >
+    <RolePermission
+        :role_id="selectRoleId"
+    />
+  </el-drawer>
+
   <!--弹框-->
   <el-dialog
       :width="CONFIG.dialog_width"
@@ -318,6 +338,7 @@ const {
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+        <el-button link type="primary" size="small" @click="setPermission(row.id)">分配权限</el-button>
       </template>
     </el-table-column>
     <template #append>

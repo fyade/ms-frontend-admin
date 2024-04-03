@@ -1,18 +1,5 @@
 import request from "@/api/request.ts";
-import { pageSelDto } from "@/type/tablePage.ts";
-
-export interface roleSelDto extends pageSelDto {
-}
-
-export interface roleInsDto {
-  label: string;
-  order_num: number;
-  remark: string;
-}
-
-export interface roleUpdDto extends roleInsDto {
-  id: number
-}
+import { roleInsDto, roleSelDto, roleSelDto2, roleUpdDto } from "@/type/api/sys/role.ts";
 
 export function roleSel(params: roleSelDto) {
   return request({
@@ -22,10 +9,11 @@ export function roleSel(params: roleSelDto) {
   })
 }
 
-export function roleSelAll() {
+export function roleSelAll(params?: roleSelDto2) {
   return request({
     url: '/sys/role/all',
-    method: 'GET'
+    method: 'GET',
+    params: params
   })
 }
 

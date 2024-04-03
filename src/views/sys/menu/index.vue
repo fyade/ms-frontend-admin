@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
-import { cascaderProps2, CONFIG, final, finalT, publicDict } from "@/utils/base.ts"
+import { cascaderProps2, CONFIG, final, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -9,6 +9,7 @@ import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { menuDel, menuIns, menuSel, menuSelById, menuUpd } from "@/api/module/sys/menu.ts";
 import Tooltip from "@/components/tooltip/tooltip.vue";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { finalT } from "@/type/utils/base.ts";
 
 const T_MENU = 'm'
 const T_COMP = 'c'

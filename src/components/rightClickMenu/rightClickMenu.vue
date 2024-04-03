@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { nextTick, reactive } from "vue";
 import eventBus from "@/utils/eventBus.ts";
-
-interface menusT {
-  label: string
-  operate: Function
-}
+import { menusT } from "@/type/components/rightClickMenu.ts";
 
 class stateReaC {
   show: boolean = false

@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
-import { loginApi, loginDto } from "@/api/module/sys/user.ts";
 import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
+import { loginDto } from "@/type/api/sys/user.ts";
+import { loginApi } from "@/api/module/sys/user.ts";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')

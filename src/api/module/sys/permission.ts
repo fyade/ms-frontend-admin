@@ -1,19 +1,5 @@
 import request from "@/api/request.ts";
-import { pageSelDto } from "@/type/tablePage.ts";
-
-export interface permissionSelDto extends pageSelDto {
-}
-
-export interface permissionInsDto {
-  label: string;
-  menu_id: number;
-  order_num: number;
-  remark: string;
-}
-
-export interface permissionUpdDto extends permissionInsDto {
-  id: number
-}
+import { permissionInsDto, permissionSelDto, permissionUpdDto } from "@/type/api/sys/permission.ts";
 
 export function permissionSel(params: permissionSelDto) {
   return request({

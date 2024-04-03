@@ -1,12 +1,6 @@
 import request from "../../request.ts";
+import { loginDto, registDto } from "@/type/api/sys/user.ts";
 
-export interface loginDto {
-  username: string
-  password: string
-}
-
-export interface registDto extends loginDto {
-}
 
 export function registApi(data: registDto) {
   return request({
