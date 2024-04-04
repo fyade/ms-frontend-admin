@@ -24,29 +24,29 @@ export const routes: RouteRecordRaw[] = [
         children: [
           {
             path: 'user',
-            name: '用户',
+            name: '用户管理',
             component: () => import('@/views/sys/user/index.vue')
           },
           {
             path: 'role',
-            name: '角色',
+            name: '角色管理',
             component: () => import('@/views/sys/role/index.vue')
           },
           {
             path: 'menu',
-            name: '菜单',
+            name: '菜单管理',
             component: () => import('@/views/sys/menu/index.vue')
           },
           {
             path: 'interface',
-            name: '接口',
+            name: '接口管理',
             component: () => import('@/views/sys/interface/index.vue')
           },
-          {
-            path: 'user-role',
-            name: '用户角色',
-            component: () => import('@/views/sys/user-role/index.vue')
-          },
+          // {
+          //   path: 'user-role',
+          //   name: '用户角色',
+          //   component: () => import('@/views/sys/user-role/index.vue')
+          // },
           // {
           //   path: 'role-permission',
           //   name: '角色权限',

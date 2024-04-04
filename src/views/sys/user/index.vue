@@ -4,9 +4,9 @@ import { CONFIG, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
-import type { FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
-import { userSelList } from "@/api/module/sys/user.ts";
+import { resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
 
 interface State {
   dialogType: {
@@ -52,6 +52,7 @@ const state = reactive<State>({
     ...publicDict,
     username: '用户名',
     nickname: '昵称',
+    password: '密码',
     avatar: '头像',
     sex: '性别',
     email: '邮箱',
@@ -169,9 +170,61 @@ const {
   switchLoadingRef,
   func
 })
+
+// 重置密码
+const defaultNewPsd = '123456'
+const newPsd = reactive({
+  id: '',
+  password: ''
+})
+const newpsdDialog = ref(false)
+const resetPsd = (id: any) => {
+  newPsd.id = id
+  newPsd.password = defaultNewPsd
+  newpsdDialog.value = true
+}
+const npCan = () => {
+  newpsdDialog.value = false
+}
+const npCon = () => {
+  resetUserPsd(newPsd).then(res => {
+    newpsdDialog.value = false
+    ElMessage.success('密码已重置。')
+  })
+}
+
+// 用户角色
 </script>
 
 <template>
+  <!--用户角色-->
+  <!--重置密码-->
+  <el-dialog
+      :width="CONFIG.dialog_width"
+      v-model="newpsdDialog"
+      title="重置密码"
+      draggable
+      append-to-body
+  >
+    <el-form
+        :model="newPsd"
+        :label-width="CONFIG.dialog_form_label_width"
+    >
+      <el-form-item :label="state.dict['id']" prop="id">
+        <span>{{ newPsd['id'] }}</span>
+      </el-form-item>
+      <el-form-item label="新密码" prop="password">
+        <el-input type="password" clearable v-model="newPsd['password']" placeholder="新密码"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="npCan">取消</el-button>
+        <el-button type="primary" @click="npCon">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
   <!--弹框-->
   <el-dialog
       :width="CONFIG.dialog_width"
@@ -335,10 +388,11 @@ const {
       <template #default="{row}">
         <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
         <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
+        <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
       </template>
     </el-table-column>
     <template #append>
-      <span>{{ `已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 

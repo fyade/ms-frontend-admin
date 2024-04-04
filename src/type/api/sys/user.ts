@@ -5,3 +5,8 @@ export interface loginDto {
 
 export interface registDto extends loginDto {
 }
+
+export interface resetPsdDto {
+  id: string
+  password: string
+}

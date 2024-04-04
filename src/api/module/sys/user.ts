@@ -25,3 +25,11 @@ export function userSelList(params: any) {
     params: params
   })
 }
+
+export function resetUserPsd(params: any) {
+  return request({
+    url: '/sys/user/resetpsd',
+    method: 'POST',
+    data: params
+  })
+}

@@ -458,15 +458,15 @@ const tDel2 = (id: any) => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
+    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120">
+      <template #default="{row}">
+        {{ row.role.label }}
+      </template>
+    </el-table-column>
     <el-table-column prop="type" :label="state.dict['type']" width="120">
       <template #default="{row}">
         <template v-if="row.type==='m'">菜单</template>
         <template v-if="row.type==='i'">接口</template>
-      </template>
-    </el-table-column>
-    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120">
-      <template #default="{row}">
-        {{ row.role.label }}
       </template>
     </el-table-column>
     <el-table-column prop="permission_id" :label="state.dict['permission_id']" min-width="120">
@@ -474,6 +474,7 @@ const tDel2 = (id: any) => {
         <el-tree
             :data="allpermissions2"
             accordion
+            default-expand-all
         />
       </template>
     </el-table-column>
@@ -532,7 +533,7 @@ const tDel2 = (id: any) => {
       </template>
     </el-table-column>
     <template #append>
-      <span>{{ `已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 
