@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
-import { cascaderProps2, CONFIG, final, publicDict } from "@/utils/base.ts"
+import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { menuDel, menuIns, menuSel, menuSelById, menuUpd } from "@/api/module/sys/menu.ts";
@@ -36,21 +36,7 @@ type DialogForm = {
   remark: string
 }
 
-interface State {
-  dialogType: {
-    value: string
-    label: string
-  }
-  dialogForm: DialogForm
-  dFormRules: FormRules
-  dict: object
-  filterForm: object
-  list: DialogForm[]
-  multipleSelection: object[]
-  total: number
-}
-
-const state = reactive<State>({
+const state = reactive<State<DialogForm>>({
   dialogType: {
     value: '',
     label: ''
@@ -100,13 +86,16 @@ const state = reactive<State>({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
@@ -178,7 +167,6 @@ const {
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -241,7 +229,7 @@ watch(() => state.dialogForm.parent_id, () => {
   if (state.dialogForm.parent_id === final.DEFAULT_PARENT_ID) {
     canChooseTypes.value = [T_MENU, T_COMP]
   } else {
-    const data = state.list.find((item: any) => item.id === state.dialogForm.parent_id);
+    const data: any = state.list.find((item: any) => item.id === state.dialogForm.parent_id);
     if (data) {
       if (data.type === T_MENU) {
         canChooseTypes.value = [T_MENU, T_COMP]
@@ -270,7 +258,7 @@ const tabledata2 = computed(() => {
   return arr2ToDiguiObj(state.list)
 })
 const tabledata3 = computed(() => {
-  return arr2ToDiguiObj(state.list.filter(item => checkVisible(item.type, [T_MENU, T_COMP])))
+  return arr2ToDiguiObj(state.list.filter((item: any) => checkVisible(item.type, [T_MENU, T_COMP])))
 })
 </script>
 
@@ -299,7 +287,7 @@ const tabledata3 = computed(() => {
       </el-row>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <el-row>
@@ -476,7 +464,7 @@ const tabledata3 = computed(() => {
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -531,7 +519,8 @@ const tabledata3 = computed(() => {
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 
@@ -539,6 +528,8 @@ const tabledata3 = computed(() => {
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

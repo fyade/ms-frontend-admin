@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from "vue"
-import { cascaderProps4, CONFIG, final, Operate, publicDict } from "@/utils/base.ts"
+import { cascaderProps4, CONFIG, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -16,7 +16,6 @@ import {
 import { roleSelAll } from "@/api/module/sys/role.ts";
 import { menuSel } from "@/api/module/sys/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { usePageStore } from "@/store/module/page.ts";
 
 const props = defineProps({
   role_id: {
@@ -82,13 +81,16 @@ const state = reactive({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
@@ -109,6 +111,11 @@ const config: t_config = reactive({
     dialogVisibleChange()
   },
   tableInlineOperate: true, // 允许表格行内操作，默认true
+  one2More: true,
+  one2MoreConfig: {
+    oneKey: 'role_id',
+    moreKey: 'permission_id'
+  }
 })
 
 const func: t_FuncMap = {
@@ -169,7 +176,6 @@ const {
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -181,7 +187,9 @@ const {
 const allRoles = ref<any[]>([])
 roleSelAll({id: props.role_id}).then(({res}) => {
   allRoles.value = res.data
-  state.dialogForm['role_id'] = Number(props.role_id)
+  if (config.one2MoreConfig?.oneKey) {
+    state.dialogForm[config.one2MoreConfig?.oneKey] = Number(props.role_id)
+  }
 })
 
 const allpermissions = ref<any[]>([])
@@ -199,27 +207,35 @@ watch(() => state.dialogForm['type'], () => {
 const allpermissions2 = computed(() => {
   return arr2ToDiguiObj(allpermissions.value)
 })
+const allpermissions3 = (id: any) => {
+  const findElement = state.list.find((item: any) => item.id === id);
+  if (findElement && config.one2MoreConfig?.moreKey && findElement[config.one2MoreConfig?.moreKey]) {
+    return arr2ToDiguiObj(allpermissions.value.filter(item => (findElement[config.one2MoreConfig?.moreKey as string] as any[]).indexOf(item.id) > -1))
+  } else {
+    return []
+  }
+}
 let lastPermissionSelect: any[] = []
 const permissionSelectChange = (): void => {
   if (!checked3.value) {
     return
   }
-  const val = state.dialogForm['permission_id']
+  const val = state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]
   if (val.length > lastPermissionSelect.length) {
     const zengids = val.filter(item => lastPermissionSelect.indexOf(item) === -1)
     const parentids = zengids.filter(id => allpermissions.value.find(item => item.children.indexOf(id) > -1))
         .map(id => allpermissions.value.find(item => item.children.indexOf(id) > -1).id)
-        .filter(item => state.dialogForm['permission_id'].indexOf(item) === -1)
-    state.dialogForm['permission_id'] = [...state.dialogForm['permission_id'], ...parentids]
+        .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) === -1)
+    state.dialogForm[config.one2MoreConfig?.moreKey as string] = [...state.dialogForm[config.one2MoreConfig?.moreKey as string], ...parentids]
   }
   if (val.length < lastPermissionSelect.length) {
     const deleteids = lastPermissionSelect.filter(item => val.indexOf(item) === -1)
     const chlidids = deleteids.map(id => allpermissions.value.find(item => item.id === id).children)
         .flat()
-        .filter(item => state.dialogForm['permission_id'].indexOf(item) > -1)
-    state.dialogForm['permission_id'] = state.dialogForm['permission_id'].filter(item => chlidids.indexOf(item) === -1)
+        .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) > -1)
+    state.dialogForm[config.one2MoreConfig?.moreKey as string] = (state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]).filter(item => chlidids.indexOf(item) === -1)
   }
-  lastPermissionSelect = state.dialogForm['permission_id']
+  lastPermissionSelect = state.dialogForm[config.one2MoreConfig?.moreKey as string]
 }
 
 const checked2 = ref(false)
@@ -230,75 +246,10 @@ const dialogVisibleChange = () => {
 }
 const checked2change = () => {
   if (checked2.value) {
-    state.dialogForm['permission_id'] = allpermissions.value.map(item => item.id)
+    state.dialogForm[config.one2MoreConfig?.moreKey as string] = allpermissions.value.map(item => item.id)
   } else {
-    state.dialogForm['permission_id'] = []
+    state.dialogForm[config.one2MoreConfig?.moreKey as string] = []
   }
-}
-
-// 修改
-const tUpd2 = (id: any) => {
-  state.dialogType.value = 'upd'
-  state.dialogType.label = '修改'
-  dialogVisible.value = true
-  nextTick(() => {
-    dislogLoadingRef.value = true
-    func.selectList({role_id: id}).then(({res}) => {
-      let obj = res.data[0]
-      Object.keys(state.dialogForm).forEach(item => {
-        state.dialogForm[item] = obj[item]
-      })
-    }).finally(() => {
-      dislogLoadingRef.value = false
-    })
-  })
-}
-// 删除
-const gDel2 = (delids?: any[]) => {
-  const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
-  if (permissionids.length === 0) {
-    return ElMessage.warning('请至少选择 1 条数据。')
-  }
-  ElMessageBox.confirm(
-      `此操作将删除选中的 ${permissionids.length} 条数据，且无法撤销，请确认是否继续？`,
-      '警告',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-        draggable: true
-      }
-  ).then(() => {
-    let arr: any[] = state.multipleSelection.map((item: any) => item.id)
-    const ids = permissionids
-    tableLoadingRef.value = true
-    func.deleteList(...ids).then(({res}) => {
-      if (res.code === 200) {
-        ElMessage.success(Operate.success)
-        tableLoadingRef.value = true
-        state.list = []
-        const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
-        const obj = ifByPage ? {...usePageStore().getPage, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
-        func.selectList(obj).then(({res}) => {
-          if (ifByPage) {
-            state.list = res.data.list
-            state.total = res.data.total
-          } else {
-            state.list = res.data
-          }
-        }).finally(() => {
-          tableLoadingRef.value = false
-        })
-      } else {
-        tableLoadingRef.value = false
-      }
-    })
-  })
-}
-const tDel2 = (id: any) => {
-  const fined: any = state.list.find((item: any) => item.id === id);
-  const permissionids = fined && fined.permission_id ? fined.permission_id : []
-  gDel2(permissionids)
 }
 </script>
 
@@ -327,7 +278,7 @@ const tDel2 = (id: any) => {
       </el-row>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <el-row>
@@ -431,7 +382,7 @@ const tDel2 = (id: any) => {
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel2()">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -472,7 +423,7 @@ const tDel2 = (id: any) => {
     <el-table-column prop="permission_id" :label="state.dict['permission_id']" min-width="120">
       <template #default="{row}">
         <el-tree
-            :data="allpermissions2"
+            :data="allpermissions3(row.id)"
             accordion
             default-expand-all
         />
@@ -528,12 +479,13 @@ const tDel2 = (id: any) => {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tUpd2(row.role_id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel2(row.id)">删除</el-button>
+        <el-button link type="primary" size="small" @click="tUpd(row.role_id)">修改</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 
@@ -541,6 +493,8 @@ const tDel2 = (id: any) => {
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

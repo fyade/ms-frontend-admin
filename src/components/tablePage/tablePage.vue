@@ -1,25 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { CONFIG, final, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { CONFIG, final, PAGINATION, publicDict, shift_yes_no } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-
-interface State {
-  dialogType: {
-    value: string
-    label: string
-  }
-  dialogForm: object
-  dFormRules: FormRules
-  dict: object
-  filterForm: object
-  list: object[]
-  multipleSelection: object[]
-  total: number
-}
 
 const state = reactive<State>({
   dialogType: {
@@ -58,13 +44,16 @@ const state = reactive<State>({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
@@ -81,7 +70,17 @@ const config: t_config = reactive({
    */
   dialogVisibleCallback: (visible: boolean) => {
   },
+  /**
+   * selectList回调函数，可不传
+   */
+  selectListCallback: () => {
+  },
   tableInlineOperate: true, // 允许表格行内操作，默认true
+  one2More: false, // 表格数据为一对多格式，默认false
+  one2MoreConfig: { // 仅在表格数据为一对多时有效
+    oneKey: '', // 一的键
+    moreKey: '', // 多的键
+  }
 })
 
 const func: t_FuncMap = {
@@ -157,7 +156,6 @@ const {
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -192,7 +190,7 @@ const {
       </el-form-item>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <!--<el-form-item :label="state.dict['']" prop="">-->
@@ -247,7 +245,7 @@ const {
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -338,6 +336,8 @@ const {
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

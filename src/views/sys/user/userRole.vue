@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { CONFIG, publicDict } from "@/utils/base.ts"
+import { inject, nextTick, reactive, Ref, ref, toRaw, watch } from "vue"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { t_config, t_FuncMap } from "@/type/tablePage.ts";
-import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
-import { userRoleDel, userRoleIns, userRoleSel, userRoleSelById, userRoleUpd } from "@/api/module/sys/userRole.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { ElTable, FormRules } from 'element-plus'
+import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sys/role.ts";
+import RolePermission from "@/views/sys/role/rolePermission.vue";
 
-const state = reactive({
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
+
+const state = reactive<State>({
   dialogType: {
     value: '',
     label: ''
@@ -23,8 +30,8 @@ const state = reactive({
   // }
   dialogForm: {
     id: '',
-    user_id: '',
-    role_id: 1,
+    label: '',
+    order_num: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
   // 这个是弹出框表单校验
@@ -32,7 +39,9 @@ const state = reactive({
   //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
-  dFormRules: {} as FormRules,
+  dFormRules: {
+    label: [{required: true, trigger: 'change'}]
+  } as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
@@ -41,8 +50,7 @@ const state = reactive({
   // }
   dict: {
     ...publicDict,
-    user_id: '用户id',
-    role_id: '角色id',
+    label: '角色名',
   },
   // 筛选表单
   // 格式: {
@@ -52,13 +60,16 @@ const state = reactive({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
@@ -69,6 +80,11 @@ const config: t_config = reactive({
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
+  selectListCallback: () => {
+    nextTick(() => {
+      handleDataChange()
+    })
+  },
   tableInlineOperate: true // 允许表格行内操作，默认true
 })
 
@@ -78,35 +94,35 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return userRoleSel(params)
+    return roleSel(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    return userRoleSelById(id)
+    return roleSelById(id)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    return userRoleIns(obj)
+    return roleIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    return userRoleUpd(obj)
+    return roleUpd(obj)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    return userRoleDel(ids)
+    return roleDel(ids)
   }
 }
 
@@ -123,14 +139,13 @@ const {
   gDel,
   tUpd,
   tDel,
-  handleSelectionChange,
+  // handleSelectionChange,
   pageChange
 } = funcTablePage({
   config,
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -138,9 +153,93 @@ const {
   switchLoadingRef,
   func
 })
+
+const setPermission = (id: any) => {
+  selectRoleId.value = id
+  drawer.value = true
+}
+const drawer = ref(false)
+const selectRoleId = ref(0)
+const selectRole: Ref<any[]> | undefined = inject('changeSelectRole')
+const multipleTable: Ref<InstanceType<typeof ElTable> | null> = ref<InstanceType<typeof ElTable> | null>(null)
+const handleSelectionChange = (val: any) => {
+  const index = state.multipleSelection.findIndex((item: any) => item.id === val.id);
+  if (index === -1) {
+    state.multipleSelection.push(val)
+  } else {
+    state.multipleSelection.splice(index, 1)
+  }
+  if (selectRole) {
+    selectRole.value = state.multipleSelection
+  }
+}
+const handleDataChange = () => {
+  if (selectRole && selectRole.value && multipleTable && multipleTable.value) {
+    const selectRoleIds = selectRole.value.map(item => item.id);
+    state.list.forEach((item: any) => {
+      if (selectRoleIds.indexOf(item.id) > -1) {
+        multipleTable.value?.toggleRowSelection(item, true)
+      }
+    })
+    state.multipleSelection = selectRole.value
+  }
+}
+const selects = reactive({})
+watch(() => state.multipleSelection, () => {
+  state.multipleSelection.forEach((item: any) => {
+    selects[item.id] = true
+  })
+}, {
+  deep: true
+})
+
+const selectAll = (val: any[]) => {
+  const additems = val.filter(item => state.multipleSelection.findIndex((itm: any) => itm.id === item.id) === -1)
+  state.multipleSelection.push(...additems)
+  if (selectRole) {
+    selectRole.value = state.multipleSelection
+  }
+}
 </script>
 
 <template>
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">用户信息</el-text>
+  </el-divider>
+  <el-form>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item label="用户id">
+          <el-input disabled v-model="props.user.id"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="用户名">
+          <el-input disabled v-model="props.user.username"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="用户昵称">
+          <el-input disabled v-model="props.user.nickname"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">权限列表</el-text>
+  </el-divider>
+  <el-drawer
+      v-model="drawer"
+      :size="CONFIG.drawer_size"
+      destroy-on-close
+      title="分配权限"
+  >
+    <RolePermission
+        :role_id="selectRoleId"
+    />
+  </el-drawer>
+
   <!--弹框-->
   <el-dialog
       :width="CONFIG.dialog_width"
@@ -165,19 +264,18 @@ const {
       </el-row>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <el-row>
         <el-col :span="12">
-          <el-form-item :label="state.dict['user_id']" prop="user_id">
-            <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['user_id']"
-                      :placeholder="state.dict['user_id']"/>
+          <el-form-item :label="state.dict['label']" prop="label">
+            <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="state.dict['role_id']" prop="role_id">
-            <el-input v-model="state.dialogForm['role_id']" :placeholder="state.dict['role_id']"/>
+          <el-form-item :label="state.dict['order_num']" prop="order_num">
+            <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -233,12 +331,12 @@ const {
   <!--操作按钮-->
   <div style="display: flex;flex-wrap: wrap;gap: 1rem;">
     <el-button-group>
-      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
-      </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
-      </el-button>
+      <!--<el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>-->
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
+      <!--</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
+      <!--</el-button>-->
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     </el-button-group>
@@ -256,16 +354,23 @@ const {
   <!--数据表格-->
   <el-table
       style="width: 100%"
+      ref="multipleTable"
       v-loading="tableLoadingRef"
       :data="state.list"
-      @selection-change="handleSelectionChange"
+      row-key="id"
+      @select-all="selectAll"
   >
-    <el-table-column fixed type="selection" width="55"/>
+    <!--@selection-change="handleSelectionChange"-->
+    <el-table-column fixed type="selection" width="55" :reserve-selection="true">
+      <template #default="{row}">
+        <el-checkbox v-model="selects[row.id]" @change="handleSelectionChange(row)"/>
+      </template>
+    </el-table-column>
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="user_id" :label="state.dict['user_id']" width="120"/>
-    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120"/>
+    <el-table-column prop="label" :label="state.dict['label']" width="120"/>
+    <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
@@ -316,12 +421,11 @@ const {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span
+          class="underline">支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 
@@ -329,6 +433,8 @@ const {
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

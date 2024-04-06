@@ -1,26 +1,15 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { CONFIG, publicDict } from "@/utils/base.ts"
+import { provide, reactive, Ref, ref } from "vue"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { t_config, t_FuncMap } from "@/type/tablePage.ts";
-import { ElMessage, ElMessageBox, FormRules } from 'element-plus'
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { ElMessage, FormRules } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
-
-interface State {
-  dialogType: {
-    value: string
-    label: string
-  }
-  dialogForm: object
-  dFormRules: FormRules
-  dict: object
-  filterForm: object
-  list: object[]
-  multipleSelection: object[]
-  total: number
-}
+import UserRole from "@/views/sys/user/userRole.vue";
+import { userDto } from "@/type/api/sys/user.ts";
+import { userRoleIns, userRoleUpd } from "@/api/module/sys/userRole.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -66,20 +55,25 @@ const state = reactive<State>({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
+  selectParam: {
+    ifWithRole: final.Y
+  }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
@@ -88,6 +82,8 @@ const config: t_config = reactive({
    * @param visible 变化后的值
    */
   dialogVisibleCallback: (visible: boolean) => {
+  },
+  selectListCallback: () => {
   },
   tableInlineOperate: true, // 允许表格行内操作，默认true
 })
@@ -162,7 +158,6 @@ const {
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -194,10 +189,53 @@ const npCon = () => {
 }
 
 // 用户角色
+const userRole: Ref<InstanceType<typeof UserRole> | null> = ref<InstanceType<typeof UserRole> | null>(null)
+const drawer = ref(false)
+const selectUser = ref<userDto>({
+  id: '',
+  username: '',
+  nickname: ''
+})
+const selectRole = ref<any[]>([])
+const setRole = (row: any) => {
+  selectUser.value = row
+  selectRole.value = row.roles
+  drawer.value = true
+}
+const drawerConfirm = () => {
+  const obj = {
+    user_id: selectUser.value.id,
+    role_id: selectRole.value.map(item => item.id)
+  }
+  userRoleUpd(obj).then(({res}) => {
+    drawer.value = false
+    gRefresh()
+  })
+}
+const drawerCancel = () => {
+  drawer.value = false
+}
+provide('changeSelectRole', selectRole)
 </script>
 
 <template>
   <!--用户角色-->
+  <el-drawer
+      v-model="drawer"
+      :size="CONFIG.drawer_size"
+      destroy-on-close
+      title="分配角色"
+  >
+    <UserRole
+        ref="userRole"
+        :user="selectUser"
+    />
+    <template #footer>
+      <el-button type="primary" plain @click="drawerConfirm">提交</el-button>
+      <el-button plain @click="drawerCancel">取消</el-button>
+    </template>
+  </el-drawer>
+
   <!--重置密码-->
   <el-dialog
       :width="CONFIG.dialog_width"
@@ -249,7 +287,7 @@ const npCon = () => {
       </el-form-item>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <!--<el-form-item :label="state.dict['']" prop="">-->
@@ -304,7 +342,7 @@ const npCon = () => {
       <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
       <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
       <!--</el-button>-->
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
       <!--</el-button>-->
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -389,17 +427,21 @@ const npCon = () => {
         <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
         <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
         <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
+        <el-button link type="primary" size="small" @click="setRole(row)">分配角色</el-button>
       </template>
     </el-table-column>
-    <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
-    </template>
+    <!--<template #append>-->
+    <!--  <span>此表格的多选<span-->
+    <!--      class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>-->
+    <!--</template>-->
   </el-table>
 
   <!--分页-->
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/module/user.ts";
-import { usePageStore } from "@/store/module/page.ts";
 
 export const homerouter = '/index'
 export const routerPinList = [
@@ -41,17 +40,7 @@ export const routes: RouteRecordRaw[] = [
             path: 'interface',
             name: '接口管理',
             component: () => import('@/views/sys/interface/index.vue')
-          },
-          // {
-          //   path: 'user-role',
-          //   name: '用户角色',
-          //   component: () => import('@/views/sys/user-role/index.vue')
-          // },
-          // {
-          //   path: 'role-permission',
-          //   name: '角色权限',
-          //   component: () => import('@/views/sys/role-permission/index.vue')
-          // }
+          }
         ]
       }
     ]
@@ -78,8 +67,6 @@ const router = createRouter({
 const whitelist = ['/login']
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  let pageStore = usePageStore();
-  pageStore.init()
   if (!userStore.ifLogin && whitelist.indexOf(to.path) === -1) {
     next(`/login?redirect=${to.path}`)
   } else {

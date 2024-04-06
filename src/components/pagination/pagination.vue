@@ -1,42 +1,32 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import useStore from '@/store';
 
 const props = defineProps(['pageNum', 'pageSize', 'total']);
 const emits = defineEmits(['pageChange']);
 
-const store = useStore();
-onMounted(() => {
-  pageNumRef.value = props.pageNum;
-  pageSizeRef.value = props.pageSize;
-});
-
-const pageNumRef = ref(store.page.getPageNum);
-const pageSizeRef = ref(store.page.getPageSize);
-
 const handleSizeChange = (val: number) => {
   const obj = {
-    pageNum: pageNumRef.value,
+    pageNum: props.pageNum,
     pageSize: val
   };
-  store.page.setPageSize(val);
-  emits('pageChange');
+  if ((props.pageNum - 1) * val > props.total) {
+    obj.pageNum = Math.floor(props.total / props.pageSize)
+  }
+  emits('pageChange', obj);
 };
 const handleCurrentChange = (val: number) => {
   const obj = {
     pageNum: val,
-    pageSize: pageSizeRef.value
+    pageSize: props.pageSize
   };
-  store.page.setPageNum(val);
-  emits('pageChange');
+  emits('pageChange', obj);
 }
 </script>
 
 <template>
   <el-pagination
       class="my-pagination"
-      v-model:current-page="pageNumRef"
-      v-model:page-size="pageSizeRef"
+      :current-page="props.pageNum"
+      :page-size="props.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="handleSizeChange"

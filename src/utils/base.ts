@@ -3,7 +3,8 @@ import { N, Y } from '@/type/utils/base.ts'
 
 export const CONFIG = {
   dialog_width: '800px',
-  dialog_form_label_width: '120px'
+  dialog_form_label_width: '120px',
+  drawer_size: '80%'
 }
 
 export const PAGINATION = {

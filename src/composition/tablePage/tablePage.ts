@@ -1,7 +1,6 @@
 import { nextTick, onMounted, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { Operate } from "@/utils/base.ts"
-import { usePageStore } from "@/store/module/page.ts"
 import { t_funcTablePage_params } from "@/type/tablePage.ts";
 
 export const funcTablePage = ({
@@ -9,7 +8,6 @@ export const funcTablePage = ({
                                 state,
                                 // state2,
                                 dialogFormRef,
-                                dialogFormInput1Ref,
                                 filterFormRef,
                                 dialogVisible,
                                 dislogLoadingRef,
@@ -24,7 +22,7 @@ export const funcTablePage = ({
     tableLoadingRef.value = true
     state.list = []
     const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
-    const obj = ifByPage ? {...usePageStore().getPage, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
+    const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
     func.selectList(obj).then(({res}) => {
       if (ifByPage) {
         state.list = res.data.list
@@ -32,6 +30,7 @@ export const funcTablePage = ({
       } else {
         state.list = res.data
       }
+      config.selectListCallback && config.selectListCallback()
     }).finally(() => {
       tableLoadingRef.value = false
     })
@@ -101,9 +100,6 @@ export const funcTablePage = ({
     watch(dialogVisible, (newVal) => {
       nextTick(() => {
         if (newVal) {
-          Promise.resolve().then(() => {
-            dialogFormInput1Ref?.value?.focus()
-          })
         } else {
           dialogFormRef.value?.resetFields()
         }
@@ -180,23 +176,47 @@ export const funcTablePage = ({
     tUpd(state.multipleSelection[0].id)
   }
   // 删除
-  const gDel = () => {
-    if (state.multipleSelection.length === 0) {
-      return ElMessage.warning('请至少选择 1 条数据。')
+  const gDel = ({
+                  delids = []
+                }: {
+                  delids?: any[]
+                } = {}
+  ) => {
+    if (config.one2More) {
+      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
+      if (permissionids.length === 0) {
+        return ElMessage.warning('请至少选择 1 条数据。')
+      }
+      ElMessageBox.confirm(
+          `此操作将删除选中的 ${permissionids.length} 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        delData(...permissionids)
+      })
+    } else {
+      if (state.multipleSelection.length === 0) {
+        return ElMessage.warning('请至少选择 1 条数据。')
+      }
+      ElMessageBox.confirm(
+          `此操作将删除选中的 ${state.multipleSelection.length} 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        let arr: any[] = state.multipleSelection.map((item: any) => item.id)
+        delData(...arr)
+      })
     }
-    ElMessageBox.confirm(
-        `此操作将删除选中的 ${state.multipleSelection.length} 条数据，且无法撤销，请确认是否继续？`,
-        '警告',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-          draggable: true
-        }
-    ).then(() => {
-      let arr: any[] = state.multipleSelection.map((item: any) => item.id)
-      delData(...arr)
-    })
   }
   // 修改
   const tUpd = (id: any) => {
@@ -205,39 +225,54 @@ export const funcTablePage = ({
     dialogVisible.value = true
     nextTick(() => {
       dislogLoadingRef.value = true
-      func.selectById(id).then(({res}) => {
-        let obj = res.data
-        Object.keys(state.dialogForm).forEach(item => {
-          state.dialogForm[item] = obj[item]
+      if (config.one2More && config.one2MoreConfig?.oneKey) {
+        func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
+          let obj = res.data[0]
+          Object.keys(state.dialogForm).forEach(item => {
+            state.dialogForm[item] = obj[item]
+          })
+        }).finally(() => {
+          dislogLoadingRef.value = false
         })
-      }).finally(() => {
-        dislogLoadingRef.value = false
-      })
+      } else {
+        func.selectById(id).then(({res}) => {
+          let obj = res.data
+          Object.keys(state.dialogForm).forEach(item => {
+            state.dialogForm[item] = obj[item]
+          })
+        }).finally(() => {
+          dislogLoadingRef.value = false
+        })
+      }
     })
   }
   // 删除
   const tDel = (id: any) => {
-    ElMessageBox.confirm(
-        `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
-        '警告',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-          draggable: true
-        }
-    ).then(() => {
-      delData(id)
-    })
+    if (config.one2More) {
+      const fined: any = state.list.find((item: any) => item.id === id);
+      const permissionids = fined && fined.permission_id ? fined.permission_id : []
+      gDel({delids: permissionids})
+    } else {
+      ElMessageBox.confirm(
+          `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        delData(id)
+      })
+    }
   }
   const handleSelectionChange = (val: any) => {
-    let arr: any[] = []
-    val.forEach((item: any) => {
-      arr[state.list.findIndex((i: any) => i.id === item.id)] = item
-    })
-    state.multipleSelection = arr.filter(Boolean)
+    state.multipleSelection = val
   }
-  const pageChange = () => {
+  const pageChange = (newVal: any) => {
+    state.pageParam.pageNum = newVal.pageNum
+    state.pageParam.pageSize = newVal.pageSize
     getData()
   }
 

@@ -1,3 +1,13 @@
+export interface userDto {
+  id: string
+  username: string
+  nickname?: string
+  avatar?: string
+  sex?: string
+  email?: string
+  tel?: string
+}
+
 export interface loginDto {
   username: string
   password: string

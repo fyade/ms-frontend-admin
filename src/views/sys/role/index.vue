@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { CONFIG, final, publicDict } from "@/utils/base.ts"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -54,13 +54,16 @@ const state = reactive({
   filterForm: {},
   list: [],
   multipleSelection: [],
-  total: -1
+  total: -1,
+  pageParam: {
+    pageNum: PAGINATION.pageNum,
+    pageSize: PAGINATION.pageSize
+  }
 })
 const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
-const dialogFormInput1Ref = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dislogLoadingRef = ref(false)
@@ -132,7 +135,6 @@ const {
   state,
   state2,
   dialogFormRef,
-  dialogFormInput1Ref,
   filterFormRef,
   dialogVisible,
   dislogLoadingRef,
@@ -150,10 +152,10 @@ const selectRoleId = ref(0)
 </script>
 
 <template>
-  <!--抽屉-->
+  <!--角色权限-->
   <el-drawer
       v-model="drawer"
-      size="80%"
+      :size="CONFIG.drawer_size"
       destroy-on-close
       title="分配权限"
   >
@@ -186,13 +188,13 @@ const selectRoleId = ref(0)
       </el-row>
       <!--
       第一个input添加如下属性
-      ref="dialogFormInput1Ref"
+      v-autofocus
       -->
       <!--在此下方添加表单项-->
       <el-row>
         <el-col :span="12">
           <el-form-item :label="state.dict['label']" prop="label">
-            <el-input ref="dialogFormInput1Ref" v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
+            <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -257,7 +259,7 @@ const selectRoleId = ref(0)
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -350,6 +352,8 @@ const selectRoleId = ref(0)
   <Pagination
       v-if="state.total!==-1"
       :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
       @page-change="pageChange"
   />
 </template>

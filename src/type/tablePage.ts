@@ -1,6 +1,24 @@
 import { axiosVo } from "@/type/asiox.ts";
 import { Ref } from "vue";
-import type { FormInstance } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
+
+export interface State<T = object> {
+  dialogType: {
+    value: string
+    label: string
+  }
+  dialogForm: T
+  dFormRules: FormRules
+  dict: object
+  filterForm: object
+  list: object[]
+  multipleSelection: object[]
+  total: number
+  pageParam: {
+    pageNum: number
+    pageSize: number
+  }
+}
 
 export interface t_config {
   selectParam: object
@@ -8,7 +26,13 @@ export interface t_config {
   pageQuery: boolean
   watchDialogVisible: boolean
   dialogVisibleCallback?: Function
+  selectListCallback?: Function
   tableInlineOperate: boolean
+  one2More?: boolean
+  one2MoreConfig?: {
+    oneKey: string
+    moreKey: string
+  }
 }
 
 type t_MyFuncType = (any: any) => Promise<axiosVo>
@@ -27,7 +51,6 @@ export interface t_funcTablePage_params {
   state: any
   state2: any
   dialogFormRef: Ref<FormInstance | null>
-  dialogFormInput1Ref: Ref<HTMLElement | null>
   filterFormRef: Ref<FormInstance | null>
   dialogVisible: Ref<boolean>
   dislogLoadingRef: Ref<boolean>
