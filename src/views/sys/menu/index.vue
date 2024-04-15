@@ -513,7 +513,7 @@ const tabledata3 = computed(() => {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="150">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
+        <el-button v-if="row.type!==T_Inter" link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
