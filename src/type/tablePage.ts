@@ -32,7 +32,9 @@ export interface t_config {
   one2MoreConfig?: {
     oneKey: string
     moreKey: string
-  }
+  },
+  beforeUpdateOneCallback1?: Function,
+  beforeUpdateOneCallback2?: Function
 }
 
 type t_MyFuncType = (any: any) => Promise<axiosVo>

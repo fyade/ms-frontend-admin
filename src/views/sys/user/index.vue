@@ -45,7 +45,8 @@ const state = reactive<State>({
     avatar: '头像',
     sex: '性别',
     email: '邮箱',
-    tel: '电话'
+    tel: '电话',
+    roles: '角色'
   },
   // 筛选表单
   // 格式: {
@@ -372,6 +373,13 @@ provide('changeSelectRole', selectRole)
     <el-table-column prop="username" :label="state.dict['username']" width="120"/>
     <el-table-column prop="nickname" :label="state.dict['nickname']" width="120"/>
     <el-table-column prop="avatar" :label="state.dict['avatar']" width="120"/>
+    <el-table-column prop="roles" :label="state.dict['roles']" width="240">
+      <template #default="{row}">
+        <el-space wrap>
+          <el-tag type="primary" v-for="item in row.roles as any[]" :key="item.id">{{ item.label }}</el-tag>
+        </el-space>
+      </template>
+    </el-table-column>
     <el-table-column prop="sex" :label="state.dict['sex']" width="120"/>
     <el-table-column prop="email" :label="state.dict['email']" width="120"/>
     <el-table-column prop="tel" :label="state.dict['tel']" width="120"/>

@@ -115,6 +115,12 @@ const config: t_config = reactive({
   one2MoreConfig: {
     oneKey: 'role_id',
     moreKey: 'permission_id'
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为true时调这个
+   */
+  beforeUpdateOneCallback1: (res: any[]) => {
+    beforeUpdateOne(res)
   }
 })
 
@@ -197,7 +203,7 @@ watch(() => state.dialogForm['type'], () => {
   allpermissions.value = []
   if (state.dialogForm['type'] === T_MENU) {
     menuSel().then(({res}) => {
-      allpermissions.value = arr1GetDiguiRelation(res.data)
+      allpermissions.value = arr1GetDiguiRelation(res.data, {ckey: 'cids'}).map((item: any) => ({children: [], ...item}))
     })
   } else if (state.dialogForm['type'] === T_INTER) {
   }
@@ -223,14 +229,16 @@ const permissionSelectChange = (): void => {
   const val = state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]
   if (val.length > lastPermissionSelect.length) {
     const zengids = val.filter(item => lastPermissionSelect.indexOf(item) === -1)
-    const parentids = zengids.filter(id => allpermissions.value.find(item => item.children.indexOf(id) > -1))
-        .map(id => allpermissions.value.find(item => item.children.indexOf(id) > -1).id)
+    const parentids = zengids.filter(id => allpermissions.value.find(item => item.cids.indexOf(id) > -1))
+        .map(id => allpermissions.value.filter(item => item.cids.indexOf(id) > -1))
+        .flat()
+        .map((item: any) => item.id)
         .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) === -1)
     state.dialogForm[config.one2MoreConfig?.moreKey as string] = [...state.dialogForm[config.one2MoreConfig?.moreKey as string], ...parentids]
   }
   if (val.length < lastPermissionSelect.length) {
     const deleteids = lastPermissionSelect.filter(item => val.indexOf(item) === -1)
-    const chlidids = deleteids.map(id => allpermissions.value.find(item => item.id === id).children)
+    const chlidids = deleteids.map(id => allpermissions.value.find(item => item.id === id).cids)
         .flat()
         .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) > -1)
     state.dialogForm[config.one2MoreConfig?.moreKey as string] = (state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]).filter(item => chlidids.indexOf(item) === -1)
@@ -238,6 +246,9 @@ const permissionSelectChange = (): void => {
   lastPermissionSelect = state.dialogForm[config.one2MoreConfig?.moreKey as string]
 }
 
+const beforeUpdateOne = (data: any[]) => {
+  lastPermissionSelect = data[0][config.one2MoreConfig?.moreKey as string]
+}
 const checked2 = ref(false)
 const checked3 = ref(true)
 const dialogVisibleChange = () => {
@@ -310,14 +321,14 @@ const checked2change = () => {
               </el-row>
               <el-row>
                 <el-col :span="24">
-                  <el-cascader
+                  <el-cascader-panel
                       v-model="state.dialogForm['permission_id']"
                       :options="allpermissions2"
                       :props="cascaderProps4"
                       clearable
                       collapse-tags
                       collapse-tags-tooltip
-                      :max-collapse-tags="0"
+                      :max-collapse-tags="3"
                       @change="permissionSelectChange"
                   />
                 </el-col>

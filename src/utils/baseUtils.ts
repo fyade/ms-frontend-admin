@@ -81,16 +81,24 @@ function diguiObjToArr2_(objs: any[], key: string, ret: any[] = [], parents: any
 /**
  * 一维数组递归找关系
  * @param objs
- * @param key
+ * @param pkey
+ * @param ckey
  */
-export function arr1GetDiguiRelation(objs: any[], key: string = 'parent_id') {
+export function arr1GetDiguiRelation(objs: any[], {
+                                       pkey = 'parent_id',
+                                       ckey = 'children'
+                                     }: {
+                                       pkey?: string,
+                                       ckey?: string
+                                     } = {}
+) {
   objs.forEach(obj => {
     const childrens: any[][] = []
-    childrens.push(objs.filter(item => item[key] === obj.id))
+    childrens.push(objs.filter(item => item[pkey] === obj.id))
     while (childrens[childrens.length - 1].length > 0) {
-      childrens.push(objs.filter(item => childrens[childrens.length - 1].map(item => item.id).indexOf(item[key]) > -1))
+      childrens.push(objs.filter(item => childrens[childrens.length - 1].map(item => item.id).indexOf(item[pkey]) > -1))
     }
-    obj.children = childrens.flat().map(item => item.id)
+    obj[ckey] = childrens.flat().map(item => item.id)
   })
   return objs
 }

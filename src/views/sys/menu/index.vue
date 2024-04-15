@@ -495,7 +495,7 @@ const tabledata3 = computed(() => {
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="200"/>
     <el-table-column prop="path" :label="state.dict['path']" width="120"/>
-    <el-table-column prop="component" :label="state.dict['component']" width="120"/>
+    <el-table-column prop="component" :label="state.dict['component']" width="280"/>
     <el-table-column prop="icon" :label="state.dict['icon']" width="120"/>
     <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
     <el-table-column prop="if_link" :label="state.dict['if_link']" width="120"/>

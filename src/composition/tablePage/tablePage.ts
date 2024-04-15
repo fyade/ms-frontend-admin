@@ -173,7 +173,11 @@ export const funcTablePage = ({
     if (state.multipleSelection.length !== 1) {
       return ElMessage.warning('请选择 1 条数据。')
     }
-    tUpd(state.multipleSelection[0].id)
+    if (config.one2More && config.one2MoreConfig?.oneKey) {
+      tUpd(state.multipleSelection[0][config.one2MoreConfig?.oneKey])
+    } else {
+      tUpd(state.multipleSelection[0].id)
+    }
   }
   // 删除
   const gDel = ({
@@ -231,6 +235,7 @@ export const funcTablePage = ({
           Object.keys(state.dialogForm).forEach(item => {
             state.dialogForm[item] = obj[item]
           })
+          config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
         }).finally(() => {
           dislogLoadingRef.value = false
         })
@@ -240,6 +245,7 @@ export const funcTablePage = ({
           Object.keys(state.dialogForm).forEach(item => {
             state.dialogForm[item] = obj[item]
           })
+          config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
         }).finally(() => {
           dislogLoadingRef.value = false
         })

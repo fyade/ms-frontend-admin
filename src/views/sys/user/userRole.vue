@@ -186,6 +186,9 @@ const handleDataChange = () => {
 }
 const selects = reactive({})
 watch(() => state.multipleSelection, () => {
+  for (let key in selects) {
+    selects[key] = false
+  }
   state.multipleSelection.forEach((item: any) => {
     selects[item.id] = true
   })
@@ -194,8 +197,14 @@ watch(() => state.multipleSelection, () => {
 })
 
 const selectAll = (val: any[]) => {
-  const additems = val.filter(item => state.multipleSelection.findIndex((itm: any) => itm.id === item.id) === -1)
-  state.multipleSelection.push(...additems)
+  let newselect: any[] = []
+  if (val.length > 0) {
+    const additems = val.filter(item => state.multipleSelection.findIndex((itm: any) => itm.id === item.id) === -1)
+    newselect = [...state.multipleSelection, ...additems]
+  } else {
+    newselect = state.multipleSelection.filter((item: any) => state.list.findIndex((itm: any) => itm.id === item.id) === -1)
+  }
+  state.multipleSelection = newselect
   if (selectRole) {
     selectRole.value = state.multipleSelection
   }

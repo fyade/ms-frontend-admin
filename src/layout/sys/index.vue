@@ -69,7 +69,7 @@ const contextMenu = (info: any, index: number) => [
         <el-header style="padding: 0;height: 50px;">
           <Header/>
         </el-header>
-        <el-container>
+        <el-container style="height: calc(100% - 50px)">
           <el-aside width="200px">
             <Aside ref="aside"/>
           </el-aside>

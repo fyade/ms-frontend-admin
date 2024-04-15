@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict, shift_yes_no } from "@/utils/base.ts"
+import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 
 const state = reactive<State>({
   dialogType: {
@@ -65,13 +65,13 @@ const config: t_config = reactive({
   pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   /**
-   * dialogVisible变化时的回调函数，可不传
+   * dialogVisible变化时的回调，可不传
    * @param visible 变化后的值
    */
   dialogVisibleCallback: (visible: boolean) => {
   },
   /**
-   * selectList回调函数，可不传
+   * selectList回调，可不传
    */
   selectListCallback: () => {
   },
@@ -80,6 +80,16 @@ const config: t_config = reactive({
   one2MoreConfig: { // 仅在表格数据为一对多时有效
     oneKey: '', // 一的键
     moreKey: '', // 多的键
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为true时调这个
+   */
+  beforeUpdateOneCallback1: (res: any[]) => {
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为false时调这个
+   */
+  beforeUpdateOneCallback2: (res: any) => {
   }
 })
 
