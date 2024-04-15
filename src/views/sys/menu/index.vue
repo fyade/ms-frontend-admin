@@ -36,7 +36,7 @@ type DialogForm = {
   remark: string
 }
 
-const state = reactive<State<DialogForm>>({
+const state = reactive<State<DialogForm, DialogForm>>({
   dialogType: {
     value: '',
     label: ''
@@ -462,7 +462,9 @@ const tabledata3 = computed(() => {
     <el-button-group>
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
+      <el-button type="success" plain :icon="Edit"
+                 :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
+                 @click="gUpd">修改
       </el-button>
       <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>

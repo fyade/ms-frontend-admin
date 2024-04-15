@@ -2,7 +2,7 @@ import { axiosVo } from "@/type/asiox.ts";
 import { Ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 
-export interface State<T = object> {
+export interface State<T = object, T2 = object> {
   dialogType: {
     value: string
     label: string
@@ -12,7 +12,7 @@ export interface State<T = object> {
   dict: object
   filterForm: object
   list: object[]
-  multipleSelection: object[]
+  multipleSelection: T2[]
   total: number
   pageParam: {
     pageNum: number
