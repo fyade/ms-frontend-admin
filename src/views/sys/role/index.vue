@@ -25,6 +25,8 @@ const state = reactive({
   dialogForm: {
     id: '',
     label: '',
+    if_admin: final.N,
+    if_disabled: final.N,
     order_num: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
@@ -34,7 +36,9 @@ const state = reactive({
   //   ...
   // }
   dFormRules: {
-    label: [{required: true, trigger: 'change'}]
+    label: [{required: true, trigger: 'change'}],
+    if_admin: [{required: true, trigger: 'change'}],
+    if_disabled: [{required: true, trigger: 'change'}]
   } as FormRules,
   // 字典
   // 格式: {
@@ -45,13 +49,19 @@ const state = reactive({
   dict: {
     ...publicDict,
     label: '角色名',
+    if_admin: '是否管理员用户',
+    if_disabled: '是否禁用',
   },
   // 筛选表单
   // 格式: {
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    label: '',
+    if_admin: '',
+    if_disabled: ''
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -204,6 +214,24 @@ const selectRoleId = ref(0)
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['if_admin']" prop="if_admin">
+            <el-radio-group v-model="state.dialogForm['if_admin']">
+              <el-radio :label="final.Y">是</el-radio>
+              <el-radio :label="final.N">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
+            <el-radio-group v-model="state.dialogForm['if_disabled']">
+              <el-radio :label="final.Y">是</el-radio>
+              <el-radio :label="final.N">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="24">
           <el-form-item :label="state.dict['remark']" prop="remark">
             <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
@@ -242,9 +270,15 @@ const selectRoleId = ref(0)
       @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
+    <el-form-item :label="state.dict['label']" prop="label">
+      <el-input v-model="state.filterForm['label']" :placeholder="state.dict['label']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['if_admin']" prop="if_admin">
+      <el-input v-model="state.filterForm['if_admin']" :placeholder="state.dict['if_admin']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
+      <el-input v-model="state.filterForm['if_disabled']" :placeholder="state.dict['if_disabled']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -253,17 +287,17 @@ const selectRoleId = ref(0)
   </el-form>
 
   <!--操作按钮-->
-  <div style="display: flex;flex-wrap: wrap;gap: 1rem;">
-    <el-button-group>
+  <div>
+    <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    </el-button-group>
+    <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
@@ -287,8 +321,10 @@ const selectRoleId = ref(0)
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="120"/>
+    <el-table-column prop="if_admin" :label="state.dict['if_admin']" width="120"/>
+    <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
     <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
-    <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
+    <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
     <!--  <template #default="{row}">-->
@@ -332,8 +368,8 @@ const selectRoleId = ref(0)
     <!--</el-table-column>-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="200"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="200"/>-->
+    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
+    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
@@ -344,7 +380,8 @@ const selectRoleId = ref(0)
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+      <span>此表格的多选<span
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
     </template>
   </el-table>
 

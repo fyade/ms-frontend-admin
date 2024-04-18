@@ -88,6 +88,8 @@ export const funcTablePage = ({
       } else {
         tableLoadingRef.value = false
       }
+    }).catch(() => {
+      tableLoadingRef.value = false
     })
   }
 
@@ -151,6 +153,7 @@ export const funcTablePage = ({
         state.filterForm[item] = state.filterForm[item].trim()
       }
     })
+    state.pageParam.pageNum = 1
     getData()
   }
   // 重置
@@ -236,6 +239,8 @@ export const funcTablePage = ({
             state.dialogForm[item] = obj[item]
           })
           config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
+        }).catch(() => {
+          dialogVisible.value = false
         }).finally(() => {
           dislogLoadingRef.value = false
         })
@@ -246,6 +251,8 @@ export const funcTablePage = ({
             state.dialogForm[item] = obj[item]
           })
           config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+        }).catch(() => {
+          dialogVisible.value = false
         }).finally(() => {
           dislogLoadingRef.value = false
         })

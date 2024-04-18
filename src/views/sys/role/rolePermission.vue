@@ -24,7 +24,7 @@ const props = defineProps({
   }
 })
 
-const T_MENU = 'm'
+const T_MENU = 'mm'
 const T_INTER = 'i'
 const menuTypeDict = {
   [T_MENU]: '菜单',
@@ -387,17 +387,17 @@ const checked2change = () => {
   </el-form>
 
   <!--操作按钮-->
-  <div style="display: flex;flex-wrap: wrap;gap: 1rem;">
-    <el-button-group>
+  <div>
+    <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    </el-button-group>
+    <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
@@ -427,7 +427,7 @@ const checked2change = () => {
     </el-table-column>
     <el-table-column prop="type" :label="state.dict['type']" width="120">
       <template #default="{row}">
-        <template v-if="row.type==='m'">菜单</template>
+        <template v-if="row.type==='mm'">菜单</template>
         <template v-if="row.type==='i'">接口</template>
       </template>
     </el-table-column>
@@ -440,7 +440,7 @@ const checked2change = () => {
         />
       </template>
     </el-table-column>
-    <!--<el-table-column prop="remark" :label="state.dict['remark']" width="120"/>-->
+    <!--<el-table-column prop="remark" :label="state.dict['remark']" width="200"/>-->
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
     <!--  <template #default="{row}">-->
@@ -484,8 +484,8 @@ const checked2change = () => {
     <!--</el-table-column>-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="200"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="200"/>-->
+    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
+    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">

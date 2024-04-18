@@ -34,7 +34,7 @@ request.interceptors.response.use(
       } else if (error.response.status === 403) {
         ElMessage.error('无权限。')
       } else {
-        ElMessage.error('系统繁忙，请稍后再试。')
+        ElMessage.error(error.response.data.message)
       }
       return Promise.reject(error)
     }

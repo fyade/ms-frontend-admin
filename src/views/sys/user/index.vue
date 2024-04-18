@@ -10,6 +10,7 @@ import { resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
 import UserRole from "@/views/sys/user/userRole.vue";
 import { userDto } from "@/type/api/sys/user.ts";
 import { userRoleIns, userRoleUpd } from "@/api/module/sys/userRole.ts";
+import { deepClone } from "@/utils/baseUtils.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -53,7 +54,11 @@ const state = reactive<State>({
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    username: '',
+    nickname: '',
+    sex: ''
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -173,6 +178,9 @@ const newPsd = reactive({
   id: '',
   password: ''
 })
+const newPsdRule = {
+  password: [{required: true, trigger: 'change'}],
+}
 const newpsdDialog = ref(false)
 const resetPsd = (id: any) => {
   newPsd.id = id
@@ -199,8 +207,8 @@ const selectUser = ref<userDto>({
 })
 const selectRole = ref<any[]>([])
 const setRole = (row: any) => {
-  selectUser.value = row
-  selectRole.value = row.roles
+  selectUser.value = deepClone(row)
+  selectRole.value = deepClone(row.roles)
   drawer.value = true
 }
 const drawerConfirm = () => {
@@ -248,12 +256,13 @@ provide('changeSelectRole', selectRole)
     <el-form
         :model="newPsd"
         :label-width="CONFIG.dialog_form_label_width"
+        :rules="newPsdRule"
     >
       <el-form-item :label="state.dict['id']" prop="id">
         <span>{{ newPsd['id'] }}</span>
       </el-form-item>
       <el-form-item label="新密码" prop="password">
-        <el-input type="password" clearable v-model="newPsd['password']" placeholder="新密码"/>
+        <el-input v-model="newPsd['password']" placeholder="新密码" clearable/>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -326,9 +335,15 @@ provide('changeSelectRole', selectRole)
       @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
+    <el-form-item :label="state.dict['username']" prop="username">
+      <el-input v-model="state.filterForm['username']" :placeholder="state.dict['username']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['nickname']" prop="nickname">
+      <el-input v-model="state.filterForm['nickname']" :placeholder="state.dict['nickname']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['sex']" prop="sex">
+      <el-input v-model="state.filterForm['sex']" :placeholder="state.dict['sex']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -337,17 +352,17 @@ provide('changeSelectRole', selectRole)
   </el-form>
 
   <!--操作按钮-->
-  <div style="display: flex;flex-wrap: wrap;gap: 1rem;">
-    <el-button-group>
+  <div>
+    <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
       <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
       <!--</el-button>-->
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除-->
       <!--</el-button>-->
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    </el-button-group>
+    <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
@@ -426,8 +441,8 @@ provide('changeSelectRole', selectRole)
     <!--</el-table-column>-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="200"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="200"/>-->
+    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
+    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">

@@ -11,12 +11,12 @@ import Tooltip from "@/components/tooltip/tooltip.vue";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { finalT } from "@/type/utils/base.ts";
 
-const T_MENU = 'm'
-const T_COMP = 'c'
-const T_Inter = 'b'
-type T_MENU = 'm'
-type T_COMP = 'c'
-type T_Inter = 'b'
+const T_MENU = 'mm'
+const T_COMP = 'mc'
+const T_Inter = 'mb'
+type T_MENU = 'mm'
+type T_COMP = 'mc'
+type T_Inter = 'mb'
 type tType = T_MENU | T_COMP | T_Inter
 
 type DialogForm = {
@@ -185,8 +185,8 @@ watch(() => state.dialogForm.type, () => {
   state.dFormRules = {
     type: [{required: true, trigger: 'change'}],
     label: [{required: true, trigger: 'change'}],
+    order_num: [{required: true, trigger: 'change'}],
     path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
-    parent_id: [{required: true, trigger: 'change'}],
     component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
@@ -202,6 +202,7 @@ watch(() => state.dialogForm.type, () => {
   if ([T_Inter].indexOf(state.dialogForm.type) > -1) {
     state.dFormRules = {
       ...state.dFormRules,
+      parent_id: [{required: true, trigger: 'change'}],
       if_public: [{required: true, trigger: 'change'}],
     }
   }
@@ -458,19 +459,19 @@ const tabledata3 = computed(() => {
   </el-form>
 
   <!--操作按钮-->
-  <div style="display: flex;flex-wrap: wrap;gap: 1rem;">
-    <el-button-group>
+  <div>
+    <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit"
                  :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
                  @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    </el-button-group>
+    <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
@@ -504,13 +505,13 @@ const tabledata3 = computed(() => {
     <el-table-column prop="if_visible" :label="state.dict['if_visible']" width="120"/>
     <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
     <el-table-column prop="if_public" :label="state.dict['if_public']" width="120"/>
-    <el-table-column prop="perms" :label="state.dict['perms']" width="120"/>
-    <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
+    <el-table-column prop="perms" :label="state.dict['perms']" width="280"/>
+    <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->
-    <el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>
-    <el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>
-    <el-table-column prop="create_time" :label="state.dict['create_time']" width="200"/>
-    <el-table-column prop="update_time" :label="state.dict['update_time']" width="200"/>
+    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
+    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
+    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
+    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
     <el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="150">
