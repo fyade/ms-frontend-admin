@@ -5,6 +5,7 @@ import { useRoute } from "vue-router";
 import { useRouterStore } from "@/store/module/router.ts";
 import { Ref, ref } from "vue";
 import { homerouter, routerPinList } from "@/router";
+import { deepClone } from "@/utils/baseUtils.ts";
 
 const route = useRoute()
 const routerStore = useRouterStore();
@@ -57,6 +58,15 @@ const contextMenu = (info: any, index: number) => [
         }
         routerStore.deleteOtherMenu(index, routerPinList.indexOf(info.path) > -1)
       }
+    },
+    {
+      label: '关闭全部标签页',
+      operate: () => {
+        if (routerPinList.indexOf(route.path) === -1) {
+          aside.value && aside.value.gotoMenu(homerouter)
+        }
+        routerStore.deleteAllMenu()
+      }
     }
   ]
 ]
@@ -87,7 +97,7 @@ const contextMenu = (info: any, index: number) => [
                     @close="deleteMenu(index)"
                     style="cursor: pointer;"
                 >
-                  {{ item.name }}
+                  {{ item.meta ? item.meta.label : item.name }}
                 </el-tag>
               </RightClickMenu>
             </div>

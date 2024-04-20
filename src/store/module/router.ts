@@ -1,14 +1,16 @@
 import { defineStore } from 'pinia'
 import { Ref, ref } from "vue";
-import { routerPinList, routes } from "@/router";
+import router, { routerPinList, routes } from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
 
 export const useRouterStore = defineStore('routerStore', () => {
-  const allMenus1: any[] = routes.filter(item => item.path === '/');
+  // const allMenus1: any[] = routes.filter(item => item.path === '/');
+  const allMenus1: any[] = router.getRoutes().filter(item => (item.meta && item.meta.asideMenu) && (item.path.length - item.path.replace(/\//g, '').length === 1));
   const allMenus2 = diguiObjToArr2(allMenus1).map(ar => {
     return {
       path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
       name: ar[ar.length - 1].name,
+      meta: ar[ar.length - 1].meta,
       ar: ar
     }
   });
@@ -35,6 +37,10 @@ export const useRouterStore = defineStore('routerStore', () => {
     menuList.value.splice(pinNum, index - 1)
     menuList.value.splice(ifPin ? pinNum : (pinNum + 1), menuList.value.length - 1)
   }
+  const deleteAllMenu = () => {
+    const pinNum = menuList.value.filter(item => routerPinList.indexOf(item.path) > -1).length
+    menuList.value.splice(pinNum, menuList.value.length - pinNum)
+  }
   const getMenuList = () => {
     return menuList.value
   }
@@ -47,6 +53,7 @@ export const useRouterStore = defineStore('routerStore', () => {
     deleteLeftMenu,
     deleteRightMenu,
     deleteOtherMenu,
+    deleteAllMenu,
     getMenuList,
     getMenuListNames,
     allMenus1,

@@ -8,41 +8,68 @@ export const routerPinList = [
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: '首页',
+    name: '/',
     redirect: '/index',
+    meta: {
+      label: '首页'
+    },
     component: () => import('@/layout/sys/index.vue'),
     children: [
       {
         path: 'index',
-        name: '总览',
+        name: 'index',
+        meta: {
+          asideMenu: true,
+          label: '总览'
+        },
         component: () => import('@/views/sys/home/index.vue')
       },
-      {
-        path: 'sys',
-        name: '系统管理',
-        children: [
-          {
-            path: 'user',
-            name: '用户管理',
-            component: () => import('@/views/sys/user/index.vue')
-          },
-          {
-            path: 'role',
-            name: '角色管理',
-            component: () => import('@/views/sys/role/index.vue')
-          },
-          {
-            path: 'menu',
-            name: '菜单管理',
-            component: () => import('@/views/sys/menu/index.vue')
-          },
-          {
-            path: 'interface',
-            name: '接口管理',
-            component: () => import('@/views/sys/interface/index.vue')
-          }
-        ]
-      }
+      // {
+      //   path: 'sys',
+      //   name: 'sys',
+      //   meta: {
+      //     asideMenu: true,
+      //     label: '系统管理'
+      //   },
+      //   children: [
+      //     {
+      //       path: 'user',
+      //       name: 'user',
+      //       meta: {
+      //         asideMenu: true,
+      //         label: '用户管理'
+      //       },
+      //       component: () => import('@/views/sys/user/index.vue')
+      //     },
+      //     {
+      //       path: 'role',
+      //       name: 'role',
+      //       meta: {
+      //         asideMenu: true,
+      //         label: '角色管理'
+      //       },
+      //       component: () => import('@/views/sys/role/index.vue')
+      //     },
+      //     {
+      //       path: 'menu',
+      //       name: 'menu',
+      //       meta: {
+      //         asideMenu: true,
+      //         label: '菜单管理'
+      //       },
+      //       component: () => import('@/views/sys/menu/index.vue')
+      //     },
+      //     {
+      //       path: 'interface',
+      //       name: 'interface',
+      //       meta: {
+      //         asideMenu: true,
+      //         label: '接口管理'
+      //       },
+      //       component: () => import('@/views/sys/interface/index.vue')
+      //     }
+      //   ]
+      // }
     ]
   },
   {

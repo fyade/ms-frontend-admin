@@ -19,9 +19,15 @@ export function toPath(...str: string[]): string {
  * @param list
  * @param key
  * @param defaultParent
+ * @param ifDeepClone
  */
-export function arr2ToDiguiObj(list: any[], key: string = 'parent_id', defaultParent = 0) {
-  const list2 = deepClone<any[]>(list)
+export function arr2ToDiguiObj(list: any[], {
+                                 key = 'parent_id', defaultParent = 0, ifDeepClone = true
+                               }: {
+                                 key?: string, defaultParent?: number, ifDeepClone?: boolean
+                               } = {}
+) {
+  const list2 = ifDeepClone ? deepClone<any[]>(list) : list
   if (list2.length === 0) {
     return []
   }

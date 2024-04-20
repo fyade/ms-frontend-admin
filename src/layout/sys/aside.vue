@@ -85,9 +85,7 @@ defineExpose({
         text-color="#ffffff"
     >
       <Menu
-          v-for="(item, index) in allMenus1"
-          :key="index"
-          :items="item.children"
+          :items="allMenus1"
           @gotoMenu="go"
       ></Menu>
     </el-menu>

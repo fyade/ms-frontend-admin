@@ -28,10 +28,10 @@ const menuclick = (item: any) => {
   >
     <template v-if="item.children && item.children?.length > 0">
       <el-sub-menu
-          :index="`${props.parentPath}/${item.path}`"
+          :index="`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
       >
         <template #title>
-          {{ item.name }}
+          {{ item.meta ? item.meta.label : item.name }}
         </template>
         <Menu
             :style="{backgroundColor: '#1f2d3d'}"
@@ -43,10 +43,10 @@ const menuclick = (item: any) => {
     </template>
     <template v-else>
       <el-menu-item
-          :index="`${props.parentPath}/${item.path}`"
+          :index="`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
           @click="menuclick"
       >
-        {{ item.name }}
+        {{ item.meta ? item.meta.label : item.name }}
       </el-menu-item>
     </template>
   </div>

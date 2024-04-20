@@ -8,8 +8,8 @@ const form = reactive({
   password: ''
 })
 
-const onSubmit = () => {
-  userStore.login(form)
+const onSubmit = async () => {
+  await userStore.login(form)
 }
 </script>
 

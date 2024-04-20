@@ -235,7 +235,7 @@ watch(() => state.dialogForm.parent_id, () => {
       if (data.type === T_MENU) {
         canChooseTypes.value = [T_MENU, T_COMP]
       } else if (data.type === T_COMP) {
-        canChooseTypes.value = [T_Inter]
+        canChooseTypes.value = [T_COMP, T_Inter]
       }
     }
   }
@@ -467,7 +467,7 @@ const tabledata3 = computed(() => {
                  :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
                  @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel">删除
+      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
       </el-button>
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
@@ -496,7 +496,7 @@ const tabledata3 = computed(() => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="label" :label="state.dict['label']" width="200"/>
+    <el-table-column prop="label" :label="state.dict['label']" min-width="240"/>
     <el-table-column prop="path" :label="state.dict['path']" width="120"/>
     <el-table-column prop="component" :label="state.dict['component']" width="280"/>
     <el-table-column prop="icon" :label="state.dict['icon']" width="120"/>
