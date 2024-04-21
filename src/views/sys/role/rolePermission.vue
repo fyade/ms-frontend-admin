@@ -24,7 +24,7 @@ const props = defineProps({
   }
 })
 
-const T_MENU = 'mm'
+const T_MENU = 'm'
 const T_INTER = 'i'
 const menuTypeDict = {
   [T_MENU]: '菜单',
@@ -393,8 +393,8 @@ const checked2change = () => {
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
       </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
-      </el-button>
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
+      <!--</el-button>-->
       <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     <!--</el-button-group>-->
@@ -427,7 +427,7 @@ const checked2change = () => {
     </el-table-column>
     <el-table-column prop="type" :label="state.dict['type']" width="120">
       <template #default="{row}">
-        <template v-if="row.type==='mm'">菜单</template>
+        <template v-if="row.type==='m'">菜单</template>
         <template v-if="row.type==='i'">接口</template>
       </template>
     </el-table-column>

@@ -5,8 +5,8 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import { ElMessage, FormRules } from 'element-plus'
-import { Refresh } from "@element-plus/icons-vue";
-import { resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
+import { Plus, Refresh } from "@element-plus/icons-vue";
+import { newUser, resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
 import UserRole from "@/views/sys/user/userRole.vue";
 import { userDto } from "@/type/api/sys/user.ts";
 import { userRoleIns, userRoleUpd } from "@/api/module/sys/userRole.ts";
@@ -25,13 +25,19 @@ const state = reactive<State>({
   //   parent_id: final.DEFAULT_PARENT_ID,
   //   ...
   // }
-  dialogForm: {},
+  dialogForm: {
+    username: '',
+    password: '123456'
+  },
   // 这个是弹出框表单校验
   // 格式: {
   //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
-  dFormRules: {} as FormRules,
+  dFormRules: {
+    username: [{required: true, trigger: 'change'}],
+    password: [{required: true, trigger: 'change'}]
+  } as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
@@ -117,10 +123,7 @@ const func: t_FuncMap = {
    * @param obj
    */
   insertOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return newUser(obj)
   },
   /**
    * 修改
@@ -288,10 +291,6 @@ provide('changeSelectRole', selectRole)
         :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
-      <!--<el-row>-->
-      <!--  <el-col :span="12"></el-col>-->
-      <!--  <el-col :span="12"></el-col>-->
-      <!--</el-row>-->
       <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
         <span>{{ state.dialogForm['id'] }}</span>
       </el-form-item>
@@ -300,9 +299,18 @@ provide('changeSelectRole', selectRole)
       v-autofocus
       -->
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="state.dict['']" prop="">-->
-      <!--  <el-input v-model="state.dialogForm['']" :placeholder="state.dict['']"/>-->
-      <!--</el-form-item>-->
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label="state.dict['username']" prop="username">
+            <el-input v-model="state.dialogForm['username']" :placeholder="state.dict['username']"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label="state.dialogType.value!=='ins'?state.dict['password']:'初始密码'" prop="password">
+            <el-input v-model="state.dialogForm['password']" :placeholder="state.dict['password']"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
       <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
@@ -354,14 +362,14 @@ provide('changeSelectRole', selectRole)
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-      <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
-      <!--</el-button>-->
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
-      <!--</el-button>-->
-      <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
+    <!--</el-button>-->
+    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
+    <!--</el-button>-->
+    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
+    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->

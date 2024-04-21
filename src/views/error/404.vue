@@ -7,7 +7,8 @@ const backHome = () => {
 </script>
 
 <template>
-  404
+  <p>404</p>
+  <p></p>
   <el-button @click="backHome">返回首页</el-button>
 </template>
 
