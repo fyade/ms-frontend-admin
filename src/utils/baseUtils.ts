@@ -1,10 +1,4 @@
-/**
- * 深克隆
- * @param any
- */
-export function deepClone<T>(any: any): T {
-  return JSON.parse(JSON.stringify(any))
-}
+import { deepClone } from "@/utils/ObjectUtils.ts";
 
 /**
  * 转换为path

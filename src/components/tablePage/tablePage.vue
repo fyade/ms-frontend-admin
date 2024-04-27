@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -213,6 +213,12 @@ const {
       <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
       <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
       <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
+      <!--</el-form-item>-->
+      <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
+      <!--  <el-radio-group v-model="state.dialogForm['if_disabled']">-->
+      <!--    <el-radio :label="final.Y">是</el-radio>-->
+      <!--    <el-radio :label="final.N">否</el-radio>-->
+      <!--  </el-radio-group>-->
       <!--</el-form-item>-->
       <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
       <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->

@@ -13,7 +13,8 @@ export const funcTablePage = ({
                                 dislogLoadingRef,
                                 tableLoadingRef,
                                 // switchLoadingRef,
-                                func
+                                func,
+                                props
                               }: t_funcTablePage_params) => {
   /**
    * 查询
@@ -108,6 +109,9 @@ export const funcTablePage = ({
         config.dialogVisibleCallback && config.dialogVisibleCallback(newVal)
       })
     })
+  }
+  if (config.one2MoreConfig?.oneKey && props) {
+    state.dialogForm[config.one2MoreConfig?.oneKey] = props[config.one2MoreConfig?.oneKey]
   }
 
   // 弹窗取消

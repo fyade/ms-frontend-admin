@@ -52,7 +52,6 @@ const state = reactive<State>({
     ...publicDict,
     label: '角色名',
     if_admin: '是否管理员用户',
-    if_disabled: '是否禁用',
   },
   // 筛选表单
   // 格式: {

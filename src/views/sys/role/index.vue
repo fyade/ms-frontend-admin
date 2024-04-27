@@ -50,7 +50,6 @@ const state = reactive({
     ...publicDict,
     label: '角色名',
     if_admin: '是否管理员用户',
-    if_disabled: '是否禁用',
   },
   // 筛选表单
   // 格式: {
@@ -153,12 +152,12 @@ const {
   func
 })
 
+const selectRoleId = ref(0)
+const drawer = ref(false)
 const setPermission = (id: any) => {
   selectRoleId.value = id
   drawer.value = true
 }
-const drawer = ref(false)
-const selectRoleId = ref(0)
 </script>
 
 <template>
@@ -375,8 +374,8 @@ const selectRoleId = ref(0)
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
         <el-button link type="primary" size="small" @click="setPermission(row.id)">分配权限</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>

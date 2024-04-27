@@ -56,7 +56,7 @@ const state = reactive<State<DialogForm, DialogForm>>({
     path: '#',
     parent_id: final.DEFAULT_PARENT_ID,
     component: '#',
-    icon: '#',
+    icon: '',
     order_num: final.DEFAULT_ORDER_NUM,
     if_link: final.N,
     if_visible: final.Y,
@@ -307,9 +307,9 @@ const tabledata3 = computed(() => {
         <el-col :span="24">
           <el-form-item :label="state.dict['type']" prop="type">
             <template #label>
-              <tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
+              <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
                 {{ state.dict['type'] }}
-              </tooltip>
+              </Tooltip>
             </template>
             <el-radio-group v-model="state.dialogForm['type']">
               <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
@@ -328,7 +328,7 @@ const tabledata3 = computed(() => {
       <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
         <el-col :span="24">
           <el-form-item :label="state.dict['icon']" prop="icon">
-            <el-input v-model="state.dialogForm['icon']" :placeholder="state.dict['icon']"/>
+            <IconSelect v-model="state.dialogForm['icon']" :placeholder="state.dict['icon']"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -348,7 +348,7 @@ const tabledata3 = computed(() => {
         <el-col :span="12">
           <el-form-item :label="state.dict['if_link']" prop="if_link">
             <template #label>
-              <tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['if_link'] }}</tooltip>
+              <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['if_link'] }}</Tooltip>
             </template>
             <el-radio-group v-model="state.dialogForm['if_link']">
               <el-radio :label="final.Y">是</el-radio>
@@ -359,7 +359,7 @@ const tabledata3 = computed(() => {
         <el-col :span="12">
           <el-form-item :label="state.dict['path']" prop="path">
             <template #label>
-              <tooltip content="这里填写路由地址。">{{ state.dict['path'] }}</tooltip>
+              <Tooltip content="这里填写路由地址。">{{ state.dict['path'] }}</Tooltip>
             </template>
             <el-input v-model="state.dialogForm['path']" :placeholder="state.dict['path']"/>
           </el-form-item>
@@ -387,7 +387,7 @@ const tabledata3 = computed(() => {
         <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP])">
           <el-form-item :label="state.dict['component']" prop="component">
             <template #label>
-              <tooltip content="这里填写项目文件夹中的路径。">{{ state.dict['component'] }}</tooltip>
+              <Tooltip content="这里填写项目文件夹中的路径。">{{ state.dict['component'] }}</Tooltip>
             </template>
             <el-input v-model="state.dialogForm['component']" :placeholder="state.dict['component']"/>
           </el-form-item>
@@ -395,7 +395,7 @@ const tabledata3 = computed(() => {
         <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP,T_Inter])">
           <el-form-item :label="state.dict['perms']" prop="perms">
             <template #label>
-              <tooltip content="与后端配合。">{{ state.dict['perms'] }}</tooltip>
+              <Tooltip content="与后端配合。">{{ state.dict['perms'] }}</Tooltip>
             </template>
             <el-input v-model="state.dialogForm['perms']" :placeholder="state.dict['perms']"/>
           </el-form-item>
@@ -489,7 +489,7 @@ const tabledata3 = computed(() => {
       v-loading="tableLoadingRef"
       :data="tabledata2"
       row-key="id"
-      default-expand-all
+      :default-expand-all="false"
       @selection-change="handleSelectionChange"
   >
     <el-table-column fixed type="selection" width="55"/>
@@ -499,7 +499,11 @@ const tabledata3 = computed(() => {
     <el-table-column prop="label" :label="state.dict['label']" min-width="240"/>
     <el-table-column prop="path" :label="state.dict['path']" width="120"/>
     <el-table-column prop="component" :label="state.dict['component']" width="280"/>
-    <el-table-column prop="icon" :label="state.dict['icon']" width="120"/>
+    <el-table-column prop="icon" :label="state.dict['icon']" width="120">
+      <template #default="{row}">
+        <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
+      </template>
+    </el-table-column>
     <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
     <el-table-column prop="if_link" :label="state.dict['if_link']" width="120"/>
     <el-table-column prop="if_visible" :label="state.dict['if_visible']" width="120"/>
@@ -512,7 +516,7 @@ const tabledata3 = computed(() => {
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
     <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
     <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
-    <el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>
+    <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="150">
       <template #default="{row}">

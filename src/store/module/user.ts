@@ -5,7 +5,8 @@ import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 import { loginDto } from "@/type/api/sys/user.ts";
 import { loginApi } from "@/api/module/sys/user.ts";
-import { arr2ToDiguiObj, deepClone } from "@/utils/baseUtils.ts";
+import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
 
 const modules = import.meta.glob("../../views/**/**/**.vue")
 
@@ -20,7 +21,8 @@ export const useUserStore = defineStore('userStore', () => {
         const permissions = await Promise.all(deepClone<any[]>(res.data.permissions).filter(item => ['mm', 'mc'].indexOf(item.type) > -1).map(async item => {
           item.meta = {
             asideMenu: true,
-            label: item.label
+            label: item.label,
+            icon: item.icon
           }
           item.name = item.path
           if (item.type === 'mc') {

@@ -187,15 +187,13 @@ const {
   dislogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
-  func
+  func,
+  props
 })
 
 const allRoles = ref<any[]>([])
 roleSelAll({id: props.role_id}).then(({res}) => {
   allRoles.value = res.data
-  if (config.one2MoreConfig?.oneKey) {
-    state.dialogForm[config.one2MoreConfig?.oneKey] = Number(props.role_id)
-  }
 })
 
 const allpermissions = ref<any[]>([])

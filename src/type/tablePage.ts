@@ -59,6 +59,7 @@ export interface t_funcTablePage_params {
   tableLoadingRef: Ref<boolean>
   switchLoadingRef: Ref<boolean>
   func: t_FuncMap
+  props?:any
 }
 
 export interface pageSelDto {

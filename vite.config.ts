@@ -8,6 +8,7 @@ import compressPlugin from "vite-plugin-compression";
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Inspect from 'vite-plugin-inspect'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -17,6 +18,10 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [
       vue(),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), 'src/assets/icon')],
+        symbolId: '[name]'
+      }),
       compressPlugin({
         threshold: 1024 * 50 // 大于这个值的压缩
       }),

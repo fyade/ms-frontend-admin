@@ -4,7 +4,9 @@ import { N, Y } from '@/type/utils/base.ts'
 export const CONFIG = {
   dialog_width: '800px',
   dialog_form_label_width: '120px',
-  drawer_size: '80%'
+  drawer_size: '80%',
+  icon_white: '#ffffff',
+  icon_black: '#000000'
 }
 
 export const PAGINATION = {
@@ -17,7 +19,7 @@ export const publicDict = {
   remark: '备注',
   order_num: '顺序',
   if_default: '是否默认',
-  if_disabled: '是否启用',
+  if_disabled: '是否禁用',
   create_by: 'createBy',
   update_by: 'updateBy',
   create_time: 'createTime',

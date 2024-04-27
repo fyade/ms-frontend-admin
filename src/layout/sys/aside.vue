@@ -2,7 +2,7 @@
 import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
-import Menu from "@/layout/menu.vue";
+import Menu from "@/components/menu/asideMenu.vue";
 
 const defaultActive = ref('')
 const go = (url: string) => {

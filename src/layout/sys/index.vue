@@ -5,7 +5,6 @@ import { useRoute } from "vue-router";
 import { useRouterStore } from "@/store/module/router.ts";
 import { Ref, ref } from "vue";
 import { homerouter, routerPinList } from "@/router";
-import { deepClone } from "@/utils/baseUtils.ts";
 
 const route = useRoute()
 const routerStore = useRouterStore();

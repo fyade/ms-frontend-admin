@@ -10,7 +10,7 @@ import { newUser, resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
 import UserRole from "@/views/sys/user/userRole.vue";
 import { userDto } from "@/type/api/sys/user.ts";
 import { userRoleIns, userRoleUpd } from "@/api/module/sys/userRole.ts";
-import { deepClone } from "@/utils/baseUtils.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
 
 const state = reactive<State>({
   dialogType: {
