@@ -20,7 +20,8 @@ export const routes: RouteRecordRaw[] = [
         name: 'index',
         meta: {
           asideMenu: true,
-          label: '总览'
+          label: '总览',
+          icon: 'workbench'
         },
         component: () => import('@/views/sys/home/index.vue')
       },

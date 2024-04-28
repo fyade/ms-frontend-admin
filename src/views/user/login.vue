@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useUserStore } from "@/store/module/user.ts";
 import Loginbg from "@/views/user/loginbg.vue";
 
@@ -9,8 +9,12 @@ const form = reactive({
   password: ''
 })
 
+const logining = ref(false)
 const onSubmit = async () => {
-  await userStore.login(form)
+  logining.value = true
+  userStore.login(form).then().catch(() => {
+    logining.value = false
+  })
 }
 </script>
 
@@ -24,7 +28,7 @@ const onSubmit = async () => {
         <el-input type="password" v-model="form.password"/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">登录</el-button>
+        <el-button type="primary" :disabled="logining" @click="onSubmit">登录</el-button>
       </el-form-item>
     </el-form>
   </div>

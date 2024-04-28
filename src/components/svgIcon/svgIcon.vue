@@ -21,7 +21,9 @@ const symbolId = computed(() => `#${props.name}`)
 <template>
   <svg aria-hidden="true" class="icon" :style="{
     fontSize: `${props.size}px`,
-    color: props.color
+    color: props.color,
+    filter: `drop-shadow(100px 0 0 ${props.color})`,
+    transform: 'translateX(-100px)'
   }">
     <use :href="symbolId" :fill="props.color"/>
   </svg>

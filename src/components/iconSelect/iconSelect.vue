@@ -37,6 +37,7 @@ icons.value = Object.keys(files).map((path: any) => {
       :placeholder="props.placeholder"
       :options="icons"
       filterable
+      clearable
   >
     <template #default="{item}">
       <div>
@@ -47,7 +48,7 @@ icons.value = Object.keys(files).map((path: any) => {
       </div>
     </template>
     <template #footer>
-      <el-tag type="info" effect="plain">当前系统图标库中共有{{ icons.length }}个图标</el-tag>
+      <el-tag type="info" effect="plain">当前系统图标库中共有{{ icons.length }}个图标。</el-tag>
     </template>
   </el-select-v2>
 </template>
