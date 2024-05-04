@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sys:interface'
+}
+</script>
 <script setup lang="ts">
 
 </script>

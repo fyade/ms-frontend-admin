@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sys:menu'
+}
+</script>
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
@@ -189,7 +194,7 @@ watch(() => state.dialogForm.type, () => {
     path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
-    perms: [{required: [T_COMP, T_Inter].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+    perms: [{required: true, trigger: 'change'}],
   }
   if ([T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1) {
     state.dFormRules = {
@@ -392,7 +397,7 @@ const tabledata3 = computed(() => {
             <el-input v-model="state.dialogForm['component']" :placeholder="state.dict['component']"/>
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP,T_Inter])">
+        <el-col :span="12">
           <el-form-item :label="state.dict['perms']" prop="perms">
             <template #label>
               <Tooltip content="与后端配合。">{{ state.dict['perms'] }}</Tooltip>
@@ -461,16 +466,16 @@ const tabledata3 = computed(() => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit"
-                 :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
-                 @click="gUpd">修改
-      </el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
-      </el-button>
-      <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    <el-button type="success" plain :icon="Edit"
+               :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
+               @click="gUpd">修改
+    </el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
+    </el-button>
+    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
+    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
@@ -527,7 +532,7 @@ const tabledata3 = computed(() => {
     </el-table-column>
     <template #append>
       <span>此表格的多选<span
-          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
     </template>
   </el-table>
 

@@ -75,6 +75,8 @@ export const funcTablePage = ({
       } else {
         tableLoadingRef.value = false
       }
+    }).catch(() => {
+      tableLoadingRef.value = false
     })
   }
   /**

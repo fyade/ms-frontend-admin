@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sys:user'
+}
+</script>
 <script setup lang="ts">
 import { provide, reactive, Ref, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
@@ -399,6 +404,7 @@ provide('changeSelectRole', selectRole)
     <el-table-column prop="roles" :label="state.dict['roles']" width="240">
       <template #default="{row}">
         <el-space wrap>
+          <el-tag v-if="row.if_top_admin" type="success">超级管理员</el-tag>
           <el-tag type="primary" v-for="item in row.roles as any[]" :key="item.id">{{ item.label }}</el-tag>
         </el-space>
       </template>
@@ -463,7 +469,7 @@ provide('changeSelectRole', selectRole)
     </el-table-column>
     <!--<template #append>-->
     <!--  <span>此表格的多选<span-->
-    <!--      class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>-->
+    <!--      class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>-->
     <!--</template>-->
   </el-table>
 

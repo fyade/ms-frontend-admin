@@ -32,7 +32,7 @@ export const useUserStore = defineStore('userStore', () => {
               label: item.label,
               icon: item.icon
             }
-            item.name = item.path
+            item.name = item.perms
             if (item.type === 'mc') {
               const component: any = await modules[`${item.component.indexOf('@') === 0 ? item.component.replace('@', '../..') : item.component}`]()
               item.component = component.default
@@ -48,8 +48,7 @@ export const useUserStore = defineStore('userStore', () => {
           Object.keys(res.data.user).forEach(key => {
             userinfo[key] = res.data.user[key]
           })
-          // ElMessage.success('登录成功。')
-          if (route.query?.redirect) {
+          if (route.query?.redirect && route.query?.redirect !== '/404') {
             notification.close()
             await router.push(route.query.redirect as string)
           } else {

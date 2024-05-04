@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Ref, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import router, { routerPinList, routes } from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
 
@@ -44,9 +44,9 @@ export const useRouterStore = defineStore('routerStore', () => {
   const getMenuList = () => {
     return menuList.value
   }
-  const getMenuListNames = () => {
-    return getMenuList().map((item: any) => item.name) as string[]
-  }
+  const getMenuListNames = computed(() => {
+    return menuList.value.map((item: any) => item.name) as string[]
+  })
   return {
     addMenu,
     deleteMenu,

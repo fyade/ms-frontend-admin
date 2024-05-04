@@ -102,7 +102,7 @@ const contextMenu = (info: any, index: number) => [
             </div>
             <div class="main">
               <router-view #default="{Component}">
-                <keep-alive :include="routerStore.getMenuListNames()">
+                <keep-alive :include="routerStore.getMenuListNames">
                   <component :is="Component" :key="route.path"/>
                 </keep-alive>
               </router-view>

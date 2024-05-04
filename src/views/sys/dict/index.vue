@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sys:dict'
+}
+</script>
 <script setup lang="ts">
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
@@ -400,7 +405,7 @@ const setDicData = (row: any) => {
     </el-table-column>
     <template #append>
       <span>此表格的多选<span
-          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据` }}</span>
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
     </template>
   </el-table>
 
