@@ -228,7 +228,7 @@ const setDicData = (row: any) => {
       </el-form-item>
       <!--
       第一个input添加如下属性
-      v-autofocus
+      v-focus
       -->
       <!--在此下方添加表单项-->
       <el-row>
@@ -344,7 +344,7 @@ const setDicData = (row: any) => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="name" :label="state.dict['name']" width="120"/>
+    <el-table-column prop="name" :label="state.dict['name']" width="200"/>
     <el-table-column prop="type" :label="state.dict['type']" width="200"/>
     <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
     <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>

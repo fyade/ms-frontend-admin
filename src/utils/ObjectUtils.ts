@@ -1,4 +1,16 @@
 /**
+ * 类型
+ * @param param
+ */
+export function typeOf(param: any) {
+  if (typeof param === 'object') {
+    return Object.prototype.toString.call(param).slice(8, -1).toLowerCase()
+  } else {
+    return typeof param
+  }
+}
+
+/**
  * 是否null
  * @param val
  * @returns {boolean}

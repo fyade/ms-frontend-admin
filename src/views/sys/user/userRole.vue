@@ -278,7 +278,7 @@ const selectAll = (val: any[]) => {
   <!--    </el-row>-->
   <!--    &lt;!&ndash;-->
   <!--    第一个input添加如下属性-->
-  <!--    v-autofocus-->
+  <!--    v-focus-->
   <!--    &ndash;&gt;-->
   <!--    &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
   <!--    <el-row>-->

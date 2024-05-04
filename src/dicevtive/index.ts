@@ -1,7 +1,9 @@
-import autofocus from "@/dicevtive/modules/autofocus.ts";
+import focus from "@/dicevtive/modules/focus.ts";
+import noMoreClick from "@/dicevtive/modules/noMoreClick.ts";
 
 const directivesList = {
-  autofocus
+  focus,
+  noMoreClick
 }
 
 const directives = {

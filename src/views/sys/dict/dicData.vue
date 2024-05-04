@@ -224,7 +224,7 @@ dicTypeSelAll({}).then(({res}) => {
       </el-form-item>
       <!--
       第一个input添加如下属性
-      v-autofocus
+      v-focus
       -->
       <!--在此下方添加表单项-->
       <el-row>
