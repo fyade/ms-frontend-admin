@@ -425,7 +425,7 @@ const setDicData = (row: any) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" @click="gUpd">修改
+    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length===0" @click="gUpd">修改
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
