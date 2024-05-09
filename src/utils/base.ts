@@ -1,5 +1,5 @@
 import { CascaderProps } from "element-plus";
-import { N, Y } from '@/type/utils/base.ts'
+import { INS, MORE, N, ONE, UPD, Y } from '@/type/utils/base.ts'
 
 export const CONFIG = {
   dialog_width: '800px',
@@ -33,12 +33,20 @@ export const final: {
   Y: Y
   N: N
   DEFAULT_PARENT_ID: 0
-  DEFAULT_ORDER_NUM: 0
+  DEFAULT_ORDER_NUM: 0,
+  one: ONE,
+  more: MORE,
+  ins: INS,
+  upd: UPD
 } = {
   Y,
   N,
   DEFAULT_PARENT_ID: 0,
   DEFAULT_ORDER_NUM: 0,
+  one: 'ONE',
+  more: 'MORE',
+  ins: 'INS',
+  upd: 'UPD'
 }
 
 export const Operate = {

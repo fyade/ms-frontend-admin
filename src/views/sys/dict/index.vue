@@ -11,8 +11,16 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
-import { dicTypeDel, dicTypeIns, dicTypeSel, dicTypeSelById, dicTypeUpd } from "@/api/module/sys/dicType.ts";
+import {
+  dicTypeDel,
+  dicTypeIns,
+  dicTypeInss,
+  dicTypeSel,
+  dicTypeSelById, dicTypeSelByIds,
+  dicTypeUpd, dicTypeUpds
+} from "@/api/module/sys/dicType.ts";
 import DicData from "@/views/sys/dict/dicData.vue";
+import { MORE, ONE } from "@/type/utils/base.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -35,6 +43,8 @@ const state = reactive<State>({
     order_num: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
+  dialogForms: [],
+  dialogForms_error: {},
   // 这个是弹出框表单校验
   // 格式: {
   //   name: [{ required: true, trigger: 'change' }],
@@ -78,11 +88,13 @@ const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
+const dialogFormsRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
-const dislogLoadingRef = ref(false)
+const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
+const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
@@ -133,6 +145,13 @@ const func: t_FuncMap = {
     return dicTypeSelById(id)
   },
   /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return dicTypeSelByIds(ids)
+  },
+  /**
    * 新增
    * @param obj
    */
@@ -145,6 +164,20 @@ const func: t_FuncMap = {
    */
   updateOne: (obj: any) => {
     return dicTypeUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param obj
+   */
+  insertMore: (obj: any) => {
+    return dicTypeInss(obj)
+  },
+  /**
+   * 修改多个
+   * @param obj
+   */
+  updateMore: (obj: any) => {
+    return dicTypeUpds(obj)
   },
   /**
    * 删除
@@ -169,17 +202,21 @@ const {
   tUpd,
   tDel,
   handleSelectionChange,
-  pageChange
+  pageChange,
+  dfIns,
+  dfDel
 } = funcTablePage({
   config,
   state,
   state2,
   dialogFormRef,
+  dialogFormsRef,
   filterFormRef,
   dialogVisible,
-  dislogLoadingRef,
+  dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
+  activeTabName,
   func
 })
 
@@ -206,79 +243,152 @@ const setDicData = (row: any) => {
 
   <!--弹框-->
   <el-dialog
-      :width="CONFIG.dialog_width"
+      :width="activeTabName===final.more ? 'calc(100% - 50px)' : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
       append-to-body
   >
-    <el-form
-        ref="dialogFormRef"
-        v-loading="dislogLoadingRef"
-        :model="state.dialogForm"
-        :label-width="CONFIG.dialog_form_label_width"
-        :rules="state.dFormRules"
-    >
-      <!--<el-row>-->
-      <!--  <el-col :span="12"></el-col>-->
-      <!--  <el-col :span="12"></el-col>-->
-      <!--</el-row>-->
-      <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
-        <span>{{ state.dialogForm['id'] }}</span>
-      </el-form-item>
-      <!--
-      第一个input添加如下属性
-      v-focus
-      -->
-      <!--在此下方添加表单项-->
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['name']" prop="name">
-            <el-input v-model="state.dialogForm['name']" :placeholder="state.dict['name']"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['type']" prop="type">
-            <el-input v-model="state.dialogForm['type']" :placeholder="state.dict['type']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
-            <el-radio-group v-model="state.dialogForm['if_disabled']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['order_num']" prop="order_num">
-            <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="state.dict['remark']" prop="remark">
-            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--在此上方添加表单项-->
-      <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-      <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-      <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
-      <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-      <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
-      <!--             :inactive-value="final.DISABLED_YES"/>-->
-      <!--</el-form-item>-->
-      <!--上方几个酌情使用-->
-    </el-form>
+    <el-tabs v-model="activeTabName">
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+    </el-tabs>
+    <template v-if="activeTabName===final.one">
+      <el-form
+          ref="dialogFormRef"
+          v-loading="dialogLoadingRef"
+          :model="state.dialogForm"
+          :label-width="CONFIG.dialog_form_label_width"
+          :rules="state.dFormRules"
+      >
+        <!--<el-row>-->
+        <!--  <el-col :span="12"></el-col>-->
+        <!--  <el-col :span="12"></el-col>-->
+        <!--</el-row>-->
+        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
+          <span>{{ state.dialogForm['id'] }}</span>
+        </el-form-item>
+        <!--
+        第一个input添加如下属性
+        v-focus
+        -->
+        <!--在此下方添加表单项-->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['name']" prop="name">
+              <el-input v-model="state.dialogForm['name']" :placeholder="state.dict['name']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['type']" prop="type">
+              <el-input v-model="state.dialogForm['type']" :placeholder="state.dict['type']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
+              <el-radio-group v-model="state.dialogForm['if_disabled']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['order_num']" prop="order_num">
+              <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['remark']" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--在此上方添加表单项-->
+        <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
+        <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
+        <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+        <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
+        <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+        <!--             :inactive-value="final.DISABLED_YES"/>-->
+        <!--</el-form-item>-->
+        <!--上方几个酌情使用-->
+      </el-form>
+    </template>
+    <template v-if="activeTabName===final.more">
+      <el-form
+          ref="dialogFormsRef"
+          v-loading="dialogLoadingRef"
+      >
+        <el-table
+            style="width: 100%"
+            :data="state.dialogForms"
+            v-if="state.dialogForms"
+        >
+          <el-table-column type="index" width="50">
+            <template #header>
+              #
+            </template>
+          </el-table-column>
+          <!--<el-table-column prop="" :label="state.dict['']" width="300">
+            <template #default="{$index}">
+              <el-form-item label="" :prop="[$index]['']">
+                <el-input v-model="state.dialogForms[$index]['']" :placeholder="state.dict['']"/>
+              </el-form-item>
+            </template>
+          </el-table-column>-->
+          <!--在此下方添加表格列-->
+          <el-table-column prop="name" :label="state.dict['name']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-name`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['name']" :placeholder="state.dict['name']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="type" :label="state.dict['type']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['type']" :placeholder="state.dict['type']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="200">
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-if_disabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-radio-group v-model="state.dialogForms[$index]['if_disabled']">
+                  <el-radio :label="final.Y">是</el-radio>
+                  <el-radio :label="final.N">否</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="order_num" :label="state.dict['order_num']" width="200">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-order_num`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['order_num']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <!--在此上方添加表格列-->
+          <el-table-column fixed="right" label="操作" min-width="120">
+            <template #default="{$index}">
+              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+            </template>
+          </el-table-column>
+          <template #append>
+            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
+          </template>
+        </el-table>
+      </el-form>
+    </template>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dCan">取消</el-button>
@@ -315,7 +425,7 @@ const setDicData = (row: any) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
+    <el-button type="success" plain :icon="Edit" @click="gUpd">修改
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>

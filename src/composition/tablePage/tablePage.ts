@@ -1,6 +1,6 @@
-import { nextTick, onMounted, watch } from "vue"
+import { nextTick, onMounted, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { Operate } from "@/utils/base.ts"
+import { final, Operate } from "@/utils/base.ts"
 import { t_funcTablePage_params } from "@/type/tablePage.ts";
 
 export const funcTablePage = ({
@@ -8,14 +8,19 @@ export const funcTablePage = ({
                                 state,
                                 // state2,
                                 dialogFormRef,
+                                dialogFormsRef,
                                 filterFormRef,
                                 dialogVisible,
-                                dislogLoadingRef,
+                                dialogLoadingRef,
                                 tableLoadingRef,
                                 // switchLoadingRef,
+                                activeTabName,
                                 func,
                                 props
                               }: t_funcTablePage_params) => {
+  const initialStateDialogForm = structuredClone(toRaw(state.dialogForm))
+  const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
+
   /**
    * 查询
    */
@@ -52,32 +57,54 @@ export const funcTablePage = ({
    * 新增
    */
   const insData = () => {
-    let obj = state.dialogForm
-    func.insertOne(obj).then(({res}) => {
-      if (res.code === 200) {
-        ElMessage.success(Operate.success)
-        dialogVisible.value = false
-        getData()
-      }
-    })
+    if (activeTabName && activeTabName.value === final.more) {
+      func.insertMore && func.insertMore(state.dialogForms).then(({res}) => {
+        if (res.code === 200) {
+          ElMessage.success(Operate.success)
+          dialogVisible.value = false
+          getData()
+        }
+      })
+    } else if (!activeTabName || activeTabName.value === final.one) {
+      func.insertOne(state.dialogForm).then(({res}) => {
+        if (res.code === 200) {
+          ElMessage.success(Operate.success)
+          dialogVisible.value = false
+          getData()
+        }
+      })
+    }
   }
   /**
    * 修改
-   * @param obj
    */
-  const updData = (obj = state.dialogForm) => {
+  const updData = () => {
     tableLoadingRef.value = true
-    func.updateOne(obj).then(({res}) => {
-      if (res.code === 200) {
-        ElMessage.success(Operate.success)
-        dialogVisible.value = false
-        getData()
-      } else {
+    if (activeTabName?.value === final.more) {
+      func.updateMore && func.updateMore(state.dialogForms).then(({res}) => {
+        if (res.code === 200) {
+          ElMessage.success(Operate.success)
+          dialogVisible.value = false
+          getData()
+        } else {
+          tableLoadingRef.value = false
+        }
+      }).catch(() => {
         tableLoadingRef.value = false
-      }
-    }).catch(() => {
-      tableLoadingRef.value = false
-    })
+      })
+    } else if (!activeTabName || activeTabName.value === final.one) {
+      func.updateOne(state.dialogForm).then(({res}) => {
+        if (res.code === 200) {
+          ElMessage.success(Operate.success)
+          dialogVisible.value = false
+          getData()
+        } else {
+          tableLoadingRef.value = false
+        }
+      }).catch(() => {
+        tableLoadingRef.value = false
+      })
+    }
   }
   /**
    * 删除
@@ -106,6 +133,11 @@ export const funcTablePage = ({
       nextTick(() => {
         if (newVal) {
         } else {
+          if (state.dialogForms_error) {
+            Object.keys(state.dialogForms_error).forEach(key => {
+              delete state.dialogForms_error[key]
+            })
+          }
           dialogFormRef.value?.resetFields()
         }
         config.dialogVisibleCallback && config.dialogVisibleCallback(newVal)
@@ -127,21 +159,46 @@ export const funcTablePage = ({
         state.dialogForm[item] = state.dialogForm[item].trim()
       }
     })
-    dialogFormRef.value?.validate((valid, fields) => {
-      if (valid) {
+    if (activeTabName && activeTabName.value === final.more && dialogFormsRef) {
+      Object.keys(state.dialogForms_error).forEach(key => {
+        delete state.dialogForms_error[key]
+      })
+      const keys = Object.keys(initialStateDFormRules)
+      for (let i = 0; i < state.dialogForms.length; i++) {
+        keys.forEach(key => {
+          const value = state.dialogForms[i][key]
+          const rule = state.dFormRules[key][0]
+          if (rule.required && value === '') {
+            state.dialogForms_error[`${i}-${key}`] = 'error'
+          }
+        })
+      }
+      if (Object.keys(state.dialogForms_error).length === 0) {
         const obj = {
-          ins: () => insData(),
-          upd: () => updData()
+          [final.ins]: () => insData(),
+          [final.upd]: () => updData()
         }
         obj[state.dialogType.value]()
       } else {
-        if (fields) {
-          let arr: any[] = []
-          Object.keys(fields).forEach(item => arr.push(state.dict[item]))
-          ElMessage.warning(`${arr.join('、')}不能为空。`)
-        }
+        ElMessage.warning(`校验未通过，请完善表格中红框字段。`)
       }
-    })
+    } else if (!activeTabName || activeTabName?.value === final.one) {
+      dialogFormRef.value?.validate((valid, fields) => {
+        if (valid) {
+          const obj = {
+            [final.ins]: () => insData(),
+            [final.upd]: () => updData()
+          }
+          obj[state.dialogType.value]()
+        } else {
+          if (fields) {
+            let arr: any[] = []
+            Object.keys(fields).forEach(item => arr.push(state.dict[item]))
+            ElMessage.warning(`${arr.join('、')}不能为空。`)
+          }
+        }
+      })
+    }
   }
   // 筛选
   const fEnter = () => {
@@ -173,19 +230,24 @@ export const funcTablePage = ({
   }
   // 新增
   const gIns = () => {
-    state.dialogType.value = 'ins'
+    state.dialogType.value = final.ins
     state.dialogType.label = '新增'
+    if (activeTabName) {
+      activeTabName.value = final.one
+      state.dialogForms = []
+      dfIns()
+    }
     dialogVisible.value = true
   }
   // 修改
-  const gUpd = () => {
-    if (state.multipleSelection.length !== 1) {
-      return ElMessage.warning('请选择 1 条数据。')
-    }
+  const gUpd = async () => {
+    // if (state.multipleSelection.length !== 1) {
+    //   return ElMessage.warning('请选择 1 条数据。')
+    // }
     if (config.one2More && config.one2MoreConfig?.oneKey) {
-      tUpd(state.multipleSelection[0][config.one2MoreConfig?.oneKey])
+      await tUpd(state.multipleSelection[0][config.one2MoreConfig?.oneKey], true)
     } else {
-      tUpd(state.multipleSelection[0].id)
+      await tUpd(state.multipleSelection[0].id, true)
     }
   }
   // 删除
@@ -232,36 +294,83 @@ export const funcTablePage = ({
     }
   }
   // 修改
-  const tUpd = (id: any) => {
-    state.dialogType.value = 'upd'
+  const tUpd = async (id: any, ifMore?: boolean) => {
+    state.dialogType.value = final.upd
     state.dialogType.label = '修改'
     dialogVisible.value = true
-    nextTick(() => {
-      dislogLoadingRef.value = true
-      if (config.one2More && config.one2MoreConfig?.oneKey) {
-        func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
-          let obj = res.data[0]
-          Object.keys(state.dialogForm).forEach(item => {
-            state.dialogForm[item] = obj[item]
+    nextTick(async () => {
+      dialogLoadingRef.value = true
+      if (ifMore) {
+        if (activeTabName) {
+          activeTabName.value = final.more
+        }
+        state.dialogForms.splice(0, state.dialogForms.length)
+        if (func.selectByIds) {
+          func.selectByIds(state.multipleSelection.map((item: any) => item.id)).then(({res}) => {
+            res.data.forEach((obj: any, i: number) => {
+              state.dialogForms[i] = structuredClone(initialStateDialogForm)
+              Object.keys(state.dialogForm).forEach(item => {
+                state.dialogForms[i][item] = obj[item]
+              })
+            })
+            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+          }).catch((e) => {
+            dialogVisible.value = false
+          }).finally(() => {
+            dialogLoadingRef.value = false
           })
-          config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
-        }).catch(() => {
-          dialogVisible.value = false
-        }).finally(() => {
-          dislogLoadingRef.value = false
-        })
+        } else {
+          const datas: any[] = []
+          for (let i = 0; i < state.multipleSelection.length; i++) {
+            state.dialogForms[i] = structuredClone(initialStateDialogForm)
+            try {
+              const {res} = await func.selectById(state.multipleSelection[i].id)
+              let obj = res.data
+              datas.push(obj)
+              // Object.keys(state.dialogForm).forEach(item => {
+              //   state.dialogForms[i][item] = obj[item]
+              // })
+              // config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+            } catch (e) {
+              dialogVisible.value = false
+            } finally {
+              // dialogLoadingRef.value = false
+            }
+          }
+          datas.forEach((_, i) => {
+            Object.keys(state.dialogForm).forEach(item => {
+              state.dialogForms[i][item] = datas[i][item]
+            })
+          })
+          config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(datas)
+          dialogLoadingRef.value = false
+        }
       } else {
-        func.selectById(id).then(({res}) => {
-          let obj = res.data
-          Object.keys(state.dialogForm).forEach(item => {
-            state.dialogForm[item] = obj[item]
+        if (config.one2More && config.one2MoreConfig?.oneKey) {
+          func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
+            let obj = res.data[0]
+            Object.keys(state.dialogForm).forEach(item => {
+              state.dialogForm[item] = obj[item]
+            })
+            config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
+          }).catch(() => {
+            dialogVisible.value = false
+          }).finally(() => {
+            dialogLoadingRef.value = false
           })
-          config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
-        }).catch(() => {
-          dialogVisible.value = false
-        }).finally(() => {
-          dislogLoadingRef.value = false
-        })
+        } else {
+          func.selectById(id).then(({res}) => {
+            let obj = res.data
+            Object.keys(state.dialogForm).forEach(item => {
+              state.dialogForm[item] = obj[item]
+            })
+            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+          }).catch(() => {
+            dialogVisible.value = false
+          }).finally(() => {
+            dialogLoadingRef.value = false
+          })
+        }
       }
     })
   }
@@ -299,6 +408,14 @@ export const funcTablePage = ({
     getData()
   }
 
+  const dfIns = () => {
+    state.dialogForms.push(structuredClone(initialStateDialogForm))
+  }
+
+  const dfDel = (index: number) => {
+    state.dialogForms.splice(index, 1)
+  }
+
   return {
     refresh,
     dCan,
@@ -313,6 +430,8 @@ export const funcTablePage = ({
     tUpd,
     tDel,
     handleSelectionChange,
-    pageChange
+    pageChange,
+    dfIns,
+    dfDel
   }
 }

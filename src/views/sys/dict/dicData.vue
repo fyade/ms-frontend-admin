@@ -87,7 +87,7 @@ const state2 = reactive({
 const dialogFormRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
-const dislogLoadingRef = ref(false)
+const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
@@ -186,7 +186,7 @@ const {
   dialogFormRef,
   filterFormRef,
   dialogVisible,
-  dislogLoadingRef,
+  dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   func,
@@ -210,7 +210,7 @@ dicTypeSelAll({}).then(({res}) => {
   >
     <el-form
         ref="dialogFormRef"
-        v-loading="dislogLoadingRef"
+        v-loading="dialogLoadingRef"
         :model="state.dialogForm"
         :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
@@ -219,7 +219,7 @@ dicTypeSelAll({}).then(({res}) => {
       <!--  <el-col :span="12"></el-col>-->
       <!--  <el-col :span="12"></el-col>-->
       <!--</el-row>-->
-      <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
+      <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
         <span>{{ state.dialogForm['id'] }}</span>
       </el-form-item>
       <!--

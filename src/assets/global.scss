@@ -1,3 +1,5 @@
+@import "./styles/tablePage";
+
 * {
   margin: 0;
 }
@@ -18,25 +20,4 @@ html, body {
 
 .underline {
   text-decoration: underline;
-}
-
-.popperClass > .el-select-dropdown > .el-vl__wrapper > .el-vl__window.el-select-dropdown__list > div {
-  //> li {
-  //  all: initial;
-  //}
-  //
-  //display: flex;
-  //flex-wrap: wrap;
-  //flex-direction: row;
-  //gap: 10px;
-  //height: 100% !important;
-  //
-  //> li {
-  //  position: initial !important;
-  //  display: inline-flex;
-  //  align-items: center;
-  //  justify-content: center;
-  //  width: fit-content !important;
-  //  cursor: pointer;
-  //}
 }

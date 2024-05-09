@@ -1,0 +1,22 @@
+.tp-table-cell-bg-red {
+  @extend .tp-table-cell-base;
+  animation: colorChange 1.2s infinite
+}
+
+.tp-table-cell {
+  @extend .tp-table-cell-base;
+}
+
+.tp-table-cell-base {
+  padding: 3px;
+  border-radius: 5px;
+}
+
+@keyframes colorChange {
+  0%, 100% {
+    background-color: red;
+  }
+  50% {
+    background-color: white;
+  }
+}

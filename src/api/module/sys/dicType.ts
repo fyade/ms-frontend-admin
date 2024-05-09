@@ -24,6 +24,14 @@ export function dicTypeSelById(id: number) {
   })
 }
 
+export function dicTypeSelByIds(ids: any[]) {
+  return request({
+    url: `/sys/dic-type/ids`,
+    method: 'GET',
+    params: ids
+  })
+}
+
 export function dicTypeIns(params: dicTypeInsDto) {
   return request({
     url: '/sys/dic-type',
@@ -35,6 +43,22 @@ export function dicTypeIns(params: dicTypeInsDto) {
 export function dicTypeUpd(params: dicTypeUpdDto) {
   return request({
     url: '/sys/dic-type',
+    method: 'PUT',
+    data: params
+  })
+}
+
+export function dicTypeInss(params: dicTypeInsDto[]) {
+  return request({
+    url: '/sys/dic-type/s',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function dicTypeUpds(params: dicTypeUpdDto[]) {
+  return request({
+    url: '/sys/dic-type/s',
     method: 'PUT',
     data: params
   })

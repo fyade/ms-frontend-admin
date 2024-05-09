@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from "vue"
-import { cascaderProps4, CONFIG, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
+import { cascaderProps4, CONFIG, final, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
@@ -93,7 +93,7 @@ const state2 = reactive({
 const dialogFormRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
-const dislogLoadingRef = ref(false)
+const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
@@ -184,7 +184,7 @@ const {
   dialogFormRef,
   filterFormRef,
   dialogVisible,
-  dislogLoadingRef,
+  dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   func,
@@ -273,14 +273,14 @@ const checked2change = () => {
   >
     <el-form
         ref="dialogFormRef"
-        v-loading="dislogLoadingRef"
+        v-loading="dialogLoadingRef"
         :model="state.dialogForm"
         :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
       <el-row>
         <el-col :span="24">
-          <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
+          <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
             <span>{{ state.dialogForm['id'] }}</span>
           </el-form-item>
         </el-col>

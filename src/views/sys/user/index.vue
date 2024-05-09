@@ -84,7 +84,7 @@ const state2 = reactive({
 const dialogFormRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
-const dislogLoadingRef = ref(false)
+const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
@@ -174,7 +174,7 @@ const {
   dialogFormRef,
   filterFormRef,
   dialogVisible,
-  dislogLoadingRef,
+  dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   func
@@ -291,12 +291,12 @@ provide('changeSelectRole', selectRole)
   >
     <el-form
         ref="dialogFormRef"
-        v-loading="dislogLoadingRef"
+        v-loading="dialogLoadingRef"
         :model="state.dialogForm"
         :label-width="CONFIG.dialog_form_label_width"
         :rules="state.dFormRules"
     >
-      <el-form-item v-if="state.dialogType.value!=='ins'" :label="state.dict['id']" prop="id">
+      <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
         <span>{{ state.dialogForm['id'] }}</span>
       </el-form-item>
       <!--
@@ -311,7 +311,7 @@ provide('changeSelectRole', selectRole)
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="state.dialogType.value!=='ins'?state.dict['password']:'初始密码'" prop="password">
+          <el-form-item :label="state.dialogType.value!==final.ins?state.dict['password']:'初始密码'" prop="password">
             <el-input v-model="state.dialogForm['password']" :placeholder="state.dict['password']"/>
           </el-form-item>
         </el-col>
