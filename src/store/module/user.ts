@@ -3,8 +3,8 @@ import router from "@/router/index.ts";
 import { defineAsyncComponent, reactive, ref } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
 import { useRoute } from "vue-router";
-import { loginDto } from "@/type/api/sys/user.ts";
-import { loginApi } from "@/api/module/sys/user.ts";
+import { loginDto } from "@/type/api/sysManage/user.ts";
+import { loginApi } from "@/api/module/sysManage/user.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 
@@ -26,11 +26,12 @@ export const useUserStore = defineStore('userStore', () => {
             showClose: false,
             duration: 0,
           });
-          const permissions = await Promise.all(deepClone<any[]>(res.data.permissions).filter(item => ['mm', 'mc'].indexOf(item.type) > -1).map(async item => {
+          const permissions = (await Promise.all(deepClone<any[]>(res.data.permissions).filter(item => ['mm', 'mc'].indexOf(item.type) > -1).map(async item => {
             item.meta = {
               asideMenu: true,
               label: item.label,
-              icon: item.icon
+              icon: item.icon,
+              id: item.id
             }
             item.name = item.perms
             if (item.type === 'mc') {
@@ -40,9 +41,11 @@ export const useUserStore = defineStore('userStore', () => {
               delete item.component
             }
             return item
-          }))
+          })))
           const permissionsObj = arr2ToDiguiObj(permissions, {ifDeepClone: false});
-          router.addRoute('/', permissionsObj[0])
+          for (let i = 0; i < permissionsObj.length; i++) {
+            router.addRoute('/', permissionsObj[i])
+          }
           token.value = res.data.token
           ifLogin.value = true
           Object.keys(res.data.user).forEach(key => {
@@ -56,7 +59,9 @@ export const useUserStore = defineStore('userStore', () => {
             await router.push('/')
           }
         }
-      }).catch(() => {
+        resolve(null)
+      }).catch((e) => {
+        console.error(e)
         reject()
       })
     })

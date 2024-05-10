@@ -1,9 +1,9 @@
 import request from "@/api/request.ts";
-import { permissionInsDto, permissionSelDto, permissionUpdDto } from "@/type/api/sys/permission.ts";
+import { permissionInsDto, permissionSelDto, permissionUpdDto } from "@/type/api/sysManage/permission.ts";
 
 export function permissionSel(params: permissionSelDto) {
   return request({
-    url: '/sys/permission',
+    url: '/sys-manage/permission',
     method: 'GET',
     params: params
   })
@@ -11,14 +11,14 @@ export function permissionSel(params: permissionSelDto) {
 
 export function permissionSelById(id: any) {
   return request({
-    url: `/sys/permission/${id}`,
+    url: `/sys-manage/permission/${id}`,
     method: 'GET'
   })
 }
 
 export function permissionIns(params: permissionInsDto) {
   return request({
-    url: '/sys/permission',
+    url: '/sys-manage/permission',
     method: 'POST',
     data: params
   })
@@ -26,7 +26,7 @@ export function permissionIns(params: permissionInsDto) {
 
 export function permissionUpd(params: permissionUpdDto) {
   return request({
-    url: '/sys/permission',
+    url: '/sys-manage/permission',
     method: 'PUT',
     data: params
   })
@@ -34,7 +34,7 @@ export function permissionUpd(params: permissionUpdDto) {
 
 export function permissionDel(ids: any[]) {
   return request({
-    url: '/sys/permission',
+    url: '/sys-manage/permission',
     method: 'DELETE',
     data: ids
   })

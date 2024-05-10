@@ -1,9 +1,9 @@
 import request from "@/api/request.ts";
-import { dicTypeInsDto, dicTypeSelAllDto, dicTypeSelDto, dicTypeUpdDto } from "@/type/api/sys/dicType.ts";
+import { dicTypeInsDto, dicTypeSelAllDto, dicTypeSelDto, dicTypeUpdDto } from "@/type/api/sysManage/dicType.ts";
 
 export function dicTypeSel(params: dicTypeSelDto) {
   return request({
-    url: '/sys/dic-type',
+    url: '/sys-manage/dic-type',
     method: 'GET',
     params: params
   })
@@ -11,7 +11,7 @@ export function dicTypeSel(params: dicTypeSelDto) {
 
 export function dicTypeSelAll(params: dicTypeSelAllDto) {
   return request({
-    url: '/sys/dic-type/all',
+    url: '/sys-manage/dic-type/all',
     method: 'GET',
     params: params
   })
@@ -19,14 +19,14 @@ export function dicTypeSelAll(params: dicTypeSelAllDto) {
 
 export function dicTypeSelById(id: number) {
   return request({
-    url: `/sys/dic-type/${id}`,
+    url: `/sys-manage/dic-type/${id}`,
     method: 'GET'
   })
 }
 
 export function dicTypeSelByIds(ids: any[]) {
   return request({
-    url: `/sys/dic-type/ids`,
+    url: `/sys-manage/dic-type/ids`,
     method: 'GET',
     params: ids
   })
@@ -34,7 +34,7 @@ export function dicTypeSelByIds(ids: any[]) {
 
 export function dicTypeIns(params: dicTypeInsDto) {
   return request({
-    url: '/sys/dic-type',
+    url: '/sys-manage/dic-type',
     method: 'POST',
     data: params
   })
@@ -42,7 +42,7 @@ export function dicTypeIns(params: dicTypeInsDto) {
 
 export function dicTypeUpd(params: dicTypeUpdDto) {
   return request({
-    url: '/sys/dic-type',
+    url: '/sys-manage/dic-type',
     method: 'PUT',
     data: params
   })
@@ -50,7 +50,7 @@ export function dicTypeUpd(params: dicTypeUpdDto) {
 
 export function dicTypeInss(params: dicTypeInsDto[]) {
   return request({
-    url: '/sys/dic-type/s',
+    url: '/sys-manage/dic-type/s',
     method: 'POST',
     data: params
   })
@@ -58,7 +58,7 @@ export function dicTypeInss(params: dicTypeInsDto[]) {
 
 export function dicTypeUpds(params: dicTypeUpdDto[]) {
   return request({
-    url: '/sys/dic-type/s',
+    url: '/sys-manage/dic-type/s',
     method: 'PUT',
     data: params
   })
@@ -66,7 +66,7 @@ export function dicTypeUpds(params: dicTypeUpdDto[]) {
 
 export function dicTypeDel(ids: any[]) {
   return request({
-    url: '/sys/dic-type',
+    url: '/sys-manage/dic-type',
     method: 'DELETE',
     data: ids
   })

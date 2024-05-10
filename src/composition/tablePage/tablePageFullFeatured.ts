@@ -144,6 +144,9 @@ export const funcTablePage = ({
       })
     })
   }
+  if (config.one2MoreConfig?.oneKey && props) {
+    state.dialogForm[config.one2MoreConfig?.oneKey] = props[config.one2MoreConfig?.oneKey]
+  }
 
   // 弹窗取消
   const dCan = () => {
@@ -241,7 +244,11 @@ export const funcTablePage = ({
     // if (state.multipleSelection.length !== 1) {
     //   return ElMessage.warning('请选择 1 条数据。')
     // }
-    await tUpd(state.multipleSelection[0].id, config.bulkOperation && state.multipleSelection.length > 1)
+    if (config.one2More && config.one2MoreConfig?.oneKey) {
+      await tUpd(state.multipleSelection[0][config.one2MoreConfig?.oneKey], config.bulkOperation && state.multipleSelection.length > 1)
+    } else {
+      await tUpd(state.multipleSelection[0].id, config.bulkOperation && state.multipleSelection.length > 1)
+    }
   }
   // 删除
   const gDel = ({
@@ -250,22 +257,41 @@ export const funcTablePage = ({
                   delids?: any[]
                 } = {}
   ) => {
-    if (state.multipleSelection.length === 0) {
-      return ElMessage.warning('请至少选择 1 条数据。')
+    if (config.one2More) {
+      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
+      if (permissionids.length === 0) {
+        return ElMessage.warning('请至少选择 1 条数据。')
+      }
+      ElMessageBox.confirm(
+          `此操作将删除选中的 ${permissionids.length} 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        delData(...permissionids)
+      })
+    } else {
+      if (state.multipleSelection.length === 0) {
+        return ElMessage.warning('请至少选择 1 条数据。')
+      }
+      ElMessageBox.confirm(
+          `此操作将删除选中的 ${state.multipleSelection.length} 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        let arr: any[] = state.multipleSelection.map((item: any) => item.id)
+        delData(...arr)
+      })
     }
-    ElMessageBox.confirm(
-        `此操作将删除选中的 ${state.multipleSelection.length} 条数据，且无法撤销，请确认是否继续？`,
-        '警告',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-          draggable: true
-        }
-    ).then(() => {
-      let arr: any[] = state.multipleSelection.map((item: any) => item.id)
-      delData(...arr)
-    })
   }
   // 修改
   const tUpd = async (id: any, ifMore?: boolean) => {
@@ -320,34 +346,54 @@ export const funcTablePage = ({
           dialogLoadingRef.value = false
         }
       } else {
-        func.selectById(id).then(({res}) => {
-          let obj = res.data
-          Object.keys(state.dialogForm).forEach(item => {
-            state.dialogForm[item] = obj[item]
+        if (config.one2More && config.one2MoreConfig?.oneKey) {
+          func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
+            let obj = res.data[0]
+            Object.keys(state.dialogForm).forEach(item => {
+              state.dialogForm[item] = obj[item]
+            })
+            config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
+          }).catch(() => {
+            dialogVisible.value = false
+          }).finally(() => {
+            dialogLoadingRef.value = false
           })
-          config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
-        }).catch(() => {
-          dialogVisible.value = false
-        }).finally(() => {
-          dialogLoadingRef.value = false
-        })
+        } else {
+          func.selectById(id).then(({res}) => {
+            let obj = res.data
+            Object.keys(state.dialogForm).forEach(item => {
+              state.dialogForm[item] = obj[item]
+            })
+            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+          }).catch(() => {
+            dialogVisible.value = false
+          }).finally(() => {
+            dialogLoadingRef.value = false
+          })
+        }
       }
     })
   }
   // 删除
   const tDel = (id: any) => {
-    ElMessageBox.confirm(
-        `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
-        '警告',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-          draggable: true
-        }
-    ).then(() => {
-      delData(id)
-    })
+    if (config.one2More) {
+      const fined: any = state.list.find((item: any) => item.id === id);
+      const permissionids = fined && fined.permission_id ? fined.permission_id : []
+      gDel({delids: permissionids})
+    } else {
+      ElMessageBox.confirm(
+          `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
+          '警告',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true
+          }
+      ).then(() => {
+        delData(id)
+      })
+    }
   }
   const handleSelectionChange = (val: any) => {
     state.multipleSelection = val

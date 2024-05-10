@@ -23,7 +23,7 @@ export const routes: RouteRecordRaw[] = [
           label: '总览',
           icon: 'workbench'
         },
-        component: () => import('@/views/sys/home/index.vue')
+        component: () => import('@/views/sysManage/home/index.vue')
       },
       // {
       //   path: 'sys',

@@ -6,7 +6,23 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import {
+  dicDataDel,
+  dicDataIns, dicDataInss,
+  dicDataSel,
+  dicDataSelById,
+  dicDataSelByIds,
+  dicDataUpd, dicDataUpds
+} from "@/api/module/sysManage/dicData.ts";
+import { dicTypeSelAll } from "@/api/module/sysManage/dicType.ts";
 import { MORE, ONE } from "@/type/utils/base.ts";
+
+const props = defineProps({
+  dic_type: {
+    type: String,
+    required: true
+  }
+})
 
 const state = reactive<State>({
   dialogType: {
@@ -21,7 +37,16 @@ const state = reactive<State>({
   //   parent_id: final.DEFAULT_PARENT_ID,
   //   ...
   // }
-  dialogForm: {},
+  dialogForm: {
+    id: '',
+    label: '',
+    value: '',
+    dic_type: props.dic_type,
+    if_default: final.N,
+    if_disabled: final.N,
+    order_num: final.DEFAULT_ORDER_NUM,
+    remark: ''
+  },
   dialogForms: [],
   dialogForms_error: {},
   // 这个是弹出框表单校验
@@ -29,7 +54,14 @@ const state = reactive<State>({
   //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
-  dFormRules: {} as FormRules,
+  dFormRules: {
+    label: [{required: true, trigger: 'change'}],
+    value: [{required: true, trigger: 'change'}],
+    dic_type: [{required: true, trigger: 'change'}],
+    if_default: [{required: true, trigger: 'change'}],
+    if_disabled: [{required: true, trigger: 'change'}],
+    order_num: [{required: true, trigger: 'change'}]
+  } as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
@@ -37,14 +69,20 @@ const state = reactive<State>({
   //   ...
   // }
   dict: {
-    ...publicDict
+    ...publicDict,
+    label: '标签',
+    value: '值',
+    dic_type: '字典类型'
   },
   // 筛选表单
   // 格式: {
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    label: '',
+    value: ''
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -65,7 +103,9 @@ const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
+  selectParam: {
+    dic_type: props.dic_type
+  }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
@@ -80,7 +120,12 @@ const config: t_config = reactive({
    */
   selectListCallback: () => {
   },
-  bulkOperation: false, // 弹出表单是否支持批量操作，默认false
+  bulkOperation: true,
+  one2More: false, // 表格数据为一对多格式，默认false
+  one2MoreConfig: { // 仅在表格数据为一对多时有效
+    oneKey: '', // 一的键
+    moreKey: '', // 多的键
+  },
   /**
    * 修改单个前的查询的回调，可不传，one2More为true时调这个
    */
@@ -99,80 +144,56 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    // return func(params)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataSel(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    // return func(id)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    // return func(id)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataSelByIds(ids)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataUpd(obj)
   },
   /**
    * 新增多个
    * @param objs
    */
   insertMore: (objs: any[]) => {
-    // return func(objs)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataInss(objs)
   },
   /**
    * 修改多个
    * @param objs
    */
   updateMore: (objs: any[]) => {
-    // return func(objs)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataUpds(objs)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    // return func(...ids)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return dicDataDel(ids)
   }
 }
 
@@ -205,7 +226,13 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func,
+  props
+})
+
+const allDicTypes = ref<any[]>([])
+dicTypeSelAll({}).then(({res}) => {
+  allDicTypes.value = res.data
 })
 </script>
 
@@ -242,9 +269,57 @@ const {
         v-focus
         -->
         <!--在此下方添加表单项-->
-        <!--<el-form-item :label="state.dict['']" prop="">-->
-        <!--  <el-input v-model="state.dialogForm['']" :placeholder="state.dict['']"/>-->
-        <!--</el-form-item>-->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['label']" prop="label">
+              <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['value']" prop="value">
+              <el-input v-model="state.dialogForm['value']" :placeholder="state.dict['value']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['if_default']" prop="if_default">
+              <el-radio-group v-model="state.dialogForm['if_default']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['dic_type']" prop="dic_type">
+              <el-select v-model="state.dialogForm['dic_type']" clearable filterable disabled>
+                <el-option v-for="item in allDicTypes" :key="item.id" :label="item.name" :value="item.type"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
+              <el-radio-group v-model="state.dialogForm['if_disabled']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['order_num']" prop="order_num">
+              <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['remark']" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!--在此上方添加表单项-->
         <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
         <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
@@ -289,6 +364,66 @@ const {
           <!--  </template>-->
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
+          <el-table-column prop="label" :label="state.dict['label']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="value" :label="state.dict['value']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-value`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['value']" :placeholder="state.dict['value']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="if_default" :label="state.dict['if_default']" width="300">
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-if_default`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-radio-group v-model="state.dialogForms[$index]['if_default']">
+                  <el-radio :label="final.Y">是</el-radio>
+                  <el-radio :label="final.N">否</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="dic_type" :label="state.dict['dic_type']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-dic_type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-select v-model="state.dialogForms[$index]['dic_type']" clearable filterable disabled>
+                  <el-option v-for="item in allDicTypes" :key="item.id" :label="item.name" :value="item.type"/>
+                </el-select>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="300">
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-if_disabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-radio-group v-model="state.dialogForms[$index]['if_disabled']">
+                  <el-radio :label="final.Y">是</el-radio>
+                  <el-radio :label="final.N">否</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="order_num" :label="state.dict['order_num']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-order_num`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['order_num']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"
+                          :placeholder="state.dict['remark']"/>
+              </div>
+            </template>
+          </el-table-column>
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">
@@ -319,9 +454,12 @@ const {
       @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
+    <el-form-item :label="state.dict['label']" prop="label">
+      <el-input v-model="state.filterForm['label']" :placeholder="state.dict['label']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['value']" prop="value">
+      <el-input v-model="state.filterForm['value']" :placeholder="state.dict['value']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -334,7 +472,9 @@ const {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
+    <el-button type="success" plain :icon="Edit"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
+               @click="gUpd">修改
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
@@ -363,7 +503,12 @@ const {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <!--<el-table-column prop="" :label="state.dict['']" width="120"/>-->
+    <el-table-column prop="label" :label="state.dict['label']" width="120"/>
+    <el-table-column prop="value" :label="state.dict['value']" width="120"/>
+    <el-table-column prop="if_default" :label="state.dict['if_default']" width="120"/>
+    <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
+    <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
+    <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->

@@ -30,7 +30,7 @@ export interface t_config {
   watchDialogVisible: boolean
   dialogVisibleCallback?: Function
   selectListCallback?: Function
-  tableInlineOperate: boolean
+  bulkOperation?: boolean
   one2More?: boolean
   one2MoreConfig?: {
     oneKey: string

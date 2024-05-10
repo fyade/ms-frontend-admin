@@ -2,7 +2,7 @@
 import { computed, nextTick, reactive, ref, watch } from "vue"
 import { cascaderProps4, CONFIG, final, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
+import { funcTablePage } from "@/composition/tablePage/tablePageFullFeatured.ts"
 import { t_config, t_FuncMap } from "@/type/tablePage.ts";
 import { ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
@@ -12,9 +12,9 @@ import {
   rolePermissionSelAll,
   rolePermissionSelById,
   rolePermissionUpd
-} from "@/api/module/sys/rolePermission.ts";
-import { roleSelAll } from "@/api/module/sys/role.ts";
-import { menuSel } from "@/api/module/sys/menu.ts";
+} from "@/api/module/sysManage/rolePermission.ts";
+import { roleSelAll } from "@/api/module/sysManage/role.ts";
+import { menuSel } from "@/api/module/sysManage/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -110,7 +110,6 @@ const config: t_config = reactive({
   dialogVisibleCallback: (visible?: boolean) => {
     dialogVisibleChange()
   },
-  tableInlineOperate: true, // 允许表格行内操作，默认true
   one2More: true,
   one2MoreConfig: {
     oneKey: 'role_id',
@@ -440,46 +439,6 @@ const checked2change = () => {
     </el-table-column>
     <!--<el-table-column prop="remark" :label="state.dict['remark']" width="200"/>-->
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-input-number-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.order_num"-->
-    <!--        step-strictly-->
-    <!--        :value-on-clear="state2.orderNum"-->
-    <!--        controls-position="right"-->
-    <!--        @focus="handlerFocus(row.order_num)"-->
-    <!--        @change="handleOrderNumChange(row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ row['order_num'] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
-    <!--<el-table-column :label="state.dict['if_default']" width="80">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-switch-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.if_default"-->
-    <!--        :loading="switchLoadingRef"-->
-    <!--        :active-value="final.IS_DEFAULT_YES"-->
-    <!--        :inactive-value="final.IS_DEFAULT_NO"-->
-    <!--        :before-change="tBeforeChangeIsDefault.bind(this,row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ row['if_default'] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
-    <!--<el-table-column :label="state.dict['if_disabled']" width="80">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-switch-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.if_disabled"-->
-    <!--        :loading="switchLoadingRef"-->
-    <!--        :active-value="final.DISABLED_NO"-->
-    <!--        :inactive-value="final.DISABLED_YES"-->
-    <!--        :before-change="tBeforeChangeSwitch.bind(this,row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ shift_yes_no[row['if_disabled']] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
     <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->

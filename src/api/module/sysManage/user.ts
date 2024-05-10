@@ -1,5 +1,5 @@
 import request from "../../request.ts";
-import { loginDto, registDto } from "@/type/api/sys/user.ts";
+import { loginDto, registDto } from "@/type/api/sysManage/user.ts";
 
 
 export function registApi(data: registDto) {
@@ -20,7 +20,7 @@ export function loginApi(data: loginDto) {
 
 export function userSelList(params: any) {
   return request({
-    url: '/sys/user/page',
+    url: '/sys-manage/user/page',
     method: 'GET',
     params: params
   })
@@ -28,7 +28,7 @@ export function userSelList(params: any) {
 
 export function newUser(params: any) {
   return request({
-    url: '/sys/user',
+    url: '/sys-manage/user',
     method: 'POST',
     data: params
   })
@@ -36,7 +36,7 @@ export function newUser(params: any) {
 
 export function resetUserPsd(params: any) {
   return request({
-    url: '/sys/user/resetpsd',
+    url: '/sys-manage/user/resetpsd',
     method: 'POST',
     data: params
   })

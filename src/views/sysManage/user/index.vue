@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sys:user'
+  name: 'sysManage:user'
 }
 </script>
 <script setup lang="ts">
@@ -11,10 +11,10 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import { ElMessage, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";
-import { newUser, resetUserPsd, userSelList } from "@/api/module/sys/user.ts";
-import UserRole from "@/views/sys/user/userRole.vue";
-import { userDto } from "@/type/api/sys/user.ts";
-import { userRoleIns, userRoleUpd } from "@/api/module/sys/userRole.ts";
+import { newUser, resetUserPsd, userSelList } from "@/api/module/sysManage/user.ts";
+import UserRole from "./userRole.vue";
+import { userDto } from "@/type/api/sysManage/user.ts";
+import { userRoleIns, userRoleUpd } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 
 const state = reactive<State>({
@@ -101,8 +101,7 @@ const config: t_config = reactive({
   dialogVisibleCallback: (visible: boolean) => {
   },
   selectListCallback: () => {
-  },
-  tableInlineOperate: true, // 允许表格行内操作，默认true
+  }
 })
 
 const func: t_FuncMap = {
@@ -413,46 +412,6 @@ provide('changeSelectRole', selectRole)
     <el-table-column prop="email" :label="state.dict['email']" width="120"/>
     <el-table-column prop="tel" :label="state.dict['tel']" width="120"/>
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="order_num" :label="state.dict['order_num']" width="180">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-input-number-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.order_num"-->
-    <!--        step-strictly-->
-    <!--        :value-on-clear="state2.orderNum"-->
-    <!--        controls-position="right"-->
-    <!--        @focus="handlerFocus(row.order_num)"-->
-    <!--        @change="handleOrderNumChange(row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ row['order_num'] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
-    <!--<el-table-column :label="state.dict['if_default']" width="80">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-switch-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.if_default"-->
-    <!--        :loading="switchLoadingRef"-->
-    <!--        :active-value="final.IS_DEFAULT_YES"-->
-    <!--        :inactive-value="final.IS_DEFAULT_NO"-->
-    <!--        :before-change="tBeforeChangeIsDefault.bind(this,row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ row['if_default'] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
-    <!--<el-table-column :label="state.dict['if_disabled']" width="80">-->
-    <!--  <template #default="{row}">-->
-    <!--    <el-switch-->
-    <!--        v-if="config.tableInlineOperate"-->
-    <!--        v-model="row.if_disabled"-->
-    <!--        :loading="switchLoadingRef"-->
-    <!--        :active-value="final.DISABLED_NO"-->
-    <!--        :inactive-value="final.DISABLED_YES"-->
-    <!--        :before-change="tBeforeChangeSwitch.bind(this,row.id)"-->
-    <!--    />-->
-    <!--    <template v-else>{{ shift_yes_no[row['if_disabled']] }}</template>-->
-    <!--  </template>-->
-    <!--</el-table-column>-->
     <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
     <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
     <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->

@@ -53,6 +53,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./components/svgIcon/svgIcon.vue')['default']
     TablePage: typeof import('./components/tablePage/tablePage.vue')['default']
+    TablePageFullFeatured: typeof import('./components/tablePage/tablePageFullFeatured.vue')['default']
     Tooltip: typeof import('./components/tooltip/tooltip.vue')['default']
   }
   export interface ComponentCustomProperties {

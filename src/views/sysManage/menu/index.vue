@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sys:menu'
+  name: 'sysManage:menu'
 }
 </script>
 <script setup lang="ts">
@@ -10,11 +10,12 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
-import { menuDel, menuIns, menuSel, menuSelById, menuUpd } from "@/api/module/sys/menu.ts";
+import { Sort, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { menuDel, menuIns, menuSel, menuSelById, menuUpd } from "@/api/module/sysManage/menu.ts";
 import Tooltip from "@/components/tooltip/tooltip.vue";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { finalT } from "@/type/utils/base.ts";
+import { useRouterStore } from "@/store/module/router.ts";
 
 const T_MENU = 'mm'
 const T_COMP = 'mc'
@@ -111,7 +112,6 @@ const config: t_config = reactive({
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
-  tableInlineOperate: true // 允许表格行内操作，默认true
 })
 
 const func: t_FuncMap = {
@@ -180,6 +180,7 @@ const {
   func
 })
 
+const routerStore = useRouterStore();
 const menuTypeDict = {
   [T_MENU]: '菜单',
   [T_COMP]: '组件',
@@ -266,6 +267,15 @@ const tabledata2 = computed(() => {
 const tabledata3 = computed(() => {
   return arr2ToDiguiObj(state.list.filter((item: any) => checkVisible(item.type, [T_MENU, T_COMP])))
 })
+
+const expandRowKeys = ref<any[]>([])
+const expendAll = () => {
+  if (expandRowKeys.value.length > 0) {
+    expandRowKeys.value = []
+  } else {
+    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item)
+  }
+}
 </script>
 
 <template>
@@ -466,6 +476,7 @@ const tabledata3 = computed(() => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
+    <el-button type="info" plain :icon="Sort" @click="expendAll">展开/折叠</el-button>
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
     <el-button type="success" plain :icon="Edit"
@@ -493,6 +504,7 @@ const tabledata3 = computed(() => {
       style="width: 100%"
       v-loading="tableLoadingRef"
       :data="tabledata2"
+      :expand-row-keys="expandRowKeys"
       row-key="id"
       :default-expand-all="false"
       @selection-change="handleSelectionChange"
@@ -501,8 +513,8 @@ const tabledata3 = computed(() => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="label" :label="state.dict['label']" min-width="240"/>
-    <el-table-column prop="path" :label="state.dict['path']" width="120"/>
+    <el-table-column fixed prop="label" :label="state.dict['label']" min-width="240"/>
+    <el-table-column prop="path" :label="state.dict['path']" width="200"/>
     <el-table-column prop="component" :label="state.dict['component']" width="280"/>
     <el-table-column prop="icon" :label="state.dict['icon']" width="120">
       <template #default="{row}">
