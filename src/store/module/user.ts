@@ -2,11 +2,12 @@ import { defineStore } from "pinia";
 import router from "@/router/index.ts";
 import { defineAsyncComponent, reactive, ref } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-import { useRoute } from "vue-router";
+import { RouteRecordNormalized, useRoute } from "vue-router";
 import { loginDto } from "@/type/api/sysManage/user.ts";
 import { loginApi } from "@/api/module/sysManage/user.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { deepClone } from "@/utils/ObjectUtils.ts";
+import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
+import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
 const modules = import.meta.glob("../../views/**/**/**.vue")
 
@@ -28,10 +29,8 @@ export const useUserStore = defineStore('userStore', () => {
           });
           const permissions = (await Promise.all(deepClone<any[]>(res.data.permissions).filter(item => ['mm', 'mc'].indexOf(item.type) > -1).map(async item => {
             item.meta = {
-              asideMenu: true,
-              label: item.label,
-              icon: item.icon,
-              id: item.id
+              ...item,
+              asideMenu: true
             }
             item.name = item.perms
             if (item.type === 'mc') {
@@ -51,7 +50,7 @@ export const useUserStore = defineStore('userStore', () => {
           Object.keys(res.data.user).forEach(key => {
             userinfo[key] = res.data.user[key]
           })
-          if (route.query?.redirect && route.query?.redirect !== '/404') {
+          if (route.query?.redirect && route.query?.redirect !== '/404' && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
             notification.close()
             await router.push(route.query.redirect as string)
           } else {

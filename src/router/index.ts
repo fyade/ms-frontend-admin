@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/module/user.ts";
+import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
 export const homerouter = '/index'
 export const routerPinList = [
@@ -23,7 +24,7 @@ export const routes: RouteRecordRaw[] = [
           label: '总览',
           icon: 'workbench'
         },
-        component: () => import('@/views/sysManage/home/index.vue')
+        component: () => import('@/views/home/index.vue')
       },
       // {
       //   path: 'sys',
@@ -94,6 +95,9 @@ const router = createRouter({
 
 const whitelist = ['/login']
 router.beforeEach((to, from, next) => {
+  if (ifWebsiteLink(to.path, '/')) {
+    return
+  }
   const userStore = useUserStore();
   if (!userStore.ifLogin && whitelist.indexOf(to.path) === -1) {
     next(`/login?redirect=${to.path}`)

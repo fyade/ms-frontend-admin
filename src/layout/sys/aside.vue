@@ -85,7 +85,7 @@ defineExpose({
         text-color="#ffffff"
     >
       <Menu
-          :items="allMenus1"
+          :menus="allMenus1"
           @gotoMenu="go"
       ></Menu>
     </el-menu>

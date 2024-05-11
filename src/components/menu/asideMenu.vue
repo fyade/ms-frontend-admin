@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { CONFIG } from "@/utils/base.ts";
+import { CONFIG, final } from "@/utils/base.ts";
+import { computed } from "vue";
+import { ifValid } from "@/utils/ObjectUtils.ts";
 
 const props = defineProps({
-  items: {
+  menus: {
     type: Array,
     required: true
   },
@@ -15,16 +17,26 @@ const props = defineProps({
     default: {}
   }
 });
+const menus2 = computed(() => {
+  return props.menus.sort((a: any, b: any) => {
+    return (ifValid(a.meta.order_num) && typeof a.meta.order_num === 'number' ? a.meta.order_num : 0) - (ifValid(b.meta.order_num) && typeof b.meta.order_num === 'number' ? b.meta.order_num : 0)
+  })
+})
 const emits = defineEmits(['gotoMenu']);
 
-const menuclick = (item: any) => {
-  emits('gotoMenu', item.index || item)
+const menuClick = (path: any, ifLink: boolean = false) => {
+  if (ifLink) {
+    openSite(path)
+  } else {
+    emits('gotoMenu', `${props.parentPath}/${path}`.replace(/\/{2,}/g, '/'))
+  }
 }
+const openSite = (item: string) => window.open(item.replace('/http', 'http'))
 </script>
 
 <template>
   <div
-      v-for="(item, index) in props.items as any[]"
+      v-for="(item, index) in menus2 as any[]"
       :key="index"
       :style="style"
   >
@@ -40,21 +52,32 @@ const menuclick = (item: any) => {
         </template>
         <AsideMenu
             :style="{backgroundColor: '#1f2d3d'}"
-            :items="item.children"
+            :menus="item.children"
             :parent-path="`${props.parentPath}/${item.path}`"
-            @gotoMenu="menuclick"
+            @gotoMenu="menuClick"
         ></AsideMenu>
       </el-sub-menu>
     </template>
     <template v-else>
       <el-menu-item
-          :index="`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
-          @click="menuclick"
+          :index="item.meta.if_link===final.Y?`${item.path}`:`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
+          @click="menuClick(item.path, item.meta.if_link===final.Y)"
       >
-        <el-space>
-          <SvgIcon :name="item.meta.icon" :color="CONFIG.icon_white"/>
-          <span>{{ item.meta ? item.meta.label : item.name }}</span>
-        </el-space>
+        <template v-if="item.meta.if_link===final.Y">
+          <a :href="item.path.replace('/http', 'http')" target="_blank"
+             style="position: absolute;left: 0;display: block;padding: inherit;width: 100%;color: #fff;" @click.stop>
+            <el-space>
+              <SvgIcon :name="item.meta.icon" :color="CONFIG.icon_white"/>
+              <span>{{ item.meta ? item.meta.label : item.name }}</span>
+            </el-space>
+          </a>
+        </template>
+        <template v-else>
+          <el-space>
+            <SvgIcon :name="item.meta.icon" :color="CONFIG.icon_white"/>
+            <span>{{ item.meta ? item.meta.label : item.name }}</span>
+          </el-space>
+        </template>
       </el-menu-item>
     </template>
   </div>

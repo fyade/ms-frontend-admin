@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia'
 import { computed, Ref, ref } from "vue";
-import router, { routerPinList, routes } from "@/router";
+import router, { routerPinList } from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
+import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
 export const useRouterStore = defineStore('routerStore', () => {
   // const allMenus1: any[] = routes.filter(item => item.path === '/');
-  const allMenus1: any[] = router.getRoutes().filter(item => (item.meta && item.meta.asideMenu) && (item.path.length - item.path.replace(/\//g, '').length === 1));
+  const allMenus1: any[] = router.getRoutes().filter(item => {
+    return (item.meta && item.meta.asideMenu) &&
+        ((item.path.length - item.path.replace(/\//g, '').length === 1) || ifWebsiteLink(item.path, '/'))
+  })
   const allMenus2 = diguiObjToArr2(allMenus1).map(ar => {
     return {
       path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),

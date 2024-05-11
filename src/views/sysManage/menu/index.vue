@@ -269,12 +269,16 @@ const tabledata3 = computed(() => {
 })
 
 const expandRowKeys = ref<any[]>([])
+let level = 0
 const expendAll = () => {
-  if (expandRowKeys.value.length > 0) {
+  if (level % 3 === 0) {
+    expandRowKeys.value = routerStore.allMenus2.filter((item: any) => item.meta.parent_id === 0).map((item: any) => item.meta.id.toString())
+  } else if (level % 3 === 1) {
+    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item).map(item => item.toString())
+  } else if (level % 3 === 2) {
     expandRowKeys.value = []
-  } else {
-    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item)
   }
+  level++
 }
 </script>
 
