@@ -25,7 +25,7 @@ export interface State<T = object, T2 = object> {
 
 export interface t_config {
   selectParam: object
-  getDataOnMounted: boolean
+  getDataOnMounted?: boolean
   pageQuery: boolean
   watchDialogVisible: boolean
   dialogVisibleCallback?: Function

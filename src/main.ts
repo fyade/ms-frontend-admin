@@ -13,7 +13,6 @@ import 'virtual:svg-icons-register'
 const app = createApp(App)
 const pinia = createPinia()
 
-
 app.use(router)
 app.use(pinia)
 app.use(ElementPlus, {
@@ -23,3 +22,6 @@ app.use(directives)
 app.mount('#app')
 
 document.title = APP_NAME
+
+const NODE_ENV = import.meta.env.VITE_MODE
+console.info(NODE_ENV)
