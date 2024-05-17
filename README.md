@@ -1,3 +1,9 @@
+## 使用说明 Description
+
+在项目根目录中新建 .env.test 文件，配置项与 .env.dev 一样，用于测试环境；
+
+在项目根目录中新建 .env.prod 文件，配置项与 .env.dev 一样，由于生产环境。
+
 ## 关于 About
 
 这是一个后台管理系统模板，后端语言为Nest.js，前端语言为Vue.js。
