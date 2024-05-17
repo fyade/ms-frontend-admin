@@ -258,7 +258,7 @@ export const funcTablePage = ({
                 } = {}
   ) => {
     if (config.one2More) {
-      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item.permission_id).flat();
+      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item[config.one2MoreConfig?.moreKey]).flat();
       if (permissionids.length === 0) {
         return ElMessage.warning('请至少选择 1 条数据。')
       }
@@ -378,7 +378,7 @@ export const funcTablePage = ({
   const tDel = (id: any) => {
     if (config.one2More) {
       const fined: any = state.list.find((item: any) => item.id === id);
-      const permissionids = fined && fined.permission_id ? fined.permission_id : []
+      const permissionids = fined && fined[config.one2MoreConfig?.moreKey] ? fined[config.one2MoreConfig?.moreKey] : []
       gDel({delids: permissionids})
     } else {
       ElMessageBox.confirm(

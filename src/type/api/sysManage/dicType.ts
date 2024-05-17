@@ -9,8 +9,8 @@ export interface dicTypeSelAllDto {
 export interface dicTypeInsDto {
   name: string;
   type: string;
-  if_disabled: string;
-  order_num: number;
+  ifDisabled: string;
+  orderNum: number;
   remark: string;
 }
 

@@ -5,8 +5,8 @@ export interface permissionSelDto extends pageSelDto {
 
 export interface permissionInsDto {
   label: string;
-  menu_id: number;
-  order_num: number;
+  menuId: number;
+  orderNum: number;
   remark: string;
 }
 

@@ -30,17 +30,17 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {
     id: '',
     name: '',
     type: '',
-    if_disabled: final.N,
-    order_num: final.DEFAULT_ORDER_NUM,
+    ifDisabled: final.N,
+    orderNum: final.DEFAULT_ORDER_NUM,
     remark: ''
   },
   dialogForms: [],
@@ -53,8 +53,8 @@ const state = reactive<State>({
   dFormRules: {
     name: [{required: true, trigger: 'change'}],
     type: [{required: true, trigger: 'change'}],
-    if_disabled: [{required: true, trigger: 'change'}],
-    order_num: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -222,7 +222,7 @@ const setDicData = (row: any) => {
       title="字典数据"
   >
     <DicData
-        :dic_type="selectDicType"
+        :dic-type="selectDicType"
     />
   </el-drawer>
 
@@ -272,16 +272,16 @@ const setDicData = (row: any) => {
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
-              <el-radio-group v-model="state.dialogForm['if_disabled']">
+            <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm['ifDisabled']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="state.dict['order_num']" prop="order_num">
-              <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
+            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -293,15 +293,15 @@ const setDicData = (row: any) => {
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-        <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-        <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
         <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-        <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
         <!--             :inactive-value="final.DISABLED_YES"/>-->
         <!--</el-form-item>-->
         <!--上方几个酌情使用-->
@@ -344,21 +344,21 @@ const setDicData = (row: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="200">
+          <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="200">
             <template #default="{$index}">
               <div
-                  :class="state.dialogForms_error?.[`${$index}-if_disabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-radio-group v-model="state.dialogForms[$index]['if_disabled']">
+                  :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-radio-group v-model="state.dialogForms[$index]['ifDisabled']">
                   <el-radio :label="final.Y">是</el-radio>
                   <el-radio :label="final.N">否</el-radio>
                 </el-radio-group>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="order_num" :label="state.dict['order_num']" width="200">
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="200">
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-order_num`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['order_num']" controls-position="right"/>
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
@@ -450,14 +450,14 @@ const setDicData = (row: any) => {
     <!--在此下方添加表格列-->
     <el-table-column prop="name" :label="state.dict['name']" width="200"/>
     <el-table-column prop="type" :label="state.dict['type']" width="200"/>
-    <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
-    <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
+    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
+    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">

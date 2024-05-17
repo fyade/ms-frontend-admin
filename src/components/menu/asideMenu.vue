@@ -19,7 +19,7 @@ const props = defineProps({
 });
 const menus2 = computed(() => {
   return props.menus.sort((a: any, b: any) => {
-    return (ifValid(a.meta.order_num) && typeof a.meta.order_num === 'number' ? a.meta.order_num : 0) - (ifValid(b.meta.order_num) && typeof b.meta.order_num === 'number' ? b.meta.order_num : 0)
+    return (ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
   })
 })
 const emits = defineEmits(['gotoMenu']);
@@ -60,10 +60,10 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
     </template>
     <template v-else>
       <el-menu-item
-          :index="item.meta.if_link===final.Y?`${item.path}`:`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
-          @click="menuClick(item.path, item.meta.if_link===final.Y)"
+          :index="item.meta.ifLink===final.Y?`${item.path}`:`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
+          @click="menuClick(item.path, item.meta.ifLink===final.Y)"
       >
-        <template v-if="item.meta.if_link===final.Y">
+        <template v-if="item.meta.ifLink===final.Y">
           <a :href="item.path.replace('/http', 'http')" target="_blank"
              style="position: absolute;left: 0;display: block;padding: inherit;width: 100%;color: #fff;" @click.stop>
             <el-space>

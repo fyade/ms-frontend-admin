@@ -16,7 +16,7 @@ export function toPath(...str: string[]): string {
  * @param ifDeepClone
  */
 export function arr2ToDiguiObj(list: any[], {
-                                 key = 'parent_id', defaultParent = 0, ifDeepClone = true
+                                 key = 'parentId', defaultParent = 0, ifDeepClone = true
                                }: {
                                  key?: string, defaultParent?: number, ifDeepClone?: boolean
                                } = {}
@@ -29,7 +29,7 @@ export function arr2ToDiguiObj(list: any[], {
   const cachrarr = [lis]
   let finish = false
   while (!finish) {
-    const ar = list2.filter(item => cachrarr.flat().map(item => item.id).indexOf(item.id) === -1).filter(item => cachrarr[cachrarr.length - 1].map(item => item.id).indexOf(item.parent_id) > -1)
+    const ar = list2.filter(item => cachrarr.flat().map(item => item.id).indexOf(item.id) === -1).filter(item => cachrarr[cachrarr.length - 1].map(item => item.id).indexOf(item[key]) > -1)
     if (ar.length === 0) {
       finish = true
     } else {
@@ -43,7 +43,7 @@ export function arr2ToDiguiObj(list: any[], {
   for (let i = cachrarr.length - 1; i >= 0; i--) {
     if (i !== 0) {
       cachrarr[i - 1].forEach(obj => {
-        obj.children = cachrarr[i].filter(item => item.parent_id === obj.id)
+        obj.children = cachrarr[i].filter(item => item[key] === obj.id)
       })
     } else {
       ret.push(...cachrarr[0])
@@ -85,7 +85,7 @@ function diguiObjToArr2_(objs: any[], key: string, ret: any[] = [], parents: any
  * @param ckey
  */
 export function arr1GetDiguiRelation(objs: any[], {
-                                       pkey = 'parent_id',
+                                       pkey = 'parentId',
                                        ckey = 'children'
                                      }: {
                                        pkey?: string,

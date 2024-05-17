@@ -4,8 +4,8 @@ export interface userRoleSelDto extends pageSelDto {
 }
 
 export interface userRoleInsDto {
-  user_id: string;
-  role_id: number[];
+  userId: string;
+  roleId: number[];
 }
 
 export interface userRoleUpdDto extends userRoleInsDto {

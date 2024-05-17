@@ -17,13 +17,13 @@ export const PAGINATION = {
 export const publicDict = {
   id: '主键id',
   remark: '备注',
-  order_num: '顺序',
-  if_default: '是否默认',
-  if_disabled: '是否禁用',
-  create_by: 'createBy',
-  update_by: 'updateBy',
-  create_time: 'createTime',
-  update_time: 'updateTime',
+  orderNum: '顺序',
+  ifDefault: '是否默认',
+  ifDisabled: '是否禁用',
+  createBy: 'createBy',
+  updateBy: 'updateBy',
+  createTime: 'createTime',
+  updateTime: 'updateTime',
   deleted: '逻辑删除'
 }
 

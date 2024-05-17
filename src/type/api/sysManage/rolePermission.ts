@@ -4,8 +4,8 @@ export interface rolePermissionSelDto extends pageSelDto {
 }
 
 export interface rolePermissionInsDto {
-  role_id: number;
-  permission_id: number;
+  roleId: number;
+  permissionId: number;
   remark: string;
 }
 

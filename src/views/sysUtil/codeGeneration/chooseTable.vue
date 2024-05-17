@@ -17,9 +17,9 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {},
@@ -39,8 +39,8 @@ const state = reactive<State>({
   // }
   dict: {
     ...publicDict,
-    table_name_en: '表名',
-    table_name_cn: '表名含义'
+    tableNameEn: '表名',
+    tableNameCn: '表名含义'
   },
   // 筛选表单
   // 格式: {
@@ -252,21 +252,21 @@ const cg = (rowId: any) => {
         <!--  <el-input v-model="state.dialogForm['']" :placeholder="state.dict['']"/>-->
         <!--</el-form-item>-->
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-        <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-        <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
         <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-        <!--  <el-radio-group v-model="state.dialogForm['if_disabled']">-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
         <!--    <el-radio :label="final.Y">是</el-radio>-->
         <!--    <el-radio :label="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-        <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
         <!--             :inactive-value="final.DISABLED_YES"/>-->
         <!--</el-form-item>-->
         <!--上方几个酌情使用-->
@@ -338,7 +338,7 @@ const cg = (rowId: any) => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <!--<el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>-->
     <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
     <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
     <!--</el-button>-->
@@ -369,13 +369,13 @@ const cg = (rowId: any) => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="table_name_en" :label="state.dict['table_name_en']" width="240"/>
-    <el-table-column prop="table_name_cn" :label="state.dict['table_name_cn']" width="240"/>
+    <el-table-column prop="tableNameEn" :label="state.dict['tableNameEn']" width="240"/>
+    <el-table-column prop="tableNameCn" :label="state.dict['tableNameCn']" width="240"/>
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">

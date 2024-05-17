@@ -9,7 +9,7 @@ export interface roleSelDto2 {
 
 export interface roleInsDto {
   label: string;
-  order_num: number;
+  orderNum: number;
   remark: string;
 }
 

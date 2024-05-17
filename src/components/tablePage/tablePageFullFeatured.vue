@@ -16,9 +16,9 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {},
@@ -251,21 +251,21 @@ const {
         <!--  <el-input v-model="state.dialogForm['']" :placeholder="state.dict['']"/>-->
         <!--</el-form-item>-->
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-        <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-        <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
         <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-        <!--  <el-radio-group v-model="state.dialogForm['if_disabled']">-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
         <!--    <el-radio :label="final.Y">是</el-radio>-->
         <!--    <el-radio :label="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-        <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
         <!--             :inactive-value="final.DISABLED_YES"/>-->
         <!--</el-form-item>-->
         <!--上方几个酌情使用-->
@@ -370,10 +370,10 @@ const {
     <!--在此下方添加表格列-->
     <!--<el-table-column prop="" :label="state.dict['']" width="120"/>-->
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">

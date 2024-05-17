@@ -30,14 +30,14 @@ type DialogForm = {
   label: string
   type: tType
   path: string
-  parent_id: number
+  parentId: number
   component: string
   icon: string
-  order_num: number
-  if_link: finalT
-  if_visible: finalT
-  if_disabled: finalT
-  if_public: finalT
+  orderNum: number
+  ifLink: finalT
+  ifVisible: finalT
+  ifDisabled: finalT
+  ifPublic: finalT
   perms: string
   remark: string
 }
@@ -50,9 +50,9 @@ const state = reactive<State<DialogForm, DialogForm>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {
@@ -60,14 +60,14 @@ const state = reactive<State<DialogForm, DialogForm>>({
     label: '',
     type: T_MENU,
     path: '#',
-    parent_id: final.DEFAULT_PARENT_ID,
+    parentId: final.DEFAULT_PARENT_ID,
     component: '#',
     icon: '',
-    order_num: final.DEFAULT_ORDER_NUM,
-    if_link: final.N,
-    if_visible: final.Y,
-    if_disabled: final.N,
-    if_public: final.N,
+    orderNum: final.DEFAULT_ORDER_NUM,
+    ifLink: final.N,
+    ifVisible: final.Y,
+    ifDisabled: final.N,
+    ifPublic: final.N,
     perms: '',
     remark: ''
   },
@@ -191,7 +191,7 @@ watch(() => state.dialogForm.type, () => {
   state.dFormRules = {
     type: [{required: true, trigger: 'change'}],
     label: [{required: true, trigger: 'change'}],
-    order_num: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
     path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
@@ -200,16 +200,16 @@ watch(() => state.dialogForm.type, () => {
   if ([T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1) {
     state.dFormRules = {
       ...state.dFormRules,
-      if_link: [{required: true, trigger: 'change'}],
-      if_visible: [{required: true, trigger: 'change'}],
-      if_disabled: [{required: true, trigger: 'change'}],
+      ifLink: [{required: true, trigger: 'change'}],
+      ifVisible: [{required: true, trigger: 'change'}],
+      ifDisabled: [{required: true, trigger: 'change'}],
     }
   }
   if ([T_Inter].indexOf(state.dialogForm.type) > -1) {
     state.dFormRules = {
       ...state.dFormRules,
-      parent_id: [{required: true, trigger: 'change'}],
-      if_public: [{required: true, trigger: 'change'}],
+      parentId: [{required: true, trigger: 'change'}],
+      ifPublic: [{required: true, trigger: 'change'}],
     }
   }
   state.dict = {
@@ -217,26 +217,26 @@ watch(() => state.dialogForm.type, () => {
     label: `${menuTypeDict[state.dialogForm.type]}名`,
     type: '菜单类型',
     path: '菜单路径',
-    parent_id: '父级菜单',
+    parentId: '父级菜单',
     component: '组件路径',
     icon: '图标',
-    if_link: '是否外链',
-    if_visible: '是否显示',
-    if_disabled: '是否禁用',
-    if_public: '是否公共接口',
+    ifLink: '是否外链',
+    ifVisible: '是否显示',
+    ifDisabled: '是否禁用',
+    ifPublic: '是否公共接口',
     perms: '权限标识',
   }
 }, {
   immediate: true,
 })
-watch(() => state.dialogForm.parent_id, () => {
-  if (state.dialogForm.parent_id === null) {
-    state.dialogForm.parent_id = final.DEFAULT_PARENT_ID
+watch(() => state.dialogForm.parentId, () => {
+  if (state.dialogForm.parentId === null) {
+    state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   }
-  if (state.dialogForm.parent_id === final.DEFAULT_PARENT_ID) {
+  if (state.dialogForm.parentId === final.DEFAULT_PARENT_ID) {
     canChooseTypes.value = [T_MENU, T_COMP]
   } else {
-    const data: any = state.list.find((item: any) => item.id === state.dialogForm.parent_id);
+    const data: any = state.list.find((item: any) => item.id === state.dialogForm.parentId);
     if (data) {
       if (data.type === T_MENU) {
         canChooseTypes.value = [T_MENU, T_COMP]
@@ -253,7 +253,7 @@ watch(() => state.dialogForm.parent_id, () => {
 })
 
 const tIns = (id: number) => {
-  state.dialogForm.parent_id = id
+  state.dialogForm.parentId = id
   gIns()
 }
 
@@ -272,7 +272,7 @@ const expandRowKeys = ref<any[]>([])
 let level = 0
 const expendAll = () => {
   if (level % 3 === 0) {
-    expandRowKeys.value = routerStore.allMenus2.filter((item: any) => item.meta.parent_id === 0).map((item: any) => item.meta.id.toString())
+    expandRowKeys.value = routerStore.allMenus2.filter((item: any) => item.meta.parentId === 0).map((item: any) => item.meta.id.toString())
   } else if (level % 3 === 1) {
     expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item).map(item => item.toString())
   } else if (level % 3 === 2) {
@@ -312,9 +312,9 @@ const expendAll = () => {
       <!--在此下方添加表单项-->
       <el-row>
         <el-col :span="24">
-          <el-form-item :label="state.dict['parent_id']" prop="parent_id">
+          <el-form-item :label="state.dict['parentId']" prop="parentId">
             <el-cascader
-                v-model="state.dialogForm['parent_id']"
+                v-model="state.dialogForm['parentId']"
                 :options="tabledata3"
                 :props="cascaderProps2"
                 clearable
@@ -358,18 +358,18 @@ const expendAll = () => {
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="state.dict['order_num']" prop="order_num">
-            <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>
+          <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+            <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
         <el-col :span="12">
-          <el-form-item :label="state.dict['if_link']" prop="if_link">
+          <el-form-item :label="state.dict['ifLink']" prop="ifLink">
             <template #label>
-              <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['if_link'] }}</Tooltip>
+              <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['ifLink'] }}</Tooltip>
             </template>
-            <el-radio-group v-model="state.dialogForm['if_link']">
+            <el-radio-group v-model="state.dialogForm['ifLink']">
               <el-radio :label="final.Y">是</el-radio>
               <el-radio :label="final.N">否</el-radio>
             </el-radio-group>
@@ -386,16 +386,16 @@ const expendAll = () => {
       </el-row>
       <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
         <el-col :span="12">
-          <el-form-item :label="state.dict['if_visible']" prop="if_visible">
-            <el-radio-group v-model="state.dialogForm['if_visible']">
+          <el-form-item :label="state.dict['ifVisible']" prop="ifVisible">
+            <el-radio-group v-model="state.dialogForm['ifVisible']">
               <el-radio :label="final.Y">是</el-radio>
               <el-radio :label="final.N">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="state.dict['if_disabled']" prop="if_disabled">
-            <el-radio-group v-model="state.dialogForm['if_disabled']">
+          <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
+            <el-radio-group v-model="state.dialogForm['ifDisabled']">
               <el-radio :label="final.Y">是</el-radio>
               <el-radio :label="final.N">否</el-radio>
             </el-radio-group>
@@ -420,8 +420,8 @@ const expendAll = () => {
           </el-form-item>
         </el-col>
         <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_Inter])">
-          <el-form-item :label="state.dict['if_public']" prop="if_public">
-            <el-radio-group v-model="state.dialogForm['if_public']">
+          <el-form-item :label="state.dict['ifPublic']" prop="ifPublic">
+            <el-radio-group v-model="state.dialogForm['ifPublic']">
               <el-radio :label="final.Y">是</el-radio>
               <el-radio :label="final.N">否</el-radio>
             </el-radio-group>
@@ -436,15 +436,15 @@ const expendAll = () => {
         </el-col>
       </el-row>
       <!--在此上方添加表单项-->
-      <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-      <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+      <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+      <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-      <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+      <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
       <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-      <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+      <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
       <!--             :inactive-value="final.DISABLED_YES"/>-->
       <!--</el-form-item>-->
       <!--上方几个酌情使用-->
@@ -525,18 +525,18 @@ const expendAll = () => {
         <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
       </template>
     </el-table-column>
-    <el-table-column prop="order_num" :label="state.dict['order_num']" width="120"/>
-    <el-table-column prop="if_link" :label="state.dict['if_link']" width="120"/>
-    <el-table-column prop="if_visible" :label="state.dict['if_visible']" width="120"/>
-    <el-table-column prop="if_disabled" :label="state.dict['if_disabled']" width="120"/>
-    <el-table-column prop="if_public" :label="state.dict['if_public']" width="120"/>
+    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
+    <el-table-column prop="ifLink" :label="state.dict['ifLink']" width="120"/>
+    <el-table-column prop="ifVisible" :label="state.dict['ifVisible']" width="120"/>
+    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
+    <el-table-column prop="ifPublic" :label="state.dict['ifPublic']" width="120"/>
     <el-table-column prop="perms" :label="state.dict['perms']" width="280"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="150">

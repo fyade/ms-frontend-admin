@@ -18,7 +18,7 @@ import { menuSel } from "@/api/module/sysManage/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
-  role_id: {
+  roleId: {
     type: Number,
     required: true
   }
@@ -39,16 +39,16 @@ const state = reactive({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {
     id: '',
     type: T_MENU,
-    role_id: 0,
-    permission_id: [] as any[],
+    roleId: 0,
+    permissionId: [] as any[],
     remark: ''
   },
   // 这个是弹出框表单校验
@@ -58,8 +58,8 @@ const state = reactive({
   // }
   dFormRules: {
     type: [{required: true, trigger: 'change'}],
-    role_id: [{required: true, trigger: 'change'}],
-    permission_id: [{required: true, trigger: 'change'}]
+    roleId: [{required: true, trigger: 'change'}],
+    permissionId: [{required: true, trigger: 'change'}]
   } as FormRules,
   // 字典
   // 格式: {
@@ -70,8 +70,8 @@ const state = reactive({
   dict: {
     ...publicDict,
     type: '权限类型',
-    role_id: '角色',
-    permission_id: '权限'
+    roleId: '角色',
+    permissionId: '权限'
   },
   // 筛选表单
   // 格式: {
@@ -98,7 +98,7 @@ const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
   selectParam: {
-    role_id: props.role_id
+    roleId: props.roleId
   }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
@@ -112,8 +112,8 @@ const config: t_config = reactive({
   },
   one2More: true,
   one2MoreConfig: {
-    oneKey: 'role_id',
-    moreKey: 'permission_id'
+    oneKey: 'roleId',
+    moreKey: 'permissionId'
   },
   /**
    * 修改单个前的查询的回调，可不传，one2More为true时调这个
@@ -191,7 +191,7 @@ const {
 })
 
 const allRoles = ref<any[]>([])
-roleSelAll({id: props.role_id}).then(({res}) => {
+roleSelAll({id: props.roleId}).then(({res}) => {
   allRoles.value = res.data
 })
 
@@ -291,8 +291,8 @@ const checked2change = () => {
       <!--在此下方添加表单项-->
       <el-row>
         <el-col :span="12">
-          <el-form-item :label="state.dict['role_id']" prop="role_id">
-            <el-select v-model="state.dialogForm['role_id']" clearable filterable disabled>
+          <el-form-item :label="state.dict['roleId']" prop="roleId">
+            <el-select v-model="state.dialogForm['roleId']" clearable filterable disabled>
               <el-option v-for="item in allRoles" :key="item.id" :label="item.label" :value="item.id"/>
             </el-select>
           </el-form-item>
@@ -308,7 +308,7 @@ const checked2change = () => {
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item :label="state.dict['permission_id']" prop="permission_id">
+          <el-form-item :label="state.dict['permissionId']" prop="permissionId">
             <div>
               <el-row>
                 <el-col :span="24">
@@ -319,7 +319,7 @@ const checked2change = () => {
               <el-row>
                 <el-col :span="24">
                   <el-cascader-panel
-                      v-model="state.dialogForm['permission_id']"
+                      v-model="state.dialogForm['permissionId']"
                       :options="allpermissions2"
                       :props="cascaderProps4"
                       clearable
@@ -342,15 +342,15 @@ const checked2change = () => {
       <!--  </el-col>-->
       <!--</el-row>-->
       <!--在此上方添加表单项-->
-      <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-      <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+      <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+      <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-      <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+      <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
       <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-      <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+      <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
       <!--             :inactive-value="final.DISABLED_YES"/>-->
       <!--</el-form-item>-->
       <!--上方几个酌情使用-->
@@ -417,7 +417,7 @@ const checked2change = () => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="role_id" :label="state.dict['role_id']" width="120">
+    <el-table-column prop="roleId" :label="state.dict['roleId']" width="120">
       <template #default="{row}">
         {{ row.role.label }}
       </template>
@@ -428,7 +428,7 @@ const checked2change = () => {
         <template v-if="row.type==='i'">接口</template>
       </template>
     </el-table-column>
-    <el-table-column prop="permission_id" :label="state.dict['permission_id']" min-width="120">
+    <el-table-column prop="permissionId" :label="state.dict['permissionId']" min-width="120">
       <template #default="{row}">
         <el-tree
             :data="allpermissions3(row.id)"
@@ -439,15 +439,15 @@ const checked2change = () => {
     </el-table-column>
     <!--<el-table-column prop="remark" :label="state.dict['remark']" width="200"/>-->
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tUpd(row.role_id)">修改</el-button>
+        <el-button link type="primary" size="small" @click="tUpd(row.roleId)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>

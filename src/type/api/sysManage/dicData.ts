@@ -9,10 +9,10 @@ export interface dicDataSelAllDto {
 export interface dicDataInsDto {
   label: string;
   value: string;
-  dic_type: string;
-  if_default: string;
-  if_disabled: string;
-  order_num: number;
+  dicType: string;
+  ifDefault: string;
+  ifDisabled: string;
+  orderNum: number;
   remark: string;
 }
 

@@ -25,9 +25,9 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   if_default: final.IS_DEFAULT_YES,
-  //   if_disabled: final.DISABLED_NO,
-  //   parent_id: final.DEFAULT_PARENT_ID,
+  //   ifDefault: final.IS_DEFAULT_YES,
+  //   ifDisabled: final.DISABLED_NO,
+  //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
   dialogForm: {
@@ -220,8 +220,8 @@ const setRole = (row: any) => {
 }
 const drawerConfirm = () => {
   const obj = {
-    user_id: selectUser.value.id,
-    role_id: selectRole.value.map(item => item.id)
+    userId: selectUser.value.id,
+    roleId: selectRole.value.map(item => item.id)
   }
   userRoleUpd(obj).then(({res}) => {
     drawer.value = false
@@ -316,15 +316,15 @@ provide('changeSelectRole', selectRole)
         </el-col>
       </el-row>
       <!--在此上方添加表单项-->
-      <!--<el-form-item :label="state.dict['order_num']" prop="order_num">-->
-      <!--  <el-input-number v-model="state.dialogForm['order_num']" controls-position="right"/>-->
+      <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+      <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_default']" prop="if_default">-->
-      <!--  <el-switch v-model="state.dialogForm['if_default']" :active-value="final.IS_DEFAULT_YES"-->
+      <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
       <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
       <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['if_disabled']" prop="if_disabled">-->
-      <!--  <el-switch v-model="state.dialogForm['if_disabled']" :active-value="final.DISABLED_NO"-->
+      <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+      <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
       <!--             :inactive-value="final.DISABLED_YES"/>-->
       <!--</el-form-item>-->
       <!--上方几个酌情使用-->
@@ -403,7 +403,7 @@ provide('changeSelectRole', selectRole)
     <el-table-column prop="roles" :label="state.dict['roles']" width="240">
       <template #default="{row}">
         <el-space wrap>
-          <el-tag v-if="row.if_top_admin" type="success">超级管理员</el-tag>
+          <el-tag v-if="row.ifTopAdmin" type="success">超级管理员</el-tag>
           <el-tag type="primary" v-for="item in row.roles as any[]" :key="item.id">{{ item.label }}</el-tag>
         </el-space>
       </template>
@@ -412,10 +412,10 @@ provide('changeSelectRole', selectRole)
     <el-table-column prop="email" :label="state.dict['email']" width="120"/>
     <el-table-column prop="tel" :label="state.dict['tel']" width="120"/>
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="create_by" :label="state.dict['create_by']" width="120"/>-->
-    <!--<el-table-column prop="update_by" :label="state.dict['update_by']" width="120"/>-->
-    <!--<el-table-column prop="create_time" :label="state.dict['create_time']" width="220"/>-->
-    <!--<el-table-column prop="update_time" :label="state.dict['update_time']" width="220"/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
