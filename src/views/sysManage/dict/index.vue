@@ -189,7 +189,8 @@ const {
   handleSelectionChange,
   pageChange,
   dfIns,
-  dfDel
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
@@ -331,6 +332,9 @@ const setDicData = (row: any) => {
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
           <el-table-column prop="name" :label="state.dict['name']" width="300">
+            <template #header>
+              <span :class="ifRequired('name')?'tp-table-header-required':''">{{ state.dict['name'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-name`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['name']" :placeholder="state.dict['name']"/>
@@ -338,6 +342,9 @@ const setDicData = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column prop="type" :label="state.dict['type']" width="300">
+            <template #header>
+              <span :class="ifRequired('type')?'tp-table-header-required':''">{{ state.dict['type'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['type']" :placeholder="state.dict['type']"/>
@@ -345,6 +352,11 @@ const setDicData = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="200">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{
+                  state.dict['ifDisabled']
+                }}</span>
+            </template>
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -356,6 +368,9 @@ const setDicData = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="200">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
@@ -363,9 +378,13 @@ const setDicData = (row: any) => {
             </template>
           </el-table-column>
           <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"
+                          :placeholder="state.dict['remark']"/>
               </div>
             </template>
           </el-table-column>

@@ -213,7 +213,8 @@ const {
   handleSelectionChange,
   pageChange,
   dfIns,
-  dfDel
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
@@ -365,6 +366,9 @@ dicTypeSelAll({}).then(({res}) => {
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
           <el-table-column prop="label" :label="state.dict['label']" width="300">
+            <template #header>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
@@ -372,6 +376,9 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="value" :label="state.dict['value']" width="300">
+            <template #header>
+              <span :class="ifRequired('value')?'tp-table-header-required':''">{{ state.dict['value'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-value`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['value']" :placeholder="state.dict['value']"/>
@@ -379,6 +386,9 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="ifDefault" :label="state.dict['ifDefault']" width="300">
+            <template #header>
+              <span :class="ifRequired('ifDefault')?'tp-table-header-required':''">{{ state.dict['ifDefault'] }}</span>
+            </template>
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDefault`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -390,6 +400,9 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="dicType" :label="state.dict['dicType']" width="300">
+            <template #header>
+              <span :class="ifRequired('dicType')?'tp-table-header-required':''">{{ state.dict['dicType'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-dicType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-select v-model="state.dialogForms[$index]['dicType']" clearable filterable disabled>
@@ -399,6 +412,11 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="300">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{
+                  state.dict['ifDisabled']
+                }}</span>
+            </template>
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -410,6 +428,9 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
@@ -417,6 +438,9 @@ dicTypeSelAll({}).then(({res}) => {
             </template>
           </el-table-column>
           <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+            </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"

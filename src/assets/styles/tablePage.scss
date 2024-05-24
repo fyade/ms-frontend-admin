@@ -1,3 +1,11 @@
+.tp-table-header-required {
+  &::before {
+    content: "*";
+    color: var(--el-color-danger);
+    margin-right: 4px;
+  }
+}
+
 .tp-table-cell-bg-red {
   @extend .tp-table-cell-base;
   animation: colorChange 1.2s infinite

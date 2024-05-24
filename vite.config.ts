@@ -63,6 +63,17 @@ export default defineConfig(({mode}) => {
           rewrite: path => path.substring(env.VITE_API_PREFIX.length)
         }
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes('node_modules')) {
+              return 'vendor'
+            }
+          }
+        }
+      }
     }
   }
 })

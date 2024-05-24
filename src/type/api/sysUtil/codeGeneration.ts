@@ -1,3 +1,8 @@
+export interface fileConfigInter {
+  modelName: string
+  businessName: string
+}
+
 export interface chooseTableTableIntre {
   rowIndex: number
   tableNameEn: string
@@ -5,6 +10,7 @@ export interface chooseTableTableIntre {
   tableNameEnInitial: string
   tableNameCnInitial: string
   cols: chooseTableTableColIntre[]
+  fileConfig: fileConfigInter
 }
 
 export interface chooseTableTableColIntre {

@@ -21,6 +21,8 @@ export const funcTablePage = ({
   const initialStateDialogForm = structuredClone(toRaw(state.dialogForm))
   const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
 
+  const ifRequired = (key: string) => state.dFormRules[key] && (state.dFormRules[key] as any[]).some((item: any) => item.required)
+
   /**
    * 查询
    */
@@ -257,8 +259,8 @@ export const funcTablePage = ({
                   delids?: any[]
                 } = {}
   ) => {
-    if (config.one2More) {
-      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item[config.one2MoreConfig?.moreKey]).flat();
+    if (config.one2More && config.one2MoreConfig?.moreKey) {
+      const permissionids = delids || state.list.filter((item: any) => state.multipleSelection.map((item: any) => item.id).indexOf(item.id) > -1).map((item: any) => item[`${config.one2MoreConfig?.moreKey}`]).flat();
       if (permissionids.length === 0) {
         return ElMessage.warning('请至少选择 1 条数据。')
       }
@@ -376,7 +378,7 @@ export const funcTablePage = ({
   }
   // 删除
   const tDel = (id: any) => {
-    if (config.one2More) {
+    if (config.one2More && config.one2MoreConfig?.moreKey) {
       const fined: any = state.list.find((item: any) => item.id === id);
       const permissionids = fined && fined[config.one2MoreConfig?.moreKey] ? fined[config.one2MoreConfig?.moreKey] : []
       gDel({delids: permissionids})
@@ -432,6 +434,7 @@ export const funcTablePage = ({
     handleSelectionChange,
     pageChange,
     dfIns,
-    dfDel
+    dfDel,
+    ifRequired
   }
 }

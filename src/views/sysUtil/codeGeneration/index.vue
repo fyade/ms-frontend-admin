@@ -1,8 +1,3 @@
-<script lang="ts">
-export default {
-  name: 'sysUtil:codeGeneration'
-}
-</script>
 <script setup lang="ts">
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
@@ -10,10 +5,17 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Plus, Refresh } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
-import { getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
+import {
+  codeGenTableDel,
+  codeGenTableIns, codeGenTableInss,
+  codeGenTableSelMore,
+  codeGenTableSelOne,
+  codeGenTableSelPage, codeGenTableUpd, codeGenTableUpds, getDbInfo
+} from "@/api/module/sysUtil/codeGeneration.ts";
 import { chooseTableTableIntre } from "@/type/api/sysUtil/codeGeneration.ts";
+import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
 
 const state = reactive<State>({
   dialogType: {
@@ -28,7 +30,16 @@ const state = reactive<State>({
   //   parentId: final.DEFAULT_PARENT_ID,
   //   ...
   // }
-  dialogForm: {},
+  dialogForm: {
+    id: '',
+    tableName: '',
+    tableDescr: '',
+    entityName: '',
+    tableRemark: '',
+    moduleName: '',
+    businessName: '',
+    orderNum: final.DEFAULT_ORDER_NUM
+  },
   dialogForms: [],
   dialogForms_error: {},
   // 这个是弹出框表单校验
@@ -36,7 +47,14 @@ const state = reactive<State>({
   //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
-  dFormRules: {} as FormRules,
+  dFormRules: {
+    tableName: [{required: true, trigger: 'change'}],
+    tableDescr: [{required: true, trigger: 'change'}],
+    entityName: [{required: true, trigger: 'change'}],
+    moduleName: [{required: true, trigger: 'change'}],
+    businessName: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
+  } as FormRules,
   // 字典
   // 格式: {
   //   ...publicDict,
@@ -45,19 +63,26 @@ const state = reactive<State>({
   // }
   dict: {
     ...publicDict,
-    tableNameEn: '表名',
-    tableNameCn: '表名含义',
-    colName: '字段名',
-    colType: '字段类型',
-    ifMust: '是否必填',
-    sel: '查',
+    tableName: '表名称',
+    tableDescr: '表描述',
+    entityName: '实体类名',
+    tableRemark: '表备注',
+    moduleName: '生成模块名',
+    businessName: '生成业务名',
   },
   // 筛选表单
   // 格式: {
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    tableName: '',
+    tableDescr: '',
+    entityName: '',
+    tableRemark: '',
+    moduleName: '',
+    businessName: '',
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -80,20 +105,23 @@ const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: false, // 分页，默认true
+  pageQuery: true, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   /**
    * dialogVisible变化时的回调，可不传
    * @param visible 变化后的值
    */
   dialogVisibleCallback: (visible: boolean) => {
+    if (visible) {
+      dialogShowCallback()
+    }
   },
   /**
    * selectList回调，可不传
    */
   selectListCallback: () => {
   },
-  bulkOperation: false, // 弹出表单是否支持批量操作，默认false
+  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   /**
    * 修改单个前的查询的回调，可不传，one2More为true时调这个
    */
@@ -112,77 +140,56 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return getDbInfo(params)
+    return codeGenTableSelPage(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    // return func(id)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableSelOne(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    // return func(id)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableSelMore(ids)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableUpd(obj)
   },
   /**
    * 新增多个
    * @param objs
    */
   insertMore: (objs: any[]) => {
-    // return func(objs)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableInss(objs)
   },
   /**
    * 修改多个
    * @param objs
    */
   updateMore: (objs: any[]) => {
-    // return func(objs)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableUpds(objs)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    // return func(...ids)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
+    return codeGenTableDel(ids)
   }
 }
 
@@ -202,7 +209,8 @@ const {
   handleSelectionChange,
   pageChange,
   dfIns,
-  dfDel
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
@@ -218,86 +226,51 @@ const {
   func
 })
 
-const cgDialogVisible = ref(false)
-const selectTable = reactive<chooseTableTableIntre>({
-  rowIndex: -1,
-  tableNameEn: '',
-  tableNameCn: '',
-  tableNameEnInitial: '',
-  tableNameCnInitial: '',
-  cols: []
-})
-const cg = (rowId: any) => {
-  const row: any = state.list.find((item: any) => item.id === rowId)
-  Object.keys(selectTable).forEach(key => {
-    selectTable[key] = row[key]
+const tablesList = ref<chooseTableTableIntre[]>([])
+const dialogShowCallback = () => {
+  tablesList.value = []
+  getDbInfo().then(({res}) => {
+    tablesList.value = res.data
   })
-  cgDialogVisible.value = true
+}
+const tableNameChange = (val: string) => {
+  const table = tablesList.value.find(item => item.tableNameEn === val)
+  if (table) {
+    state.dialogForm['tableDescr'] = table.tableNameCn
+  } else {
+    state.dialogForm['tableDescr'] = ''
+  }
+}
+const tableNameChange2 = ($index: number) => {
+  const table = tablesList.value.find(item => item.tableNameEn === (state.dialogForms as any[])[$index]['tableName'])
+  if (table) {
+    (state.dialogForms as any[])[$index]['tableDescr'] = table.tableNameCn
+  } else {
+    (state.dialogForms as any[])[$index]['tableDescr'] = ''
+  }
+}
+
+const selectTableId = ref<any>()
+const drawer = ref(false)
+const setColumnInfo = (rowid: number) => {
+  const row = state.list.find((item: any) => item.id === rowid)
+  if (!row) {
+    return
+  }
+  selectTableId.value = rowid
+  drawer.value = true
 }
 </script>
 
 <template>
-  <!--代码生成细节弹框-->
-  <el-dialog
-      :width="'calc(100% - 50px)'"
-      v-model="cgDialogVisible"
-      title="代码生成配置"
-      draggable
-      append-to-body
+  <el-drawer
+      v-model="drawer"
+      :size="CONFIG.drawer_size"
+      destroy-on-close
+      title="列字段设置"
   >
-    <!--表格表单，放每个字段的配置-->
-    <el-table
-        style="width: 100%"
-        :data="selectTable.cols"
-    >
-      <el-table-column type="index" width="50">
-        <template #header>
-          #
-        </template>
-      </el-table-column>
-      <!--在此下方添加表格列-->
-      <el-table-column prop="colName" :label="state.dict['colName']" width="200">
-        <template #default="{$index}">
-          <div :class="state.dialogForms_error?.[`${$index}-colName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-            <el-input disabled v-model="selectTable.cols[$index]['colName']" :placeholder="state.dict['colName']"/>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="colType" :label="state.dict['colType']" width="200">
-        <template #default="{$index}">
-          <div :class="state.dialogForms_error?.[`${$index}-colType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-            <el-input disabled v-model="selectTable.cols[$index]['colType']" :placeholder="state.dict['colType']"/>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="ifMust" :label="state.dict['ifMust']" width="100">
-        <template #default="{$index}">
-          <div :class="state.dialogForms_error?.[`${$index}-ifMust`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-            <el-switch disabled v-model="selectTable.cols[$index]['ifMust']" :placeholder="state.dict['ifMust']"/>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="" :label="state.dict['']" width="100">
-        <template #default="{$index}">
-          <div :class="state.dialogForms_error?.[`${$index}-`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-            <el-input disabled v-model="selectTable.cols[$index]['']" :placeholder="state.dict['']"/>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="" :label="state.dict['']" width="100">
-        <template #default="{$index}">
-          <div :class="state.dialogForms_error?.[`${$index}-`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-            <el-input disabled v-model="selectTable.cols[$index]['']" :placeholder="state.dict['']"/>
-          </div>
-        </template>
-      </el-table-column>
-      <!--在此上方添加表格列-->
-    </el-table>
-
-    <!--接口设置-->
-    <!--文件路径设置-->
-    <!--导出按钮-->
-  </el-dialog>
+    <SetColumn :table-id="selectTableId"/>
+  </el-drawer>
 
   <!--弹框-->
   <el-dialog
@@ -331,9 +304,58 @@ const cg = (rowId: any) => {
         v-focus
         -->
         <!--在此下方添加表单项-->
-        <!--<el-form-item :label="state.dict['']" prop="">-->
-        <!--  <el-input v-model="state.dialogForm['']" :placeholder="state.dict['']"/>-->
-        <!--</el-form-item>-->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['tableName']" prop="tableName">
+              <!--<el-input v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']"/>-->
+              <el-select v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']" clearable
+                         filterable @change="tableNameChange">
+                <el-option
+                    v-for="item in tablesList"
+                    :key="item.tableNameEn"
+                    :label="item.tableNameEn"
+                    :value="item.tableNameEn"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['tableDescr']" prop="tableDescr">
+              <el-input disabled v-model="state.dialogForm['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['entityName']" prop="entityName">
+              <el-input v-model="state.dialogForm['entityName']" :placeholder="state.dict['entityName']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" :placeholder="state.dict['orderNum']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['businessName']" prop="businessName">
+              <el-input v-model="state.dialogForm['businessName']" :placeholder="state.dict['businessName']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['moduleName']" prop="moduleName">
+              <el-input v-model="state.dialogForm['moduleName']" :placeholder="state.dict['moduleName']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['tableRemark']" prop="tableRemark">
+              <el-input v-model="state.dialogForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!--在此上方添加表单项-->
         <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
         <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
@@ -371,6 +393,9 @@ const cg = (rowId: any) => {
             </template>
           </el-table-column>
           <!--<el-table-column prop="" :label="state.dict['']" width="300">-->
+          <!--  <template #header>-->
+          <!--    <span :class="ifRequired('')?'tp-table-header-required':''">{{ state.dict[''] }}</span>-->
+          <!--  </template>-->
           <!--  <template #default="{$index}">-->
           <!--    <div :class="state.dialogForms_error?.[`${$index}-`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
           <!--      <el-input v-model="state.dialogForms[$index]['']" :placeholder="state.dict['']"/>-->
@@ -378,6 +403,102 @@ const cg = (rowId: any) => {
           <!--  </template>-->
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
+          <el-table-column prop="tableName" :label="state.dict['tableName']" width="300">
+            <template #header>
+              <span :class="ifRequired('tableName')?'tp-table-header-required':''">{{ state.dict['tableName'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-tableName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-input v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"/>-->
+                <el-select v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"
+                           clearable filterable @change="tableNameChange2($index)">
+                  <el-option
+                      v-for="item in tablesList"
+                      :key="item.tableNameEn"
+                      :label="item.tableNameEn"
+                      :value="item.tableNameEn"
+                  />
+                </el-select>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tableDescr" :label="state.dict['tableDescr']" width="300">
+            <template #header>
+              <span :class="ifRequired('tableDescr')?'tp-table-header-required':''">{{
+                  state.dict['tableDescr']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-tableDescr`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input disabled v-model="state.dialogForms[$index]['tableDescr']"
+                          :placeholder="state.dict['tableDescr']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="entityName" :label="state.dict['entityName']" width="300">
+            <template #header>
+              <span :class="ifRequired('entityName')?'tp-table-header-required':''">{{
+                  state.dict['entityName']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-entityName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['entityName']" :placeholder="state.dict['entityName']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="200">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" :placeholder="state.dict['orderNum']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="300">
+            <template #header>
+              <span :class="ifRequired('moduleName')?'tp-table-header-required':''">{{
+                  state.dict['moduleName']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-moduleName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['moduleName']" :placeholder="state.dict['moduleName']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="businessName" :label="state.dict['businessName']" width="300">
+            <template #header>
+              <span :class="ifRequired('businessName')?'tp-table-header-required':''">{{
+                  state.dict['businessName']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-businessName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['businessName']"
+                          :placeholder="state.dict['businessName']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tableRemark" :label="state.dict['tableRemark']" width="300">
+            <template #header>
+              <span :class="ifRequired('tableRemark')?'tp-table-header-required':''">{{
+                  state.dict['tableRemark']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-tableRemark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['tableRemark']" :placeholder="state.dict['tableRemark']"/>
+              </div>
+            </template>
+          </el-table-column>
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">
@@ -408,9 +529,24 @@ const cg = (rowId: any) => {
       @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
+    <el-form-item :label="state.dict['tableName']" prop="tableName">
+      <el-input v-model="state.filterForm['tableName']" :placeholder="state.dict['tableName']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['tableDescr']" prop="tableDescr">
+      <el-input v-model="state.filterForm['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['entityName']" prop="entityName">
+      <el-input v-model="state.filterForm['entityName']" :placeholder="state.dict['entityName']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['tableRemark']" prop="tableRemark">
+      <el-input v-model="state.filterForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['moduleName']" prop="moduleName">
+      <el-input v-model="state.filterForm['moduleName']" :placeholder="state.dict['moduleName']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['businessName']" prop="businessName">
+      <el-input v-model="state.filterForm['businessName']" :placeholder="state.dict['businessName']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -421,12 +557,12 @@ const cg = (rowId: any) => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <!--<el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>-->
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
-    <!--</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
-    <!--</el-button>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新表</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增表</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改表
+    </el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除表
+    </el-button>
     <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
     <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     <!--</el-button-group>-->
@@ -448,12 +584,17 @@ const cg = (rowId: any) => {
       :data="state.list"
       @selection-change="handleSelectionChange"
   >
-    <!--<el-table-column fixed type="selection" width="55"/>-->
+    <el-table-column fixed type="selection" width="55"/>
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="tableNameEn" :label="state.dict['tableNameEn']" width="240"/>
-    <el-table-column prop="tableNameCn" :label="state.dict['tableNameCn']" width="240"/>
+    <el-table-column prop="tableName" :label="state.dict['tableName']" width="150"/>
+    <el-table-column prop="tableDescr" :label="state.dict['tableDescr']" width="150"/>
+    <el-table-column prop="entityName" :label="state.dict['entityName']" width="120"/>
+    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
+    <el-table-column prop="businessName" :label="state.dict['businessName']" width="120"/>
+    <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="120"/>
+    <el-table-column prop="tableRemark" :label="state.dict['tableRemark']" width="150"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
     <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
@@ -463,15 +604,15 @@ const cg = (rowId: any) => {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="cg(row.id)">选择</el-button>
-        <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
-        <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
+        <el-button link type="primary" size="small" @click="tUpd(row.id)" :icon="Edit">修改</el-button>
+        <el-button link type="primary" size="small" @click="setColumnInfo(row.id)" :icon="Edit">列字段设置</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)" :icon="Delete">删除</el-button>
       </template>
     </el-table-column>
-    <!--<template #append>-->
-    <!--  <span>此表格的多选<span-->
-    <!--      class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>-->
-    <!--</template>-->
+    <template #append>
+      <span>此表格的多选<span
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+    </template>
   </el-table>
 
   <!--分页-->

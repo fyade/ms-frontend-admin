@@ -124,7 +124,7 @@ const func: t_FuncMap = {
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    // return func(id)
+    // return func(ids)
     return new Promise((resolve, reject) => {
       reject()
     })
@@ -174,7 +174,7 @@ const func: t_FuncMap = {
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    // return func(...ids)
+    // return func(ids)
     return new Promise((resolve, reject) => {
       reject()
     })
@@ -197,7 +197,8 @@ const {
   handleSelectionChange,
   pageChange,
   dfIns,
-  dfDel
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
@@ -286,14 +287,17 @@ const {
               #
             </template>
           </el-table-column>
+          <!--在此下方添加表格列-->
           <!--<el-table-column prop="" :label="state.dict['']" width="300">-->
+          <!--  <template #header>-->
+          <!--    <span :class="ifRequired('')?'tp-table-header-required':''">{{ state.dict[''] }}</span>-->
+          <!--  </template>-->
           <!--  <template #default="{$index}">-->
           <!--    <div :class="state.dialogForms_error?.[`${$index}-`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
           <!--      <el-input v-model="state.dialogForms[$index]['']" :placeholder="state.dict['']"/>-->
           <!--    </div>-->
           <!--  </template>-->
           <!--</el-table-column>-->
-          <!--在此下方添加表格列-->
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">

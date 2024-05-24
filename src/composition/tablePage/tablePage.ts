@@ -21,6 +21,8 @@ export const funcTablePage = ({
   const initialStateDialogForm = structuredClone(toRaw(state.dialogForm))
   const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
 
+  const ifRequired = (key: string) => state.dFormRules[key] && (state.dFormRules[key] as any[]).some((item: any) => item.required)
+
   /**
    * 查询
    */
@@ -386,6 +388,7 @@ export const funcTablePage = ({
     handleSelectionChange,
     pageChange,
     dfIns,
-    dfDel
+    dfDel,
+    ifRequired
   }
 }
