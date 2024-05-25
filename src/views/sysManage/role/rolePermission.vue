@@ -408,7 +408,6 @@ const checked2change = () => {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       v-loading="tableLoadingRef"
       :data="state.list"
       @selection-change="handleSelectionChange"

@@ -505,7 +505,6 @@ const expendAll = () => {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       v-loading="tableLoadingRef"
       :data="tabledata2"
       :expand-row-keys="expandRowKeys"

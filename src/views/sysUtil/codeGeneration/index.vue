@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sysUtil:codeGeneration'
+}
+</script>
 <script setup lang="ts">
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
@@ -112,9 +117,6 @@ const config: t_config = reactive({
    * @param visible 变化后的值
    */
   dialogVisibleCallback: (visible: boolean) => {
-    if (visible) {
-      dialogShowCallback()
-    }
   },
   /**
    * selectList回调，可不传
@@ -227,12 +229,11 @@ const {
 })
 
 const tablesList = ref<chooseTableTableIntre[]>([])
-const dialogShowCallback = () => {
-  tablesList.value = []
-  getDbInfo().then(({res}) => {
-    tablesList.value = res.data
-  })
-}
+tablesList.value = []
+getDbInfo().then(({res}) => {
+  tablesList.value = res.data
+})
+
 const tableNameChange = (val: string) => {
   const table = tablesList.value.find(item => item.tableNameEn === val)
   if (table) {
@@ -251,13 +252,15 @@ const tableNameChange2 = ($index: number) => {
 }
 
 const selectTableId = ref<any>()
+const selectTableNameEn = ref<any>()
 const drawer = ref(false)
 const setColumnInfo = (rowid: number) => {
-  const row = state.list.find((item: any) => item.id === rowid)
+  const row: any = state.list.find((item: any) => item.id === rowid)
   if (!row) {
     return
   }
   selectTableId.value = rowid
+  selectTableNameEn.value = row.tableName
   drawer.value = true
 }
 </script>
@@ -269,12 +272,15 @@ const setColumnInfo = (rowid: number) => {
       destroy-on-close
       title="列字段设置"
   >
-    <SetColumn :table-id="selectTableId"/>
+    <SetColumn
+        :table-id="selectTableId"
+        :table-name-en="selectTableNameEn"
+    />
   </el-drawer>
 
   <!--弹框-->
   <el-dialog
-      :width="activeTabName===final.more ? 'calc(100% - 50px)' : CONFIG.dialog_width"
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -383,7 +389,6 @@ const setColumnInfo = (rowid: number) => {
           v-loading="dialogLoadingRef"
       >
         <el-table
-            style="width: 100%"
             :data="state.dialogForms"
             v-if="state.dialogForms"
         >
@@ -579,7 +584,6 @@ const setColumnInfo = (rowid: number) => {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       v-loading="tableLoadingRef"
       :data="state.list"
       @selection-change="handleSelectionChange"
@@ -604,9 +608,9 @@ const setColumnInfo = (rowid: number) => {
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tUpd(row.id)" :icon="Edit">修改</el-button>
-        <el-button link type="primary" size="small" @click="setColumnInfo(row.id)" :icon="Edit">列字段设置</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)" :icon="Delete">删除</el-button>
+        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改表</el-button>
+        <el-button link type="primary" size="small" @click="setColumnInfo(row.id)">列字段设置</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>

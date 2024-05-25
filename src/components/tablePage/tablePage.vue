@@ -213,7 +213,7 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      :width="activeTabName===final.more ? 'calc(100% - 50px)' : CONFIG.dialog_width"
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -273,7 +273,6 @@ const {
           v-loading="dialogLoadingRef"
       >
         <el-table
-            style="width: 100%"
             :data="state.dialogForms"
             v-if="state.dialogForms"
         >
@@ -358,7 +357,6 @@ const {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       v-loading="tableLoadingRef"
       :data="state.list"
       @selection-change="handleSelectionChange"

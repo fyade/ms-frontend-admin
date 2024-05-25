@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { reactive, ref, toRaw } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -12,13 +12,24 @@ import {
   codeGenColumnIns, codeGenColumnInss,
   codeGenColumnSelMore,
   codeGenColumnSelOne,
-  codeGenColumnSelPage, codeGenColumnUpd, codeGenColumnUpds
+  codeGenColumnSelPage, codeGenColumnUpd, codeGenColumnUpds, getDbInfo
 } from "@/api/module/sysUtil/codeGeneration.ts";
+import {
+  chooseTableTableColIntre,
+  chooseTableTableColIntreDict,
+  chooseTableTableIntre
+} from "@/type/api/sysUtil/codeGeneration.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
+import { toCamelCase } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
   tableId: {
     require: true,
     type: Number
+  },
+  tableNameEn: {
+    require: true,
+    type: String
   }
 })
 
@@ -43,11 +54,11 @@ const state = reactive<State>({
     mysqlType: '',
     tsType: '',
     tsName: '',
-    ifIns: '',
-    ifUpd: '',
-    ifSelOne: '',
-    ifSelMore: '',
-    ifRequired: '',
+    ifIns: final.N,
+    ifUpd: final.N,
+    ifSelOne: final.N,
+    ifSelMore: final.N,
+    ifRequired: final.N,
     formType: '',
     selType: '',
     orderNum: final.DEFAULT_ORDER_NUM
@@ -70,8 +81,8 @@ const state = reactive<State>({
     ifSelOne: [{required: true, trigger: 'change'}],
     ifSelMore: [{required: true, trigger: 'change'}],
     ifRequired: [{required: true, trigger: 'change'}],
-    selType: [{required: true, trigger: 'change'}],
     formType: [{required: true, trigger: 'change'}],
+    selType: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -87,13 +98,13 @@ const state = reactive<State>({
     mysqlType: 'mysql类型',
     tsType: 'ts类型',
     tsName: 'ts属性',
-    ifIns: '是否增',
-    ifUpd: '是否改',
-    ifSelOne: '是否查1',
-    ifSelMore: '是否查n',
-    ifRequired: '是否必填',
-    selType: '查询方式',
+    ifIns: '增',
+    ifUpd: '改',
+    ifSelOne: '查1',
+    ifSelMore: '查n',
+    ifRequired: '必填',
     formType: '表单类型',
+    selType: '查询方式',
   },
   // 筛选表单
   // 格式: {
@@ -106,8 +117,8 @@ const state = reactive<State>({
     mysqlType: '',
     tsType: '',
     tsName: '',
-    selType: '',
     formType: '',
+    selType: '',
   },
   list: [],
   multipleSelection: [],
@@ -250,12 +261,100 @@ const {
   activeTabName,
   func
 })
+
+const tsTypeDicts = [
+  {label: 'string', value: 'string'},
+  {label: 'number', value: 'number'},
+]
+const formTypeDicts = [
+  {label: '文本框', value: 'input'},
+  {label: '文本框-数字', value: 'inputNumber'},
+  {label: '文本域', value: 'textarea'},
+  {label: '单选框', value: 'radio'},
+  {label: '复选框', value: 'checkbox'},
+]
+const selTypeDicts = [
+  {label: '=', value: 'equals'},
+  {label: '%=%', value: 'like'},
+]
+
+const tablesList = ref<chooseTableTableIntre[]>([])
+tablesList.value = []
+getDbInfo().then(({res}) => {
+  tablesList.value = res.data
+})
+
+const dialog2Visible = ref(false)
+const tableCols = ref<chooseTableTableColIntre[]>([])
+const tableColsDict = chooseTableTableColIntreDict
+const multipleSelection1 = ref([])
+const selCol = () => {
+  const selectTable = tablesList.value.find(item => item.tableNameEn === props.tableNameEn)
+  if (selectTable) {
+    tableCols.value = selectTable.cols
+  } else {
+    tableCols.value = []
+  }
+  dialog2Visible.value = true
+}
+const d1Can = () => {
+  dialog2Visible.value = false
+}
+const d1Con = () => {
+  if (multipleSelection1.value.length > 1) {
+    activeTabName.value = final.more
+  }
+  if (activeTabName.value === final.more) {
+    state.dialogForms = []
+    multipleSelection1.value.forEach((row: any) => {
+      const obj: any = deepClone(toRaw(state.dialogForm))
+      obj.colName = row.colName
+      obj.mysqlType = row.colType
+      obj.tsType = ['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value
+      obj.tsName = toCamelCase(row.colName)
+      obj.ifRequired = row.ifMust ? final.Y : final.N
+      obj.formType = formTypeDicts.find(item => item.value === 'input')?.value
+      obj.selType = selTypeDicts.find(item => item.value === 'like')?.value
+      state.dialogForms && state.dialogForms.push(obj)
+    })
+  }
+  if (activeTabName.value === final.one) {
+  }
+  dialog2Visible.value = false
+}
+const handleSelectionChange1 = (val: any) => {
+  multipleSelection1.value = val
+}
 </script>
 
 <template>
   <!--弹框-->
   <el-dialog
-      :width="activeTabName===final.more ? 'calc(100% - 50px)' : CONFIG.dialog_width"
+      :width="CONFIG.dialog_width_wider"
+      v-model="dialog2Visible"
+      title="选择列"
+      draggable
+      append-to-body
+  >
+    <el-table :data="tableCols" @selection-change="handleSelectionChange1">
+      <el-table-column fixed type="selection" width="55"/>
+      <el-table-column prop="colName" :label="tableColsDict['colName']" width="180"/>
+      <el-table-column prop="colType" :label="tableColsDict['colType']" width="180"/>
+      <el-table-column prop="ifMust" :label="tableColsDict['ifMust']" width="180"/>
+      <el-table-column prop="colRemark" :label="tableColsDict['colRemark']" width="360"/>
+      <el-table-column prop="colInfo" :label="tableColsDict['colInfo']" width="360"/>
+    </el-table>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="d1Can">取消</el-button>
+        <el-button type="primary" @click="d1Con">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!--弹框-->
+  <el-dialog
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
@@ -288,7 +387,11 @@ const {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['colName']" prop="colName">
-              <el-input v-model="state.dialogForm['colName']" :placeholder="state.dict['colName']"/>
+              <el-input disabled v-model="state.dialogForm['colName']" :placeholder="state.dict['colName']">
+                <template #append>
+                  <el-button @click="selCol">选择</el-button>
+                </template>
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -300,12 +403,14 @@ const {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['mysqlType']" prop="mysqlType">
-              <el-input v-model="state.dialogForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+              <el-input disabled v-model="state.dialogForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['tsType']" prop="tsType">
-              <el-input v-model="state.dialogForm['tsType']" :placeholder="state.dict['tsType']"/>
+              <el-select v-model="state.dialogForm['tsType']" :placeholder="state.dict['tsType']" clearable>
+                <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -317,43 +422,62 @@ const {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifIns']" prop="ifIns">
-              <el-input v-model="state.dialogForm['ifIns']" :placeholder="state.dict['ifIns']"/>
+              <el-radio-group v-model="state.dialogForm['ifIns']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifUpd']" prop="ifUpd">
-              <el-input v-model="state.dialogForm['ifUpd']" :placeholder="state.dict['ifUpd']"/>
+              <el-radio-group v-model="state.dialogForm['ifUpd']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifSelOne']" prop="ifSelOne">
-              <el-input v-model="state.dialogForm['ifSelOne']" :placeholder="state.dict['ifSelOne']"/>
+              <el-radio-group v-model="state.dialogForm['ifSelOne']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifSelMore']" prop="ifSelMore">
-              <el-input v-model="state.dialogForm['ifSelMore']" :placeholder="state.dict['ifSelMore']"/>
+              <el-radio-group v-model="state.dialogForm['ifSelMore']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifRequired']" prop="ifRequired">
-              <el-input v-model="state.dialogForm['ifRequired']" :placeholder="state.dict['ifRequired']"/>
+              <el-radio-group v-model="state.dialogForm['ifRequired']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="state.dict['selType']" prop="selType">
-              <el-input v-model="state.dialogForm['selType']" :placeholder="state.dict['selType']"/>
+            <el-form-item :label="state.dict['formType']" prop="formType">
+              <el-select v-model="state.dialogForm['formType']" :placeholder="state.dict['formType']" clearable>
+                <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="state.dict['formType']" prop="formType">
-              <el-input v-model="state.dialogForm['formType']" :placeholder="state.dict['formType']"/>
+            <el-form-item :label="state.dict['selType']" prop="selType">
+              <el-select v-model="state.dialogForm['selType']" :placeholder="state.dict['selType']" clearable>
+                <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -391,27 +515,30 @@ const {
           v-loading="dialogLoadingRef"
       >
         <el-table
-            style="width: 100%"
             :data="state.dialogForms"
             v-if="state.dialogForms"
         >
-          <el-table-column type="index" width="50">
+          <el-table-column fixed type="index" width="50">
             <template #header>
               #
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <el-table-column prop="colName" :label="state.dict['colName']" width="300">
+          <el-table-column fixed prop="colName" :label="state.dict['colName']" width="200">
             <template #header>
               <span :class="ifRequired('colName')?'tp-table-header-required':''">{{ state.dict['colName'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-colName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['colName']" :placeholder="state.dict['colName']"/>
+                <el-input disabled v-model="state.dialogForms[$index]['colName']" :placeholder="state.dict['colName']">
+                  <template #append>
+                    <el-button @click="selCol">选择</el-button>
+                  </template>
+                </el-input>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="colDescr" :label="state.dict['colDescr']" width="300">
+          <el-table-column fixed prop="colDescr" :label="state.dict['colDescr']" width="200">
             <template #header>
               <span :class="ifRequired('colDescr')?'tp-table-header-required':''">{{ state.dict['colDescr'] }}</span>
             </template>
@@ -421,27 +548,30 @@ const {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="mysqlType" :label="state.dict['mysqlType']" width="300">
+          <el-table-column prop="mysqlType" :label="state.dict['mysqlType']" width="200">
             <template #header>
               <span :class="ifRequired('mysqlType')?'tp-table-header-required':''">{{ state.dict['mysqlType'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-mysqlType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+                <el-input disabled v-model="state.dialogForms[$index]['mysqlType']"
+                          :placeholder="state.dict['mysqlType']"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="tsType" :label="state.dict['tsType']" width="300">
+          <el-table-column prop="tsType" :label="state.dict['tsType']" width="200">
             <template #header>
               <span :class="ifRequired('tsType')?'tp-table-header-required':''">{{ state.dict['tsType'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-tsType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['tsType']" :placeholder="state.dict['tsType']"/>
+                <el-select v-model="state.dialogForms[$index]['tsType']" :placeholder="state.dict['tsType']" clearable>
+                  <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+                </el-select>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="tsName" :label="state.dict['tsName']" width="300">
+          <el-table-column prop="tsName" :label="state.dict['tsName']" width="200">
             <template #header>
               <span :class="ifRequired('tsName')?'tp-table-header-required':''">{{ state.dict['tsName'] }}</span>
             </template>
@@ -451,77 +581,89 @@ const {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="300">
+          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="70" align="center">
             <template #header>
               <span :class="ifRequired('ifIns')?'tp-table-header-required':''">{{ state.dict['ifIns'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifIns`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['ifIns']" :placeholder="state.dict['ifIns']"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifIns']" :true-label="final.Y" :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="300">
+          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="70" align="center">
             <template #header>
               <span :class="ifRequired('ifUpd')?'tp-table-header-required':''">{{ state.dict['ifUpd'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifUpd`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['ifUpd']" :placeholder="state.dict['ifUpd']"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifUpd']" :true-label="final.Y" :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="300">
+          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="70" align="center">
             <template #header>
               <span :class="ifRequired('ifSelOne')?'tp-table-header-required':''">{{ state.dict['ifSelOne'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelOne`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['ifSelOne']" :placeholder="state.dict['ifSelOne']"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifSelOne']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="300">
+          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="70" align="center">
             <template #header>
               <span :class="ifRequired('ifSelMore')?'tp-table-header-required':''">{{ state.dict['ifSelMore'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelMore`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['ifSelMore']" :placeholder="state.dict['ifSelMore']"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifSelMore']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="300">
+          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="70" align="center">
             <template #header>
-              <span :class="ifRequired('ifRequired')?'tp-table-header-required':''">{{ state.dict['ifRequired'] }}</span>
+              <span :class="ifRequired('ifRequired')?'tp-table-header-required':''">
+                {{ state.dict['ifRequired'] }}
+              </span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ifRequired`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['ifRequired']" :placeholder="state.dict['ifRequired']"/>
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-ifRequired`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['ifRequired']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="formType" :label="state.dict['formType']" width="300">
+          <el-table-column prop="formType" :label="state.dict['formType']" width="200">
             <template #header>
               <span :class="ifRequired('formType')?'tp-table-header-required':''">{{ state.dict['formType'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-formType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['formType']" :placeholder="state.dict['formType']"/>
+                <el-select v-model="state.dialogForms[$index]['formType']" :placeholder="state.dict['formType']"
+                           clearable>
+                  <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+                </el-select>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="selType" :label="state.dict['selType']" width="300">
+          <el-table-column prop="selType" :label="state.dict['selType']" width="200">
             <template #header>
               <span :class="ifRequired('selType')?'tp-table-header-required':''">{{ state.dict['selType'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-selType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['selType']" :placeholder="state.dict['selType']"/>
+                <el-select v-model="state.dialogForms[$index]['selType']" :placeholder="state.dict['selType']"
+                           clearable>
+                  <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+                </el-select>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="200">
             <template #header>
               <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
             </template>
@@ -571,16 +713,22 @@ const {
       <el-input v-model="state.filterForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
     </el-form-item>
     <el-form-item :label="state.dict['tsType']" prop="tsType">
-      <el-input v-model="state.filterForm['tsType']" :placeholder="state.dict['tsType']"/>
+      <el-select v-model="state.filterForm['tsType']" :placeholder="state.dict['tsType']" clearable>
+        <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+      </el-select>
     </el-form-item>
     <el-form-item :label="state.dict['tsName']" prop="tsName">
       <el-input v-model="state.filterForm['tsName']" :placeholder="state.dict['tsName']"/>
     </el-form-item>
-    <el-form-item :label="state.dict['selType']" prop="selType">
-      <el-input v-model="state.filterForm['selType']" :placeholder="state.dict['selType']"/>
-    </el-form-item>
     <el-form-item :label="state.dict['formType']" prop="formType">
-      <el-input v-model="state.filterForm['formType']" :placeholder="state.dict['formType']"/>
+      <el-select v-model="state.filterForm['formType']" :placeholder="state.dict['formType']" clearable>
+        <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="state.dict['selType']" prop="selType">
+      <el-select v-model="state.filterForm['selType']" :placeholder="state.dict['selType']" clearable>
+        <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
+      </el-select>
     </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
@@ -614,7 +762,6 @@ const {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       v-loading="tableLoadingRef"
       :data="state.list"
       @selection-change="handleSelectionChange"
@@ -633,8 +780,8 @@ const {
     <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="120"/>
     <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="120"/>
     <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="120"/>
-    <el-table-column prop="selType" :label="state.dict['selType']" width="120"/>
     <el-table-column prop="formType" :label="state.dict['formType']" width="120"/>
+    <el-table-column prop="selType" :label="state.dict['selType']" width="120"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->

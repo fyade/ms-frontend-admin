@@ -3,8 +3,9 @@ import { INS, MORE, N, ONE, UPD, Y } from '@/type/utils/base.ts'
 
 export const CONFIG = {
   dialog_width: '800px',
+  dialog_width_wider: 'calc(100% - 50px)',
   dialog_form_label_width: '120px',
-  drawer_size: '80%',
+  drawer_size: 'calc(100% - 200px)',
   icon_white: '#ffffff',
   icon_black: '#000000'
 }

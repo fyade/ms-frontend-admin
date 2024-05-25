@@ -372,7 +372,6 @@ const selectAll = (val: any[]) => {
 
   <!--数据表格-->
   <el-table
-      style="width: 100%"
       ref="multipleTable"
       v-loading="tableLoadingRef"
       :data="state.list"
