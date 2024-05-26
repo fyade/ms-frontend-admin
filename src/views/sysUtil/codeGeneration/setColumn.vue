@@ -17,7 +17,7 @@ import {
 import {
   chooseTableTableColIntre,
   chooseTableTableColIntreDict,
-  chooseTableTableIntre
+  chooseTableTableIntre, setColumnType
 } from "@/type/api/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { toCamelCase } from "@/utils/baseUtils.ts";
@@ -33,7 +33,7 @@ const props = defineProps({
   }
 })
 
-const state = reactive<State>({
+const state = reactive<State<setColumnType>>({
   dialogType: {
     value: '',
     label: ''
@@ -48,7 +48,7 @@ const state = reactive<State>({
   // }
   dialogForm: {
     id: '',
-    tableId: props.tableId,
+    tableId: props.tableId as number,
     colName: '',
     colDescr: '',
     mysqlType: '',
@@ -288,6 +288,9 @@ const dialog2Visible = ref(false)
 const tableCols = ref<chooseTableTableColIntre[]>([])
 const tableColsDict = chooseTableTableColIntreDict
 const multipleSelection1 = ref([])
+const adict = {
+  ...publicDict
+}
 const selCol = () => {
   const selectTable = tablesList.value.find(item => item.tableNameEn === props.tableNameEn)
   if (selectTable) {
@@ -309,9 +312,14 @@ const d1Con = () => {
     multipleSelection1.value.forEach((row: any) => {
       const obj: any = deepClone(toRaw(state.dialogForm))
       obj.colName = row.colName
+      obj.colDescr = adict[toCamelCase(row.colName)] || ''
       obj.mysqlType = row.colType
       obj.tsType = ['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value
       obj.tsName = toCamelCase(row.colName)
+      obj.ifIns = final.Y
+      obj.ifUpd = final.Y
+      obj.ifSelOne = final.Y
+      obj.ifSelMore = final.Y
       obj.ifRequired = row.ifMust ? final.Y : final.N
       obj.formType = formTypeDicts.find(item => item.value === 'input')?.value
       obj.selType = selTypeDicts.find(item => item.value === 'like')?.value
@@ -319,6 +327,19 @@ const d1Con = () => {
     })
   }
   if (activeTabName.value === final.one) {
+    const row: any = deepClone(toRaw(multipleSelection1.value[0]))
+    state.dialogForm.colName = row.colName
+    state.dialogForm.colDescr = adict[toCamelCase(row.colName)] || ''
+    state.dialogForm.mysqlType = row.colType
+    state.dialogForm.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) as string
+    state.dialogForm.tsName = toCamelCase(row.colName)
+    state.dialogForm.ifIns = final.Y
+    state.dialogForm.ifUpd = final.Y
+    state.dialogForm.ifSelOne = final.Y
+    state.dialogForm.ifSelMore = final.Y
+    state.dialogForm.ifRequired = row.ifMust ? final.Y : final.N
+    state.dialogForm.formType = formTypeDicts.find(item => item.value === 'input')?.value as string
+    state.dialogForm.selType = selTypeDicts.find(item => item.value === 'like')?.value as string
   }
   dialog2Visible.value = false
 }
@@ -742,7 +763,9 @@ const handleSelectionChange1 = (val: any) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新列</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增列</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改列
+    <el-button type="success" plain :icon="Edit"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
+               @click="gUpd">修改列
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除列
     </el-button>
@@ -773,15 +796,27 @@ const handleSelectionChange1 = (val: any) => {
     <el-table-column prop="colName" :label="state.dict['colName']" width="120"/>
     <el-table-column prop="colDescr" :label="state.dict['colDescr']" width="120"/>
     <el-table-column prop="mysqlType" :label="state.dict['mysqlType']" width="120"/>
-    <el-table-column prop="tsType" :label="state.dict['tsType']" width="120"/>
+    <el-table-column prop="tsType" :label="state.dict['tsType']" width="120">
+      <template #default="{row}">
+        {{ tsTypeDicts.find(item => item.value === row.tsType).label }}
+      </template>
+    </el-table-column>
     <el-table-column prop="tsName" :label="state.dict['tsName']" width="120"/>
     <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="120"/>
     <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="120"/>
     <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="120"/>
     <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="120"/>
     <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="120"/>
-    <el-table-column prop="formType" :label="state.dict['formType']" width="120"/>
-    <el-table-column prop="selType" :label="state.dict['selType']" width="120"/>
+    <el-table-column prop="formType" :label="state.dict['formType']" width="120">
+      <template #default="{row}">
+        {{ formTypeDicts.find(item => item.value === row.formType).label }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="selType" :label="state.dict['selType']" width="120">
+      <template #default="{row}">
+        {{ selTypeDicts.find(item => item.value === row.selType).label }}
+      </template>
+    </el-table-column>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->

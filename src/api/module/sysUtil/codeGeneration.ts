@@ -8,6 +8,20 @@ export function getDbInfo(params?: any) {
   })
 }
 
+export function genCode(id?: any) {
+  return request({
+    url: `/sys-util/code-generation/c/${id}`,
+    method: 'GET'
+  })
+}
+
+export function genCodeZip(id?: any) {
+  return request({
+    url: `/sys-util/code-generation/z/${id}`,
+    method: 'GET'
+  })
+}
+
 // ----- ----- ----- ----- table ----- ----- ----- -----
 export function codeGenTableSelPage(params: any) {
   return request({

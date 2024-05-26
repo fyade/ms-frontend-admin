@@ -1,3 +1,21 @@
+export type setColumnType = {
+  id: number | string,
+  tableId: number | string,
+  colName: string,
+  colDescr: string,
+  mysqlType: string,
+  tsType: string,
+  tsName: string,
+  ifIns: string,
+  ifUpd: string,
+  ifSelOne: string,
+  ifSelMore: string,
+  ifRequired: string,
+  formType: string,
+  selType: string,
+  orderNum: number
+};
+
 export interface fileConfigInter {
   modelName: string
   businessName: string

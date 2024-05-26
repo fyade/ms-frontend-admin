@@ -14,13 +14,20 @@ import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
 import {
   codeGenTableDel,
-  codeGenTableIns, codeGenTableInss,
+  codeGenTableIns,
+  codeGenTableInss,
   codeGenTableSelMore,
   codeGenTableSelOne,
-  codeGenTableSelPage, codeGenTableUpd, codeGenTableUpds, getDbInfo
+  codeGenTableSelPage,
+  codeGenTableUpd,
+  codeGenTableUpds,
+  genCode,
+  genCodeZip,
+  getDbInfo
 } from "@/api/module/sysUtil/codeGeneration.ts";
 import { chooseTableTableIntre } from "@/type/api/sysUtil/codeGeneration.ts";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
+import Tooltip from "@/components/tooltip/tooltip.vue";
 
 const state = reactive<State>({
   dialogType: {
@@ -263,9 +270,69 @@ const setColumnInfo = (rowid: number) => {
   selectTableNameEn.value = row.tableName
   drawer.value = true
 }
+
+const dialog3Visible = ref(false)
+const codeViewState = reactive({
+  fileNames: {},
+  filePaths: {},
+  codes: {}
+})
+const activeNameOfCodeView = ref('')
+const codeView = (rowId: any) => {
+  codeViewState.fileNames = {}
+  codeViewState.filePaths = {}
+  codeViewState.codes = {}
+  genCode(rowId).then(({res}) => {
+    Object.keys(codeViewState).forEach(key0 => {
+      Object.keys(res.data.cgRes[key0]).forEach(key1 => {
+        codeViewState[key0][key1] = res.data.cgRes[key0][key1]
+      })
+    })
+    dialog3Visible.value = true
+  })
+}
+const codeViewZip = (rowId: any) => {
+  genCodeZip(rowId).then(({res}) => {
+  })
+}
+const copyCode = async (key: string) => {
+  const code = codeViewState.codes[key]
+  await navigator.clipboard.writeText(code)
+  ElMessage.success('复制成功。')
+}
+const copyFileName = async (key: string) => {
+  const code = codeViewState.fileNames[key]
+  await navigator.clipboard.writeText(code)
+  ElMessage.success('复制成功。')
+}
 </script>
 
 <template>
+  <!--代码预览-->
+  <el-dialog
+      :width="CONFIG.dialog_width_wider"
+      v-model="dialog3Visible"
+      title="代码预览"
+      draggable
+      append-to-body
+  >
+    <el-tabs>
+      <el-tab-pane v-for="key in Object.keys(codeViewState.fileNames)" :label="codeViewState.fileNames[key]">
+        <div>文件路径：{{ codeViewState.filePaths[key] }}/{{ codeViewState.fileNames[key] }}</div>
+        <div>
+          <el-space wrap>
+            代码内容：
+            <el-button text bg @click="copyFileName(key)">复制文件名</el-button>
+            <el-button text bg @click="copyCode(key)">复制代码</el-button>
+          </el-space>
+          <pre>
+            {{ codeViewState.codes[key] }}
+          </pre>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </el-dialog>
+
   <el-drawer
       v-model="drawer"
       :size="CONFIG.drawer_size"
@@ -346,11 +413,21 @@ const setColumnInfo = (rowid: number) => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['businessName']" prop="businessName">
+              <template #label>
+                <Tooltip content="这里需使用小驼峰命名法。">
+                  {{ state.dict['businessName'] }}
+                </Tooltip>
+              </template>
               <el-input v-model="state.dialogForm['businessName']" :placeholder="state.dict['businessName']"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['moduleName']" prop="moduleName">
+              <template #label>
+                <Tooltip content="这里需使用小驼峰命名法。">
+                  {{ state.dict['moduleName'] }}
+                </Tooltip>
+              </template>
               <el-input v-model="state.dialogForm['moduleName']" :placeholder="state.dict['moduleName']"/>
             </el-form-item>
           </el-col>
@@ -564,7 +641,9 @@ const setColumnInfo = (rowid: number) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新表</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增表</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改表
+    <el-button type="success" plain :icon="Edit"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
+               @click="gUpd">修改表
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除表
     </el-button>
@@ -610,6 +689,8 @@ const setColumnInfo = (rowid: number) => {
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改表</el-button>
         <el-button link type="primary" size="small" @click="setColumnInfo(row.id)">列字段设置</el-button>
+        <el-button link type="primary" size="small" @click="codeView(row.id)">代码预览</el-button>
+        <!--<el-button link type="primary" size="small" @click="codeViewZip(row.id)">代码生成</el-button>-->
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
