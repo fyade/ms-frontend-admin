@@ -48,8 +48,8 @@ const state = reactive<State>({
     tableDescr: '',
     entityName: '',
     tableRemark: '',
-    moduleName: '',
     businessName: '',
+    moduleName: '',
     orderNum: final.DEFAULT_ORDER_NUM
   },
   dialogForms: [],
@@ -63,8 +63,8 @@ const state = reactive<State>({
     tableName: [{required: true, trigger: 'change'}],
     tableDescr: [{required: true, trigger: 'change'}],
     entityName: [{required: true, trigger: 'change'}],
-    moduleName: [{required: true, trigger: 'change'}],
     businessName: [{required: true, trigger: 'change'}],
+    moduleName: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -79,8 +79,8 @@ const state = reactive<State>({
     tableDescr: '表描述',
     entityName: '实体类名',
     tableRemark: '表备注',
-    moduleName: '生成模块名',
     businessName: '生成业务名',
+    moduleName: '生成模块名',
   },
   // 筛选表单
   // 格式: {
@@ -92,8 +92,8 @@ const state = reactive<State>({
     tableDescr: '',
     entityName: '',
     tableRemark: '',
-    moduleName: '',
     businessName: '',
+    moduleName: '',
   },
   list: [],
   multipleSelection: [],
@@ -627,11 +627,11 @@ const copyFileName = async (key: string) => {
     <el-form-item :label="state.dict['tableRemark']" prop="tableRemark">
       <el-input v-model="state.filterForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
     </el-form-item>
-    <el-form-item :label="state.dict['moduleName']" prop="moduleName">
-      <el-input v-model="state.filterForm['moduleName']" :placeholder="state.dict['moduleName']"/>
-    </el-form-item>
     <el-form-item :label="state.dict['businessName']" prop="businessName">
       <el-input v-model="state.filterForm['businessName']" :placeholder="state.dict['businessName']"/>
+    </el-form-item>
+    <el-form-item :label="state.dict['moduleName']" prop="moduleName">
+      <el-input v-model="state.filterForm['moduleName']" :placeholder="state.dict['moduleName']"/>
     </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
