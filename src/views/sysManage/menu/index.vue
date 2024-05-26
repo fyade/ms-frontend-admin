@@ -11,10 +11,19 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
 import { Sort, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
-import { menuDel, menuIns, menuSel, menuSelById, menuUpd } from "@/api/module/sysManage/menu.ts";
+import {
+  menuDel,
+  menuIns,
+  menuInss,
+  menuSelAll,
+  menuSelById,
+  menuSelByIds,
+  menuUpd,
+  menuUpds
+} from "@/api/module/sysManage/menu.ts";
 import Tooltip from "@/components/tooltip/tooltip.vue";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { finalT } from "@/type/utils/base.ts";
+import { finalT, MORE, ONE } from "@/type/utils/base.ts";
 import { useRouterStore } from "@/store/module/router.ts";
 
 const T_MENU = 'mm'
@@ -71,6 +80,8 @@ const state = reactive<State<DialogForm, DialogForm>>({
     perms: '',
     remark: ''
   },
+  dialogForms: [],
+  dialogForms_error: {},
   // 这个是弹出框表单校验
   // 格式: {
   //   name: [{ required: true, trigger: 'change' }],
@@ -83,7 +94,20 @@ const state = reactive<State<DialogForm, DialogForm>>({
   //   name: '名字',
   //   ...
   // }
-  dict: {},
+  dict: {
+    ...publicDict,
+    label: `菜单/组件名`,
+    type: '菜单类型',
+    path: '菜单路径',
+    parentId: '父级菜单',
+    component: '组件路径',
+    icon: '图标',
+    ifLink: '是否外链',
+    ifVisible: '是否显示',
+    ifDisabled: '是否禁用',
+    ifPublic: '是否公共接口',
+    perms: '权限标识',
+  },
   // 筛选表单
   // 格式: {
   //   name: '',
@@ -102,16 +126,40 @@ const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
+const dialogFormsRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
+const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
+  /**
+   * dialogVisible变化时的回调，可不传
+   * @param visible 变化后的值
+   */
+  dialogVisibleCallback: (visible: boolean) => {
+  },
+  /**
+   * selectList回调，可不传
+   */
+  selectListCallback: () => {
+  },
+  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为true时调这个
+   */
+  beforeUpdateOneCallback1: (res: any[]) => {
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为false时调这个
+   */
+  beforeUpdateOneCallback2: (res: any) => {
+  }
 })
 
 const func: t_FuncMap = {
@@ -120,7 +168,7 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return menuSel(params)
+    return menuSelAll(params)
   },
   /**
    * 查询单个
@@ -128,6 +176,13 @@ const func: t_FuncMap = {
    */
   selectById: (id: any) => {
     return menuSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return menuSelByIds(ids)
   },
   /**
    * 新增
@@ -142,6 +197,20 @@ const func: t_FuncMap = {
    */
   updateOne: (obj: any) => {
     return menuUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: any[]) => {
+    return menuInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: any[]) => {
+    return menuUpds(objs)
   },
   /**
    * 删除
@@ -166,17 +235,22 @@ const {
   tUpd,
   tDel,
   handleSelectionChange,
-  pageChange
+  pageChange,
+  dfIns,
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
   state2,
   dialogFormRef,
+  dialogFormsRef,
   filterFormRef,
   dialogVisible,
   dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
+  activeTabName,
   func
 })
 
@@ -187,7 +261,11 @@ const menuTypeDict = {
   [T_Inter]: '接口'
 };
 const canChooseTypes = ref<tType[]>([])
-watch(() => state.dialogForm.type, () => {
+watch(() => [state.dialogForm.type, activeTabName.value], () => {
+  if (activeTabName.value === final.more) {
+    state.dFormRules = {}
+    return
+  }
   state.dFormRules = {
     type: [{required: true, trigger: 'change'}],
     label: [{required: true, trigger: 'change'}],
@@ -212,24 +290,13 @@ watch(() => state.dialogForm.type, () => {
       ifPublic: [{required: true, trigger: 'change'}],
     }
   }
-  state.dict = {
-    ...publicDict,
-    label: `${menuTypeDict[state.dialogForm.type]}名`,
-    type: '菜单类型',
-    path: '菜单路径',
-    parentId: '父级菜单',
-    component: '组件路径',
-    icon: '图标',
-    ifLink: '是否外链',
-    ifVisible: '是否显示',
-    ifDisabled: '是否禁用',
-    ifPublic: '是否公共接口',
-    perms: '权限标识',
-  }
 }, {
   immediate: true,
 })
-watch(() => state.dialogForm.parentId, () => {
+watch(() => [state.dialogForm.parentId, activeTabName.value], () => {
+  if (activeTabName.value === final.more) {
+    return
+  }
   if (state.dialogForm.parentId === null) {
     state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   }
@@ -285,170 +352,382 @@ const expendAll = () => {
 <template>
   <!--弹框-->
   <el-dialog
-      :width="CONFIG.dialog_width"
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
       append-to-body
   >
-    <el-form
-        ref="dialogFormRef"
-        v-loading="dialogLoadingRef"
-        :model="state.dialogForm"
-        :label-width="CONFIG.dialog_form_label_width"
-        :rules="state.dFormRules"
-    >
-      <el-row v-show="state.dialogType.value!==final.ins">
-        <el-col :span="24">
-          <el-form-item :label="state.dict['id']" prop="id">
-            <span>{{ state.dialogForm['id'] }}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--
-      第一个input添加如下属性
-      v-focus
-      -->
-      <!--在此下方添加表单项-->
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="state.dict['parentId']" prop="parentId">
-            <el-cascader
-                v-model="state.dialogForm['parentId']"
-                :options="tabledata3"
-                :props="cascaderProps2"
-                clearable
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="state.dict['type']" prop="type">
-            <template #label>
+    <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+    </el-tabs>
+    <template v-if="activeTabName===final.one">
+      <el-form
+          ref="dialogFormRef"
+          v-loading="dialogLoadingRef"
+          :model="state.dialogForm"
+          :label-width="CONFIG.dialog_form_label_width"
+          :rules="state.dFormRules"
+      >
+        <el-row v-show="state.dialogType.value!==final.ins">
+          <el-col :span="24">
+            <el-form-item :label="state.dict['id']" prop="id">
+              <span>{{ state.dialogForm['id'] }}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--
+        第一个input添加如下属性
+        v-focus
+        -->
+        <!--在此下方添加表单项-->
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['parentId']" prop="parentId">
+              <el-cascader
+                  v-model="state.dialogForm['parentId']"
+                  :options="tabledata3"
+                  :props="cascaderProps2"
+                  clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['type']" prop="type">
+              <template #label>
+                <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
+                  {{ state.dict['type'] }}
+                </Tooltip>
+              </template>
+              <el-radio-group v-model="state.dialogForm['type']">
+                <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
+                  {{ menuTypeDict[T_MENU] }}
+                </el-radio>
+                <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
+                  {{ menuTypeDict[T_COMP] }}
+                </el-radio>
+                <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
+                  {{ menuTypeDict[T_Inter] }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
+          <el-col :span="24">
+            <el-form-item :label="state.dict['icon']" prop="icon">
+              <IconSelect v-model="state.dialogForm['icon']" :placeholder="state.dict['icon']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['label']" prop="label">
+              <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
+          <el-col :span="12">
+            <el-form-item :label="state.dict['ifLink']" prop="ifLink">
+              <template #label>
+                <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['ifLink'] }}</Tooltip>
+              </template>
+              <el-radio-group v-model="state.dialogForm['ifLink']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['path']" prop="path">
+              <template #label>
+                <Tooltip content="这里填写路由地址。">{{ state.dict['path'] }}</Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm['path']" :placeholder="state.dict['path']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
+          <el-col :span="12">
+            <el-form-item :label="state.dict['ifVisible']" prop="ifVisible">
+              <el-radio-group v-model="state.dialogForm['ifVisible']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm['ifDisabled']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP])">
+            <el-form-item :label="state.dict['component']" prop="component">
+              <template #label>
+                <Tooltip content="这里填写项目文件夹中的路径。">{{ state.dict['component'] }}</Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm['component']" :placeholder="state.dict['component']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['perms']" prop="perms">
+              <template #label>
+                <Tooltip content="与后端配合。">{{ state.dict['perms'] }}</Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm['perms']" :placeholder="state.dict['perms']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_Inter])">
+            <el-form-item :label="state.dict['ifPublic']" prop="ifPublic">
+              <el-radio-group v-model="state.dialogForm['ifPublic']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['remark']" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--在此上方添加表单项-->
+        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
+        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
+        <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
+        <!--             :inactive-value="final.DISABLED_YES"/>-->
+        <!--</el-form-item>-->
+        <!--上方几个酌情使用-->
+      </el-form>
+    </template>
+    <template v-if="activeTabName===final.more">
+      <el-form
+          ref="dialogFormsRef"
+          v-loading="dialogLoadingRef"
+      >
+        <el-table
+            :data="state.dialogForms"
+            v-if="state.dialogForms"
+        >
+          <el-table-column type="index" width="50">
+            <template #header>
+              #
+            </template>
+          </el-table-column>
+          <!--在此下方添加表格列-->
+          <el-table-column prop="parentId" :label="state.dict['parentId']" width="300">
+            <template #header>
+              <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ state.dict['parentId'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-cascader
+                    v-model="state.dialogForms[$index]['parentId']"
+                    :options="tabledata3"
+                    :props="cascaderProps2"
+                    clearable
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="type" :label="state.dict['type']" width="300">
+            <template #header>
               <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
-                {{ state.dict['type'] }}
+                <span :class="ifRequired('type')?'tp-table-header-required':''">
+                  {{ state.dict['type'] }}
+                </span>
               </Tooltip>
             </template>
-            <el-radio-group v-model="state.dialogForm['type']">
-              <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
-                {{ menuTypeDict[T_MENU] }}
-              </el-radio>
-              <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
-                {{ menuTypeDict[T_COMP] }}
-              </el-radio>
-              <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
-                {{ menuTypeDict[T_Inter] }}
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
-        <el-col :span="24">
-          <el-form-item :label="state.dict['icon']" prop="icon">
-            <IconSelect v-model="state.dialogForm['icon']" :placeholder="state.dict['icon']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['label']" prop="label">
-            <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['orderNum']" prop="orderNum">
-            <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
-        <el-col :span="12">
-          <el-form-item :label="state.dict['ifLink']" prop="ifLink">
-            <template #label>
-              <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['ifLink'] }}</Tooltip>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-radio-group v-model="state.dialogForms[$index]['type']">
+                  <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
+                    {{ menuTypeDict[T_MENU] }}
+                  </el-radio>
+                  <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
+                    {{ menuTypeDict[T_COMP] }}
+                  </el-radio>
+                  <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
+                    {{ menuTypeDict[T_Inter] }}
+                  </el-radio>
+                </el-radio-group>
+              </div>
             </template>
-            <el-radio-group v-model="state.dialogForm['ifLink']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['path']" prop="path">
-            <template #label>
-              <Tooltip content="这里填写路由地址。">{{ state.dict['path'] }}</Tooltip>
+          </el-table-column>
+          <el-table-column prop="icon" :label="state.dict['icon']" width="300">
+            <template #header>
+              <span :class="ifRequired('icon')?'tp-table-header-required':''">{{ state.dict['icon'] }}</span>
             </template>
-            <el-input v-model="state.dialogForm['path']" :placeholder="state.dict['path']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row v-show="checkVisible(state.dialogForm['type'], [T_MENU,T_COMP])">
-        <el-col :span="12">
-          <el-form-item :label="state.dict['ifVisible']" prop="ifVisible">
-            <el-radio-group v-model="state.dialogForm['ifVisible']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
-            <el-radio-group v-model="state.dialogForm['ifDisabled']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_COMP])">
-          <el-form-item :label="state.dict['component']" prop="component">
-            <template #label>
-              <Tooltip content="这里填写项目文件夹中的路径。">{{ state.dict['component'] }}</Tooltip>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-icon`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <IconSelect v-model="state.dialogForms[$index]['icon']" :placeholder="state.dict['icon']"/>
+              </div>
             </template>
-            <el-input v-model="state.dialogForm['component']" :placeholder="state.dict['component']"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="state.dict['perms']" prop="perms">
-            <template #label>
-              <Tooltip content="与后端配合。">{{ state.dict['perms'] }}</Tooltip>
+          </el-table-column>
+          <el-table-column prop="label" :label="state.dict['label']" width="300">
+            <template #header>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>
             </template>
-            <el-input v-model="state.dialogForm['perms']" :placeholder="state.dict['perms']"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_Inter])">
-          <el-form-item :label="state.dict['ifPublic']" prop="ifPublic">
-            <el-radio-group v-model="state.dialogForm['ifPublic']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="state.dict['remark']" prop="remark">
-            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--在此上方添加表单项-->
-      <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
-      <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
-      <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
-      <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-      <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
-      <!--             :inactive-value="final.DISABLED_YES"/>-->
-      <!--</el-form-item>-->
-      <!--上方几个酌情使用-->
-    </el-form>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="200">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifLink" :label="state.dict['ifLink']" width="80">
+            <template #header>
+              <Tooltip content="若选是，则点击会跳转至外部链接。">
+                <span :class="ifRequired('ifLink')?'tp-table-header-required':''">{{ state.dict['ifLink'] }}</span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifLink`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index]['ifLink']">-->
+                <!--  <el-radio :label="final.Y">是</el-radio>-->
+                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index]['ifLink']" :true-label="final.Y" :false-label="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="path" :label="state.dict['path']" width="300">
+            <template #header>
+              <Tooltip content="这里填写路由地址。">
+                <span :class="ifRequired('path')?'tp-table-header-required':''">{{ state.dict['path'] }}</span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-path`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['path']" :placeholder="state.dict['path']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifVisible" :label="state.dict['ifVisible']" width="80">
+            <template #header>
+              <span :class="ifRequired('ifVisible')?'tp-table-header-required':''">{{ state.dict['ifVisible'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifVisible`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index]['ifVisible']">-->
+                <!--  <el-radio :label="final.Y">是</el-radio>-->
+                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index]['ifVisible']" :true-label="final.Y" :false-label="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="80">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{
+                  state.dict['ifDisabled']
+                }}</span>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index]['ifDisabled']">-->
+                <!--  <el-radio :label="final.Y">是</el-radio>-->
+                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-label="final.Y" :false-label="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="component" :label="state.dict['component']" width="300">
+            <template #header>
+              <Tooltip content="这里填写项目文件夹中的路径。">
+                <span :class="ifRequired('component')?'tp-table-header-required':''">
+                  {{ state.dict['component'] }}
+                </span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-component`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['component']" :placeholder="state.dict['component']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="perms" :label="state.dict['perms']" width="300">
+            <template #header>
+              <Tooltip content="与后端配合。">
+                <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ state.dict['perms'] }}</span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['perms']" :placeholder="state.dict['perms']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifPublic" :label="state.dict['ifPublic']" width="80">
+            <template #header>
+              <span :class="ifRequired('ifPublic')?'tp-table-header-required':''">{{ state.dict['ifPublic'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index]['ifPublic']">-->
+                <!--  <el-radio :label="final.Y">是</el-radio>-->
+                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-label="final.Y" :false-label="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"
+                          :placeholder="state.dict['remark']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <!--在此上方添加表格列-->
+          <el-table-column fixed="right" label="操作" min-width="120">
+            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
+              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+            </template>
+          </el-table-column>
+          <template v-if="state.dialogType.value===final.ins" #append>
+            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
+          </template>
+        </el-table>
+      </el-form>
+    </template>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dCan">取消</el-button>
@@ -484,7 +763,7 @@ const expendAll = () => {
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
     <el-button type="success" plain :icon="Edit"
-               :disabled="state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1||(state.multipleSelection.length>0&&checkVisible(state.multipleSelection[0].type,[T_Inter]))"
                @click="gUpd">修改
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除

@@ -541,30 +541,34 @@ const copyFileName = async (key: string) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="300">
-            <template #header>
-              <span :class="ifRequired('moduleName')?'tp-table-header-required':''">{{
-                  state.dict['moduleName']
-                }}</span>
-            </template>
-            <template #default="{$index}">
-              <div
-                  :class="state.dialogForms_error?.[`${$index}-moduleName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['moduleName']" :placeholder="state.dict['moduleName']"/>
-              </div>
-            </template>
-          </el-table-column>
           <el-table-column prop="businessName" :label="state.dict['businessName']" width="300">
             <template #header>
-              <span :class="ifRequired('businessName')?'tp-table-header-required':''">{{
-                  state.dict['businessName']
-                }}</span>
+              <Tooltip content="这里需使用小驼峰命名法。">
+                <span :class="ifRequired('businessName')?'tp-table-header-required':''">
+                  {{ state.dict['businessName'] }}
+                </span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-businessName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['businessName']"
                           :placeholder="state.dict['businessName']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="300">
+            <template #header>
+              <Tooltip content="这里需使用小驼峰命名法。">
+                <span :class="ifRequired('moduleName')?'tp-table-header-required':''">
+                  {{ state.dict['moduleName'] }}
+                </span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div
+                  :class="state.dialogForms_error?.[`${$index}-moduleName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['moduleName']" :placeholder="state.dict['moduleName']"/>
               </div>
             </template>
           </el-table-column>

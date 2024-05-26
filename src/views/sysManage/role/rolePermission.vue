@@ -14,7 +14,7 @@ import {
   rolePermissionUpd
 } from "@/api/module/sysManage/rolePermission.ts";
 import { roleSelAll } from "@/api/module/sysManage/role.ts";
-import { menuSel } from "@/api/module/sysManage/menu.ts";
+import { menuSelAll } from "@/api/module/sysManage/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -199,7 +199,7 @@ const allpermissions = ref<any[]>([])
 watch(() => state.dialogForm['type'], () => {
   allpermissions.value = []
   if (state.dialogForm['type'] === T_MENU) {
-    menuSel().then(({res}) => {
+    menuSelAll().then(({res}) => {
       allpermissions.value = arr1GetDiguiRelation(res.data, {ckey: 'cids'}).map((item: any) => ({children: [], ...item}))
     })
   } else if (state.dialogForm['type'] === T_INTER) {

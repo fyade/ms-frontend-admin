@@ -602,7 +602,7 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="70" align="center">
+          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="70">
             <template #header>
               <span :class="ifRequired('ifIns')?'tp-table-header-required':''">{{ state.dict['ifIns'] }}</span>
             </template>
@@ -612,7 +612,7 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="70" align="center">
+          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="70">
             <template #header>
               <span :class="ifRequired('ifUpd')?'tp-table-header-required':''">{{ state.dict['ifUpd'] }}</span>
             </template>
@@ -622,7 +622,7 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="70" align="center">
+          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="70">
             <template #header>
               <span :class="ifRequired('ifSelOne')?'tp-table-header-required':''">{{ state.dict['ifSelOne'] }}</span>
             </template>
@@ -633,7 +633,7 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="70" align="center">
+          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="70">
             <template #header>
               <span :class="ifRequired('ifSelMore')?'tp-table-header-required':''">{{ state.dict['ifSelMore'] }}</span>
             </template>
@@ -644,7 +644,7 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="70" align="center">
+          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="70">
             <template #header>
               <span :class="ifRequired('ifRequired')?'tp-table-header-required':''">
                 {{ state.dict['ifRequired'] }}
@@ -798,7 +798,7 @@ const handleSelectionChange1 = (val: any) => {
     <el-table-column prop="mysqlType" :label="state.dict['mysqlType']" width="120"/>
     <el-table-column prop="tsType" :label="state.dict['tsType']" width="120">
       <template #default="{row}">
-        {{ tsTypeDicts.find(item => item.value === row.tsType).label }}
+        {{ tsTypeDicts.find(item => item.value === row.tsType)?.label }}
       </template>
     </el-table-column>
     <el-table-column prop="tsName" :label="state.dict['tsName']" width="120"/>
@@ -809,12 +809,12 @@ const handleSelectionChange1 = (val: any) => {
     <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="120"/>
     <el-table-column prop="formType" :label="state.dict['formType']" width="120">
       <template #default="{row}">
-        {{ formTypeDicts.find(item => item.value === row.formType).label }}
+        {{ formTypeDicts.find(item => item.value === row.formType)?.label }}
       </template>
     </el-table-column>
     <el-table-column prop="selType" :label="state.dict['selType']" width="120">
       <template #default="{row}">
-        {{ selTypeDicts.find(item => item.value === row.selType).label }}
+        {{ selTypeDicts.find(item => item.value === row.selType)?.label }}
       </template>
     </el-table-column>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
