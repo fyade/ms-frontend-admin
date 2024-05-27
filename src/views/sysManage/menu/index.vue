@@ -295,6 +295,7 @@ watch(() => [state.dialogForm.type, activeTabName.value], () => {
 })
 watch(() => [state.dialogForm.parentId, activeTabName.value], () => {
   if (activeTabName.value === final.more) {
+    canChooseTypes.value = [T_MENU, T_COMP, T_Inter]
     return
   }
   if (state.dialogForm.parentId === null) {
@@ -618,7 +619,8 @@ const expendAll = () => {
                 <!--  <el-radio :label="final.Y">是</el-radio>-->
                 <!--  <el-radio :label="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifLink']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifLink']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -644,7 +646,8 @@ const expendAll = () => {
                 <!--  <el-radio :label="final.Y">是</el-radio>-->
                 <!--  <el-radio :label="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifVisible']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifVisible']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -661,7 +664,8 @@ const expendAll = () => {
                 <!--  <el-radio :label="final.Y">是</el-radio>-->
                 <!--  <el-radio :label="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -701,7 +705,8 @@ const expendAll = () => {
                 <!--  <el-radio :label="final.Y">是</el-radio>-->
                 <!--  <el-radio :label="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-label="final.Y"
+                             :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
