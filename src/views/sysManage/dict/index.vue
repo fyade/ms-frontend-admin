@@ -485,8 +485,10 @@ const setDicData = (row: any) => {
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span
-          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+      <div class="el-table-append-box">
+        <span>此表格的多选<span
+            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+      </div>
     </template>
   </el-table>
 

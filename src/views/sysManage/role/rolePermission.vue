@@ -386,14 +386,14 @@ const checked2change = () => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
-      </el-button>
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
-      <!--</el-button>-->
-      <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
+    </el-button>
+    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
+    <!--</el-button>-->
+    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
+    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
@@ -451,8 +451,10 @@ const checked2change = () => {
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span
-          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+      <div class="el-table-append-box">
+        <span>此表格的多选<span
+            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+      </div>
     </template>
   </el-table>
 

@@ -14,6 +14,10 @@
   --el-select-width: 220px;
 }
 
+.el-table-append-box {
+  position: fixed;
+}
+
 .tp-table-cell-bg-red {
   @extend .tp-table-cell-base;
   animation: colorChange 1.2s infinite
