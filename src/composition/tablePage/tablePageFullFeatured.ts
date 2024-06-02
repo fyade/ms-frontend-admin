@@ -348,6 +348,9 @@ export const funcTablePage = ({
           dialogLoadingRef.value = false
         }
       } else {
+        if (activeTabName) {
+          activeTabName.value = final.one
+        }
         if (config.one2More && config.one2MoreConfig?.oneKey) {
           func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
             let obj = res.data[0]
