@@ -322,6 +322,9 @@ export const funcTablePage = ({
           dialogLoadingRef.value = false
         }
       } else {
+        if (activeTabName) {
+          activeTabName.value = final.one
+        }
         func.selectById(id).then(({res}) => {
           let obj = res.data
           Object.keys(state.dialogForm).forEach(item => {
