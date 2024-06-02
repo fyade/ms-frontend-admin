@@ -191,16 +191,16 @@ const {
 })
 
 const allRoles = ref<any[]>([])
-roleSelAll({id: props.roleId}).then(({res}) => {
-  allRoles.value = res.data
+roleSelAll({id: props.roleId}).then(res => {
+  allRoles.value = res
 })
 
 const allpermissions = ref<any[]>([])
 watch(() => state.dialogForm['type'], () => {
   allpermissions.value = []
   if (state.dialogForm['type'] === T_MENU) {
-    menuSelAll().then(({res}) => {
-      allpermissions.value = arr1GetDiguiRelation(res.data, {ckey: 'cids'}).map((item: any) => ({children: [], ...item}))
+    menuSelAll().then(res => {
+      allpermissions.value = arr1GetDiguiRelation(res, {ckey: 'cids'}).map((item: any) => ({children: [], ...item}))
     })
   } else if (state.dialogForm['type'] === T_INTER) {
   }

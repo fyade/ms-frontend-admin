@@ -237,8 +237,8 @@ const {
 
 const tablesList = ref<chooseTableTableIntre[]>([])
 tablesList.value = []
-getDbInfo().then(({res}) => {
-  tablesList.value = res.data
+getDbInfo().then(res => {
+  tablesList.value = res
 })
 
 const tableNameChange = (val: string) => {
@@ -282,17 +282,17 @@ const codeView = (rowId: any) => {
   codeViewState.fileNames = {}
   codeViewState.filePaths = {}
   codeViewState.codes = {}
-  genCode(rowId).then(({res}) => {
+  genCode(rowId).then(res => {
     Object.keys(codeViewState).forEach(key0 => {
-      Object.keys(res.data.cgRes[key0]).forEach(key1 => {
-        codeViewState[key0][key1] = res.data.cgRes[key0][key1]
+      Object.keys(res.cgRes[key0]).forEach(key1 => {
+        codeViewState[key0][key1] = res.cgRes[key0][key1]
       })
     })
     dialog3Visible.value = true
   })
 }
 const codeViewZip = (rowId: any) => {
-  genCodeZip(rowId).then(({res}) => {
+  genCodeZip(rowId).then(res => {
   })
 }
 const copyCode = async (key: string) => {

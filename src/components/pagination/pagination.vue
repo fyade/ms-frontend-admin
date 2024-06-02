@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const props = defineProps(['pageNum', 'pageSize', 'total']);
 const emits = defineEmits(['pageChange']);
 

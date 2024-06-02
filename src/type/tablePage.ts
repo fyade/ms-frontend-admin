@@ -1,4 +1,3 @@
-import { axiosVo } from "@/type/asiox.ts";
 import { Ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { MORE, ONE } from "@/type/utils/base.ts";
@@ -40,8 +39,8 @@ export interface t_config {
   beforeUpdateOneCallback2?: Function
 }
 
-type t_MyFuncType = (any: any) => Promise<axiosVo>
-type t_MyFuncType2 = (...any: any[]) => Promise<axiosVo>
+type t_MyFuncType = (any: any) => Promise<any>
+type t_MyFuncType2 = (...any: any[]) => Promise<any>
 
 export interface t_FuncMap {
   selectList: t_MyFuncType

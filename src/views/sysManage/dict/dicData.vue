@@ -232,8 +232,8 @@ const {
 })
 
 const allDicTypes = ref<any[]>([])
-dicTypeSelAll({}).then(({res}) => {
-  allDicTypes.value = res.data
+dicTypeSelAll({}).then(res => {
+  allDicTypes.value = res
 })
 </script>
 

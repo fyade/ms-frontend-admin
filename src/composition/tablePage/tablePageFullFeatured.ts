@@ -31,12 +31,12 @@ export const funcTablePage = ({
     state.list = []
     const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
     const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
-    func.selectList(obj).then(({res}) => {
+    func.selectList(obj).then(res => {
       if (ifByPage) {
-        state.list = res.data.list
-        state.total = res.data.total
+        state.list = res.list
+        state.total = res.total
       } else {
-        state.list = res.data
+        state.list = res
       }
       config.selectListCallback && config.selectListCallback()
     }).finally(() => {
@@ -49,8 +49,8 @@ export const funcTablePage = ({
   //  */
   // const getDataById = (id: any) => {
   //   // tableLoadingRef.value = true
-  //   // func.selectById(id).then(({res}) => {
-  //   //   state.list[state.list.findIndex((item: any) => item.id === id)] = res.data
+  //   // func.selectById(id).then(res => {
+  //   //   state.list[state.list.findIndex((item: any) => item.id === id)] = res
   //   // }).finally(() => {
   //   //   tableLoadingRef.value = false
   //   // })
@@ -60,16 +60,16 @@ export const funcTablePage = ({
    */
   const insData = () => {
     if (activeTabName && activeTabName.value === final.more) {
-      func.insertMore && func.insertMore(state.dialogForms).then(({res}) => {
-        if (res.code === 200) {
+      func.insertMore && func.insertMore(state.dialogForms).then(res => {
+        if (res) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
         }
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
-      func.insertOne(state.dialogForm).then(({res}) => {
-        if (res.code === 200) {
+      func.insertOne(state.dialogForm).then(res => {
+        if (res) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -83,8 +83,8 @@ export const funcTablePage = ({
   const updData = () => {
     tableLoadingRef.value = true
     if (activeTabName?.value === final.more) {
-      func.updateMore && func.updateMore(state.dialogForms).then(({res}) => {
-        if (res.code === 200) {
+      func.updateMore && func.updateMore(state.dialogForms).then(res => {
+        if (res) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -95,8 +95,8 @@ export const funcTablePage = ({
         tableLoadingRef.value = false
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
-      func.updateOne(state.dialogForm).then(({res}) => {
-        if (res.code === 200) {
+      func.updateOne(state.dialogForm).then(res => {
+        if (res) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -113,8 +113,8 @@ export const funcTablePage = ({
    */
   const delData = (...ids: any[]) => {
     tableLoadingRef.value = true
-    func.deleteList(...ids).then(({res}) => {
-      if (res.code === 200) {
+    func.deleteList(...ids).then(res => {
+      if (res) {
         ElMessage.success(Operate.success)
         getData()
       } else {
@@ -308,14 +308,14 @@ export const funcTablePage = ({
         }
         state.dialogForms.splice(0, state.dialogForms.length)
         if (func.selectByIds) {
-          func.selectByIds(state.multipleSelection.map((item: any) => item.id)).then(({res}) => {
-            res.data.forEach((obj: any, i: number) => {
+          func.selectByIds(state.multipleSelection.map((item: any) => item.id)).then(res => {
+            res.forEach((obj: any, i: number) => {
               state.dialogForms[i] = structuredClone(initialStateDialogForm)
               Object.keys(state.dialogForm).forEach(item => {
                 state.dialogForms[i][item] = obj[item]
               })
             })
-            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res)
           }).catch((e) => {
             dialogVisible.value = false
           }).finally(() => {
@@ -326,13 +326,13 @@ export const funcTablePage = ({
           for (let i = 0; i < state.multipleSelection.length; i++) {
             state.dialogForms[i] = structuredClone(initialStateDialogForm)
             try {
-              const {res} = await func.selectById(state.multipleSelection[i].id)
-              let obj = res.data
+              const res = await func.selectById(state.multipleSelection[i].id)
+              let obj = res
               datas.push(obj)
               // Object.keys(state.dialogForm).forEach(item => {
               //   state.dialogForms[i][item] = obj[item]
               // })
-              // config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+              // config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res)
             } catch (e) {
               dialogVisible.value = false
             } finally {
@@ -352,24 +352,24 @@ export const funcTablePage = ({
           activeTabName.value = final.one
         }
         if (config.one2More && config.one2MoreConfig?.oneKey) {
-          func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(({res}) => {
-            let obj = res.data[0]
+          func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(res => {
+            let obj = res[0]
             Object.keys(state.dialogForm).forEach(item => {
               state.dialogForm[item] = obj[item]
             })
-            config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res.data)
+            config.beforeUpdateOneCallback1 && config.beforeUpdateOneCallback1(res)
           }).catch(() => {
             dialogVisible.value = false
           }).finally(() => {
             dialogLoadingRef.value = false
           })
         } else {
-          func.selectById(id).then(({res}) => {
-            let obj = res.data
+          func.selectById(id).then(res => {
+            let obj = res
             Object.keys(state.dialogForm).forEach(item => {
               state.dialogForm[item] = obj[item]
             })
-            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res.data)
+            config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res)
           }).catch(() => {
             dialogVisible.value = false
           }).finally(() => {

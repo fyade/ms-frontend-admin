@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { getFilenameWithoutSuffix } from "@/utils/RegularUtils.ts";
-import iconEnCn from '@/utils/iconEnCn.json'
+import iconEnCn from './iconEnCn.json'
 import { CONFIG } from "@/utils/base.ts";
 
 const modelValue = defineModel()

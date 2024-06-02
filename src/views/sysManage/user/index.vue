@@ -223,7 +223,7 @@ const drawerConfirm = () => {
     userId: selectUser.value.id,
     roleId: selectRole.value.map(item => item.id)
   }
-  userRoleUpd(obj).then(({res}) => {
+  userRoleUpd(obj).then(res => {
     drawer.value = false
     gRefresh()
   })

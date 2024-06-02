@@ -280,8 +280,8 @@ const selTypeDicts = [
 
 const tablesList = ref<chooseTableTableIntre[]>([])
 tablesList.value = []
-getDbInfo().then(({res}) => {
-  tablesList.value = res.data
+getDbInfo().then(res => {
+  tablesList.value = res
 })
 
 const dialog2Visible = ref(false)
