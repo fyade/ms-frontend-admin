@@ -2,6 +2,7 @@ import { nextTick, onMounted, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { final, Operate } from "@/utils/base.ts"
 import { t_funcTablePage_params } from "@/type/tablePage.ts";
+import { ifValid } from "@/utils/ObjectUtils.ts";
 
 export const funcTablePage = ({
                                 config,
@@ -61,7 +62,7 @@ export const funcTablePage = ({
   const insData = () => {
     if (activeTabName && activeTabName.value === final.more) {
       func.insertMore && func.insertMore(state.dialogForms).then(res => {
-        if (res) {
+        if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -69,7 +70,7 @@ export const funcTablePage = ({
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
       func.insertOne(state.dialogForm).then(res => {
-        if (res) {
+        if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -84,7 +85,7 @@ export const funcTablePage = ({
     tableLoadingRef.value = true
     if (activeTabName?.value === final.more) {
       func.updateMore && func.updateMore(state.dialogForms).then(res => {
-        if (res) {
+        if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -96,7 +97,7 @@ export const funcTablePage = ({
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
       func.updateOne(state.dialogForm).then(res => {
-        if (res) {
+        if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
           getData()
@@ -114,7 +115,7 @@ export const funcTablePage = ({
   const delData = (...ids: any[]) => {
     tableLoadingRef.value = true
     func.deleteList(...ids).then(res => {
-      if (res) {
+      if (ifValid(res)) {
         ElMessage.success(Operate.success)
         getData()
       } else {
