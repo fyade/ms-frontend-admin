@@ -586,7 +586,7 @@ const copyFileName = async (key: string) => {
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="120">
+          <el-table-column fixed="right" label="操作" min-width="200">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">
               <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
             </template>
@@ -675,12 +675,12 @@ const copyFileName = async (key: string) => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="tableName" :label="state.dict['tableName']" width="150"/>
-    <el-table-column prop="tableDescr" :label="state.dict['tableDescr']" width="150"/>
-    <el-table-column prop="entityName" :label="state.dict['entityName']" width="120"/>
+    <el-table-column prop="tableName" :label="state.dict['tableName']" width="200"/>
+    <el-table-column prop="tableDescr" :label="state.dict['tableDescr']" width="180"/>
+    <el-table-column prop="entityName" :label="state.dict['entityName']" width="180"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
-    <el-table-column prop="businessName" :label="state.dict['businessName']" width="120"/>
-    <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="120"/>
+    <el-table-column prop="businessName" :label="state.dict['businessName']" width="180"/>
+    <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="180"/>
     <el-table-column prop="tableRemark" :label="state.dict['tableRemark']" width="150"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
@@ -689,7 +689,7 @@ const copyFileName = async (key: string) => {
     <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改表</el-button>
         <el-button link type="primary" size="small" @click="setColumnInfo(row.id)">列字段设置</el-button>

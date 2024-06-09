@@ -695,7 +695,7 @@ const handleSelectionChange1 = (val: any) => {
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="120">
+          <el-table-column fixed="right" label="操作" min-width="200">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">
               <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
             </template>
@@ -825,7 +825,7 @@ const handleSelectionChange1 = (val: any) => {
     <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>

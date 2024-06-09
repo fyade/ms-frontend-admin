@@ -722,7 +722,7 @@ const expendAll = () => {
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="120">
+          <el-table-column fixed="right" label="操作" min-width="200">
             <template v-if="state.dialogType.value===final.ins" #default="{$index}">
               <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
             </template>

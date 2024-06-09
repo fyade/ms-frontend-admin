@@ -444,7 +444,7 @@ const checked2change = () => {
     <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.roleId)">修改</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
