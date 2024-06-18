@@ -7,7 +7,10 @@ export const CONFIG = {
   dialog_form_label_width: '120px',
   drawer_size: 'calc(100% - 200px)',
   icon_white: '#ffffff',
-  icon_black: '#000000'
+  icon_black: '#000000',
+  theme_color_menu_bg_active: '#70a1ff',
+  theme_color_menu_bg_not_active: '#fff',
+  theme_color_menu_color: '#fff',
 }
 
 export const PAGINATION = {

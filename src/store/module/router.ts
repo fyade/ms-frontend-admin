@@ -11,10 +11,12 @@ export const useRouterStore = defineStore('routerStore', () => {
         ((item.path.length - item.path.replace(/\//g, '').length === 1) || ifWebsiteLink(item.path, '/'))
   })
   const allMenus2 = diguiObjToArr2(allMenus1).map(ar => {
+    const meta = ar[ar.length - 1].meta;
+    meta.fullPath = ar.map((item: any) => item.path).join('/')
     return {
       path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
       name: ar[ar.length - 1].name,
-      meta: ar[ar.length - 1].meta,
+      meta: meta,
       ar: ar
     }
   });

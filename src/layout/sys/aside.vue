@@ -81,8 +81,6 @@ defineExpose({
         :collapse="false"
         :unique-opened="true"
         router
-        background-color="#304156"
-        text-color="#ffffff"
     >
       <Menu
           :menus="allMenus1"
@@ -92,7 +90,7 @@ defineExpose({
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .el {
   height: 100%;
 

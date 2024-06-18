@@ -75,6 +75,11 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/user',
+    component: () => import('@/layout/user/index.vue'),
+    children: []
+  },
+  {
     path: '/login',
     component: () => import('@/views/user/login.vue')
   },

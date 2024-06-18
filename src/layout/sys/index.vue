@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Header from "@/layout/sys/header.vue";
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
 import { useRouterStore } from "@/store/module/router.ts";
-import { Ref, ref } from "vue";
+import { Ref, ref, watch } from "vue";
 import { homerouter, routerPinList } from "@/router";
+import PublicIndex from "@/layout/publicIndex.vue";
 
 const route = useRoute()
 const routerStore = useRouterStore();
@@ -72,59 +72,42 @@ const contextMenu = (info: any, index: number) => [
 </script>
 
 <template>
-  <RightClickMenu style="height: 100%;">
-    <div class="layout-sys">
-      <el-container>
-        <el-header style="padding: 0;height: 50px;">
-          <Header/>
-        </el-header>
-        <el-container style="height: calc(100% - 50px)">
-          <el-aside width="200px">
-            <Aside ref="aside"/>
-          </el-aside>
-          <el-main class="content">
-            <div class="header">
-              <RightClickMenu
-                  v-for="(item,index) in routerStore.getMenuList()"
-                  :key="item.name"
-                  :menus="contextMenu(item,index)">
-                <el-tag
-                    type="info"
-                    :effect="item.path===route.path?'light':'plain'"
-                    :closable="routerPinList.indexOf(item.path)===-1"
-                    @click="gotoMenu(item.path)"
-                    @close="deleteMenu(index)"
-                    style="cursor: pointer;"
-                >
-                  {{ item.meta ? item.meta.label : item.name }}
-                </el-tag>
-              </RightClickMenu>
-            </div>
-            <div class="main">
-              <router-view #default="{Component}">
-                <keep-alive :include="routerStore.getMenuListNames">
-                  <component :is="Component" :key="route.path"/>
-                </keep-alive>
-              </router-view>
-            </div>
-          </el-main>
-        </el-container>
-      </el-container>
-    </div>
-  </RightClickMenu>
+  <PublicIndex>
+    <el-container style="height: calc(100% - 50px)">
+      <el-aside width="200px">
+        <Aside ref="aside"/>
+      </el-aside>
+      <el-main class="content">
+        <div class="header">
+          <RightClickMenu
+              v-for="(item,index) in routerStore.getMenuList()"
+              :key="item.name"
+              :menus="contextMenu(item,index)">
+            <el-tag
+                type="info"
+                :effect="item.path===route.path?'light':'plain'"
+                :closable="routerPinList.indexOf(item.path)===-1"
+                @click="gotoMenu(item.path)"
+                @close="deleteMenu(index)"
+                style="cursor: pointer;"
+            >
+              {{ item.meta ? item.meta.label : item.name }}
+            </el-tag>
+          </RightClickMenu>
+        </div>
+        <div class="main">
+          <router-view #default="{Component}">
+            <keep-alive :include="routerStore.getMenuListNames">
+              <component :is="Component" :key="route.path"/>
+            </keep-alive>
+          </router-view>
+        </div>
+      </el-main>
+    </el-container>
+  </PublicIndex>
 </template>
 
 <style scoped lang="scss">
-.layout-sys {
-  width: 100%;
-  height: 100%;
-
-  > * {
-    width: 100%;
-    height: 100%;
-  }
-}
-
 .content {
   display: flex;
   flex-direction: column;

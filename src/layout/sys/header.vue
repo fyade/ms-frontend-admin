@@ -36,7 +36,11 @@ watch(() => route.path, () => {
       </el-breadcrumb>
     </div>
     <div class="center"></div>
-    <div class="right"></div>
+    <div class="right">
+      <router-link to="/user">
+        <SvgIcon name="user" color="#000000"/>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -45,9 +49,10 @@ watch(() => route.path, () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: calc(100% - 10px * 2);
   height: calc(100% - 1px);
   border-bottom: 1px solid #ddd;
+  padding: 0 10px;
 
   > * {
     display: flex;
@@ -62,6 +67,9 @@ watch(() => route.path, () => {
   }
 
   > .right {
+    > * {
+      cursor: pointer;
+    }
   }
 }
 </style>
