@@ -93,6 +93,7 @@ defineExpose({
 <style scoped lang="scss">
 .el {
   height: 100%;
+  overflow: hidden auto;
 
   > * {
     height: 100%;
