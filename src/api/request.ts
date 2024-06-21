@@ -7,6 +7,7 @@ import { sleep } from "@/utils/baseUtils.ts";
 export const baseURL = import.meta.env.VITE_API_PREFIX
 export const fileBaseUrl = import.meta.env.VITE_API_FILE_PREFIX + '/'
 const maxReqCount = 3
+const whiteList = ['/sys/user/adminlogin']
 const request = axios.create({
   baseURL: baseURL,
   timeout: 1000 * 60 * 10
@@ -21,16 +22,18 @@ let count0 = 0
 request.interceptors.response.use(
     async response => {
       if (response.data.code && response.data.code !== 200) {
-        await sleep(100)
-        for (let i = 0; i < maxReqCount - 1 && count0 < maxReqCount - 1; i++) {
-          count0++
-          const response1 = await request({
-            url: response.config.url,
-            method: response.config.method,
-            data: JSON.parse(response.config.data)
-          });
-          count0 = 0
-          return Promise.resolve(response1 as any)
+        if (response.config.url && whiteList.indexOf(response.config.url) === -1) {
+          await sleep(100)
+          for (let i = 0; i < maxReqCount - 1 && count0 < maxReqCount - 1; i++) {
+            count0++
+            const response1 = await request({
+              url: response.config.url,
+              method: response.config.method,
+              data: JSON.parse(response.config.data)
+            });
+            count0 = 0
+            return Promise.resolve(response1 as any)
+          }
         }
         ElMessage.error(response.data.msg)
         count0 = 0

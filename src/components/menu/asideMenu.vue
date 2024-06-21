@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CONFIG, final } from "@/utils/base.ts";
 import { computed } from "vue";
-import { ifValid } from "@/utils/ObjectUtils.ts";
+import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { useRoute } from "vue-router";
 
 const route = useRoute()
@@ -16,7 +16,7 @@ const props = defineProps({
   }
 });
 const menus2 = computed(() => {
-  return props.menus.toSorted((a: any, b: any) => {
+  return (deepClone(props.menus) as any[]).sort((a: any, b: any) => {
     return (ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
   })
 })

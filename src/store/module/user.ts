@@ -22,7 +22,7 @@ export const useUserStore = defineStore('userStore', () => {
         if (res) {
           const notification = ElNotification({
             title: '提示',
-            message: '登陆成功，系统资源加载中。。。',
+            message: '登录成功，系统资源加载中。。。',
             type: 'success',
             showClose: false,
             duration: 0,
