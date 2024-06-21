@@ -1,6 +1,14 @@
 import { deepClone } from "@/utils/ObjectUtils.ts";
 
 /**
+ * sleep
+ * @param ms
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
  * 转换为path
  * @param str
  */
