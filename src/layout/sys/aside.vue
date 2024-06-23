@@ -2,7 +2,8 @@
 import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
-import Menu from "@/components/menu/asideMenu.vue";
+import AsideMenu from "@/components/menu/asideMenu.vue";
+import { CONFIG } from "@/utils/base.ts";
 
 const defaultActive = ref('')
 const go = (url: string) => {
@@ -75,17 +76,23 @@ defineExpose({
 })
 </script>
 <template>
-  <div class="el">
+  <div
+      class="el"
+      :style="{
+        '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
+        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
+      }"
+  >
     <el-menu
         :default-active="defaultActive"
         :collapse="false"
         :unique-opened="true"
         router
     >
-      <Menu
+      <AsideMenu
           :menus="allMenus1"
           @gotoMenu="go"
-      ></Menu>
+      ></AsideMenu>
     </el-menu>
   </div>
 </template>

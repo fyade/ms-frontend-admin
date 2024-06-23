@@ -22,11 +22,11 @@ const menus2 = computed(() => {
 })
 const emits = defineEmits(['gotoMenu']);
 
-const menuClick = (path: any, ifLink: boolean = false) => {
+const menuClick = (path: any, ifLink: boolean = false, i = 0) => {
   if (ifLink) {
     openSite(path)
   } else {
-    emits('gotoMenu', `${props.parentPath}/${path}`.replace(/\/{2,}/g, '/'))
+    emits('gotoMenu', i > 0 ? path : `${props.parentPath}/${path}`.replace(/\/{2,}/g, '/'), ifLink, ++i)
   }
 }
 const openSite = (item: string) => window.open(item.replace('/http', 'http'))
@@ -37,10 +37,6 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
       class="asideMenu"
       v-for="(item, index) in menus2 as any[]"
       :key="index"
-      :style="{
-        '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
-        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
-      }"
   >
     <template v-if="item.children && item.children?.length > 0">
       <el-sub-menu
