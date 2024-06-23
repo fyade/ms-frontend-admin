@@ -25,3 +25,6 @@ stats.html
 *.sw?
 
 /config/authConfig.ts
+.vscode/
+.env.test
+.env.prod
