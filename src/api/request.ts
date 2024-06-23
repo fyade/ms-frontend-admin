@@ -29,7 +29,8 @@ request.interceptors.response.use(
             const response1 = await request({
               url: response.config.url,
               method: response.config.method,
-              data: JSON.parse(response.config.data)
+              data: response.config.data ? JSON.parse(response.config.data) : null,
+              params: response.config.params ? response.config.params : null,
             });
             count0 = 0
             return Promise.resolve(response1 as any)
@@ -42,17 +43,33 @@ request.interceptors.response.use(
       count0 = 0
       return Promise.resolve(response.data.data as any)
     },
-    error => {
-      count0 = 0
+    async error => {
+      const response = error.response
+      if (response.config.url && whiteList.indexOf(response.config.url) === -1) {
+        await sleep(100)
+        for (let i = 0; i < maxReqCount - 1 && count0 < maxReqCount - 1; i++) {
+          count0++
+          const response1 = await request({
+            url: response.config.url,
+            method: response.config.method,
+            data: response.config.data ? JSON.parse(response.config.data) : null,
+            params: response.config.params ? response.config.params : null,
+          })
+          count0 = 0
+          return Promise.resolve(response1 as any)
+        }
+      }
       if (error.response.status === 401) {
         useUserStore().removeToken()
         ElMessage.error('登录已过期，请重新登录。')
         window.location.href = '/login'
-      } else if (error.response.status === 403) {
-        ElMessage.error('无权限。')
       } else {
-        ElMessage.error(error.response.data.message || '系统繁忙，请稍后再试。')
+        let msg = error.response.data.message || '系统繁忙，请稍后再试。'
+        if (error.response.status === 500) msg = '系统繁忙，请稍后再试。'
+        else if (error.response.status === 403) msg = '您无权限。'
+        ElMessage.error(msg)
       }
+      count0 = 0
       return Promise.reject(error)
     }
 )
