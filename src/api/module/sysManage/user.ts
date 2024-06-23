@@ -1,5 +1,6 @@
 import request from "../../request.ts";
 import { loginDto, registDto } from "@/type/api/sysManage/user.ts";
+import { encrypt } from "@/utils/EncryptUtils.ts";
 
 
 export function registApi(data: registDto) {
@@ -14,7 +15,10 @@ export function loginApi(data: loginDto) {
   return request({
     url: '/sys/user/adminlogin',
     method: 'POST',
-    data: data
+    data: {
+      ...data,
+      password: encrypt(data.password)
+    }
   })
 }
 
@@ -30,7 +34,10 @@ export function newUser(params: any) {
   return request({
     url: '/sys-manage/user',
     method: 'POST',
-    data: params
+    data: {
+      ...params,
+      password: encrypt(params.password)
+    }
   })
 }
 
@@ -38,6 +45,9 @@ export function resetUserPsd(params: any) {
   return request({
     url: '/sys-manage/user/resetpsd',
     method: 'POST',
-    data: params
+    data: {
+      ...params,
+      password: encrypt(params.password)
+    }
   })
 }

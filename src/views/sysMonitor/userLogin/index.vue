@@ -83,7 +83,9 @@ const state = reactive<State>({
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    userId: ''
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -426,6 +428,9 @@ const {
     <!--<el-form-item :label="state.dict['']" prop="">-->
     <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
     <!--</el-form-item>-->
+    <el-form-item :label="state.dict['userId']" prop="userId">
+      <el-input v-model="state.filterForm['userId']" :placeholder="state.dict['userId']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -464,12 +469,11 @@ const {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width='180'/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="id" :label="state.dict['id']" width='120'/>
     <el-table-column prop="userId" :label="state.dict['userId']" width='120'/>
-    <el-table-column prop="loginIp" :label="state.dict['loginIp']" width='120'/>
+    <el-table-column prop="loginIp" :label="state.dict['loginIp']" width='200'/>
     <el-table-column prop="loginPosition" :label="state.dict['loginPosition']" width='120'/>
-    <el-table-column prop="loginBrowser" :label="state.dict['loginBrowser']" width='120'/>
-    <el-table-column prop="loginOs" :label="state.dict['loginOs']" width='120'/>
+    <el-table-column prop="loginBrowser" :label="state.dict['loginBrowser']" width='200'/>
+    <el-table-column prop="loginOs" :label="state.dict['loginOs']" width='200'/>
     <el-table-column prop="ifSuccess" :label="state.dict['ifSuccess']" width='120'>
       <template #default="{row}">
         <el-tag type="success" v-if="row.ifSuccess===final.Y">登录成功</el-tag>
