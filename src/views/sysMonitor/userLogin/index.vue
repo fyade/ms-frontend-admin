@@ -480,7 +480,7 @@ const {
         <el-tag type="danger" v-else>登录失败</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="remark" :label="state.dict['remark']" width='240'/>
+    <el-table-column prop="remark" :label="state.dict['remark']" width='160'/>
     <el-table-column prop="createTime" :label="state.dict['createTime']" width='240'/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width='120'/>-->
