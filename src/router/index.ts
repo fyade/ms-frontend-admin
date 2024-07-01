@@ -82,6 +82,10 @@ export const routes: RouteRecordRaw[] = [
       {
         path: 'info',
         component: () => import('@/views/user/info.vue')
+      },
+      {
+        path: 'edit-psd',
+        component: () => import('@/views/user/edit-psd.vue')
       }
     ]
   },
