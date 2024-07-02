@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ArrowRight } from '@element-plus/icons-vue'
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useRouterStore } from "@/store/module/router.ts";
 import { toPath } from "@/utils/baseUtils.ts";
+import { useUserStore } from '@/store/module/user';
 
 const route = useRoute()
+const router = useRouter()
 const routerStore = useRouterStore();
+const userStore = useUserStore()
 
 const list = ref<any[]>([])
 
@@ -26,11 +29,8 @@ watch(() => route.path, () => {
       <span>logo</span>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-        <el-breadcrumb-item
-            v-for="(item, index) in list"
-            :key="index"
-            :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`"
-        >
+        <el-breadcrumb-item v-for="(item, index) in list" :key="index"
+          :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`">
           {{ item.meta ? item.meta.label : item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -38,7 +38,10 @@ watch(() => route.path, () => {
     <div class="center"></div>
     <div class="right">
       <router-link to="/user">
-        <SvgIcon name="user" color="#000000"/>
+        <el-space>
+          <SvgIcon name="user" color="#000000" />
+          {{ userStore.userinfo.nickname }}
+        </el-space>
       </router-link>
     </div>
   </div>
@@ -54,20 +57,22 @@ watch(() => route.path, () => {
   border-bottom: 1px solid #ddd;
   padding: 0 10px;
 
-  > * {
+  a {
+    color: #000;
+  }
+
+  >* {
     display: flex;
     gap: 16px;
     align-items: center;
   }
 
-  > .left {
-  }
+  >.left {}
 
-  > .center {
-  }
+  >.center {}
 
-  > .right {
-    > * {
+  >.right {
+    >* {
       cursor: pointer;
     }
   }

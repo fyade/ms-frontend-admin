@@ -22,6 +22,13 @@ export function loginApi(data: loginDto) {
   })
 }
 
+export function getSelfInfo() {
+  return request({
+    url: '/sys-manage/user/self-info',
+    method: 'GET',
+  })
+}
+
 export function userSelList(params: any) {
   return request({
     url: '/sys-manage/user/page',
@@ -41,9 +48,29 @@ export function newUser(params: any) {
   })
 }
 
+export function updUser(params: any) {
+  return request({
+    url: '/sys-manage/user/upd-user',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function updPsd(params: any) {
+  return request({
+    url: '/sys-manage/user/upd-psd',
+    method: 'POST',
+    data: {
+      oldp: encrypt(params.oldp),
+      newp1: encrypt(params.newp1),
+      newp2: encrypt(params.newp2)
+    }
+  })
+}
+
 export function resetUserPsd(params: any) {
   return request({
-    url: '/sys-manage/user/resetpsd',
+    url: '/sys-manage/user/admin-reset-user-psd',
     method: 'POST',
     data: {
       ...params,
