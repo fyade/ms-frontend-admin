@@ -2,6 +2,17 @@
 
 作为一个TS项目，我对这个项目中的编码规范、TS的使用并不满意，并没有完全把TS的优势发挥出来，但时间又特别有限，所以在此给希望或者正在使用本项目的小伙伴说声抱歉，我会尽量抽时间系统性地学习TS，早日将次项目改的健壮一点！
 
+## 关于 About
+
+这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js。
+
+前端开源地址：
+https://github.com/fyade/ms-frontend-admin
+https://gitee.com/fyade/ms-frontend-admin
+后端开源地址：
+https://github.com/fyade/ms-backend
+https://gitee.com/fyade/ms-backend
+
 ## 使用说明 Description
 
 项目名在 /config/config.ts 中；
@@ -10,14 +21,7 @@
 
 在项目根目录中新建 .env.prod 文件，配置项与 .env.dev 一样，用于生产环境。
 
-在 /config 中新建 authConfig.ts 文件，并写入以下内容：
-```typescript
-export const SECRET_KEY = '' // 这里输入你的盐
-```
-
-## 关于 About
-
-这是一个后台管理系统模板，后端语言为Nest.js，前端语言为Vue.js。
+在 /config 目录下新建 authConfig.ts 文件，随后将 authConfig.txt 内的内容复制进去并根据自身情况做修改；
 
 ## 注意 NOTICE
 
