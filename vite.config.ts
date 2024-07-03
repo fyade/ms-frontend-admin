@@ -53,6 +53,7 @@ export default defineConfig(({mode}) => {
     resolve: {
       alias: {
         '@': join(__dirname, 'src'),
+        '#': join(__dirname)
       }
     },
     server: {
@@ -61,6 +62,11 @@ export default defineConfig(({mode}) => {
           target: env.VITE_BASEURL,
           changeOrigin: true,
           rewrite: path => path.substring(env.VITE_API_PREFIX.length)
+        },
+        [env.VITE_API_FILE_PREFIX]: {
+          target: env.VITE_FILE_BASEURL,
+          changeOrigin: true,
+          rewrite: path => path.substring(env.VITE_API_FILE_PREFIX.length)
         }
       }
     },

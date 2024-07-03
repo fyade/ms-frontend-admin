@@ -28,8 +28,8 @@ watch(() => route.path, () => {
     <div class="left">
       <span>logo</span>
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
-        <el-breadcrumb-item v-for="(item, index) in list" :key="index"
+        <el-breadcrumb-item class="el-breadcrumb-item" to="/">首页</el-breadcrumb-item>
+        <el-breadcrumb-item class="el-breadcrumb-item" v-for="(item, index) in list" :key="index"
           :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`">
           {{ item.meta ? item.meta.label : item.name }}
         </el-breadcrumb-item>
