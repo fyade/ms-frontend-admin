@@ -9,7 +9,7 @@ import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
 import {
   codeGenColumnDel,
-  codeGenColumnIns, codeGenColumnInss,
+  codeGenColumnIns, codeGenColumnInss, codeGenColumnSelAll,
   codeGenColumnSelMore,
   codeGenColumnSelOne,
   codeGenColumnSelPage, codeGenColumnUpd, codeGenColumnUpds, getDbInfo
@@ -144,7 +144,7 @@ const config: t_config = reactive({
     tableId: props.tableId
   }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
+  pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   /**
    * dialogVisible变化时的回调，可不传
@@ -176,7 +176,7 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    return codeGenColumnSelPage(params)
+    return codeGenColumnSelAll(params)
   },
   /**
    * 查询单个
@@ -270,8 +270,8 @@ const formTypeDicts = [
   {label: '文本框', value: 'input'},
   {label: '文本框-数字', value: 'inputNumber'},
   {label: '文本域', value: 'textarea'},
-  {label: '单选框', value: 'radio'},
-  {label: '复选框', value: 'checkbox'},
+  {label: '单选框（是与否）', value: 'radio'},
+  // {label: '复选框', value: 'checkbox'},
 ]
 const selTypeDicts = [
   {label: '=', value: 'equals'},

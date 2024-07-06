@@ -320,14 +320,14 @@ const copyFileName = async (key: string) => {
       <el-tab-pane v-for="key in Object.keys(codeViewState.fileNames)" :label="codeViewState.fileNames[key]">
         <div>文件路径：{{ codeViewState.filePaths[key] }}/{{ codeViewState.fileNames[key] }}</div>
         <div>
-          <el-space wrap>
-            代码内容：
-            <el-button text bg @click="copyFileName(key)">复制文件名</el-button>
-            <el-button text bg @click="copyCode(key)">复制代码</el-button>
-          </el-space>
-          <pre>
-            {{ codeViewState.codes[key] }}
-          </pre>
+          <el-divider content-position="left">
+            <el-space wrap>
+              代码内容⬇
+              <el-button text bg @click="copyFileName(key)">复制文件名</el-button>
+              <el-button text bg @click="copyCode(key)">复制代码</el-button>
+            </el-space>
+          </el-divider>
+          <pre>{{ codeViewState.codes[key] }}</pre>
         </div>
       </el-tab-pane>
     </el-tabs>

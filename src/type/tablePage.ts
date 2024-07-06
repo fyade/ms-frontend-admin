@@ -69,7 +69,7 @@ export interface t_funcTablePage_params {
   props?: any
 }
 
-export interface pageSelDto {
-  pageNum: number
-  pageSize: number
+export class pageSelDto {
+  pageNum!: number
+  pageSize!: number
 }

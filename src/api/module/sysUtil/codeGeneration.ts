@@ -110,6 +110,14 @@ export function codeGenColumnSelMore(params: any) {
   })
 }
 
+export function codeGenColumnSelAll(params: any) {
+  return request({
+    url: '/sys-util/code-gen-column/all',
+    method: 'GET',
+    params
+  })
+}
+
 export function codeGenColumnIns(data: any) {
   return request({
     url: '/sys-util/code-gen-column',

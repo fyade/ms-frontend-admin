@@ -67,8 +67,7 @@ const state = reactive<State>({
   // }
   filterForm: {
     username: '',
-    nickname: '',
-    sex: ''
+    nickname: ''
   },
   list: [],
   multipleSelection: [],
@@ -352,9 +351,6 @@ provide('changeSelectRole', selectRole)
     </el-form-item>
     <el-form-item :label="state.dict['nickname']" prop="nickname">
       <el-input v-model="state.filterForm['nickname']" :placeholder="state.dict['nickname']"/>
-    </el-form-item>
-    <el-form-item :label="state.dict['sex']" prop="sex">
-      <el-input v-model="state.filterForm['sex']" :placeholder="state.dict['sex']"/>
     </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>

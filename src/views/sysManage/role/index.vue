@@ -277,10 +277,20 @@ const setPermission = (id: any) => {
       <el-input v-model="state.filterForm['label']" :placeholder="state.dict['label']"/>
     </el-form-item>
     <el-form-item :label="state.dict['ifAdmin']" prop="ifAdmin">
-      <el-input v-model="state.filterForm['ifAdmin']" :placeholder="state.dict['ifAdmin']"/>
+      <!--<el-input v-model="state.filterForm['ifAdmin']" :placeholder="state.dict['ifAdmin']"/>-->
+      <el-radio-group v-model="state.filterForm['ifAdmin']">
+        <el-radio label="">全部</el-radio>
+        <el-radio :label="final.Y">是</el-radio>
+        <el-radio :label="final.N">否</el-radio>
+      </el-radio-group>
     </el-form-item>
     <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
-      <el-input v-model="state.filterForm['ifDisabled']" :placeholder="state.dict['ifDisabled']"/>
+      <!--<el-input v-model="state.filterForm['ifDisabled']" :placeholder="state.dict['ifDisabled']"/>-->
+      <el-radio-group v-model="state.filterForm['ifDisabled']">
+        <el-radio label="">全部</el-radio>
+        <el-radio :label="final.Y">是</el-radio>
+        <el-radio :label="final.N">否</el-radio>
+      </el-radio-group>
     </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
