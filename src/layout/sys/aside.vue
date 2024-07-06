@@ -76,13 +76,7 @@ defineExpose({
 })
 </script>
 <template>
-  <div
-      class="el"
-      :style="{
-        '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
-        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
-      }"
-  >
+  <div class="el">
     <el-menu
         :default-active="defaultActive"
         :collapse="false"

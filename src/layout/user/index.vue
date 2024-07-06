@@ -32,10 +32,7 @@ const menuIndex = computed(() => {
 <template>
   <PublicIndex>
     <el-container class="el">
-      <el-aside class="left" width="200px" :style="{
-        '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
-        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
-      }">
+      <el-aside class="left" width="200px">
         <el-menu :default-active="defaultActive" :collapse="false" :unique-opened="true" router>
           <el-menu-item v-for="(item, index) in menus" :index="item.index" style="z-index: 1;" :style="{
             color: index === menuIndex ? '#fff' : '#000'
