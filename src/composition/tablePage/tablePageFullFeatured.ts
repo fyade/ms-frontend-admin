@@ -3,7 +3,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { EXPORT_IGNORE_KEYS, final, Operate } from "@/utils/base.ts"
 import { t_funcTablePage_params } from "@/type/tablePage.ts";
 import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import * as XLSXSTYLEVITE from "xlsx-style-vite";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { numberToExcelColumn } from "@/utils/ExcelUtils.ts";
@@ -314,7 +314,7 @@ export const funcTablePage = ({
   // 导出
   const gExport = async () => {
     await ElMessageBox.confirm(
-        '目前只支持单表导出，不支持子主表等所有涉及父子关系的导出，请确认是否知晓？',
+        '该功能暂不可用。',
         '警告',
         {
           confirmButtonText: '确认',
@@ -322,61 +322,70 @@ export const funcTablePage = ({
           type: 'warning',
         }
     )
-    const rows = deepClone<any[]>(toRaw(state.multipleSelection).map((item: any) => toRaw(item))).map((obj: object) => {
-      exportIgnoreKeys?.forEach(key => delete obj[key])
-      return obj
-    });
-    const keys = Object.keys(rows[0])
-    const keysCN = keys.map(key => state.dict[key] || key)
-    const datas = rows.map((row: object) => Object.values(row))
-    const sheetRows: any[][] = [
-      [{v: '#'}, ...keys.map(value => ({v: value}))],
-      [{v: '#'}, ...keysCN.map(value => ({v: value}))],
-      [
-        {v: '#'},
-        {v: '导出'},
-      ],
-      ...datas.map((row: any[]) => row.map(value => ({v: value}))).map((row: any[], index: number) => [{v: index + 1}, ...row])
-    ]
-    // 开始生成excel
-    const sheet = XLSX.utils.aoa_to_sheet(Array.from(Array(sheetRows.length), () => Array(sheetRows[1].length).fill(null)))
-    sheet['!cols'] = Array(sheetRows[1].length).fill({wch: 20})
-    sheetRows.forEach((dat, i) => {
-      dat.forEach((da, j) => {
-        const id = `${numberToExcelColumn(j + 1)}${i + 1}`
-        sheet[id] = {
-          v: da.v,
-          s: {
-            font: {
-              name: '等线',
-              sz: 11,
-              bold: i === 0
-            }
-          }
-        }
-      })
-    })
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, sheet, 'sheet1')
-    const fileName = 'data.xlsx'
-    // 创建可写流
-    const wopts = XLSXSTYLEVITE.write(workbook, {bookType: 'xlsx', bookSST: false, type: 'binary'})
-
-    // 创建一个 Blob 对象
-    function s2ab(s: any) {
-      var buf = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-      return buf;
-    }
-
-    const blob = new Blob([s2ab(wopts)], {type: ''})
-    downloadFromBlob(blob, fileName)
+    // await ElMessageBox.confirm(
+    //     '目前只支持单表导出，不支持子主表等所有涉及父子关系的导出，请确认是否知晓？',
+    //     '警告',
+    //     {
+    //       confirmButtonText: '确认',
+    //       cancelButtonText: '取消',
+    //       type: 'warning',
+    //     }
+    // )
+    // const rows = deepClone<any[]>(toRaw(state.multipleSelection).map((item: any) => toRaw(item))).map((obj: object) => {
+    //   exportIgnoreKeys?.forEach(key => delete obj[key])
+    //   return obj
+    // });
+    // const keys = Object.keys(rows[0])
+    // const keysCN = keys.map(key => state.dict[key] || key)
+    // const datas = rows.map((row: object) => Object.values(row))
+    // const sheetRows: any[][] = [
+    //   [{v: '#'}, ...keys.map(value => ({v: value}))],
+    //   [{v: '#'}, ...keysCN.map(value => ({v: value}))],
+    //   [
+    //     {v: '#'},
+    //     {v: '导出'},
+    //   ],
+    //   ...datas.map((row: any[]) => row.map(value => ({v: value}))).map((row: any[], index: number) => [{v: index + 1}, ...row])
+    // ]
+    // // 开始生成excel
+    // const sheet = XLSX.utils.aoa_to_sheet(Array.from(Array(sheetRows.length), () => Array(sheetRows[1].length).fill(null)))
+    // sheet['!cols'] = Array(sheetRows[1].length).fill({wch: 20})
+    // sheetRows.forEach((dat, i) => {
+    //   dat.forEach((da, j) => {
+    //     const id = `${numberToExcelColumn(j + 1)}${i + 1}`
+    //     sheet[id] = {
+    //       v: da.v,
+    //       s: {
+    //         font: {
+    //           name: '等线',
+    //           sz: 11,
+    //           bold: i === 0
+    //         }
+    //       }
+    //     }
+    //   })
+    // })
+    // const workbook = XLSX.utils.book_new()
+    // XLSX.utils.book_append_sheet(workbook, sheet, 'sheet1')
+    // const fileName = 'data.xlsx'
+    // // 创建可写流
+    // const wopts = XLSXSTYLEVITE.write(workbook, {bookType: 'xlsx', bookSST: false, type: 'binary'})
+    //
+    // // 创建一个 Blob 对象
+    // function s2ab(s: any) {
+    //   var buf = new ArrayBuffer(s.length);
+    //   var view = new Uint8Array(buf);
+    //   for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    //   return buf;
+    // }
+    //
+    // const blob = new Blob([s2ab(wopts)], {type: ''})
+    // downloadFromBlob(blob, fileName)
   }
   // 导入
   const gImport = async () => {
     await ElMessageBox.confirm(
-        '目前只支持单表导入，不支持子主表等所有涉及父子关系的导入，请确认是否知晓？',
+        '该功能暂不可用。',
         '警告',
         {
           confirmButtonText: '确认',
@@ -384,37 +393,46 @@ export const funcTablePage = ({
           type: 'warning',
         }
     )
-    // @ts-ignore
-    const selectFiles = await window?.showOpenFilePicker();
-    if (selectFiles.length === 0) {
-      return
-    }
-    const fileHandle = selectFiles[0]
-    const file = await fileHandle.getFile();
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSXSTYLEVITE.read(data, {type: 'array'});
-      // 假设我们只关心第一个工作表
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      // 转换为 JSON 对象数组
-      const jsonData = XLSXSTYLEVITE.utils.sheet_to_json(worksheet);
-      const data2 = jsonData.slice(2).map((obj: object) => {
-        delete obj['#']
-        if (config.selectParam) {
-          Object.keys(config.selectParam).forEach(key => {
-            obj[key] = config.selectParam[key]
-          })
-        }
-        return obj
-      })
-      insData({ifImport: true, dataFromExcel: data2})
-    }
-    reader.onerror = e => {
-      console.error(e)
-    }
-    reader.readAsArrayBuffer(file);
+    // await ElMessageBox.confirm(
+    //     '目前只支持单表导入，不支持子主表等所有涉及父子关系的导入，请确认是否知晓？',
+    //     '警告',
+    //     {
+    //       confirmButtonText: '确认',
+    //       cancelButtonText: '取消',
+    //       type: 'warning',
+    //     }
+    // )
+    // // @ts-ignore
+    // const selectFiles = await window?.showOpenFilePicker();
+    // if (selectFiles.length === 0) {
+    //   return
+    // }
+    // const fileHandle = selectFiles[0]
+    // const file = await fileHandle.getFile();
+    // const reader = new FileReader();
+    // reader.onload = (e: any) => {
+    //   const data = new Uint8Array(e.target.result);
+    //   const workbook = XLSXSTYLEVITE.read(data, {type: 'array'});
+    //   // 假设我们只关心第一个工作表
+    //   const sheetName = workbook.SheetNames[0];
+    //   const worksheet = workbook.Sheets[sheetName];
+    //   // 转换为 JSON 对象数组
+    //   const jsonData = XLSXSTYLEVITE.utils.sheet_to_json(worksheet);
+    //   const data2 = jsonData.slice(2).map((obj: object) => {
+    //     delete obj['#']
+    //     if (config.selectParam) {
+    //       Object.keys(config.selectParam).forEach(key => {
+    //         obj[key] = config.selectParam[key]
+    //       })
+    //     }
+    //     return obj
+    //   })
+    //   insData({ifImport: true, dataFromExcel: data2})
+    // }
+    // reader.onerror = e => {
+    //   console.error(e)
+    // }
+    // reader.readAsArrayBuffer(file);
   }
   // 修改
   const tUpd = async (id: any, ifMore?: boolean) => {
