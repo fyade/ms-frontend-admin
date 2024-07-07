@@ -28,7 +28,22 @@ export function selList(params: any) {
  */
 export function fileUploadOneFull(file: FormData, fileName: string = '') {
   return request({
-    url: `/sys-common/file-upload/one-full/${fileName}`,
+    url: `/sys-common/file-upload/one-full${fileName ? `/${fileName}` : ''}`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data;charset=utf-8'
+    },
+    data: file
+  })
+}
+
+/**
+ * 上传头绪
+ * @param file
+ */
+export function fileUploadAvatar(file: FormData) {
+  return request({
+    url: `/sys-common/file-upload/one-full-avatar`,
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data;charset=utf-8'

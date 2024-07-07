@@ -67,6 +67,7 @@ export interface t_funcTablePage_params {
   activeTabName?: Ref<ONE | MORE>
   func: t_FuncMap
   props?: any
+  exportIgnoreKeys?: string[]
 }
 
 export class pageSelDto {

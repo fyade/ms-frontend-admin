@@ -16,6 +16,7 @@ import UserRole from "./userRole.vue";
 import { userDto } from "@/type/api/sysManage/user.ts";
 import { userRoleIns, userRoleUpd } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
+import { fileBaseUrl } from "@/api/request.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -268,7 +269,7 @@ provide('changeSelectRole', selectRole)
         <span>{{ newPsd['id'] }}</span>
       </el-form-item>
       <el-form-item label="新密码" prop="password">
-        <el-input v-model="newPsd['password']" placeholder="新密码" clearable/>
+        <el-input v-model="newPsd['password']" placeholder="新密码"/>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -394,7 +395,15 @@ provide('changeSelectRole', selectRole)
     <!--在此下方添加表格列-->
     <el-table-column prop="username" :label="state.dict['username']" width="120"/>
     <el-table-column prop="nickname" :label="state.dict['nickname']" width="120"/>
-    <el-table-column prop="avatar" :label="state.dict['avatar']" width="120"/>
+    <el-table-column prop="avatar" :label="state.dict['avatar']" width="120">
+      <template #default="{row}">
+        <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
+          <template #error>
+            <div></div>
+          </template>
+        </el-image>
+      </template>
+    </el-table-column>
     <el-table-column prop="roles" :label="state.dict['roles']" width="240">
       <template #default="{row}">
         <el-space wrap>

@@ -19,6 +19,11 @@ const menus = [
     label: '我的资料'
   },
   {
+    index: '/user/edit-avatar',
+    icon: 'avatar',
+    label: '修改头绪'
+  },
+  {
     index: '/user/edit-psd',
     icon: 'electronic-locks-open',
     label: '修改密码'

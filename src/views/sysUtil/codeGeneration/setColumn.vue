@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
 import {
   codeGenColumnDel,
@@ -240,6 +240,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -443,6 +445,11 @@ const handleSelectionChange1 = (val: any) => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifIns']" prop="ifIns">
+              <template #label>
+                <Tooltip content="若选是，则在[新建及修改表单]中会显示">
+                  {{ state.dict['ifIns'] }}
+                </Tooltip>
+              </template>
               <el-radio-group v-model="state.dialogForm['ifIns']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
@@ -453,6 +460,11 @@ const handleSelectionChange1 = (val: any) => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifUpd']" prop="ifUpd">
+              <template #label>
+                <Tooltip content="若选是，则在[]中会显示">
+                  {{ state.dict['ifUpd'] }}
+                </Tooltip>
+              </template>
               <el-radio-group v-model="state.dialogForm['ifUpd']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
@@ -461,6 +473,11 @@ const handleSelectionChange1 = (val: any) => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifSelOne']" prop="ifSelOne">
+              <template #label>
+                <Tooltip content="若选是，则在[]中会显示">
+                  {{ state.dict['ifSelOne'] }}
+                </Tooltip>
+              </template>
               <el-radio-group v-model="state.dialogForm['ifSelOne']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
@@ -471,6 +488,11 @@ const handleSelectionChange1 = (val: any) => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifSelMore']" prop="ifSelMore">
+              <template #label>
+                <Tooltip content="若选是，则在[筛选表单]中会显示">
+                  {{ state.dict['ifSelMore'] }}
+                </Tooltip>
+              </template>
               <el-radio-group v-model="state.dialogForm['ifSelMore']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
@@ -479,6 +501,11 @@ const handleSelectionChange1 = (val: any) => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifRequired']" prop="ifRequired">
+              <template #label>
+                <Tooltip content="若选是，则在[新建及修改表单]中会有必填校验">
+                  {{ state.dict['ifRequired'] }}
+                </Tooltip>
+              </template>
               <el-radio-group v-model="state.dialogForm['ifRequired']">
                 <el-radio :label="final.Y">是</el-radio>
                 <el-radio :label="final.N">否</el-radio>
@@ -602,9 +629,11 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="70">
+          <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="90">
             <template #header>
-              <span :class="ifRequired('ifIns')?'tp-table-header-required':''">{{ state.dict['ifIns'] }}</span>
+              <Tooltip content="若选是，则在[新建及修改表单]中会显示">
+                <span :class="ifRequired('ifIns')?'tp-table-header-required':''">{{ state.dict['ifIns'] }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifIns`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -612,9 +641,11 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="70">
+          <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="90">
             <template #header>
-              <span :class="ifRequired('ifUpd')?'tp-table-header-required':''">{{ state.dict['ifUpd'] }}</span>
+              <Tooltip content="若选是，则在[]中会显示">
+                <span :class="ifRequired('ifUpd')?'tp-table-header-required':''">{{ state.dict['ifUpd'] }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifUpd`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -622,9 +653,11 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="70">
+          <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="90">
             <template #header>
-              <span :class="ifRequired('ifSelOne')?'tp-table-header-required':''">{{ state.dict['ifSelOne'] }}</span>
+              <Tooltip content="若选是，则在[]中会显示">
+                <span :class="ifRequired('ifSelOne')?'tp-table-header-required':''">{{ state.dict['ifSelOne'] }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelOne`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -633,9 +666,13 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="70">
+          <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="90">
             <template #header>
-              <span :class="ifRequired('ifSelMore')?'tp-table-header-required':''">{{ state.dict['ifSelMore'] }}</span>
+              <Tooltip content="若选是，则在[筛选表单]中会显示">
+                <span :class="ifRequired('ifSelMore')?'tp-table-header-required':''">{{
+                    state.dict['ifSelMore']
+                  }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelMore`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -644,11 +681,13 @@ const handleSelectionChange1 = (val: any) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="70">
+          <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="90">
             <template #header>
+              <Tooltip content="若选是，则在[新建及修改表单]中会有必填校验">
               <span :class="ifRequired('ifRequired')?'tp-table-header-required':''">
                 {{ state.dict['ifRequired'] }}
               </span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div
@@ -769,8 +808,10 @@ const handleSelectionChange1 = (val: any) => {
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除列
     </el-button>
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport">
+      导出
+    </el-button>
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
@@ -802,11 +843,11 @@ const handleSelectionChange1 = (val: any) => {
       </template>
     </el-table-column>
     <el-table-column prop="tsName" :label="state.dict['tsName']" width="120"/>
-    <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="120"/>
-    <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="120"/>
-    <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="120"/>
-    <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="120"/>
-    <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="120"/>
+    <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="60"/>
+    <el-table-column prop="ifUpd" :label="state.dict['ifUpd']" width="60"/>
+    <el-table-column prop="ifSelOne" :label="state.dict['ifSelOne']" width="60"/>
+    <el-table-column prop="ifSelMore" :label="state.dict['ifSelMore']" width="60"/>
+    <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="60"/>
     <el-table-column prop="formType" :label="state.dict['formType']" width="120">
       <template #default="{row}">
         {{ formTypeDicts.find(item => item.value === row.formType)?.label }}

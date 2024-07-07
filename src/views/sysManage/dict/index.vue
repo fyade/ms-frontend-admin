@@ -3,24 +3,27 @@ export default {
   name: 'sysManage:dict'
 }
 </script>
+
 <script setup lang="ts">
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus, Refresh, Download, Upload } from "@element-plus/icons-vue"
+import { MORE, ONE } from "@/type/utils/base.ts"
 import {
-  dicTypeDel,
-  dicTypeIns,
-  dicTypeInss,
   dicTypeSel,
-  dicTypeSelById, dicTypeSelByIds,
-  dicTypeUpd, dicTypeUpds
-} from "@/api/module/sysManage/dicType.ts";
-import DicData from "./dicData.vue";
-import { MORE, ONE } from "@/type/utils/base.ts";
+  dicTypeSelById,
+  dicTypeSelByIds,
+  dicTypeIns,
+  dicTypeUpd,
+  dicTypeInss,
+  dicTypeUpds,
+  dicTypeDel,
+} from "@/api/module/sysManage/dicType.ts"
+import DicData from "@/views/sysManage/dict/dicData.vue";
 
 const state = reactive<State>({
   dialogType: {
@@ -33,6 +36,7 @@ const state = reactive<State>({
   //   ifDefault: final.IS_DEFAULT_YES,
   //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
@@ -184,6 +188,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -431,7 +437,7 @@ const setDicData = (row: any) => {
   </el-form>
 
   <!--操作按钮-->
-  <div>
+  <el-space wrap>
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
@@ -441,8 +447,10 @@ const setDicData = (row: any) => {
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport">
+      导出
+    </el-button>
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
@@ -453,7 +461,7 @@ const setDicData = (row: any) => {
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
     <!--</el-button-group>-->
-  </div>
+  </el-space>
 
   <!--数据表格-->
   <el-table
@@ -486,8 +494,7 @@ const setDicData = (row: any) => {
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span
-            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>

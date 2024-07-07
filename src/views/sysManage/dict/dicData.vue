@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import {
   dicDataDel,
   dicDataIns, dicDataInss,
@@ -208,6 +208,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -501,8 +503,8 @@ dicTypeSelAll({}).then(res => {
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport">导出</el-button>
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
     <!--<el-button-group>-->
     <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->

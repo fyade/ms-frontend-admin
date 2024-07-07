@@ -84,6 +84,10 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/user/info.vue')
       },
       {
+        path: 'edit-avatar',
+        component: () => import('@/views/user/edit-avatar.vue')
+      },
+      {
         path: 'edit-psd',
         component: () => import('@/views/user/edit-psd.vue')
       }
@@ -94,12 +98,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/views/user/login.vue')
   },
   {
-    path: '/404',
-    component: () => import('@/views/error/404.vue')
-  },
-  {
     path: '/:pathMatch(.*)*',
-    redirect: '/404'
+    component: () => import('@/views/error/404.vue')
   }
 ]
 

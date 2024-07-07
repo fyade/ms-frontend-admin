@@ -5,6 +5,7 @@ import { ref, watch } from "vue";
 import { useRouterStore } from "@/store/module/router.ts";
 import { toPath } from "@/utils/baseUtils.ts";
 import { useUserStore } from '@/store/module/user';
+import { fileBaseUrl } from "@/api/request.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -30,7 +31,7 @@ watch(() => route.path, () => {
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item class="el-breadcrumb-item" to="/">首页</el-breadcrumb-item>
         <el-breadcrumb-item class="el-breadcrumb-item" v-for="(item, index) in list" :key="index"
-          :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`">
+                            :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`">
           {{ item.meta ? item.meta.label : item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -39,7 +40,8 @@ watch(() => route.path, () => {
     <div class="right">
       <router-link to="/user">
         <el-space>
-          <SvgIcon name="user" color="#000000" />
+          <el-image v-if="userStore.userinfo.avatar" style="width: 30px;height: 30px;border-radius: 8px;" :src="fileBaseUrl+userStore.userinfo.avatar" fit="contain"></el-image>
+          <SvgIcon v-else name="user" color="#000000"/>
           {{ userStore.userinfo.nickname }}
         </el-space>
       </router-link>
@@ -61,18 +63,20 @@ watch(() => route.path, () => {
     color: #000;
   }
 
-  >* {
+  > * {
     display: flex;
     gap: 16px;
     align-items: center;
   }
 
-  >.left {}
+  > .left {
+  }
 
-  >.center {}
+  > .center {
+  }
 
-  >.right {
-    >* {
+  > .right {
+    > * {
       cursor: pointer;
     }
   }

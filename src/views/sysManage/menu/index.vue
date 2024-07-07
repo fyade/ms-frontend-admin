@@ -113,7 +113,10 @@ const state = reactive<State<DialogForm, DialogForm>>({
   //   name: '',
   //   ...
   // }
-  filterForm: {},
+  filterForm: {
+    type: '',
+    perms:''
+  },
   list: [],
   multipleSelection: [],
   total: -1,
@@ -330,7 +333,11 @@ const checkVisible = (a: tType, b: tType[]): boolean => {
 }
 
 const tabledata2 = computed(() => {
-  return arr2ToDiguiObj(state.list)
+  const diguiObj = arr2ToDiguiObj(state.list);
+  if (diguiObj.length === 0 && state.list.length > 0) {
+    return state.list
+  }
+  return diguiObj
 })
 const tabledata3 = computed(() => {
   return arr2ToDiguiObj(state.list.filter((item: any) => checkVisible(item.type, [T_MENU, T_COMP])))
@@ -751,9 +758,17 @@ const expendAll = () => {
       @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
+    <el-form-item :label="state.dict['type']" prop="type">
+      <!--<el-input v-model="state.filterForm['type']" :placeholder="state.dict['type']"/>-->
+      <el-select v-model="state.filterForm['type']" :placeholder="state.dict['type']" clearable filterable>
+        <el-option :label="menuTypeDict[T_MENU]" :value="T_MENU"/>
+        <el-option :label="menuTypeDict[T_COMP]" :value="T_COMP"/>
+        <el-option :label="menuTypeDict[T_Inter]" :value="T_Inter"/>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="state.dict['perms']" prop="perms">
+      <el-input v-model="state.filterForm['perms']" :placeholder="state.dict['perms']"/>
+    </el-form-item>
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>

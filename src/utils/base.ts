@@ -31,6 +31,15 @@ export const publicDict = {
   deleted: '逻辑删除'
 }
 
+export const EXPORT_IGNORE_KEYS = [
+  'id',
+  'createBy',
+  'updateBy',
+  'createTime',
+  'updateTime',
+  'deleted'
+]
+
 const Y = 'Y'
 const N = 'N'
 export const final: {
