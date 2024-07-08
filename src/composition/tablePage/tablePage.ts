@@ -350,6 +350,11 @@ export const funcTablePage = ({
       const values: any[] = []
       sheetValues.slice(2).forEach(item => {
         const obj = (item as any[]).reduce((a, c, i) => ({...a, [(sheetValues[1] as any[])[i]]: c}), {});
+        if (config.selectParam) {
+          Object.keys(config.selectParam).forEach(key => {
+            obj[key] = config.selectParam[key]
+          })
+        }
         values.push(obj)
       })
       insData({ifImport: true, dataFromExcel: values})
