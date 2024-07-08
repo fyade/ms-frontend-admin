@@ -15,13 +15,13 @@
     "axios": "^1.6.7",
     "crypto-js": "^4.2.0",
     "element-plus": "^2.7.6",
+    "exceljs": "^4.4.0",
     "pinia": "^2.1.7",
     "pixi.js": "^8.1.0",
     "sass": "^1.71.1",
     "spark-md5": "^3.0.2",
     "vue": "^3.4.19",
-    "vue-router": "^4.3.0",
-    "xlsx-style-vite": "^0.0.2"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.20",
