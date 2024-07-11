@@ -18,8 +18,8 @@ import { menuSelAll } from "@/api/module/sysManage/menu.ts";
 import { arr1GetDiguiRelation, arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
-  roleId: {
-    type: Number,
+  selectRole: {
+    type: Object,
     required: true
   }
 })
@@ -98,7 +98,7 @@ const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const config: t_config = reactive({
   selectParam: {
-    roleId: props.roleId
+    roleId: props.selectRole.id
   }, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
@@ -108,7 +108,7 @@ const config: t_config = reactive({
    * @param visible 变化后的值
    */
   dialogVisibleCallback: (visible?: boolean) => {
-    dialogVisibleChange()
+    dialogVisibleChange(visible)
   },
   one2More: true,
   one2MoreConfig: {
@@ -129,6 +129,13 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
+    return rolePermissionSelAll(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
     return rolePermissionSelAll(params)
   },
   /**
@@ -191,7 +198,7 @@ const {
 })
 
 const allRoles = ref<any[]>([])
-roleSelAll({id: props.roleId}).then(res => {
+roleSelAll({id: props.selectRole.id}).then(res => {
   allRoles.value = res
 })
 
@@ -248,9 +255,14 @@ const beforeUpdateOne = (data: any[]) => {
 }
 const checked2 = ref(false)
 const checked3 = ref(true)
-const dialogVisibleChange = () => {
+const dialogVisibleChange = (visible?: boolean) => {
   checked2.value = false
   checked3.value = true
+  if (visible) {
+    Object.keys(config.selectParam).forEach(key => {
+      state.dialogForm[key] = config.selectParam[key]
+    })
+  }
 }
 const checked2change = () => {
   if (checked2.value) {
@@ -262,6 +274,34 @@ const checked2change = () => {
 </script>
 
 <template>
+  <!--角色信息-->
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">角色信息</el-text>
+  </el-divider>
+  <el-form>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item label="角色名">
+          <el-input disabled v-model="props.selectRole.label"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="是否管理员用户">
+          <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="是否禁用">
+          <el-input disabled v-model="props.selectRole.ifDisabled"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+
+  <!--权限列表-->
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">权限列表</el-text>
+  </el-divider>
   <!--弹框-->
   <el-dialog
       :width="CONFIG.dialog_width"

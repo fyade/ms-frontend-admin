@@ -7,6 +7,7 @@ import { CONFIG } from "@/utils/base.ts";
       class="el"
       :style="{
         '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
+        '--theme-color-menu-bg-active-lighten': `${CONFIG.theme_color_menu_bg_active_lighten}`,
         '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
       }"
   >
@@ -18,16 +19,20 @@ import { CONFIG } from "@/utils/base.ts";
 .el {
   width: 100%;
   height: 100%;
-}
 
-//$thumb-bg-color: var(--theme-color-menu-bg-active);
-//::-webkit-scrollbar {
-//  width: 10px;
-//  background-color: transparent;
-//}
-//
-//::-webkit-scrollbar-thumb {
-//  background-color: darken($thumb-bg-color, 50%);
-//  border-radius: 5px;
-//}
+  ::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--theme-color-menu-bg-active-lighten);
+    border-radius: 5px;
+    transition: all .2s;
+
+    &:hover {
+      background-color: var(--theme-color-menu-bg-active);
+    }
+  }
+}
 </style>

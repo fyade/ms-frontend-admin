@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { inject, nextTick, reactive, Ref, ref, toRaw, watch } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { inject, nextTick, reactive, Ref, ref, watch } from "vue"
+import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
 import { ElTable, FormRules } from 'element-plus'
 import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sysManage/role.ts";
-import RolePermission from "@/views/sysManage/role/rolePermission.vue";
+import { Refresh } from "@element-plus/icons-vue";
 
 const props = defineProps({
   user: {
@@ -158,25 +158,8 @@ const {
   func
 })
 
-const setPermission = (id: any) => {
-  selectRoleId.value = id
-  drawer.value = true
-}
-const drawer = ref(false)
-const selectRoleId = ref(0)
 const selectRole: Ref<any[]> | undefined = inject('changeSelectRole')
 const multipleTable: Ref<InstanceType<typeof ElTable> | null> = ref<InstanceType<typeof ElTable> | null>(null)
-const handleSelectionChange = (val: any) => {
-  const index = state.multipleSelection.findIndex((item: any) => item.id === val.id);
-  if (index === -1) {
-    state.multipleSelection.push(val)
-  } else {
-    state.multipleSelection.splice(index, 1)
-  }
-  if (selectRole) {
-    selectRole.value = state.multipleSelection
-  }
-}
 const handleDataChange = () => {
   if (selectRole && selectRole.value && multipleTable && multipleTable.value) {
     const selectRoleIds = selectRole.value.map(item => item.id);
@@ -188,27 +171,8 @@ const handleDataChange = () => {
     state.multipleSelection = selectRole.value
   }
 }
-const selects = reactive({})
-watch(() => state.multipleSelection, () => {
-  for (let key in selects) {
-    selects[key] = false
-  }
-  state.multipleSelection.forEach((item: any) => {
-    selects[item.id] = true
-  })
-}, {
-  deep: true
-})
-
-const selectAll = (val: any[]) => {
-  let newselect: any[] = []
-  if (val.length > 0) {
-    const additems = val.filter(item => state.multipleSelection.findIndex((itm: any) => itm.id === item.id) === -1)
-    newselect = [...state.multipleSelection, ...additems]
-  } else {
-    newselect = state.multipleSelection.filter((item: any) => state.list.findIndex((itm: any) => itm.id === item.id) === -1)
-  }
-  state.multipleSelection = newselect
+const handleSelectionChange = (val: any[]) => {
+  state.multipleSelection = val
   if (selectRole) {
     selectRole.value = state.multipleSelection
   }
@@ -242,16 +206,14 @@ const selectAll = (val: any[]) => {
   <el-divider content-position="left">
     <el-text size="large" style="font-weight: bold;">角色列表</el-text>
   </el-divider>
-  <el-drawer
-      v-model="drawer"
-      :size="CONFIG.drawer_size"
-      destroy-on-close
-      title="分配权限"
-  >
-    <RolePermission
-        :role-id="selectRoleId"
-    />
-  </el-drawer>
+  <!--<el-drawer-->
+  <!--    v-model="drawer"-->
+  <!--    :size="CONFIG.drawer_size"-->
+  <!--    destroy-on-close-->
+  <!--    title="分配权限"-->
+  <!--&gt;-->
+  <!--  <RolePermission/>-->
+  <!--</el-drawer>-->
 
   <!--弹框-->
   <!--<el-dialog-->
@@ -358,7 +320,7 @@ const selectAll = (val: any[]) => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <!--<el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
     <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改-->
     <!--</el-button>-->
@@ -384,14 +346,14 @@ const selectAll = (val: any[]) => {
       v-loading="tableLoadingRef"
       :data="state.list"
       row-key="id"
-      @select-all="selectAll"
+      @selection-change="handleSelectionChange"
   >
-    <!--@selection-change="handleSelectionChange"-->
-    <el-table-column fixed type="selection" width="55" :reserve-selection="true">
-      <template #default="{row}">
-        <el-checkbox v-model="selects[row.id]" @change="handleSelectionChange(row)"/>
-      </template>
-    </el-table-column>
+    <el-table-column type="selection" width="55"/>
+    <!--<el-table-column fixed type="selection" width="55" :reserve-selection="true">-->
+    <!--  <template #default="{row}">-->
+    <!--    <el-checkbox v-model="selects[row.id]" @change="handleSelectionChange(row)"/>-->
+    <!--  </template>-->
+    <!--</el-table-column>-->
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->

@@ -1,9 +1,22 @@
 import request from "@/api/request.ts";
-import { userRoleInsDto, userRoleSelDto, userRoleUpdDto } from "@/type/api/sysManage/userRole.ts";
+import {
+  userRoleUpdURDto,
+  userRoleUpdRUDto,
+  userRoleSelAllDto,
+  userRoleSelDto
+} from "@/type/api/sysManage/userRole.ts";
 
 export function userRoleSel(params: userRoleSelDto) {
   return request({
     url: '/sys-manage/user-role',
+    method: 'GET',
+    params: params
+  })
+}
+
+export function userRoleSelAll(params: userRoleSelAllDto) {
+  return request({
+    url: '/sys-manage/user-role/all',
     method: 'GET',
     params: params
   })
@@ -16,18 +29,18 @@ export function userRoleSelById(id: any) {
   })
 }
 
-export function userRoleIns(params: userRoleInsDto) {
+export function userRoleUpdUR(params: userRoleUpdURDto) {
   return request({
-    url: '/sys-manage/user-role',
+    url: '/sys-manage/user-role/ur',
     method: 'POST',
     data: params
   })
 }
 
-export function userRoleUpd(params: userRoleUpdDto) {
+export function userRoleUpdRU(params: userRoleUpdRUDto) {
   return request({
-    url: '/sys-manage/user-role',
-    method: 'PUT',
+    url: '/sys-manage/user-role/ru',
+    method: 'POST',
     data: params
   })
 }

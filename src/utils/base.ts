@@ -9,6 +9,7 @@ export const CONFIG = {
   icon_white: '#ffffff',
   icon_black: '#000000',
   theme_color_menu_bg_active: '#70a1ff',
+  theme_color_menu_bg_active_lighten: '#d5e4ff',
   theme_color_menu_bg_not_active: '#fff',
   theme_color_menu_color: '#fff',
 }
@@ -16,6 +17,14 @@ export const CONFIG = {
 export const PAGINATION = {
   pageNum: 1,
   pageSize: 10
+}
+
+export class baseInterface {
+  createBy?: string;
+  updateBy?: string;
+  createTime?: Date;
+  updateTime?: Date;
+  deleted?: string;
 }
 
 export const publicDict = {

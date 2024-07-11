@@ -34,8 +34,9 @@ export const funcTablePage = ({
     tableLoadingRef.value = true
     state.list = []
     const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
+    const funcOfSelect = (!ifByPage && func.selectAll) ? func.selectAll : func.selectList
     const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
-    func.selectList(obj).then(res => {
+    funcOfSelect(obj).then(res => {
       if (ifByPage) {
         state.list = res.list
         state.total = res.total
@@ -291,7 +292,7 @@ export const funcTablePage = ({
                          } = {}
   ) => {
     await ElMessageBox.confirm(
-        '目前只支持单表导出，不支持子主表等所有涉及父子关系的导出，请确认是否知晓？',
+        '目前只支持单表导出，不支持子主表、树表等所有涉及父子关系的导出，请确认是否知晓？',
         '警告',
         {
           confirmButtonText: '确认',
@@ -321,7 +322,7 @@ export const funcTablePage = ({
   // 导入
   const gImport = async () => {
     await ElMessageBox.confirm(
-        '目前只支持单表导入，不支持子主表等所有涉及父子关系的导入，请确认是否知晓？',
+        '目前只支持单表导入，不支持子主表、树表等所有涉及父子关系的导入，请确认是否知晓？',
         '警告',
         {
           confirmButtonText: '确认',

@@ -179,6 +179,13 @@ const func: t_FuncMap = {
     return codeGenColumnSelAll(params)
   },
   /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return codeGenColumnSelAll(params)
+  },
+  /**
    * 查询单个
    * @param id
    */

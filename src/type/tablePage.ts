@@ -44,6 +44,7 @@ type t_MyFuncType2 = (...any: any[]) => Promise<any>
 
 export interface t_FuncMap {
   selectList: t_MyFuncType
+  selectAll?: t_MyFuncType
   selectById: t_MyFuncType
   selectByIds?: t_MyFuncType
   insertOne: t_MyFuncType

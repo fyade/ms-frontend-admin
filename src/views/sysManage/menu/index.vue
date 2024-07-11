@@ -174,6 +174,13 @@ const func: t_FuncMap = {
     return menuSelAll(params)
   },
   /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return menuSelAll(params)
+  },
+  /**
    * 查询单个
    * @param id
    */
@@ -332,14 +339,14 @@ const checkVisible = (a: tType, b: tType[]): boolean => {
   return b.indexOf(a) > -1
 }
 
-const tabledata2 = computed(() => {
+const tableData2 = computed(() => {
   const diguiObj = arr2ToDiguiObj(state.list);
   if (diguiObj.length === 0 && state.list.length > 0) {
     return state.list
   }
   return diguiObj
 })
-const tabledata3 = computed(() => {
+const tableData3 = computed(() => {
   return arr2ToDiguiObj(state.list.filter((item: any) => checkVisible(item.type, [T_MENU, T_COMP])))
 })
 
@@ -395,7 +402,7 @@ const expendAll = () => {
             <el-form-item :label="state.dict['parentId']" prop="parentId">
               <el-cascader
                   v-model="state.dialogForm['parentId']"
-                  :options="tabledata3"
+                  :options="tableData3"
                   :props="cascaderProps2"
                   clearable
               />
@@ -553,7 +560,7 @@ const expendAll = () => {
               <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-cascader
                     v-model="state.dialogForms[$index]['parentId']"
-                    :options="tabledata3"
+                    :options="tableData3"
                     :props="cascaderProps2"
                     clearable
                 />
@@ -805,7 +812,7 @@ const expendAll = () => {
   <!--数据表格-->
   <el-table
       v-loading="tableLoadingRef"
-      :data="tabledata2"
+      :data="tableData2"
       :expand-row-keys="expandRowKeys"
       row-key="id"
       :default-expand-all="false"
@@ -824,10 +831,30 @@ const expendAll = () => {
       </template>
     </el-table-column>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
-    <el-table-column prop="ifLink" :label="state.dict['ifLink']" width="120"/>
-    <el-table-column prop="ifVisible" :label="state.dict['ifVisible']" width="120"/>
-    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
-    <el-table-column prop="ifPublic" :label="state.dict['ifPublic']" width="120"/>
+    <el-table-column prop="ifLink" :label="state.dict['ifLink']" width="120">
+      <template #default="{row}">
+        <el-tag v-if="row.ifLink===final.Y" type="primary">是</el-tag>
+        <el-tag v-else type="info">否</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column prop="ifVisible" :label="state.dict['ifVisible']" width="120">
+      <template #default="{row}">
+        <el-tag v-if="row.ifVisible===final.Y" type="primary">是</el-tag>
+        <el-tag v-else type="info">否</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120">
+      <template #default="{row}">
+        <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
+        <el-tag v-else type="info">否</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column prop="ifPublic" :label="state.dict['ifPublic']" width="120">
+      <template #default="{row}">
+        <el-tag v-if="row.ifPublic===final.Y" type="primary">是</el-tag>
+        <el-tag v-else type="info">否</el-tag>
+      </template>
+    </el-table-column>
     <el-table-column prop="perms" :label="state.dict['perms']" width="280"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="200"/>
     <!--在此上方添加表格列-->

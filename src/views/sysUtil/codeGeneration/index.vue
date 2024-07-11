@@ -28,6 +28,7 @@ import {
 import { chooseTableTableIntre } from "@/type/api/sysUtil/codeGeneration.ts";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
 import Tooltip from "@/components/tooltip/tooltip.vue";
+import DicData from "@/views/sysManage/dict/dicData.vue";
 
 const state = reactive<State>({
   dialogType: {
@@ -335,9 +336,11 @@ const copyFileName = async (key: string) => {
     </el-tabs>
   </el-dialog>
 
-  <el-drawer
+  <el-dialog
       v-model="drawer"
-      :size="CONFIG.drawer_size"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
       destroy-on-close
       title="列字段设置"
   >
@@ -345,7 +348,10 @@ const copyFileName = async (key: string) => {
         :table-id="selectTableId"
         :table-name-en="selectTableNameEn"
     />
-  </el-drawer>
+    <template #footer>
+      <el-button plain @click="drawer=false">取消</el-button>
+    </template>
+  </el-dialog>
 
   <!--弹框-->
   <el-dialog

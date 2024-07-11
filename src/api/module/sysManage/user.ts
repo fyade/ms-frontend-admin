@@ -37,6 +37,14 @@ export function userSelList(params: any) {
   })
 }
 
+export function userSelByIds(ids: any[]) {
+  return request({
+    url: '/sys-manage/user/ids',
+    method: 'GET',
+    params: ids
+  })
+}
+
 export function newUser(params: any) {
   return request({
     url: '/sys-manage/user',

@@ -13,6 +13,8 @@ import type { FormRules } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
 import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sysManage/role.ts";
 import RolePermission from "./rolePermission.vue";
+import RoleUser from "@/views/sysManage/role/roleUser.vue";
+import UserDept from "@/views/sysManage/user/userDept.vue";
 
 const state = reactive({
   dialogType: {
@@ -156,26 +158,55 @@ const {
   func
 })
 
-const selectRoleId = ref(0)
+
+let selectRoleInfo = {}
+const drawer2 = ref(false)
+const manageUser = (row: any) => {
+  selectRoleInfo = row
+  drawer2.value = true
+}
+
 const drawer = ref(false)
-const setPermission = (id: any) => {
-  selectRoleId.value = id
+const setPermission = (row: any) => {
+  selectRoleInfo = row
   drawer.value = true
 }
 </script>
 
 <template>
-  <!--角色权限-->
-  <el-drawer
-      v-model="drawer"
-      :size="CONFIG.drawer_size"
+  <!--管理用户-->
+  <el-dialog
+      v-model="drawer2"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      title="管理用户"
       destroy-on-close
+  >
+    <RoleUser
+        :select-role="selectRoleInfo"
+    />
+    <template #footer>
+      <el-button plain @click="drawer2=false">取消</el-button>
+    </template>
+  </el-dialog>
+
+  <!--角色权限-->
+  <el-dialog
+      v-model="drawer"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
       title="分配权限"
+      destroy-on-close
   >
     <RolePermission
-        :role-id="selectRoleId"
+        :select-role="selectRoleInfo"
     />
-  </el-drawer>
+    <template #footer>
+      <el-button plain @click="drawer=false">取消</el-button>
+    </template>
+  </el-dialog>
 
   <!--弹框-->
   <el-dialog
@@ -345,7 +376,8 @@ const setPermission = (id: any) => {
     <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="primary" size="small" @click="setPermission(row.id)">分配权限</el-button>
+        <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
+        <el-button link type="primary" size="small" @click="setPermission(row)">分配权限</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>

@@ -14,9 +14,12 @@ import { Plus, Refresh } from "@element-plus/icons-vue";
 import { newUser, resetUserPsd, userSelList } from "@/api/module/sysManage/user.ts";
 import UserRole from "./userRole.vue";
 import { userDto } from "@/type/api/sysManage/user.ts";
-import { userRoleIns, userRoleUpd } from "@/api/module/sysManage/userRole.ts";
+import { userRoleUpdUR } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { fileBaseUrl } from "@/api/request.ts";
+import UserDept from "@/views/sysManage/user/userDept.vue";
+import { userDeptUpdUD } from "@/api/module/sysManage/userDept.ts";
+import { deptDto } from "@/type/api/sysManage/dept.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -59,7 +62,8 @@ const state = reactive<State>({
     sex: '性别',
     email: '邮箱',
     tel: '电话',
-    roles: '角色'
+    roles: '角色',
+    depts: '部门',
   },
   // 筛选表单
   // 格式: {
@@ -213,32 +217,62 @@ const selectUser = ref<userDto>({
   nickname: ''
 })
 const selectRole = ref<any[]>([])
-const setRole = (row: any) => {
+const manageRole = (row: any) => {
   selectUser.value = deepClone(row)
   selectRole.value = deepClone(row.roles)
   drawer.value = true
 }
-const drawerConfirm = () => {
+const drawerConfirmUserRole = () => {
   const obj = {
     userId: selectUser.value.id,
     roleId: selectRole.value.map(item => item.id)
   }
-  userRoleUpd(obj).then(res => {
-    drawer.value = false
-    gRefresh()
+  userRoleUpdUR(obj).then(res => {
+    if (res) {
+      drawer.value = false
+      gRefresh()
+    }
   })
 }
-const drawerCancel = () => {
+const drawerCancelUserRole = () => {
   drawer.value = false
 }
 provide('changeSelectRole', selectRole)
+
+// 用户部门
+const userDept: Ref<InstanceType<typeof UserDept> | null> = ref<InstanceType<typeof UserDept> | null>(null)
+const drawer2 = ref(false)
+const selectDept = ref<any[]>([])
+const manageDept = (row: any) => {
+  selectUser.value = deepClone(row)
+  selectDept.value = deepClone(row.depts)
+  drawer2.value = true
+}
+const drawerConfirmUserDept = () => {
+  const param = {
+    userId: selectUser.value.id,
+    deptId: selectDept.value.map(item => item.id)
+  }
+  userDeptUpdUD(param).then(res => {
+    if (res) {
+      drawer2.value = false
+      gRefresh()
+    }
+  })
+}
+const drawerCancelUserDept = () => {
+  drawer2.value = false
+}
+provide('changeSelectDept', selectDept)
 </script>
 
 <template>
   <!--用户角色-->
-  <el-drawer
+  <el-dialog
       v-model="drawer"
-      :size="CONFIG.drawer_size"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
       destroy-on-close
       title="分配角色"
   >
@@ -247,10 +281,29 @@ provide('changeSelectRole', selectRole)
         :user="selectUser"
     />
     <template #footer>
-      <el-button type="primary" plain @click="drawerConfirm">提交</el-button>
-      <el-button plain @click="drawerCancel">取消</el-button>
+      <el-button plain @click="drawerCancelUserRole">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmUserRole">提交</el-button>
     </template>
-  </el-drawer>
+  </el-dialog>
+
+  <!--用户部门-->
+  <el-dialog
+      v-model="drawer2"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="分配部门"
+  >
+    <UserDept
+        ref="userDept"
+        :user="selectUser"
+    />
+    <template #footer>
+      <el-button plain @click="drawerCancelUserDept">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmUserDept">提交</el-button>
+    </template>
+  </el-dialog>
 
   <!--重置密码-->
   <el-dialog
@@ -390,7 +443,7 @@ provide('changeSelectRole', selectRole)
       @selection-change="handleSelectionChange"
   >
     <!--<el-table-column fixed type="selection" width="55"/>-->
-    <el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>
+    <el-table-column fixed prop="id" :label="state.dict['id']" width="80"/>
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="username" :label="state.dict['username']" width="120"/>
@@ -408,7 +461,14 @@ provide('changeSelectRole', selectRole)
       <template #default="{row}">
         <el-space wrap>
           <el-tag v-if="row.ifTopAdmin" type="success">超级管理员</el-tag>
-          <el-tag type="primary" v-for="item in row.roles as any[]" :key="item.id">{{ item.label }}</el-tag>
+          <el-tag v-for="item in row.roles as any[]" :key="item.id" type="primary">{{ item.label }}</el-tag>
+        </el-space>
+      </template>
+    </el-table-column>
+    <el-table-column prop="depts" :label="state.dict['depts']" width="240">
+      <template #default="{row}">
+        <el-space wrap>
+          <el-tag v-for="item in (row.depts as deptDto[])" :key="item.id" type="primary">{{ item.label }}</el-tag>
         </el-space>
       </template>
     </el-table-column>
@@ -427,7 +487,8 @@ provide('changeSelectRole', selectRole)
         <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
         <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
         <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
-        <el-button link type="primary" size="small" @click="setRole(row)">分配角色</el-button>
+        <el-button link type="primary" size="small" @click="manageRole(row)">分配角色</el-button>
+        <el-button link type="primary" size="small" @click="manageDept(row)">分配部门</el-button>
       </template>
     </el-table-column>
     <!--<template #append>-->
