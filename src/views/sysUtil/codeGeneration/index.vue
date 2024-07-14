@@ -240,9 +240,12 @@ const {
 
 const tablesList = ref<chooseTableTableIntre[]>([])
 tablesList.value = []
-getDbInfo().then(res => {
-  tablesList.value = res
-})
+const getDbInfos = () => {
+  getDbInfo().then(res => {
+    tablesList.value = res
+  })
+}
+getDbInfos()
 
 const tableNameChange = (val: string) => {
   const table = tablesList.value.find(item => item.tableNameEn === val)
@@ -307,6 +310,11 @@ const copyFileName = async (key: string) => {
   const code = codeViewState.fileNames[key]
   await navigator.clipboard.writeText(code)
   ElMessage.success('复制成功。')
+}
+
+const gRefresh2 = () => {
+  getDbInfos()
+  gRefresh()
 }
 </script>
 
@@ -651,7 +659,7 @@ const copyFileName = async (key: string) => {
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新表</el-button>
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh2">刷新表</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增表</el-button>
     <el-button type="success" plain :icon="Edit"
                :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"

@@ -4,7 +4,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { provide, reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -15,6 +15,8 @@ import { roleDel, roleIns, roleSel, roleSelById, roleUpd } from "@/api/module/sy
 import RolePermission from "./rolePermission.vue";
 import RoleUser from "@/views/sysManage/role/roleUser.vue";
 import UserDept from "@/views/sysManage/user/userDept.vue";
+import { rolePermissionSelAll, rolePermissionUpd } from "@/api/module/sysManage/rolePermission.ts";
+import { rolePermissionUpdDto } from "@/type/api/sysManage/rolePermission.ts";
 
 const state = reactive({
   dialogType: {
@@ -159,8 +161,9 @@ const {
 })
 
 
-let selectRoleInfo = {}
+let selectRoleInfo: any = {}
 const drawer2 = ref(false)
+const selectPermission = ref<any[]>([])
 const manageUser = (row: any) => {
   selectRoleInfo = row
   drawer2.value = true
@@ -169,8 +172,27 @@ const manageUser = (row: any) => {
 const drawer = ref(false)
 const setPermission = (row: any) => {
   selectRoleInfo = row
-  drawer.value = true
+  rolePermissionSelAll({roleId: selectRoleInfo.id}).then(res => {
+    selectPermission.value = res
+    drawer.value = true
+  })
 }
+const drawerCancelRolePermission = () => {
+  drawer.value = false
+}
+const drawerConfirmRolePermission = () => {
+  const param = {
+    roleId: selectRoleInfo.id,
+    permissionId: selectPermission.value.map(item => item.id)
+  }
+  rolePermissionUpd(param).then(res => {
+    if (res) {
+      drawer.value = false
+      gRefresh()
+    }
+  })
+}
+provide('changeSelectPermission', selectPermission)
 </script>
 
 <template>
@@ -204,7 +226,9 @@ const setPermission = (row: any) => {
         :select-role="selectRoleInfo"
     />
     <template #footer>
-      <el-button plain @click="drawer=false">取消</el-button>
+      <!--<el-button plain @click="drawer=false">取消</el-button>-->
+      <el-button plain @click="drawerCancelRolePermission">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmRolePermission">提交</el-button>
     </template>
   </el-dialog>
 

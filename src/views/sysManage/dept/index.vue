@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue"
+import { computed, provide, reactive, ref } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -29,6 +29,8 @@ import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import DeptUser from "@/views/sysManage/dept/deptUser.vue";
 import DeptPermission from "@/views/sysManage/dept/deptPermission.vue";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
+import UserRole from "@/views/sysManage/user/userRole.vue";
+import { deptPermissionSelAll, deptPermissionUpdDP } from "@/api/module/sysManage/deptPermission.ts";
 
 const state = reactive<State<deptDto>>({
   dialogType: {
@@ -47,6 +49,7 @@ const state = reactive<State<deptDto>>({
   dialogForm: {
     id: -1,
     label: '',
+    ifAdmin: final.N,
     parentId: final.DEFAULT_PARENT_ID,
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
@@ -60,6 +63,7 @@ const state = reactive<State<deptDto>>({
   // }
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
+    ifAdmin: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
@@ -72,6 +76,7 @@ const state = reactive<State<deptDto>>({
   dict: {
     ...publicDict,
     label: '部门名',
+    ifAdmin: '是否管理员权限',
     parentId: '父级部门',
   },
   // 筛选表单
@@ -130,7 +135,7 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
@@ -242,18 +247,38 @@ const tIns = (id: any) => {
   gIns()
 }
 
-const selectDept = ref({})
+let selectDept: any = {}
 const drawer = ref(false)
 const manageUser = (row: any) => {
-  selectDept.value = row
+  selectDept = row
   drawer.value = true
 }
 
 const drawer2 = ref(false)
+const selectPermission = ref<any[]>([])
 const managePermission = (row: any) => {
-  selectDept.value = row
-  drawer2.value = true
+  selectDept = row
+  deptPermissionSelAll({deptId: selectDept.id}).then(res => {
+    selectPermission.value = res
+    drawer2.value = true
+  })
 }
+const drawerConfirmDeptPermission = () => {
+  const param = {
+    deptId: selectDept.id,
+    permissionId: selectPermission.value.map(item => item.id)
+  }
+  deptPermissionUpdDP(param).then(res => {
+    if (res) {
+      drawer2.value = false
+      gRefresh()
+    }
+  })
+}
+const drawerCancelDeptPermission = () => {
+  drawer2.value = false
+}
+provide('changeSelectPermission', selectPermission)
 </script>
 
 <template>
@@ -287,7 +312,8 @@ const managePermission = (row: any) => {
         :select-dept="selectDept"
     />
     <template #footer>
-      <el-button plain @click="drawer2=false">取消</el-button>
+      <el-button plain @click="drawerCancelDeptPermission">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmDeptPermission">提交</el-button>
     </template>
   </el-dialog>
 
@@ -330,6 +356,16 @@ const managePermission = (row: any) => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item :label="state.dict['ifAdmin']" prop="ifAdmin">
+              <el-radio-group v-model="state.dialogForm['ifAdmin']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item :label="state.dict['parentId']" prop="parentId">
               <!--<el-input-number v-model="state.dialogForm['parentId']" controls-position="right"/>-->
               <el-cascader
@@ -340,8 +376,6 @@ const managePermission = (row: any) => {
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['orderNum']" prop="orderNum">
               <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
@@ -396,6 +430,17 @@ const managePermission = (row: any) => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="100">
+            <template #header>
+              <span :class="ifRequired('ifAdmin')?'tp-table-header-required':''">{{ state.dict['ifAdmin'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifAdmin`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-input v-model="state.dialogForms[$index]['ifAdmin']" :placeholder="state.dict['ifAdmin']"/>-->
+                <el-checkbox v-model="state.dialogForms[$index]['ifAdmin']" :true-label="final.Y" :false-label="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -516,6 +561,7 @@ const managePermission = (row: any) => {
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="240"/>
+    <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="120"/>
     <el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>

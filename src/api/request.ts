@@ -14,7 +14,7 @@ const request = axios.create({
 })
 request.interceptors.request.use(
     config => {
-      config.headers['Authorization'] = useUserStore().token
+      config.headers['Authorization'] = `Bearer ${useUserStore().token}`
       return config
     }
 )
@@ -65,9 +65,9 @@ request.interceptors.response.use(
         window.location.href = '/login'
       } else {
         let msg = error.response.data.message
-        if (error.response.status === 403) msg = msg ? `您无[${msg}]接口权限。` : '您无权限。'
+        if (error.response.status === 403) msg = msg
         else if (error.response.status === 500) msg = '系统繁忙，请稍后再试。'
-        else msg = '系统繁忙，请稍后再试。'
+        else if (!msg) msg = '系统繁忙，请稍后再试。'
         ElMessage.error(msg)
       }
       count0 = 0

@@ -392,14 +392,6 @@ const handleCheckChange = (
   <br/>
   <el-form>
     <el-form-item label="所属部门">
-      <!--<el-cascader-->
-      <!--    style="width: 100%;"-->
-      <!--    v-model="selectDept2"-->
-      <!--    :options="tableData2"-->
-      <!--    :props="cascaderProps4"-->
-      <!--    clearable-->
-      <!--    filterable-->
-      <!--/>-->
       <el-tree
           ref="selectDeptTree"
           node-key="id"

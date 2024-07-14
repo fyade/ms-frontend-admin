@@ -26,7 +26,7 @@ onMounted(() => {
 
 const setTableHeight = () => {
     // @ts-ignore
-    tableHeight.value = document.body.clientHeight - 50 - 120 - (btnGroup.value.$el.clientHeight + form2.value.$el.clientHeight + paginationref.value.$el.clientHeight)
+    tableHeight.value = document.body.clientHeight - 50 - 150 - (btnGroup.value.$el.clientHeight + form2.value.$el.clientHeight + paginationref.value.$el.clientHeight)
 }
 
 const state = reactive({

@@ -25,6 +25,7 @@ import Tooltip from "@/components/tooltip/tooltip.vue";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { finalT, MORE, ONE } from "@/type/utils/base.ts";
 import { useRouterStore } from "@/store/module/router.ts";
+import { ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 
 const T_MENU = 'mm'
 const T_COMP = 'mc'
@@ -115,7 +116,7 @@ const state = reactive<State<DialogForm, DialogForm>>({
   // }
   filterForm: {
     type: '',
-    perms:''
+    perms: ''
   },
   list: [],
   multipleSelection: [],
@@ -308,7 +309,7 @@ watch(() => [state.dialogForm.parentId, activeTabName.value], () => {
     canChooseTypes.value = [T_MENU, T_COMP, T_Inter]
     return
   }
-  if (state.dialogForm.parentId === null) {
+  if (ifNull(state.dialogForm.parentId) || ifUndefined(state.dialogForm.parentId)) {
     state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   }
   if (state.dialogForm.parentId === final.DEFAULT_PARENT_ID) {

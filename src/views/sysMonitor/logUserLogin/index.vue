@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysMonitor:userLogin'
+  name: 'sysMonitor:logUserLogin'
 }
 </script>
 
@@ -11,18 +11,20 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue"
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
+import { logUserLoginDto } from "@/type/api/sysMonitor/logUserLogin.ts";
 import {
-  userLoginSel,
-  userLoginSelById,
-  userLoginSelByIds,
-  userLoginIns,
-  userLoginUpd,
-  userLoginInss,
-  userLoginUpds,
-  userLoginDel,
-} from "@/api/module/sysMonitor/userLogin.ts"
+  logUserLoginSel,
+  logUserLoginSelById,
+  logUserLoginSelByIds,
+  logUserLoginSelAll,
+  logUserLoginIns,
+  logUserLoginUpd,
+  logUserLoginInss,
+  logUserLoginUpds,
+  logUserLoginDel,
+} from "@/api/module/sysMonitor/logUserLogin.ts"
 
 const state = reactive<State>({
   dialogType: {
@@ -136,60 +138,67 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
-    return userLoginSel(params)
+    return logUserLoginSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return logUserLoginSelAll(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    return userLoginSelById(id)
+    return logUserLoginSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    return userLoginSelByIds(ids)
+    return logUserLoginSelByIds(ids)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    return userLoginIns(obj)
+    return logUserLoginIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    return userLoginUpd(obj)
+    return logUserLoginUpd(obj)
   },
   /**
    * 新增多个
    * @param objs
    */
   insertMore: (objs: any[]) => {
-    return userLoginInss(objs)
+    return logUserLoginInss(objs)
   },
   /**
    * 修改多个
    * @param objs
    */
   updateMore: (objs: any[]) => {
-    return userLoginUpds(objs)
+    return logUserLoginUpds(objs)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    return userLoginDel(ids)
+    return logUserLoginDel(ids)
   }
 }
 
@@ -204,6 +213,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
