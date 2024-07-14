@@ -27,7 +27,7 @@ const props = defineProps({
   }
 });
 
-const state = reactive<State<deptDto>>({
+const state = reactive({
   dialogType: {
     value: '',
     label: ''
