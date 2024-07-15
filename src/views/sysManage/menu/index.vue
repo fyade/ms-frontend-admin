@@ -3,56 +3,37 @@ export default {
   name: 'sysManage:menu'
 }
 </script>
+
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Sort, Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Sort } from "@element-plus/icons-vue";
+import { MORE, ONE } from "@/type/utils/base.ts"
+import { menuDto, tType } from "@/type/api/sysManage/menu.ts";
 import {
-  menuDel,
-  menuIns,
-  menuInss,
-  menuSelAll,
+  menuSel,
   menuSelById,
   menuSelByIds,
+  menuSelAll,
+  menuIns,
   menuUpd,
-  menuUpds
-} from "@/api/module/sysManage/menu.ts";
-import Tooltip from "@/components/tooltip/tooltip.vue";
-import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { finalT, MORE, ONE } from "@/type/utils/base.ts";
+  menuInss,
+  menuUpds,
+  menuDel,
+} from "@/api/module/sysManage/menu.ts"
 import { useRouterStore } from "@/store/module/router.ts";
 import { ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
+import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const T_MENU = 'mm'
 const T_COMP = 'mc'
 const T_Inter = 'mb'
-type T_MENU = 'mm'
-type T_COMP = 'mc'
-type T_Inter = 'mb'
-type tType = T_MENU | T_COMP | T_Inter
 
-type DialogForm = {
-  id: string
-  label: string
-  type: tType
-  path: string
-  parentId: number
-  component: string
-  icon: string
-  orderNum: number
-  ifLink: finalT
-  ifVisible: finalT
-  ifDisabled: finalT
-  ifPublic: finalT
-  perms: string
-  remark: string
-}
-
-const state = reactive<State<DialogForm, DialogForm>>({
+const state = reactive<State<menuDto, menuDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -60,13 +41,12 @@ const state = reactive<State<DialogForm, DialogForm>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: -1,
     label: '',
     type: T_MENU,
     path: '#',
@@ -79,7 +59,7 @@ const state = reactive<State<DialogForm, DialogForm>>({
     ifDisabled: final.N,
     ifPublic: final.N,
     perms: '',
-    remark: ''
+    remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
@@ -168,11 +148,11 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
-    return menuSelAll(params)
+    return menuSel(params)
   },
   /**
    * 查询所有
@@ -243,6 +223,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -524,18 +506,6 @@ const expendAll = () => {
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
-        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
-        <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
-        <!--             :inactive-value="final.DISABLED_YES"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">
@@ -796,17 +766,10 @@ const expendAll = () => {
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
+    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">
+      导出
+    </el-button>
+    <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
 

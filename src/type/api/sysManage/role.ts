@@ -1,18 +1,29 @@
 import { pageSelDto } from "@/type/tablePage.ts";
+import { baseInterface } from "@/utils/base.ts";
 
-export interface roleSelDto extends pageSelDto {
+export class roleDto extends baseInterface {
+  id!: number;
+  label!: string;
+  ifAdmin!: string;
+  ifDisabled!: string;
+  orderNum!: number;
+  remark!: string;
 }
 
-export interface roleSelDto2 {
-  id?: number
+export class roleSelDto extends pageSelDto {
 }
 
-export interface roleInsDto {
-  label: string;
-  orderNum: number;
-  remark: string;
+export class roleSelAllDto {
 }
 
-export interface roleUpdDto extends roleInsDto {
-  id: number
+export class roleInsDto {
+  label!: string;
+  ifAdmin!: string;
+  ifDisabled!: string;
+  orderNum!: number;
+  remark!: string;
+}
+
+export class roleUpdDto extends roleInsDto {
+  id!: number;
 }

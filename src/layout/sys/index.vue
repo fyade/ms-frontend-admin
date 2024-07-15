@@ -123,6 +123,7 @@ const contextMenu = (info: any, index: number) => [
     padding: 8px;
     border-bottom: 1px solid #eee;
     height: 30px;
+    overflow: auto hidden;
   }
 
   > .main {

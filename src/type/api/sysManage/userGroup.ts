@@ -22,10 +22,6 @@ export class userGroupInsDto {
   remark!: string;
 }
 
-export class userGroupUpdDto {
+export class userGroupUpdDto extends userGroupInsDto {
   id!: number;
-  label!: string;
-  parentId!: number;
-  orderNum!: number;
-  remark!: string;
 }

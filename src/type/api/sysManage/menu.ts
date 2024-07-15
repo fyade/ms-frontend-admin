@@ -1,24 +1,50 @@
 import { pageSelDto } from "@/type/tablePage.ts";
+import { baseInterface } from "@/utils/base.ts";
 
-export interface menuSelDto extends pageSelDto {
+export type T_MENU = 'mm'
+export type T_COMP = 'mc'
+export type T_Inter = 'mb'
+export type tType = T_MENU | T_COMP | T_Inter
+
+export class menuDto<T = tType> extends baseInterface {
+  id!: number;
+  label!: string;
+  type!: T;
+  path!: string;
+  parentId!: number;
+  component!: string;
+  icon!: string;
+  orderNum!: number;
+  ifLink!: string;
+  ifVisible!: string;
+  ifDisabled!: string;
+  ifPublic!: string;
+  perms!: string;
+  remark!: string;
 }
 
-export interface menuInsDto {
-  label: string;
-  type: string;
-  path: string;
-  parentId: number;
-  component: string;
-  icon: string;
-  orderNum: number;
-  ifLink: string;
-  ifVisible: string;
-  ifDisabled: string;
-  ifPublic: string;
-  perms: string;
-  remark: string;
+export class menuSelDto extends pageSelDto {
 }
 
-export interface menuUpdDto extends menuInsDto {
-  id: number
+export class menuSelAllDto {
+}
+
+export class menuInsDto<T = tType> {
+  label!: string;
+  type!: T;
+  path!: string;
+  parentId!: number;
+  component!: string;
+  icon!: string;
+  orderNum!: number;
+  ifLink!: string;
+  ifVisible!: string;
+  ifDisabled!: string;
+  ifPublic!: string;
+  perms!: string;
+  remark!: string;
+}
+
+export class menuUpdDto extends menuInsDto {
+  id!: number;
 }

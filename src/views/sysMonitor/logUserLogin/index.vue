@@ -26,7 +26,7 @@ import {
   logUserLoginDel,
 } from "@/api/module/sysMonitor/logUserLogin.ts"
 
-const state = reactive<State>({
+const state = reactive<State<logUserLoginDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -34,13 +34,12 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: -1,
     userId: '',
     loginIp: '',
     loginPosition: '',
@@ -57,10 +56,8 @@ const state = reactive<State>({
   //   ...
   // }
   dFormRules: {
-    id: [{required: true, trigger: 'change'}],
     userId: [{required: true, trigger: 'change'}],
     ifSuccess: [{required: true, trigger: 'change'}],
-    createTime: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -70,15 +67,12 @@ const state = reactive<State>({
   // }
   dict: {
     ...publicDict,
-    id: '主键id',
     userId: '用户id',
     loginIp: '登录ip',
     loginPosition: '登录地',
     loginBrowser: '登录浏览器',
     loginOs: '登录系统',
     ifSuccess: '是否成功',
-    remark: '备注',
-    createTime: 'createTime',
   },
   // 筛选表单
   // 格式: {
@@ -293,24 +287,6 @@ const {
           <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
         </el-form-item>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['orderNum']" prop='orderNum'>-->
-        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->
-        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES'-->
-        <!--             :inactive-value='final.IS_DEFAULT_NO'/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->
-        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
-        <!--  </el-radio-group>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
-        <!--             :inactive-value="final.DISABLED_YES"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">
@@ -459,15 +435,6 @@ const {
     <!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0'>导出</el-button>-->
     <!--<el-button type="warning" plain :icon='Upload'>上传</el-button>-->
     <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
-    <!--</el-button-group>-->
   </div>
 
   <!--数据表格-->
@@ -523,5 +490,4 @@ const {
 </template>
 
 <style scoped>
-
 </style>

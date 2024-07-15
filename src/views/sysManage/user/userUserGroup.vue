@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue";
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import Pagination from "@/components/pagination/pagination.vue"
+import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import type { FormRules } from 'element-plus'
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { MORE, ONE } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
-import { final, PAGINATION, publicDict } from "@/utils/base.ts";
-import type { FormRules } from "element-plus";
-import { MORE, ONE } from "@/type/utils/base.ts";
 import {
-  userGroupDel,
-  userGroupIns, userGroupInss,
   userGroupSel,
-  userGroupSelAll,
   userGroupSelById,
-  userGroupSelByIds, userGroupUpd, userGroupUpds
-} from "@/api/module/sysManage/userGroup.ts";
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
+  userGroupSelByIds,
+  userGroupSelAll,
+  userGroupIns,
+  userGroupUpd,
+  userGroupInss,
+  userGroupUpds,
+  userGroupDel,
+} from "@/api/module/sysManage/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -31,8 +36,6 @@ const state = reactive<State<userGroupDto>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
@@ -227,8 +230,8 @@ const tableData2 = computed(() => arr2ToDiguiObj(state.list))
 const selectUserGroup: Ref<any[]> | undefined = inject('changeSelectUserGroup')
 const selectUserGroup2 = ref<any[]>(selectUserGroup ? selectUserGroup.value.map(item => item.id) : [])
 nextTick(() => {
-  if (selectUserGroup) {
-    selectUserGroup.value?.setCheckedKeys(selectUserGroup2.value)
+  if (selectUserGroupTree) {
+    selectUserGroupTree.value?.setCheckedKeys(selectUserGroup2.value)
   }
 })
 watch(selectUserGroup2, () => {

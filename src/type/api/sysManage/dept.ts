@@ -24,11 +24,6 @@ export class deptInsDto {
   remark!: string;
 }
 
-export class deptUpdDto {
+export class deptUpdDto extends deptInsDto {
   id!: number;
-  label!: string;
-  ifAdmin!: string;
-  parentId!: number;
-  orderNum!: number;
-  remark!: string;
 }

@@ -7,9 +7,19 @@ import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
-import { deptPermissionDto } from "@/type/api/sysManage/deptPermission.ts";
+import { menuDto } from "@/type/api/sysManage/menu.ts";
+import {
+  menuSel,
+  menuSelById,
+  menuSelByIds,
+  menuSelAll,
+  menuIns,
+  menuUpd,
+  menuInss,
+  menuUpds,
+  menuDel,
+} from "@/api/module/sysManage/menu.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { menuSelAll } from "@/api/module/sysManage/menu.ts";
 
 const props = defineProps({
   selectDept: {
@@ -18,8 +28,7 @@ const props = defineProps({
   }
 })
 
-
-const state = reactive<State<deptPermissionDto>>({
+const state = reactive<State<menuDto<string>>>({
   dialogType: {
     value: '',
     label: ''
@@ -27,17 +36,24 @@ const state = reactive<State<deptPermissionDto>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
     id: -1,
-    deptId: -1,
+    label: '',
     type: '',
-    permissionId: -1,
+    path: '',
+    parentId: final.DEFAULT_PARENT_ID,
+    component: '',
+    icon: '',
+    orderNum: final.DEFAULT_ORDER_NUM,
+    ifLink: '',
+    ifVisible: '',
+    ifDisabled: final.N,
+    ifPublic: '',
+    perms: '',
     remark: '',
   },
   dialogForms: [],
@@ -48,9 +64,18 @@ const state = reactive<State<deptPermissionDto>>({
   //   ...
   // }
   dFormRules: {
-    deptId: [{required: true, trigger: 'change'}],
+    label: [{required: true, trigger: 'change'}],
     type: [{required: true, trigger: 'change'}],
-    permissionId: [{required: true, trigger: 'change'}],
+    path: [{required: true, trigger: 'change'}],
+    parentId: [{required: true, trigger: 'change'}],
+    component: [{required: true, trigger: 'change'}],
+    icon: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
+    ifLink: [{required: true, trigger: 'change'}],
+    ifVisible: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
+    ifPublic: [{required: true, trigger: 'change'}],
+    perms: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -60,9 +85,16 @@ const state = reactive<State<deptPermissionDto>>({
   // }
   dict: {
     ...publicDict,
-    deptId: '部门id',
-    type: '接口类型',
-    permissionId: '权限id',
+    label: '菜单名',
+    type: '菜单类型',
+    path: '菜单路径',
+    parentId: '父级菜单',
+    component: '组件路径',
+    icon: '图标',
+    ifLink: '是否外链',
+    ifVisible: '是否显示',
+    ifPublic: '是否公共接口',
+    perms: '权限标识',
   },
   // 筛选表单
   // 格式: {
@@ -124,8 +156,7 @@ const func: t_FuncMap = {
    * @param params
    */
   selectList: (params: any) => {
-    // return deptPermissionSel(params)
-    return new Promise(resolve => resolve(null))
+    return menuSel(params)
   },
   /**
    * 查询所有
@@ -139,56 +170,49 @@ const func: t_FuncMap = {
    * @param id
    */
   selectById: (id: any) => {
-    // return deptPermissionSelById(id)
-    return new Promise(resolve => resolve(null))
+    return menuSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    // return deptPermissionSelByIds(ids)
-    return new Promise(resolve => resolve(null))
+    return menuSelByIds(ids)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    // return deptPermissionIns(obj)
-    return new Promise(resolve => resolve(null))
+    return menuIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    // return deptPermissionUpd(obj)
-    return new Promise(resolve => resolve(null))
+    return menuUpd(obj)
   },
   /**
    * 新增多个
    * @param objs
    */
   insertMore: (objs: any[]) => {
-    // return deptPermissionInss(objs)
-    return new Promise(resolve => resolve(null))
+    return menuInss(objs)
   },
   /**
    * 修改多个
    * @param objs
    */
   updateMore: (objs: any[]) => {
-    // return deptPermissionUpds(objs)
-    return new Promise(resolve => resolve(null))
+    return menuUpds(objs)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    // return deptPermissionDel(ids)
-    return new Promise(resolve => resolve(null))
+    return menuDel(ids)
   }
 }
 
@@ -283,23 +307,7 @@ const handleCheckChange = (
   </el-divider>
   <!--操作按钮-->
   <div>
-    <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
-    <!--</el-button-group>-->
   </div>
 
   <br/>

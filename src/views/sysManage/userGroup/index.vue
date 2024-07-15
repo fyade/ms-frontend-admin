@@ -35,8 +35,6 @@ const state = reactive<State<userGroupDto>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
@@ -304,22 +302,6 @@ const tIns = (id: any) => {
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['orderNum']" prop='orderNum'>-->
-        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->
-        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES' :inactive-value='final.IS_DEFAULT_NO'/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->
-        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
-        <!--  </el-radio-group>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO" :inactive-value="final.DISABLED_YES"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">
@@ -432,15 +414,6 @@ const tIns = (id: any) => {
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
     <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>
     <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
     <!--</el-button-group>-->
   </div>
 

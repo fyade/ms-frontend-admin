@@ -3,22 +3,28 @@ import { reactive, ref, toRaw } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts";
+import { MORE, ONE } from "@/type/utils/base.ts"
+import { codeGenColumnDto } from "@/type/api/sysUtil/codeGenColumn.ts";
 import {
+  codeGenColumnSel,
+  codeGenColumnSelById,
+  codeGenColumnSelByIds,
+  codeGenColumnSelAll,
+  codeGenColumnIns,
+  codeGenColumnUpd,
+  codeGenColumnInss,
+  codeGenColumnUpds,
   codeGenColumnDel,
-  codeGenColumnIns, codeGenColumnInss, codeGenColumnSelAll,
-  codeGenColumnSelMore,
-  codeGenColumnSelOne,
-  codeGenColumnSelPage, codeGenColumnUpd, codeGenColumnUpds, getDbInfo
-} from "@/api/module/sysUtil/codeGeneration.ts";
+} from "@/api/module/sysUtil/codeGenColumn.ts"
 import {
   chooseTableTableColIntre,
   chooseTableTableColIntreDict,
-  chooseTableTableIntre, setColumnType
+  chooseTableTableIntre
 } from "@/type/api/sysUtil/codeGeneration.ts";
+import { getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { toCamelCase } from "@/utils/baseUtils.ts";
 
@@ -33,7 +39,7 @@ const props = defineProps({
   }
 })
 
-const state = reactive<State<setColumnType>>({
+const state = reactive<State<codeGenColumnDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -41,13 +47,12 @@ const state = reactive<State<setColumnType>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: -1,
     tableId: props.tableId as number,
     colName: '',
     colDescr: '',
@@ -59,9 +64,10 @@ const state = reactive<State<setColumnType>>({
     ifSelOne: final.N,
     ifSelMore: final.N,
     ifRequired: final.N,
-    formType: '',
     selType: '',
-    orderNum: final.DEFAULT_ORDER_NUM
+    formType: '',
+    orderNum: final.DEFAULT_ORDER_NUM,
+    remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
@@ -81,8 +87,8 @@ const state = reactive<State<setColumnType>>({
     ifSelOne: [{required: true, trigger: 'change'}],
     ifSelMore: [{required: true, trigger: 'change'}],
     ifRequired: [{required: true, trigger: 'change'}],
-    formType: [{required: true, trigger: 'change'}],
     selType: [{required: true, trigger: 'change'}],
+    formType: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -103,8 +109,8 @@ const state = reactive<State<setColumnType>>({
     ifSelOne: '查1',
     ifSelMore: '查n',
     ifRequired: '必填',
-    formType: '表单类型',
     selType: '查询方式',
+    formType: '表单类型',
   },
   // 筛选表单
   // 格式: {
@@ -172,11 +178,11 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
-    return codeGenColumnSelAll(params)
+    return codeGenColumnSel(params)
   },
   /**
    * 查询所有
@@ -190,14 +196,14 @@ const func: t_FuncMap = {
    * @param id
    */
   selectById: (id: any) => {
-    return codeGenColumnSelOne(id)
+    return codeGenColumnSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    return codeGenColumnSelMore(ids)
+    return codeGenColumnSelByIds(ids)
   },
   /**
    * 新增

@@ -3,34 +3,33 @@ export default {
   name: 'sysUtil:codeGeneration'
 }
 </script>
+
 <script setup lang="ts">
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts";
+import { MORE, ONE } from "@/type/utils/base.ts"
+import { codeGenTableDto } from "@/type/api/sysUtil/codeGenTable.ts";
 import {
-  codeGenTableDel,
+  codeGenTableSel,
+  codeGenTableSelById,
+  codeGenTableSelByIds,
+  codeGenTableSelAll,
   codeGenTableIns,
-  codeGenTableInss,
-  codeGenTableSelMore,
-  codeGenTableSelOne,
-  codeGenTableSelPage,
   codeGenTableUpd,
+  codeGenTableInss,
   codeGenTableUpds,
-  genCode,
-  genCodeZip,
-  getDbInfo
-} from "@/api/module/sysUtil/codeGeneration.ts";
+  codeGenTableDel,
+} from "@/api/module/sysUtil/codeGenTable.ts"
 import { chooseTableTableIntre } from "@/type/api/sysUtil/codeGeneration.ts";
+import { genCode, genCodeZip, getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
-import Tooltip from "@/components/tooltip/tooltip.vue";
-import DicData from "@/views/sysManage/dict/dicData.vue";
 
-const state = reactive<State>({
+const state = reactive<State<codeGenTableDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -38,20 +37,20 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: -1,
     tableName: '',
     tableDescr: '',
     entityName: '',
     tableRemark: '',
     businessName: '',
     moduleName: '',
-    orderNum: final.DEFAULT_ORDER_NUM
+    orderNum: final.DEFAULT_ORDER_NUM,
+    remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
@@ -76,12 +75,12 @@ const state = reactive<State>({
   // }
   dict: {
     ...publicDict,
-    tableName: '表名称',
+    tableName: '表名',
     tableDescr: '表描述',
     entityName: '实体类名',
     tableRemark: '表备注',
-    businessName: '生成业务名',
-    moduleName: '生成模块名',
+    businessName: '业务名',
+    moduleName: '模块名',
   },
   // 筛选表单
   // 格式: {
@@ -146,25 +145,32 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
-    return codeGenTableSelPage(params)
+    return codeGenTableSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return codeGenTableSelAll(params)
   },
   /**
    * 查询单个
    * @param id
    */
   selectById: (id: any) => {
-    return codeGenTableSelOne(id)
+    return codeGenTableSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
   selectByIds: (ids: any[]) => {
-    return codeGenTableSelMore(ids)
+    return codeGenTableSelByIds(ids)
   },
   /**
    * 新增

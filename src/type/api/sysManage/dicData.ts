@@ -1,21 +1,33 @@
 import { pageSelDto } from "@/type/tablePage.ts";
+import { baseInterface } from "@/utils/base.ts";
 
-export interface dicDataSelDto extends pageSelDto {
+export class dicDataDto extends baseInterface {
+  id!: number;
+  label!: string;
+  value!: string;
+  dicType!: string;
+  ifDefault!: string;
+  ifDisabled!: string;
+  orderNum!: number;
+  remark!: string;
 }
 
-export interface dicDataSelAllDto {
+export class dicDataSelDto extends pageSelDto {
 }
 
-export interface dicDataInsDto {
-  label: string;
-  value: string;
-  dicType: string;
-  ifDefault: string;
-  ifDisabled: string;
-  orderNum: number;
-  remark: string;
+export class dicDataSelAllDto {
 }
 
-export interface dicDataUpdDto extends dicDataInsDto {
-  id: number
+export class dicDataInsDto {
+  label!: string;
+  value!: string;
+  dicType!: string;
+  ifDefault!: string;
+  ifDisabled!: string;
+  orderNum!: number;
+  remark!: string;
+}
+
+export class dicDataUpdDto extends dicDataInsDto {
+  id!: number;
 }

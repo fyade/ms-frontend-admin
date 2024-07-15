@@ -11,12 +11,14 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh, Download, Upload } from "@element-plus/icons-vue"
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
+import { dicTypeDto } from "@/type/api/sysManage/dicType.ts";
 import {
   dicTypeSel,
   dicTypeSelById,
   dicTypeSelByIds,
+  dicTypeSelAll,
   dicTypeIns,
   dicTypeUpd,
   dicTypeInss,
@@ -26,7 +28,7 @@ import {
 import DicData from "@/views/sysManage/dict/dicData.vue";
 import RoleUser from "@/views/sysManage/role/roleUser.vue";
 
-const state = reactive<State>({
+const state = reactive<State<dicTypeDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -34,19 +36,17 @@ const state = reactive<State>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: -1,
     name: '',
     type: '',
     ifDisabled: final.N,
     orderNum: final.DEFAULT_ORDER_NUM,
-    remark: ''
+    remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
@@ -70,7 +70,7 @@ const state = reactive<State>({
   dict: {
     ...publicDict,
     name: '字典名',
-    type: '字典类型'
+    type: '字典类型',
   },
   // 筛选表单
   // 格式: {
@@ -116,16 +116,33 @@ const config: t_config = reactive({
    */
   selectListCallback: () => {
   },
-  bulkOperation: true
+  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为true时调这个
+   */
+  beforeUpdateOneCallback1: (res: any[]) => {
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为false时调这个
+   */
+  beforeUpdateOneCallback2: (res: any) => {
+  }
 })
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
     return dicTypeSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return dicTypeSelAll(params)
   },
   /**
    * 查询单个
@@ -157,17 +174,17 @@ const func: t_FuncMap = {
   },
   /**
    * 新增多个
-   * @param obj
+   * @param objs
    */
-  insertMore: (obj: any[]) => {
-    return dicTypeInss(obj)
+  insertMore: (objs: any[]) => {
+    return dicTypeInss(objs)
   },
   /**
    * 修改多个
-   * @param obj
+   * @param objs
    */
-  updateMore: (obj: any[]) => {
-    return dicTypeUpds(obj)
+  updateMore: (objs: any[]) => {
+    return dicTypeUpds(objs)
   },
   /**
    * 删除
@@ -306,18 +323,6 @@ const setDicData = (row: any) => {
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
-        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"-->
-        <!--             :inactive-value="final.IS_DEFAULT_NO"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
-        <!--             :inactive-value="final.DISABLED_YES"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">
@@ -457,15 +462,6 @@ const setDicData = (row: any) => {
       导出
     </el-button>
     <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
     <!--</el-button-group>-->
   </el-space>
 

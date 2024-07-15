@@ -1,11 +1,24 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
-import { PAGINATION, publicDict } from "@/utils/base.ts"
-import { funcTablePage } from "@/composition/tablePage/tablePageFullFeatured.ts"
-import { t_config, t_FuncMap } from "@/type/tablePage.ts";
-import { FormRules } from 'element-plus'
-import { Refresh } from "@element-plus/icons-vue";
-import { menuSelAll } from "@/api/module/sysManage/menu.ts";
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import Pagination from "@/components/pagination/pagination.vue"
+import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import type { FormRules } from 'element-plus'
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { MORE, ONE } from "@/type/utils/base.ts"
+import { menuDto } from "@/type/api/sysManage/menu.ts";
+import {
+  menuSel,
+  menuSelById,
+  menuSelByIds,
+  menuSelAll,
+  menuIns,
+  menuUpd,
+  menuInss,
+  menuUpds,
+  menuDel,
+} from "@/api/module/sysManage/menu.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -15,14 +28,7 @@ const props = defineProps({
   }
 })
 
-const T_MENU = 'm'
-const T_INTER = 'i'
-const menuTypeDict = {
-  [T_MENU]: '菜单',
-  [T_INTER]: '接口'
-}
-
-const state = reactive({
+const state = reactive<State<menuDto<string>>>({
   dialogType: {
     value: '',
     label: ''
@@ -30,27 +36,46 @@ const state = reactive({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
-    id: '',
-    type: T_MENU,
-    roleId: 0,
-    permissionId: [] as any[],
-    remark: ''
+    id: -1,
+    label: '',
+    type: '',
+    path: '',
+    parentId: final.DEFAULT_PARENT_ID,
+    component: '',
+    icon: '',
+    orderNum: final.DEFAULT_ORDER_NUM,
+    ifLink: '',
+    ifVisible: '',
+    ifDisabled: final.N,
+    ifPublic: '',
+    perms: '',
+    remark: '',
   },
+  dialogForms: [],
+  dialogForms_error: {},
   // 这个是弹出框表单校验
   // 格式: {
   //   name: [{ required: true, trigger: 'change' }],
   //   ...
   // }
   dFormRules: {
+    label: [{required: true, trigger: 'change'}],
     type: [{required: true, trigger: 'change'}],
-    roleId: [{required: true, trigger: 'change'}],
-    permissionId: [{required: true, trigger: 'change'}]
+    path: [{required: true, trigger: 'change'}],
+    parentId: [{required: true, trigger: 'change'}],
+    component: [{required: true, trigger: 'change'}],
+    icon: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
+    ifLink: [{required: true, trigger: 'change'}],
+    ifVisible: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
+    ifPublic: [{required: true, trigger: 'change'}],
+    perms: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -60,9 +85,16 @@ const state = reactive({
   // }
   dict: {
     ...publicDict,
-    type: '权限类型',
-    roleId: '角色',
-    permissionId: '权限'
+    label: '菜单名',
+    type: '菜单类型',
+    path: '菜单路径',
+    parentId: '父级菜单',
+    component: '组件路径',
+    icon: '图标',
+    ifLink: '是否外链',
+    ifVisible: '是否显示',
+    ifPublic: '是否公共接口',
+    perms: '权限标识',
   },
   // 筛选表单
   // 格式: {
@@ -82,46 +114,49 @@ const state2 = reactive({
   orderNum: 0
 })
 const dialogFormRef = ref(null)
+const dialogFormsRef = ref(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
+const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
-  selectParam: {
-    // roleId: props.selectRole.id
-  }, // 查询参数（补充
+  selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   /**
-   * dialogVisible变化时的回调函数，可不传
+   * dialogVisible变化时的回调，可不传
    * @param visible 变化后的值
    */
-  dialogVisibleCallback: (visible?: boolean) => {
-    // dialogVisibleChange(visible)
+  dialogVisibleCallback: (visible: boolean) => {
   },
-  one2More: true,
-  one2MoreConfig: {
-    oneKey: 'roleId',
-    moreKey: 'permissionId'
+  /**
+   * selectList回调，可不传
+   */
+  selectListCallback: () => {
   },
+  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   /**
    * 修改单个前的查询的回调，可不传，one2More为true时调这个
    */
   beforeUpdateOneCallback1: (res: any[]) => {
-    // beforeUpdateOne(res)
+  },
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为false时调这个
+   */
+  beforeUpdateOneCallback2: (res: any) => {
   }
 })
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
-    // return rolePermissionSelAll(params)
-    return new Promise(resolve => resolve(null))
+    return menuSel(params)
   },
   /**
    * 查询所有
@@ -135,32 +170,49 @@ const func: t_FuncMap = {
    * @param id
    */
   selectById: (id: any) => {
-    // return rolePermissionSelById(id)
-    return new Promise(resolve => resolve(null))
+    return menuSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return menuSelByIds(ids)
   },
   /**
    * 新增
    * @param obj
    */
   insertOne: (obj: any) => {
-    // return rolePermissionIns(obj)
-    return new Promise(resolve => resolve(null))
+    return menuIns(obj)
   },
   /**
    * 修改
    * @param obj
    */
   updateOne: (obj: any) => {
-    // return rolePermissionUpd(obj)
-    return new Promise(resolve => resolve(null))
+    return menuUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: any[]) => {
+    return menuInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: any[]) => {
+    return menuUpds(objs)
   },
   /**
    * 删除
    * @param ids
    */
   deleteList: (...ids: any[]) => {
-    // return rolePermissionDel(ids)
-    return new Promise(resolve => resolve(null))
+    return menuDel(ids)
   }
 }
 
@@ -175,15 +227,21 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
-  pageChange
+  pageChange,
+  dfIns,
+  dfDel,
+  ifRequired
 } = funcTablePage({
   config,
   state,
   state2,
   dialogFormRef,
+  dialogFormsRef,
   filterFormRef,
   dialogVisible,
   dialogLoadingRef,
@@ -192,81 +250,6 @@ const {
   func,
   props
 })
-
-// const allRoles = ref<any[]>([])
-// roleSelAll({id: props.selectRole.id}).then(res => {
-//   allRoles.value = res
-// })
-//
-// const allpermissions = ref<any[]>([])
-// watch(() => state.dialogForm['type'], () => {
-//   allpermissions.value = []
-//   if (state.dialogForm['type'] === T_MENU) {
-//     menuSelAll().then(res => {
-//       allpermissions.value = arr1GetDiguiRelation(res, {ckey: 'cids'}).map((item: any) => ({children: [], ...item}))
-//     })
-//   } else if (state.dialogForm['type'] === T_INTER) {
-//   }
-// }, {
-//   immediate: true
-// })
-// const allpermissions2 = computed(() => {
-//   return arr2ToDiguiObj(allpermissions.value)
-// })
-// const allpermissions3 = (id: any) => {
-//   const findElement = state.list.find((item: any) => item.id === id);
-//   if (findElement && config.one2MoreConfig?.moreKey && findElement[config.one2MoreConfig?.moreKey]) {
-//     return arr2ToDiguiObj(allpermissions.value.filter(item => (findElement[config.one2MoreConfig?.moreKey as string] as any[]).indexOf(item.id) > -1))
-//   } else {
-//     return []
-//   }
-// }
-// let lastPermissionSelect: any[] = []
-// const permissionSelectChange = (): void => {
-//   if (!checked3.value) {
-//     return
-//   }
-//   const val = state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]
-//   if (val.length > lastPermissionSelect.length) {
-//     const zengids = val.filter(item => lastPermissionSelect.indexOf(item) === -1)
-//     const parentids = zengids.filter(id => allpermissions.value.find(item => item.cids.indexOf(id) > -1))
-//         .map(id => allpermissions.value.filter(item => item.cids.indexOf(id) > -1))
-//         .flat()
-//         .map((item: any) => item.id)
-//         .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) === -1)
-//     state.dialogForm[config.one2MoreConfig?.moreKey as string] = [...state.dialogForm[config.one2MoreConfig?.moreKey as string], ...parentids]
-//   }
-//   if (val.length < lastPermissionSelect.length) {
-//     const deleteids = lastPermissionSelect.filter(item => val.indexOf(item) === -1)
-//     const chlidids = deleteids.map(id => allpermissions.value.find(item => item.id === id).cids)
-//         .flat()
-//         .filter(item => state.dialogForm[config.one2MoreConfig?.moreKey as string].indexOf(item) > -1)
-//     state.dialogForm[config.one2MoreConfig?.moreKey as string] = (state.dialogForm[config.one2MoreConfig?.moreKey as string] as any[]).filter(item => chlidids.indexOf(item) === -1)
-//   }
-//   lastPermissionSelect = state.dialogForm[config.one2MoreConfig?.moreKey as string]
-// }
-//
-// const beforeUpdateOne = (data: any[]) => {
-//   lastPermissionSelect = data[0][config.one2MoreConfig?.moreKey as string]
-// }
-// const checked2 = ref(false)
-// const checked3 = ref(true)
-// const dialogVisibleChange = (visible?: boolean) => {
-//   checked2.value = false
-//   checked3.value = true
-//   if (visible) {
-//     Object.keys(config.selectParam).forEach(key => {
-//       state.dialogForm[key] = config.selectParam[key]
-//     })
-//   }
-// }
-// const checked2change = () => {
-//   if (checked2.value) {
-//     state.dialogForm[config.one2MoreConfig?.moreKey as string] = allpermissions.value.map(item => item.id)
-//   } else {
-//     state.dialogForm[config.one2MoreConfig?.moreKey as string] = []
-//   }
-// }
 
 const selectPermissionTree = ref<any>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
@@ -313,7 +296,7 @@ const handleCheckChange = (
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="是否管理员用户">
+        <el-form-item label="是否管理员权限">
           <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
         </el-form-item>
       </el-col>
@@ -329,209 +312,10 @@ const handleCheckChange = (
   <el-divider content-position="left">
     <el-text size="large" style="font-weight: bold;">权限列表</el-text>
   </el-divider>
-  <!--弹框-->
-  <!--<el-dialog-->
-  <!--    :width="CONFIG.dialog_width"-->
-  <!--    v-model="dialogVisible"-->
-  <!--    :title="state.dialogType.label"-->
-  <!--    draggable-->
-  <!--    append-to-body-->
-  <!--&gt;-->
-  <!--  <el-form-->
-  <!--      ref="dialogFormRef"-->
-  <!--      v-loading="dialogLoadingRef"-->
-  <!--      :model="state.dialogForm"-->
-  <!--      :label-width="CONFIG.dialog_form_label_width"-->
-  <!--      :rules="state.dFormRules"-->
-  <!--  >-->
-  <!--    <el-row>-->
-  <!--      <el-col :span="24">-->
-  <!--        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">-->
-  <!--          <span>{{ state.dialogForm['id'] }}</span>-->
-  <!--        </el-form-item>-->
-  <!--      </el-col>-->
-  <!--    </el-row>-->
-  <!--    &lt;!&ndash;-->
-  <!--    第一个input添加如下属性-->
-  <!--    v-focus-->
-  <!--    &ndash;&gt;-->
-  <!--    &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
-  <!--    <el-row>-->
-  <!--      <el-col :span="12">-->
-  <!--        <el-form-item :label="state.dict['roleId']" prop="roleId">-->
-  <!--          <el-select v-model="state.dialogForm['roleId']" clearable filterable disabled>-->
-  <!--            <el-option v-for="item in allRoles" :key="item.id" :label="item.label" :value="item.id"/>-->
-  <!--          </el-select>-->
-  <!--        </el-form-item>-->
-  <!--      </el-col>-->
-  <!--      <el-col :span="12">-->
-  <!--        <el-form-item :label="state.dict['type']" prop="type">-->
-  <!--          <el-radio-group v-model="state.dialogForm['type']">-->
-  <!--            <el-radio :label="T_MENU">{{ menuTypeDict[T_MENU] }}</el-radio>-->
-  <!--            <el-radio :label="T_INTER" disabled>{{ menuTypeDict[T_INTER] }}</el-radio>-->
-  <!--          </el-radio-group>-->
-  <!--        </el-form-item>-->
-  <!--      </el-col>-->
-  <!--    </el-row>-->
-  <!--    <el-row>-->
-  <!--      <el-col :span="24">-->
-  <!--        <el-form-item :label="state.dict['permissionId']" prop="permissionId">-->
-  <!--          <div>-->
-  <!--            <el-row>-->
-  <!--              <el-col :span="24">-->
-  <!--                <el-checkbox v-model="checked2" label="全选/全不选" size="large" @change="checked2change"/>-->
-  <!--                <el-checkbox v-model="checked3" label="父子联动" size="large"/>-->
-  <!--              </el-col>-->
-  <!--            </el-row>-->
-  <!--            <el-row>-->
-  <!--              <el-col :span="24">-->
-  <!--                <el-cascader-panel-->
-  <!--                    v-model="state.dialogForm['permissionId']"-->
-  <!--                    :options="allpermissions2"-->
-  <!--                    :props="cascaderProps4"-->
-  <!--                    clearable-->
-  <!--                    collapse-tags-->
-  <!--                    collapse-tags-tooltip-->
-  <!--                    :max-collapse-tags="3"-->
-  <!--                    @change="permissionSelectChange"-->
-  <!--                />-->
-  <!--              </el-col>-->
-  <!--            </el-row>-->
-  <!--          </div>-->
-  <!--        </el-form-item>-->
-  <!--      </el-col>-->
-  <!--    </el-row>-->
-  <!--    &lt;!&ndash;<el-row>&ndash;&gt;-->
-  <!--    &lt;!&ndash;  <el-col :span="24">&ndash;&gt;-->
-  <!--    &lt;!&ndash;    <el-form-item :label="state.dict['remark']" prop="remark">&ndash;&gt;-->
-  <!--    &lt;!&ndash;      <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>&ndash;&gt;-->
-  <!--    &lt;!&ndash;    </el-form-item>&ndash;&gt;-->
-  <!--    &lt;!&ndash;  </el-col>&ndash;&gt;-->
-  <!--    &lt;!&ndash;</el-row>&ndash;&gt;-->
-  <!--    &lt;!&ndash;在此上方添加表单项&ndash;&gt;-->
-  <!--    &lt;!&ndash;<el-form-item :label="state.dict['orderNum']" prop="orderNum">&ndash;&gt;-->
-  <!--    &lt;!&ndash;  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>&ndash;&gt;-->
-  <!--    &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--    &lt;!&ndash;<el-form-item :label="state.dict['ifDefault']" prop="ifDefault">&ndash;&gt;-->
-  <!--    &lt;!&ndash;  <el-switch v-model="state.dialogForm['ifDefault']" :active-value="final.IS_DEFAULT_YES"&ndash;&gt;-->
-  <!--    &lt;!&ndash;             :inactive-value="final.IS_DEFAULT_NO"/>&ndash;&gt;-->
-  <!--    &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--    &lt;!&ndash;<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">&ndash;&gt;-->
-  <!--    &lt;!&ndash;  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"&ndash;&gt;-->
-  <!--    &lt;!&ndash;             :inactive-value="final.DISABLED_YES"/>&ndash;&gt;-->
-  <!--    &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--    &lt;!&ndash;上方几个酌情使用&ndash;&gt;-->
-  <!--  </el-form>-->
-  <!--  <template #footer>-->
-  <!--    <span class="dialog-footer">-->
-  <!--      <el-button @click="dCan">取消</el-button>-->
-  <!--      <el-button type="primary" @click="dCon">确认</el-button>-->
-  <!--    </span>-->
-  <!--  </template>-->
-  <!--</el-dialog>-->
-
-  <!--顶部筛选表单-->
-  <!--<el-form-->
-  <!--    class="demo-form-inline"-->
-  <!--    v-if="Object.keys(state.filterForm).length>0"-->
-  <!--    ref="filterFormRef"-->
-  <!--    :model="state.filterForm"-->
-  <!--    :inline="true"-->
-  <!--    @keyup.enter="fEnter"-->
-  <!--&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-form-item :label="state.dict['']" prop="">&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此上方添加表单项&ndash;&gt;-->
-  <!--  <el-form-item>-->
-  <!--    <el-button type="primary" @click="fCon">筛选</el-button>-->
-  <!--    <el-button @click="fCan">重置</el-button>-->
-  <!--  </el-form-item>-->
-  <!--</el-form>-->
-
   <!--操作按钮-->
   <div>
-    <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
-    <!--</el-button>-->
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload">上传</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
-    <!--</el-button-group>-->
   </div>
-
-  <!--数据表格-->
-  <!--<el-table-->
-  <!--    v-loading="tableLoadingRef"-->
-  <!--    :data="state.list"-->
-  <!--    @selection-change="handleSelectionChange"-->
-  <!--&gt;-->
-  <!--  <el-table-column fixed type="selection" width="55"/>-->
-  <!--  &lt;!&ndash;<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上面id列的宽度改一下&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表格列&ndash;&gt;-->
-  <!--  <el-table-column prop="roleId" :label="state.dict['roleId']" width="120">-->
-  <!--    <template #default="{row}">-->
-  <!--      {{ row.role.label }}-->
-  <!--    </template>-->
-  <!--  </el-table-column>-->
-  <!--  <el-table-column prop="type" :label="state.dict['type']" width="120">-->
-  <!--    <template #default="{row}">-->
-  <!--      <template v-if="row.type==='m'">菜单</template>-->
-  <!--      <template v-if="row.type==='i'">接口</template>-->
-  <!--    </template>-->
-  <!--  </el-table-column>-->
-  <!--  <el-table-column prop="permissionId" :label="state.dict['permissionId']" width="120">-->
-  <!--    <template #default="{row}">-->
-  <!--      <el-tree-->
-  <!--          :data="allpermissions3(row.id)"-->
-  <!--          accordion-->
-  <!--          default-expand-all-->
-  <!--      />-->
-  <!--    </template>-->
-  <!--  </el-table-column>-->
-  <!--  &lt;!&ndash;<el-table-column prop="remark" :label="state.dict['remark']" width="200"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此上方添加表格列&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上方几个酌情使用&ndash;&gt;-->
-  <!--  <el-table-column fixed="right" label="操作" min-width="200">-->
-  <!--    <template #default="{row}">-->
-  <!--      <el-button link type="primary" size="small" @click="tUpd(row.roleId)">修改</el-button>-->
-  <!--      <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
-  <!--    </template>-->
-  <!--  </el-table-column>-->
-  <!--  <template #append>-->
-  <!--    <div class="el-table-append-box">-->
-  <!--      <span>此表格的多选<span-->
-  <!--          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>-->
-  <!--    </div>-->
-  <!--  </template>-->
-  <!--</el-table>-->
-
-  <!--&lt;!&ndash;分页&ndash;&gt;-->
-  <!--<Pagination-->
-  <!--    v-if="state.total!==-1"-->
-  <!--    :total="Number(state.total)"-->
-  <!--    :page-num="state.pageParam.pageNum"-->
-  <!--    :page-size="state.pageParam.pageSize"-->
-  <!--    @page-change="pageChange"-->
-  <!--/>-->
 
   <br/>
   <el-form>

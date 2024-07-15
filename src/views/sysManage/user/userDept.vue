@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue";
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import Pagination from "@/components/pagination/pagination.vue"
+import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import type { FormRules } from 'element-plus'
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { MORE, ONE } from "@/type/utils/base.ts"
 import { deptDto } from "@/type/api/sysManage/dept.ts";
-import { final, PAGINATION, publicDict } from "@/utils/base.ts";
-import { FormRules } from "element-plus";
-import { MORE, ONE } from "@/type/utils/base.ts";
 import {
-  deptDel,
-  deptIns,
-  deptInss,
   deptSel,
-  deptSelAll,
   deptSelById,
   deptSelByIds,
+  deptSelAll,
+  deptIns,
   deptUpd,
-  deptUpds
-} from "@/api/module/sysManage/dept.ts";
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
-import { Refresh } from "@element-plus/icons-vue";
+  deptInss,
+  deptUpds,
+  deptDel,
+} from "@/api/module/sysManage/dept.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -27,7 +28,7 @@ const props = defineProps({
   }
 });
 
-const state = reactive({
+const state = reactive<State<deptDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -35,8 +36,6 @@ const state = reactive({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
@@ -44,6 +43,7 @@ const state = reactive({
   dialogForm: {
     id: -1,
     label: '',
+    ifAdmin: final.N,
     parentId: final.DEFAULT_PARENT_ID,
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
@@ -57,6 +57,7 @@ const state = reactive({
   // }
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
+    ifAdmin: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
@@ -69,6 +70,7 @@ const state = reactive({
   dict: {
     ...publicDict,
     label: '部门名',
+    ifAdmin: '是否管理员权限',
     parentId: '父级部门',
   },
   // 筛选表单
@@ -113,9 +115,6 @@ const config: t_config = reactive({
    * selectList回调，可不传
    */
   selectListCallback: () => {
-    // nextTick(() => {
-    //   handleDataChange()
-    // })
   },
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   /**
@@ -132,7 +131,7 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
@@ -289,106 +288,11 @@ const handleCheckChange = (
   <el-divider content-position="left">
     <el-text size="large" style="font-weight: bold;">部门列表</el-text>
   </el-divider>
-  <!--顶部筛选表单-->
-  <!--<el-form-->
-  <!--    class="demo-form-inline"-->
-  <!--    v-if="Object.keys(state.filterForm).length>0"-->
-  <!--    ref="filterFormRef"-->
-  <!--    :model="state.filterForm"-->
-  <!--    :inline="true"-->
-  <!--    @keyup.enter="fEnter"-->
-  <!--&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
-  <!--  <el-form-item :label="state.dict['label']" prop="label">-->
-  <!--    <el-input v-model="state.filterForm['label']" :placeholder="state.dict['label']"/>-->
-  <!--  </el-form-item>-->
-  <!--  &lt;!&ndash;在此上方添加表单项&ndash;&gt;-->
-  <!--  <el-form-item>-->
-  <!--    <el-button type="primary" @click="fCon">筛选</el-button>-->
-  <!--    <el-button @click="fCan">重置</el-button>-->
-  <!--  </el-form-item>-->
-  <!--</el-form>-->
-
   <!--操作按钮-->
   <div>
-    <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--  <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>-->
-    <!--  <el-button type="success" plain :icon="Edit"-->
-    <!--             :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"-->
-    <!--             @click="gUpd">修改-->
-    <!--  </el-button>-->
-    <!--  <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除-->
-    <!--  </el-button>-->
-    <!--  <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">-->
-    <!--    导出-->
-    <!--  </el-button>-->
-    <!--  <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>-->
-    <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
-    <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
-    <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>&ndash;&gt;-->
-    <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>&ndash;&gt;-->
-    <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
-    <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
-    <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>&ndash;&gt;-->
-    <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>&ndash;&gt;-->
-    <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>&ndash;&gt;-->
-    <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
   </div>
 
-  <!--数据表格-->
-  <!--<el-table-->
-  <!--    ref="multipleTable"-->
-  <!--    v-loading="tableLoadingRef"-->
-  <!--    :data="tableData2"-->
-  <!--    row-key="id"-->
-  <!--    :expand-row-keys="expandRowKeys"-->
-  <!--    :default-expand-all="true"-->
-  <!--    @selection-change="handleSelectionChange"-->
-  <!--&gt;-->
-  <!--  &lt;!&ndash;<el-table-column fixed type="selection" width="55" :reserve-selection="true">&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <template #default="{row}">&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-checkbox v-model="selects[row.id]" @change="handleSelectionChange(row)"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  </template>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-table-column>&ndash;&gt;-->
-  <!--  <el-table-column type="selection" width="55"/>-->
-  <!--  &lt;!&ndash;<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上面id列的宽度改一下&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表格列&ndash;&gt;-->
-  <!--  <el-table-column prop="label" :label="state.dict['label']" width="240"/>-->
-  <!--  <el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
-  <!--  <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>-->
-  <!--  <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>-->
-  <!--  &lt;!&ndash;在此上方添加表格列&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上方几个酌情使用&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column fixed="right" label="操作" min-width="200">&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <template #default="{row}">&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-button link type="primary" size="small" @click="managePermission(row)">分配权限</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  </template>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-table-column>&ndash;&gt;-->
-  <!--  <template #append>-->
-  <!--    <span>此表格的多选<span-->
-  <!--        class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>-->
-  <!--  </template>-->
-  <!--</el-table>-->
-
-  <!--&lt;!&ndash;分页&ndash;&gt;-->
-  <!--<Pagination-->
-  <!--    v-if="state.total!==-1"-->
-  <!--    :total="Number(state.total)"-->
-  <!--    :page-num="state.pageParam.pageNum"-->
-  <!--    :page-size="state.pageParam.pageSize"-->
-  <!--    @page-change="pageChange"-->
-  <!--/>-->
   <br/>
   <el-form>
     <el-form-item label="所属部门">

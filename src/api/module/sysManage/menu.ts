@@ -1,7 +1,15 @@
 import request from "@/api/request.ts";
-import { menuInsDto, menuSelDto, menuUpdDto } from "@/type/api/sysManage/menu.ts";
+import { menuInsDto, menuSelAllDto, menuSelDto, menuUpdDto } from "@/type/api/sysManage/menu.ts";
 
-export function menuSelAll(params?: menuSelDto) {
+export function menuSel(params: menuSelDto) {
+  return request({
+    url: '/sys-manage/menu',
+    method: 'GET',
+    params: params
+  })
+}
+
+export function menuSelAll(params: menuSelAllDto) {
   return request({
     url: '/sys-manage/menu/all',
     method: 'GET',
@@ -9,7 +17,7 @@ export function menuSelAll(params?: menuSelDto) {
   })
 }
 
-export function menuSelById(id: any) {
+export function menuSelById(id: number) {
   return request({
     url: `/sys-manage/menu/${id}`,
     method: 'GET'

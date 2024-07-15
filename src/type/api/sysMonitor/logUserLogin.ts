@@ -28,13 +28,6 @@ export class logUserLoginInsDto {
   remark!: string;
 }
 
-export class logUserLoginUpdDto {
+export class logUserLoginUpdDto extends logUserLoginInsDto {
   id!: number;
-  userId!: string;
-  loginIp!: string;
-  loginPosition!: string;
-  loginBrowser!: string;
-  loginOs!: string;
-  ifSuccess!: string;
-  remark!: string;
 }

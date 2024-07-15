@@ -1,5 +1,5 @@
-import { dicDataInsDto, dicDataSelAllDto, dicDataSelDto, dicDataUpdDto } from "@/type/api/sysManage/dicData.ts";
 import request from "@/api/request.ts";
+import { dicDataInsDto, dicDataSelAllDto, dicDataSelDto, dicDataUpdDto } from "@/type/api/sysManage/dicData.ts";
 
 export function dicDataSel(params: dicDataSelDto) {
   return request({
