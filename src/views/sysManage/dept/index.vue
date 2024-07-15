@@ -561,8 +561,8 @@ provide('changeSelectPermission', selectPermission)
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="240"/>
-    <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="120"/>
-    <el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>
+    <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="150"/>
+    <!--<el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->

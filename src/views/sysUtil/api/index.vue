@@ -1,3 +1,8 @@
+<script lang="ts">
+export default {
+  name: 'sysUtil:api'
+}
+</script>
 <script setup lang="ts">
 import { baseURL } from "@/api/request.ts";
 </script>

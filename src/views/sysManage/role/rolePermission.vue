@@ -493,7 +493,7 @@ const handleCheckChange = (
   <!--      <template v-if="row.type==='i'">接口</template>-->
   <!--    </template>-->
   <!--  </el-table-column>-->
-  <!--  <el-table-column prop="permissionId" :label="state.dict['permissionId']" min-width="120">-->
+  <!--  <el-table-column prop="permissionId" :label="state.dict['permissionId']" width="120">-->
   <!--    <template #default="{row}">-->
   <!--      <el-tree-->
   <!--          :data="allpermissions3(row.id)"-->

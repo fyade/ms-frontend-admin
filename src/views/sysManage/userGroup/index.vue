@@ -5,8 +5,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { computed, reactive, ref } from "vue"
+import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
@@ -25,6 +25,7 @@ import {
   userGroupUpds,
   userGroupDel,
 } from "@/api/module/sysManage/userGroup.ts"
+import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const state = reactive<State<userGroupDto>>({
   dialogType: {
@@ -98,7 +99,7 @@ const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
+  pageQuery: false, // 分页，默认true
   watchDialogVisible: true, // 监听dialogVisible变化，默认true
   /**
    * dialogVisible变化时的回调，可不传
@@ -126,7 +127,7 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
@@ -224,241 +225,271 @@ const {
   activeTabName,
   func
 })
+
+const expandRowKeys = ref<any[]>([])
+const tableData2 = computed(() => {
+  return arr2ToDiguiObj(state.list)
+})
+const gIns2 = () => {
+  state.dialogForm.parentId = final.DEFAULT_PARENT_ID
+  gIns()
+}
+const tIns = (id: any) => {
+  state.dialogForm.parentId = id
+  gIns()
+}
 </script>
 
 <template>
-  用户组管理
-  <!--&lt;!&ndash;弹框&ndash;&gt;-->
-  <!--<el-dialog-->
-  <!--    :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"-->
-  <!--    v-model="dialogVisible"-->
-  <!--    :title="state.dialogType.label"-->
-  <!--    draggable-->
-  <!--    append-to-body-->
-  <!--&gt;-->
-  <!--  <el-tabs v-if="config.bulkOperation" v-model="activeTabName">-->
-  <!--    <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>-->
-  <!--    <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>-->
-  <!--  </el-tabs>-->
-  <!--  <template v-if="activeTabName===final.one">-->
-  <!--    <el-form-->
-  <!--        ref="dialogFormRef"-->
-  <!--        v-loading="dialogLoadingRef"-->
-  <!--        :model="state.dialogForm"-->
-  <!--        :label-width="CONFIG.dialog_form_label_width"-->
-  <!--        :rules="state.dFormRules"-->
-  <!--    >-->
-  <!--      &lt;!&ndash;<el-row>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-col :span="12"></el-col>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-col :span="12"></el-col>&ndash;&gt;-->
-  <!--      &lt;!&ndash;</el-row>&ndash;&gt;-->
-  <!--      <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">-->
-  <!--        <span>{{ state.dialogForm['id'] }}</span>-->
-  <!--      </el-form-item>-->
-  <!--      &lt;!&ndash;-->
-  <!--      第一个input添加如下属性-->
-  <!--      v-focus-->
-  <!--      &ndash;&gt;-->
-  <!--      &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
-  <!--      <el-row>-->
-  <!--        <el-col :span="12">-->
-  <!--          <el-form-item :label="state.dict['label']" prop="label">-->
-  <!--            <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>-->
-  <!--          </el-form-item>-->
-  <!--        </el-col>-->
-  <!--        <el-col :span="12">-->
-  <!--          <el-form-item :label="state.dict['parentId']" prop="parentId">-->
-  <!--            <el-input-number v-model="state.dialogForm['parentId']" controls-position="right"/>-->
-  <!--          </el-form-item>-->
-  <!--        </el-col>-->
-  <!--      </el-row>-->
-  <!--      <el-row>-->
-  <!--        <el-col :span="12">-->
-  <!--          <el-form-item :label="state.dict['orderNum']" prop="orderNum">-->
-  <!--            <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-  <!--          </el-form-item>-->
-  <!--        </el-col>-->
-  <!--        <el-col :span="12">-->
-  <!--          <el-form-item :label="state.dict['remark']" prop="remark">-->
-  <!--            <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>-->
-  <!--          </el-form-item>-->
-  <!--        </el-col>-->
-  <!--      </el-row>-->
-  <!--      &lt;!&ndash;在此上方添加表单项&ndash;&gt;-->
-  <!--      &lt;!&ndash;<el-form-item :label="state.dict['orderNum']" prop='orderNum'>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>&ndash;&gt;-->
-  <!--      &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--      &lt;!&ndash;<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES' :inactive-value='final.IS_DEFAULT_NO'/>&ndash;&gt;-->
-  <!--      &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--      &lt;!&ndash;<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-radio-group v-model="state.dialogForm['ifDisabled']">&ndash;&gt;-->
-  <!--      &lt;!&ndash;    <el-radio :label="final.Y">是</el-radio>&ndash;&gt;-->
-  <!--      &lt;!&ndash;    <el-radio :label="final.N">否</el-radio>&ndash;&gt;-->
-  <!--      &lt;!&ndash;  </el-radio-group>&ndash;&gt;-->
-  <!--      &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--      &lt;!&ndash;<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">&ndash;&gt;-->
-  <!--      &lt;!&ndash;  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO" :inactive-value="final.DISABLED_YES"/>&ndash;&gt;-->
-  <!--      &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--      &lt;!&ndash;上方几个酌情使用&ndash;&gt;-->
-  <!--    </el-form>-->
-  <!--  </template>-->
-  <!--  <template v-if="activeTabName===final.more">-->
-  <!--    <el-form-->
-  <!--        ref="dialogFormsRef"-->
-  <!--        v-loading="dialogLoadingRef"-->
-  <!--    >-->
-  <!--      <el-table-->
-  <!--          :data="state.dialogForms"-->
-  <!--          v-if="state.dialogForms"-->
-  <!--      >-->
-  <!--        <el-table-column type="index" width="50">-->
-  <!--          <template #header>-->
-  <!--            #-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        &lt;!&ndash;在此下方添加表格列&ndash;&gt;-->
-  <!--        <el-table-column prop="label" :label="state.dict['label']" width="300">-->
-  <!--          <template #header>-->
-  <!--            <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>-->
-  <!--          </template>-->
-  <!--          <template #default="{$index}">-->
-  <!--            <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-  <!--              <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>-->
-  <!--            </div>-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        <el-table-column prop="parentId" :label="state.dict['parentId']" width="300">-->
-  <!--          <template #header>-->
-  <!--            <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ state.dict['parentId'] }}</span>-->
-  <!--          </template>-->
-  <!--          <template #default="{$index}">-->
-  <!--            <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-  <!--              <el-input-number v-model="state.dialogForms[$index]['parentId']" controls-position="right"/>-->
-  <!--            </div>-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">-->
-  <!--          <template #header>-->
-  <!--            <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>-->
-  <!--          </template>-->
-  <!--          <template #default="{$index}">-->
-  <!--            <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-  <!--              <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>-->
-  <!--            </div>-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        <el-table-column prop="remark" :label="state.dict['remark']" width="300">-->
-  <!--          <template #header>-->
-  <!--            <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>-->
-  <!--          </template>-->
-  <!--          <template #default="{$index}">-->
-  <!--            <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-  <!--              <el-input v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>-->
-  <!--            </div>-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        &lt;!&ndash;在此上方添加表格列&ndash;&gt;-->
-  <!--        <el-table-column fixed="right" label="操作" min-width="120">-->
-  <!--          <template v-if="state.dialogType.value===final.ins" #default="{$index}">-->
-  <!--            <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>-->
-  <!--          </template>-->
-  <!--        </el-table-column>-->
-  <!--        <template v-if="state.dialogType.value===final.ins" #append>-->
-  <!--          <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>-->
-  <!--        </template>-->
-  <!--      </el-table>-->
-  <!--    </el-form>-->
-  <!--  </template>-->
-  <!--  <template #footer>-->
-  <!--    <span class="dialog-footer">-->
-  <!--      <el-button @click="dCan">取消</el-button>-->
-  <!--      <el-button type="primary" @click="dCon">确认</el-button>-->
-  <!--    </span>-->
-  <!--  </template>-->
-  <!--</el-dialog>-->
+  <!--弹框-->
+  <el-dialog
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
+      v-model="dialogVisible"
+      :title="state.dialogType.label"
+      draggable
+      append-to-body
+  >
+    <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+    </el-tabs>
+    <template v-if="activeTabName===final.one">
+      <el-form
+          ref="dialogFormRef"
+          v-loading="dialogLoadingRef"
+          :model="state.dialogForm"
+          :label-width="CONFIG.dialog_form_label_width"
+          :rules="state.dFormRules"
+      >
+        <!--<el-row>-->
+        <!--  <el-col :span="12"></el-col>-->
+        <!--  <el-col :span="12"></el-col>-->
+        <!--</el-row>-->
+        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
+          <span>{{ state.dialogForm['id'] }}</span>
+        </el-form-item>
+        <!--
+        第一个input添加如下属性
+        v-focus
+        -->
+        <!--在此下方添加表单项-->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['label']" prop="label">
+              <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['parentId']" prop="parentId">
+              <!--<el-input-number v-model="state.dialogForm['parentId']" controls-position="right"/>-->
+              <el-cascader
+                  v-model="state.dialogForm['parentId']"
+                  :options="tableData2"
+                  :props="cascaderProps2"
+                  clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['remark']" prop="remark">
+              <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--在此上方添加表单项-->
+        <!--<el-form-item :label="state.dict['orderNum']" prop='orderNum'>-->
+        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->
+        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES' :inactive-value='final.IS_DEFAULT_NO'/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->
+        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
+        <!--    <el-radio :label="final.Y">是</el-radio>-->
+        <!--    <el-radio :label="final.N">否</el-radio>-->
+        <!--  </el-radio-group>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO" :inactive-value="final.DISABLED_YES"/>-->
+        <!--</el-form-item>-->
+        <!--上方几个酌情使用-->
+      </el-form>
+    </template>
+    <template v-if="activeTabName===final.more">
+      <el-form
+          ref="dialogFormsRef"
+          v-loading="dialogLoadingRef"
+      >
+        <el-table
+            :data="state.dialogForms"
+            v-if="state.dialogForms"
+        >
+          <el-table-column type="index" width="50">
+            <template #header>
+              #
+            </template>
+          </el-table-column>
+          <!--在此下方添加表格列-->
+          <el-table-column prop="label" :label="state.dict['label']" width="300">
+            <template #header>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="parentId" :label="state.dict['parentId']" width="300">
+            <template #header>
+              <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ state.dict['parentId'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-input-number v-model="state.dialogForms[$index]['parentId']" controls-position="right"/>-->
+                <el-cascader
+                    v-model="state.dialogForms[$index]['parentId']"
+                    :options="tableData2"
+                    :props="cascaderProps2"
+                    clearable
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <!--在此上方添加表格列-->
+          <el-table-column fixed="right" label="操作" min-width="120">
+            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
+              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+            </template>
+          </el-table-column>
+          <template v-if="state.dialogType.value===final.ins" #append>
+            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
+          </template>
+        </el-table>
+      </el-form>
+    </template>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dCan">取消</el-button>
+        <el-button type="primary" @click="dCon">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
 
-  <!--&lt;!&ndash;顶部筛选表单&ndash;&gt;-->
-  <!--<el-form-->
-  <!--    class="demo-form-inline"-->
-  <!--    v-if="Object.keys(state.filterForm).length>0"-->
-  <!--    ref="filterFormRef"-->
-  <!--    :model="state.filterForm"-->
-  <!--    :inline="true"-->
-  <!--    @keyup.enter="fEnter"-->
-  <!--&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表单项&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-form-item :label="state.dict['']" prop="">&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-form-item>&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此上方添加表单项&ndash;&gt;-->
-  <!--  <el-form-item>-->
-  <!--    <el-button type="primary" @click="fCon">筛选</el-button>-->
-  <!--    <el-button @click="fCan">重置</el-button>-->
-  <!--  </el-form-item>-->
-  <!--</el-form>-->
+  <!--顶部筛选表单-->
+  <el-form
+      class="demo-form-inline"
+      v-if="Object.keys(state.filterForm).length>0"
+      ref="filterFormRef"
+      :model="state.filterForm"
+      :inline="true"
+      @keyup.enter="fEnter"
+  >
+    <!--在此下方添加表单项-->
+    <!--<el-form-item :label="state.dict['']" prop="">-->
+    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
+    <!--</el-form-item>-->
+    <!--在此上方添加表单项-->
+    <el-form-item>
+      <el-button type="primary" @click="fCon">筛选</el-button>
+      <el-button @click="fCan">重置</el-button>
+    </el-form-item>
+  </el-form>
 
-  <!--&lt;!&ndash;操作按钮&ndash;&gt;-->
-  <!--<div>-->
-  <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
-  <!--  <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>-->
-  <!--  <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-  <!--  <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-  <!--  <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-  <!--  <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport">导出</el-button>-->
-  <!--  <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>-->
-  <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-button-group>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>&ndash;&gt;-->
-  <!--  &lt;!&ndash;</el-button-group>&ndash;&gt;-->
-  <!--</div>-->
+  <!--操作按钮-->
+  <div>
+    <!--<el-button-group>-->
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
+    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>
+    <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
+    <!--</el-button-group>-->
+    <!--<el-button-group>-->
+    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
+    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
+    <!--</el-button-group>-->
+    <!--<el-button-group>-->
+    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
+    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
+    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
+    <!--</el-button-group>-->
+  </div>
 
-  <!--&lt;!&ndash;数据表格&ndash;&gt;-->
-  <!--<el-table-->
-  <!--    v-loading="tableLoadingRef"-->
-  <!--    :data="state.list"-->
-  <!--    @selection-change="handleSelectionChange"-->
-  <!--&gt;-->
-  <!--  <el-table-column fixed type="selection" width="55"/>-->
-  <!--  &lt;!&ndash;<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上面id列的宽度改一下&ndash;&gt;-->
-  <!--  &lt;!&ndash;在此下方添加表格列&ndash;&gt;-->
-  <!--  <el-table-column prop="label" :label="state.dict['label']" width="120"/>-->
-  <!--  <el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
-  <!--  <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>-->
-  <!--  <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>-->
-  <!--  &lt;!&ndash;在此上方添加表格列&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>&ndash;&gt;-->
-  <!--  &lt;!&ndash;上方几个酌情使用&ndash;&gt;-->
-  <!--  <el-table-column fixed="right" label="操作" min-width="120">-->
-  <!--    <template #default="{row}">-->
-  <!--      <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
-  <!--      <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
-  <!--    </template>-->
-  <!--  </el-table-column>-->
-  <!--  <template #append>-->
-  <!--    <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>-->
-  <!--  </template>-->
-  <!--</el-table>-->
+  <!--数据表格-->
+  <el-table
+      v-loading="tableLoadingRef"
+      :data="tableData2"
+      :expand-row-keys="expandRowKeys"
+      row-key="id"
+      :default-expand-all="true"
+      @selection-change="handleSelectionChange"
+  >
+    <el-table-column fixed type="selection" width="55"/>
+    <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
+    <!--上面id列的宽度改一下-->
+    <!--在此下方添加表格列-->
+    <el-table-column prop="label" :label="state.dict['label']" width="240"/>
+    <!--<el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
+    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
+    <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
+    <!--在此上方添加表格列-->
+    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
+    <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
+    <!--上方几个酌情使用-->
+    <el-table-column fixed="right" label="操作" min-width="120">
+      <template #default="{row}">
+        <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
+        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
+        <!--<el-button link type="primary" size="small">管理用户</el-button>-->
+        <!--<el-button link type="primary" size="small">分配权限</el-button>-->
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+      </template>
+    </el-table-column>
+    <template #append>
+      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+    </template>
+  </el-table>
 
-  <!--&lt;!&ndash;分页&ndash;&gt;-->
-  <!--<Pagination-->
-  <!--    v-if="state.total!==-1"-->
-  <!--    :total="Number(state.total)"-->
-  <!--    :page-num="state.pageParam.pageNum"-->
-  <!--    :page-size="state.pageParam.pageSize"-->
-  <!--    @page-change="pageChange"-->
-  <!--/>-->
+  <!--分页-->
+  <Pagination
+      v-if="state.total!==-1"
+      :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
+      @page-change="pageChange"
+  />
 </template>
 
 <style scoped>

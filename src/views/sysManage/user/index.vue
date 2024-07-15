@@ -20,6 +20,9 @@ import { fileBaseUrl } from "@/api/request.ts";
 import UserDept from "@/views/sysManage/user/userDept.vue";
 import { userDeptUpdUD } from "@/api/module/sysManage/userDept.ts";
 import { deptDto } from "@/type/api/sysManage/dept.ts";
+import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
+import UserUserGroup from "@/views/sysManage/user/userUserGroup.vue";
+import { userUserGroupUpdUUG } from "@/api/module/sysManage/userUserGroup.ts";
 
 const state = reactive<State>({
   dialogType: {
@@ -64,6 +67,7 @@ const state = reactive<State>({
     tel: '电话',
     roles: '角色',
     depts: '部门',
+    ugs: '用户组',
   },
   // 筛选表单
   // 格式: {
@@ -264,6 +268,32 @@ const drawerCancelUserDept = () => {
   drawer2.value = false
 }
 provide('changeSelectDept', selectDept)
+
+// 用户用户组
+const userUserGroup: Ref<InstanceType<typeof UserUserGroup> | null> = ref<InstanceType<typeof UserUserGroup> | null>(null)
+const drawer3 = ref(false)
+const selectUserGroup = ref<any[]>([])
+const manageUserGroup = (row: any) => {
+  selectUser.value = deepClone(row)
+  selectUserGroup.value = deepClone(row.ugs)
+  drawer3.value = true
+}
+const drawerConfirmUserUserGroup = () => {
+  const param = {
+    userId: selectUser.value.id,
+    userGroupId: selectUserGroup.value.map(item => item.id)
+  }
+  userUserGroupUpdUUG(param).then(res => {
+    if (res) {
+      drawer3.value = false
+      gRefresh()
+    }
+  })
+}
+const drawerCancelUserUserGroup = () => {
+  drawer3.value = false
+}
+provide('changeSelectUserGroup', selectUserGroup)
 </script>
 
 <template>
@@ -302,6 +332,25 @@ provide('changeSelectDept', selectDept)
     <template #footer>
       <el-button plain @click="drawerCancelUserDept">取消</el-button>
       <el-button type="primary" plain @click="drawerConfirmUserDept">提交</el-button>
+    </template>
+  </el-dialog>
+
+  <!--用户用户组-->
+  <el-dialog
+      v-model="drawer3"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="分配用户组"
+  >
+    <UserUserGroup
+        ref="userUserGroup"
+        :user="selectUser"
+    />
+    <template #footer>
+      <el-button plain @click="drawerCancelUserUserGroup">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmUserUserGroup">提交</el-button>
     </template>
   </el-dialog>
 
@@ -472,6 +521,13 @@ provide('changeSelectDept', selectDept)
         </el-space>
       </template>
     </el-table-column>
+    <el-table-column prop="ugs" :label="state.dict['ugs']" width="240">
+      <template #default="{row}">
+        <el-space wrap>
+          <el-tag v-for="item in (row.ugs as userGroupDto[])" :key="item.id" type="primary">{{ item.label }}</el-tag>
+        </el-space>
+      </template>
+    </el-table-column>
     <el-table-column prop="sex" :label="state.dict['sex']" width="120"/>
     <el-table-column prop="email" :label="state.dict['email']" width="120"/>
     <el-table-column prop="tel" :label="state.dict['tel']" width="120"/>
@@ -489,6 +545,7 @@ provide('changeSelectDept', selectDept)
         <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
         <el-button link type="primary" size="small" @click="manageRole(row)">分配角色</el-button>
         <el-button link type="primary" size="small" @click="manageDept(row)">分配部门</el-button>
+        <el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>
       </template>
     </el-table-column>
     <!--<template #append>-->

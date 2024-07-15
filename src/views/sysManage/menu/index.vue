@@ -823,7 +823,7 @@ const expendAll = () => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column fixed prop="label" :label="state.dict['label']" min-width="240"/>
+    <el-table-column fixed prop="label" :label="state.dict['label']" width="240"/>
     <el-table-column prop="path" :label="state.dict['path']" width="200"/>
     <el-table-column prop="component" :label="state.dict['component']" width="280"/>
     <el-table-column prop="icon" :label="state.dict['icon']" width="120">
