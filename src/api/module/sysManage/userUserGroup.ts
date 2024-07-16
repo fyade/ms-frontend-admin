@@ -1,9 +1,8 @@
 import request from "@/api/request.ts";
 import {
-  userUserGroupInsDto,
   userUserGroupSelAllDto,
   userUserGroupSelDto,
-  userUserGroupUpdDto,
+  userUserGroupUpdUGUDtp,
   userUserGroupUpdUUGDtp
 } from "@/type/api/sysManage/userUserGroup.ts";
 
@@ -41,6 +40,14 @@ export function userUserGroupSelByIds(ids: any[]) {
 export function userUserGroupUpdUUG(param: userUserGroupUpdUUGDtp) {
   return request({
     url: `/sys-manage/user-user-group/uug`,
+    method: 'POST',
+    data: param
+  })
+}
+
+export function userUserGroupUpdUGU(param: userUserGroupUpdUGUDtp) {
+  return request({
+    url: `/sys-manage/user-user-group/ugu`,
     method: 'POST',
     data: param
   })

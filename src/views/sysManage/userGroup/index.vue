@@ -26,6 +26,8 @@ import {
   userGroupDel,
 } from "@/api/module/sysManage/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import UserGroupUser from "@/views/sysManage/userGroup/userGroupUser.vue";
+import RoleUser from "@/views/sysManage/role/roleUser.vue";
 
 const state = reactive<State<userGroupDto>>({
   dialogType: {
@@ -236,9 +238,33 @@ const tIns = (id: any) => {
   state.dialogForm.parentId = id
   gIns()
 }
+let selectUserGroupInfo: any = {}
+const drawer2 = ref(false)
+const selectPermission = ref<any[]>([])
+const manageUser = (row: any) => {
+  selectUserGroupInfo = row
+  drawer2.value = true
+}
 </script>
 
 <template>
+  <!--管理用户-->
+  <el-dialog
+      v-model="drawer2"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="管理用户"
+  >
+    <UserGroupUser
+        :select-user-group="selectUserGroupInfo"
+    />
+    <template #footer>
+      <el-button plain @click="drawer2=false">取消</el-button>
+    </template>
+  </el-dialog>
+
   <!--弹框-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
@@ -410,9 +436,15 @@ const tIns = (id: any) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
-    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>
+    <el-button type="success" plain :icon="Edit"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
+               @click="gUpd">修改
+    </el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
+    </el-button>
+    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">
+      导出
+    </el-button>
     <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
@@ -445,13 +477,14 @@ const tIns = (id: any) => {
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <!--<el-button link type="primary" size="small">管理用户</el-button>-->
+        <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
         <!--<el-button link type="primary" size="small">分配权限</el-button>-->
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+      <span>此表格的多选<span
+          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
     </template>
   </el-table>
 

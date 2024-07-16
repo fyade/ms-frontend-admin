@@ -1,6 +1,7 @@
 import { pageSelDto } from "@/type/tablePage.ts";
 
 export interface userRoleSelDto extends pageSelDto {
+  roleId?: string
 }
 
 export interface userRoleSelAllDto {

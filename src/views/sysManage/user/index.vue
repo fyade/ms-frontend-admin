@@ -3,6 +3,7 @@ export default {
   name: 'sysManage:user'
 }
 </script>
+
 <script setup lang="ts">
 import { provide, reactive, Ref, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { CONFIG } from "@/utils/base.ts";
+import { CONFIG, final } from "@/utils/base.ts";
+
+const functionValueOnClear = () => {
+  return final.DEFAULT_PARENT_ID
+}
 </script>
 
 <template>
@@ -11,7 +15,11 @@ import { CONFIG } from "@/utils/base.ts";
         '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
       }"
   >
-    <router-view/>
+    <el-config-provider
+        :value-on-clear="functionValueOnClear"
+    >
+      <router-view/>
+    </el-config-provider>
   </div>
 </template>
 

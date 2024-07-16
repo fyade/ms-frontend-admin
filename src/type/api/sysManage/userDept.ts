@@ -9,6 +9,7 @@ export class userDeptDto extends baseInterface {
 }
 
 export class userDeptSelDto extends pageSelDto {
+  deptId!: number;
 }
 
 export class userDeptSelAllDto {

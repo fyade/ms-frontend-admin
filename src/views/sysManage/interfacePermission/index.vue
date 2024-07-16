@@ -3,6 +3,7 @@ export default {
   name: 'sysManage:interfacePermission'
 }
 </script>
+
 <script setup lang="ts">
 
 </script>

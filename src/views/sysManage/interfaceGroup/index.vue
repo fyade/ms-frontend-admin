@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:interface'
+  name: 'sysManage:interfaceGroup'
 }
 </script>
 
@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-接口管理
+接口组管理
 </template>
 
 <style scoped>

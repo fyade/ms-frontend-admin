@@ -3,6 +3,7 @@ export default {
     name: 'demo:fileUpload'
 }
 </script>
+
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { downloadFullFile, selList } from "@/api/fileUpload.ts";

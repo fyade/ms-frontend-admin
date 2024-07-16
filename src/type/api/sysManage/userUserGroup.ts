@@ -9,6 +9,7 @@ export class userUserGroupDto extends baseInterface {
 }
 
 export class userUserGroupSelDto extends pageSelDto {
+  userGroupId!: number;
 }
 
 export class userUserGroupSelAllDto {

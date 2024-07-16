@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
+import { computed, reactive, ref } from "vue";
+import { ElMessageBox } from "element-plus";
+import { userSelByIds, userSelList } from "@/api/module/sysManage/user.ts";
+import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/module/sysManage/userUserGroup.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
-import { computed, reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
-import { userRoleDel, userRoleSel, userRoleUpdRU } from "@/api/module/sysManage/userRole.ts";
-import { userSelByIds, userSelList } from "@/api/module/sysManage/user.ts";
 
 const props = defineProps({
-  selectRole: {
+  selectUserGroup: {
     type: Object,
     required: true
   }
@@ -50,20 +50,20 @@ const allUsers = ref([])
 // 筛选表单
 const filterFormRef = ref<any>(null)
 const table1LoadingRef = ref(false)
-// 此角色的用户
-const usersOfThisRole = ref([])
-// 此角色的用户角色对
-const userRolesOfThisRole = ref([])
+// 此用户组的用户
+const usersOfThisUserGroup = ref([])
+// 此用户组的用户用户组对
+const userUserGroupsOfThisUserGroup = ref([])
 // 分页查询当前部分用户
 const getInfo = () => {
-  usersOfThisRole.value = []
-  userRolesOfThisRole.value = []
+  usersOfThisUserGroup.value = []
+  userUserGroupsOfThisUserGroup.value = []
   table1LoadingRef.value = true
-  userRoleSel({roleId: props.selectRole.id, ...state.pageParam1}).then(res => {
+  userUserGroupSel({userGroupId: props.selectUserGroup.id, ...state.pageParam1}).then(res => {
     state.total1 = res.total
-    userRolesOfThisRole.value = res.list
-    userSelByIds(userRolesOfThisRole.value.map((item: any) => item.userId)).then(res => {
-      usersOfThisRole.value = res
+    userUserGroupsOfThisUserGroup.value = res.list
+    userSelByIds(userUserGroupsOfThisUserGroup.value.map((item: any) => item.userId)).then(res => {
+      usersOfThisUserGroup.value = res
       table1LoadingRef.value = false
     })
   })
@@ -90,7 +90,7 @@ const addUser = () => {
 // 删除用户
 const delUser = () => {
   const selectUserIds = selectRows1.value.map((item: any) => item.id);
-  const ids = userRolesOfThisRole.value.filter((item: any) => selectUserIds.indexOf(item.userId) > -1).map((item: any) => item.id)
+  const ids = userUserGroupsOfThisUserGroup.value.filter((item: any) => selectUserIds.indexOf(item.userId) > -1).map((item: any) => item.id)
   ElMessageBox.confirm(
       `此操作将删除选中的 ${ids.length} 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -101,7 +101,7 @@ const delUser = () => {
         draggable: true
       }
   ).then(() => {
-    userRoleDel(ids).then(res => {
+    userUserGroupDel(ids).then(res => {
       if (res) {
         getInfo()
       }
@@ -144,25 +144,25 @@ const selectRows2 = ref([])
 const handleSelectionChange2 = (val: any) => {
   selectRows2.value = val
 }
-// 取消新增用户角色
+// 取消新增用户用户组
 const dialogCancel = () => {
   addUserDialog.value = false
   selectRows2.value = []
 }
-// 确认新增用户角色
+// 确认新增用户用户组
 const dialogConfirm = () => {
   const param = {
     userId: selectRows2.value.map((item: any) => item.id),
-    roleId: props.selectRole.id
+    userGroupId: props.selectUserGroup.id
   }
-  userRoleUpdRU(param).then(res => {
+  userUserGroupUpdUGU(param).then(res => {
     getInfo()
     dialogCancel()
   })
 }
 
-// 删除用户角色
-const deleteUserRole = (userId: any) => {
+// 删除用户用户组
+const deleteUserUserGroup = (userId: any) => {
   ElMessageBox.confirm(
       `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -173,9 +173,9 @@ const deleteUserRole = (userId: any) => {
         draggable: true
       }
   ).then(() => {
-    const find: any = userRolesOfThisRole.value.find((item: any) => item.userId === userId)
+    const find: any = userUserGroupsOfThisUserGroup.value.find((item: any) => item.userId === userId)
     if (find) {
-      userRoleDel([find.id]).then(res => {
+      userUserGroupDel([find.id]).then(res => {
         if (res) {
           getInfo()
         }
@@ -186,25 +186,20 @@ const deleteUserRole = (userId: any) => {
 </script>
 
 <template>
-  <!--角色信息-->
+  <!--用户组信息-->
   <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">角色信息</el-text>
+    <el-text size="large" style="font-weight: bold;">用户组信息</el-text>
   </el-divider>
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="角色名">
-          <el-input disabled v-model="props.selectRole.label"></el-input>
+        <el-form-item label="用户组id">
+          <el-input disabled v-model="props.selectUserGroup.id"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="是否管理员权限">
-          <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="是否禁用">
-          <el-input disabled v-model="props.selectRole.ifDisabled"></el-input>
+        <el-form-item label="用户组名">
+          <el-input disabled v-model="props.selectUserGroup.label"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -295,10 +290,10 @@ const deleteUserRole = (userId: any) => {
   <el-button type="primary" plain :icon="Plus" @click="addUser">添加用户</el-button>
   <el-button type="danger" plain :icon="Delete" :disabled="selectRows1.length===0" @click="delUser">删除用户</el-button>
 
-  <!--当前角色的用户-->
+  <!--当前用户组的用户-->
   <el-table
       v-loading="table1LoadingRef"
-      :data="usersOfThisRole"
+      :data="usersOfThisUserGroup"
       @selection-change="handleSelectionChange1"
   >
     <el-table-column fixed type="selection" width="55"/>
@@ -321,7 +316,7 @@ const deleteUserRole = (userId: any) => {
     <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
     <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
-        <el-button link type="danger" size="small" @click="deleteUserRole(row.id)">删除</el-button>
+        <el-button link type="danger" size="small" @click="deleteUserUserGroup(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>
