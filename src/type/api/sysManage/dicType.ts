@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class dicTypeDto extends baseInterface {
@@ -10,7 +10,7 @@ export class dicTypeDto extends baseInterface {
   remark!: string;
 }
 
-export class dicTypeSelDto extends pageSelDto {
+export class dicTypeSelDto extends pageDto {
 }
 
 export class dicTypeSelAllDto {

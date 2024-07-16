@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class userUserGroupDto extends baseInterface {
@@ -8,7 +8,7 @@ export class userUserGroupDto extends baseInterface {
   remark!: string;
 }
 
-export class userUserGroupSelDto extends pageSelDto {
+export class userUserGroupSelDto extends pageDto {
   userGroupId!: number;
 }
 

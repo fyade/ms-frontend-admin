@@ -1,6 +1,6 @@
-export interface xy {
-  x: number
-  y: number
+export class xy {
+  x!: number
+  y!: number
 }
 
 /**

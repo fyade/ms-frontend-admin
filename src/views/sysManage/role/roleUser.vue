@@ -7,6 +7,9 @@ import { computed, reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import { userRoleDel, userRoleSel, userRoleUpdRU } from "@/api/module/sysManage/userRole.ts";
 import { userSelByIds, userSelList } from "@/api/module/sysManage/user.ts";
+import { userRoleDto } from "@/type/api/sysManage/userRole.ts";
+import { pageDto } from "@/type/tablePage.ts";
+import { userDto } from "@/type/api/sysManage/user.ts";
 
 const props = defineProps({
   selectRole: {
@@ -53,7 +56,7 @@ const table1LoadingRef = ref(false)
 // 此角色的用户
 const usersOfThisRole = ref([])
 // 此角色的用户角色对
-const userRolesOfThisRole = ref([])
+const userRolesOfThisRole = ref<userRoleDto[]>([])
 // 分页查询当前部分用户
 const getInfo = () => {
   usersOfThisRole.value = []
@@ -62,7 +65,7 @@ const getInfo = () => {
   userRoleSel({roleId: props.selectRole.id, ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userRolesOfThisRole.value = res.list
-    userSelByIds(userRolesOfThisRole.value.map((item: any) => item.userId)).then(res => {
+    userSelByIds(userRolesOfThisRole.value.map(item => item.userId)).then(res => {
       usersOfThisRole.value = res
       table1LoadingRef.value = false
     })
@@ -70,13 +73,13 @@ const getInfo = () => {
 }
 getInfo()
 // 分页查询
-const pageChange1 = (newVal: any) => {
+const pageChange1 = (newVal: pageDto) => {
   state.pageParam1.pageNum = newVal.pageNum
   state.pageParam1.pageSize = newVal.pageSize
   getInfo()
 }
 // 选中行
-const selectRows1 = ref([])
+const selectRows1 = ref<userDto[]>([])
 // 修改选中行
 const handleSelectionChange1 = (val: any) => {
   selectRows1.value = val
@@ -89,8 +92,8 @@ const addUser = () => {
 }
 // 删除用户
 const delUser = () => {
-  const selectUserIds = selectRows1.value.map((item: any) => item.id);
-  const ids = userRolesOfThisRole.value.filter((item: any) => selectUserIds.indexOf(item.userId) > -1).map((item: any) => item.id)
+  const selectUserIds = selectRows1.value.map(item => item.id);
+  const ids = userRolesOfThisRole.value.filter(item => selectUserIds.indexOf(item.userId) > -1).map(item => item.id)
   ElMessageBox.confirm(
       `此操作将删除选中的 ${ids.length} 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -133,13 +136,13 @@ const userDialogClear = () => {
   allUsers.value = []
 }
 // 分页查询
-const pageChange2 = (newVal: any) => {
+const pageChange2 = (newVal: pageDto) => {
   state.pageParam2.pageNum = newVal.pageNum
   state.pageParam2.pageSize = newVal.pageSize
   userDialogGetData()
 }
 // 选中行
-const selectRows2 = ref([])
+const selectRows2 = ref<userDto[]>([])
 // 修改选中行
 const handleSelectionChange2 = (val: any) => {
   selectRows2.value = val
@@ -152,7 +155,7 @@ const dialogCancel = () => {
 // 确认新增用户角色
 const dialogConfirm = () => {
   const param = {
-    userId: selectRows2.value.map((item: any) => item.id),
+    userId: selectRows2.value.map(item => item.id),
     roleId: props.selectRole.id
   }
   userRoleUpdRU(param).then(res => {
@@ -162,7 +165,7 @@ const dialogConfirm = () => {
 }
 
 // 删除用户角色
-const deleteUserRole = (userId: any) => {
+const deleteUserRole = (userId: string) => {
   ElMessageBox.confirm(
       `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -173,7 +176,7 @@ const deleteUserRole = (userId: any) => {
         draggable: true
       }
   ).then(() => {
-    const find: any = userRolesOfThisRole.value.find((item: any) => item.userId === userId)
+    const find = userRolesOfThisRole.value.find(item => item.userId === userId)
     if (find) {
       userRoleDel([find.id]).then(res => {
         if (res) {

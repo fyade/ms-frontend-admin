@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class deptPermissionDto extends baseInterface {
@@ -9,7 +9,7 @@ export class deptPermissionDto extends baseInterface {
   remark!: string;
 }
 
-export class deptPermissionSelDto extends pageSelDto {
+export class deptPermissionSelDto extends pageDto {
 }
 
 export class deptPermissionSelAllDto {

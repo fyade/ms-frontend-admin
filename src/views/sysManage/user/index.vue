@@ -14,7 +14,7 @@ import { ElMessage, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { newUser, resetUserPsd, userSelList } from "@/api/module/sysManage/user.ts";
 import UserRole from "./userRole.vue";
-import { userDto } from "@/type/api/sysManage/user.ts";
+import { userDto, userDto2 } from "@/type/api/sysManage/user.ts";
 import { userRoleUpdUR } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { fileBaseUrl } from "@/api/request.ts";
@@ -216,7 +216,7 @@ const npCon = () => {
 // 用户角色
 const userRole: Ref<InstanceType<typeof UserRole> | null> = ref<InstanceType<typeof UserRole> | null>(null)
 const drawer = ref(false)
-const selectUser = ref<userDto>({
+const selectUser = ref<userDto2>({
   id: '',
   username: '',
   nickname: ''

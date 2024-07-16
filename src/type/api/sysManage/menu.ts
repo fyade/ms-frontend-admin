@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export type T_MENU = 'mm'
@@ -23,7 +23,7 @@ export class menuDto<T = tType> extends baseInterface {
   remark!: string;
 }
 
-export class menuSelDto extends pageSelDto {
+export class menuSelDto extends pageDto {
 }
 
 export class menuSelAllDto {

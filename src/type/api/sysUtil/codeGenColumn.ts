@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class codeGenColumnDto extends baseInterface {
@@ -20,7 +20,7 @@ export class codeGenColumnDto extends baseInterface {
   remark!: string;
 }
 
-export class codeGenColumnSelDto extends pageSelDto {
+export class codeGenColumnSelDto extends pageDto {
 }
 
 export class codeGenColumnSelAllDto {

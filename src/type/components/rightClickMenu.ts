@@ -1,4 +1,4 @@
-export interface menusT {
-  label: string
-  operate: Function
+export class menusT {
+  label!: string
+  operate!: Function
 }

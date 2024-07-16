@@ -1,16 +1,16 @@
 import request, { fileBaseUrl } from "./request";
 import axios from "axios";
 
-export interface params_fileUploadOneChunk_check {
-  fileName: string
-  fileMd5: string
-  fileSize: number
-  chunkNum: number
+export class params_fileUploadOneChunk_check {
+  fileName!: string
+  fileMd5!: string
+  fileSize!: number
+  chunkNum!: number
 }
 
-export interface params_fileUploadOneChunk_merge {
-  fileNewName: string
-  fileMd5: string
+export class params_fileUploadOneChunk_merge {
+  fileNewName!: string
+  fileMd5!: string
 }
 
 export function selList(params: any) {

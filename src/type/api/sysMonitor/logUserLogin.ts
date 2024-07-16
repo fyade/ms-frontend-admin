@@ -1,4 +1,4 @@
-import { pageSelDto } from "@/type/tablePage.ts";
+import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class logUserLoginDto extends baseInterface {
@@ -12,7 +12,7 @@ export class logUserLoginDto extends baseInterface {
   remark!: string;
 }
 
-export class logUserLoginSelDto extends pageSelDto {
+export class logUserLoginSelDto extends pageDto {
 }
 
 export class logUserLoginSelAllDto {

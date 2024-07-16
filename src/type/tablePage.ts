@@ -2,14 +2,14 @@ import { Ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { MORE, ONE } from "@/type/utils/base.ts";
 
-export interface State<T = object, T2 = object> {
+export interface State<T = object, T2 = T> {
   dialogType: {
     value: string
     label: string
   }
   dialogForm: T
   dialogForms?: T[]
-  dialogForms_error?: object,
+  dialogForms_error?: object
   dFormRules: FormRules
   dict: object
   filterForm: object
@@ -34,8 +34,8 @@ export interface t_config {
   one2MoreConfig?: {
     oneKey: string
     moreKey: string
-  },
-  beforeUpdateOneCallback1?: Function,
+  }
+  beforeUpdateOneCallback1?: Function
   beforeUpdateOneCallback2?: Function
 }
 
@@ -71,7 +71,7 @@ export interface t_funcTablePage_params {
   exportIgnoreKeys?: string[]
 }
 
-export class pageSelDto {
+export class pageDto {
   pageNum!: number
   pageSize!: number
 }

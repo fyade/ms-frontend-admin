@@ -7,6 +7,9 @@ import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/m
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
+import { userUserGroupDto } from "@/type/api/sysManage/userUserGroup.ts";
+import { pageDto } from "@/type/tablePage.ts";
+import { userDto } from "@/type/api/sysManage/user.ts";
 
 const props = defineProps({
   selectUserGroup: {
@@ -53,7 +56,7 @@ const table1LoadingRef = ref(false)
 // 此用户组的用户
 const usersOfThisUserGroup = ref([])
 // 此用户组的用户用户组对
-const userUserGroupsOfThisUserGroup = ref([])
+const userUserGroupsOfThisUserGroup = ref<userUserGroupDto[]>([])
 // 分页查询当前部分用户
 const getInfo = () => {
   usersOfThisUserGroup.value = []
@@ -62,7 +65,7 @@ const getInfo = () => {
   userUserGroupSel({userGroupId: props.selectUserGroup.id, ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userUserGroupsOfThisUserGroup.value = res.list
-    userSelByIds(userUserGroupsOfThisUserGroup.value.map((item: any) => item.userId)).then(res => {
+    userSelByIds(userUserGroupsOfThisUserGroup.value.map(item => item.userId)).then(res => {
       usersOfThisUserGroup.value = res
       table1LoadingRef.value = false
     })
@@ -70,13 +73,13 @@ const getInfo = () => {
 }
 getInfo()
 // 分页查询
-const pageChange1 = (newVal: any) => {
+const pageChange1 = (newVal: pageDto) => {
   state.pageParam1.pageNum = newVal.pageNum
   state.pageParam1.pageSize = newVal.pageSize
   getInfo()
 }
 // 选中行
-const selectRows1 = ref([])
+const selectRows1 = ref<userDto[]>([])
 // 修改选中行
 const handleSelectionChange1 = (val: any) => {
   selectRows1.value = val
@@ -89,8 +92,8 @@ const addUser = () => {
 }
 // 删除用户
 const delUser = () => {
-  const selectUserIds = selectRows1.value.map((item: any) => item.id);
-  const ids = userUserGroupsOfThisUserGroup.value.filter((item: any) => selectUserIds.indexOf(item.userId) > -1).map((item: any) => item.id)
+  const selectUserIds = selectRows1.value.map(item => item.id);
+  const ids = userUserGroupsOfThisUserGroup.value.filter(item => selectUserIds.indexOf(item.userId) > -1).map(item => item.id)
   ElMessageBox.confirm(
       `此操作将删除选中的 ${ids.length} 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -133,13 +136,13 @@ const userDialogClear = () => {
   allUsers.value = []
 }
 // 分页查询
-const pageChange2 = (newVal: any) => {
+const pageChange2 = (newVal: pageDto) => {
   state.pageParam2.pageNum = newVal.pageNum
   state.pageParam2.pageSize = newVal.pageSize
   userDialogGetData()
 }
 // 选中行
-const selectRows2 = ref([])
+const selectRows2 = ref<userDto[]>([])
 // 修改选中行
 const handleSelectionChange2 = (val: any) => {
   selectRows2.value = val
@@ -152,7 +155,7 @@ const dialogCancel = () => {
 // 确认新增用户用户组
 const dialogConfirm = () => {
   const param = {
-    userId: selectRows2.value.map((item: any) => item.id),
+    userId: selectRows2.value.map(item => item.id),
     userGroupId: props.selectUserGroup.id
   }
   userUserGroupUpdUGU(param).then(res => {
@@ -162,7 +165,7 @@ const dialogConfirm = () => {
 }
 
 // 删除用户用户组
-const deleteUserUserGroup = (userId: any) => {
+const deleteUserUserGroup = (userId: string) => {
   ElMessageBox.confirm(
       `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
       '警告',
@@ -173,7 +176,7 @@ const deleteUserUserGroup = (userId: any) => {
         draggable: true
       }
   ).then(() => {
-    const find: any = userUserGroupsOfThisUserGroup.value.find((item: any) => item.userId === userId)
+    const find = userUserGroupsOfThisUserGroup.value.find(item => item.userId === userId)
     if (find) {
       userUserGroupDel([find.id]).then(res => {
         if (res) {
@@ -320,7 +323,9 @@ const deleteUserUserGroup = (userId: any) => {
       </template>
     </el-table-column>
     <template #append>
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows1.length} 条数据。` }}</span>
+      <span>此表格的多选<span class="underline">不支持</span>{{
+          `跨分页保存，当前已选 ${selectRows1.length} 条数据。`
+        }}</span>
     </template>
   </el-table>
   <Pagination

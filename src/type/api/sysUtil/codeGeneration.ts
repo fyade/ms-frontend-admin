@@ -1,24 +1,24 @@
-export interface fileConfigInter {
-  modelName: string
-  businessName: string
+export class fileConfigInter {
+  modelName!: string
+  businessName!: string
 }
 
-export interface chooseTableTableIntre {
-  rowIndex: number
-  tableNameEn: string
-  tableNameCn: string
-  tableNameEnInitial: string
-  tableNameCnInitial: string
-  cols: chooseTableTableColIntre[]
-  fileConfig: fileConfigInter
+export class chooseTableTableIntre {
+  rowIndex!: number
+  tableNameEn!: string
+  tableNameCn!: string
+  tableNameEnInitial!: string
+  tableNameCnInitial!: string
+  cols!: chooseTableTableColIntre[]
+  fileConfig!: fileConfigInter
 }
 
-export interface chooseTableTableColIntre {
-  colName: string
-  colRemark: string
-  colType: string
-  ifMust: boolean
-  colInfo: string
+export class chooseTableTableColIntre {
+  colName!: string
+  colRemark!: string
+  colType!: string
+  ifMust!: boolean
+  colInfo!: string
 }
 
 export const chooseTableTableColIntreDict = {

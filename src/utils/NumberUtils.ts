@@ -1,4 +1,4 @@
-interface typeUnitConversion {
+class typeUnitConversion {
   scale?: number
   units?: string[]
   decimalDigits?: number
