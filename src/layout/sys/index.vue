@@ -79,28 +79,37 @@ const contextMenu = (info: any, index: number) => [
       </el-aside>
       <el-main class="content">
         <div class="header">
-          <RightClickMenu
-              v-for="(item,index) in routerStore.getMenuList()"
-              :key="item.name"
-              :menus="contextMenu(item,index)">
-            <el-tag
-                type="info"
-                :effect="item.path===route.path?'light':'plain'"
-                :closable="routerPinList.indexOf(item.path)===-1"
-                @click="gotoMenu(item.path)"
-                @close="deleteMenu(index)"
-                style="cursor: pointer;"
-            >
-              {{ item.meta ? item.meta.label : item.name }}
-            </el-tag>
-          </RightClickMenu>
+          <el-scrollbar>
+            <div class="header2">
+              <RightClickMenu
+                  v-for="(item,index) in routerStore.getMenuList()"
+                  :key="item.name"
+                  :menus="contextMenu(item,index)"
+              >
+                <el-tag
+                    type="info"
+                    :effect="item.path===route.path?'light':'plain'"
+                    :closable="routerPinList.indexOf(item.path)===-1"
+                    @click="gotoMenu(item.path)"
+                    @close="deleteMenu(index)"
+                    style="cursor: pointer;"
+                >
+                  {{ item.meta ? item.meta.label : item.name }}
+                </el-tag>
+              </RightClickMenu>
+            </div>
+          </el-scrollbar>
         </div>
         <div class="main">
-          <router-view #default="{Component}">
-            <keep-alive :include="routerStore.getMenuListNames">
-              <component :is="Component" :key="route.path"/>
-            </keep-alive>
-          </router-view>
+          <el-scrollbar always view-style="height: 100%;">
+            <div class="main2">
+              <router-view #default="{Component}">
+                <keep-alive :include="routerStore.getMenuListNames">
+                  <component :is="Component" :key="route.path"/>
+                </keep-alive>
+              </router-view>
+            </div>
+          </el-scrollbar>
         </div>
       </el-main>
     </el-container>
@@ -115,21 +124,30 @@ const contextMenu = (info: any, index: number) => [
   overflow: auto;
   padding: 0;
 
-  > .header {
+  .header {
+    border-bottom: 1px solid #eee;
+  }
+
+  .header2 {
     display: flex;
     align-items: center;
     gap: 4px;
     flex: none;
     padding: 8px;
-    border-bottom: 1px solid #eee;
     height: 30px;
-    overflow: auto hidden;
+    //overflow: auto hidden;
   }
 
   > .main {
     flex: auto;
     padding: 8px;
+    padding-right: 0;
     overflow: auto;
+  }
+
+  .main2 {
+    height: 100%;
+    padding-right: 12px;
   }
 }
 </style>

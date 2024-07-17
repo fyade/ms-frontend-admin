@@ -388,6 +388,7 @@ const expendAll = () => {
                   :options="tableData3"
                   :props="cascaderProps2"
                   clearable
+                  :value-on-clear="final.DEFAULT_PARENT_ID"
               />
             </el-form-item>
           </el-col>
@@ -534,6 +535,7 @@ const expendAll = () => {
                     :options="tableData3"
                     :props="cascaderProps2"
                     clearable
+                    :value-on-clear="final.DEFAULT_PARENT_ID"
                 />
               </div>
             </template>

@@ -36,7 +36,7 @@ export const funcTablePage = ({
     const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
     const funcOfSelect = (!ifByPage && func.selectAll) ? func.selectAll : func.selectList
     const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
-    funcOfSelect(obj).then(res => {
+    funcOfSelect(obj).then((res: any) => {
       if (ifByPage) {
         state.list = res.list
         state.total = res.total

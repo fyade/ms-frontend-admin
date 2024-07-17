@@ -90,7 +90,7 @@ const addUser = () => {
   addUserDialog.value = true
   selectRows2.value = []
 }
-// 删除用户
+// 移除用户
 const delUser = () => {
   const selectUserIds = selectRows1.value.map(item => item.id);
   const ids = userRolesOfThisRole.value.filter(item => selectUserIds.indexOf(item.userId) > -1).map(item => item.id)
@@ -296,7 +296,7 @@ const deleteUserRole = (userId: string) => {
 
   <el-button type="primary" plain :icon="Refresh" @click="getInfo">刷新</el-button>
   <el-button type="primary" plain :icon="Plus" @click="addUser">添加用户</el-button>
-  <el-button type="danger" plain :icon="Delete" :disabled="selectRows1.length===0" @click="delUser">删除用户</el-button>
+  <el-button type="danger" plain :icon="Delete" :disabled="selectRows1.length===0" @click="delUser">移除用户</el-button>
 
   <!--当前角色的用户-->
   <el-table

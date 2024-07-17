@@ -699,7 +699,7 @@ const gRefresh2 = () => {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="tableName" :label="state.dict['tableName']" width="200"/>
+    <el-table-column prop="tableName" :label="state.dict['tableName']" width="240"/>
     <el-table-column prop="tableDescr" :label="state.dict['tableDescr']" width="180"/>
     <el-table-column prop="entityName" :label="state.dict['entityName']" width="180"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>

@@ -311,6 +311,7 @@ const manageUser = (row: any) => {
                   :options="tableData2"
                   :props="cascaderProps2"
                   clearable
+                  :value-on-clear="final.DEFAULT_PARENT_ID"
               />
             </el-form-item>
           </el-col>
@@ -367,6 +368,7 @@ const manageUser = (row: any) => {
                     :options="tableData2"
                     :props="cascaderProps2"
                     clearable
+                    :value-on-clear="final.DEFAULT_PARENT_ID"
                 />
               </div>
             </template>

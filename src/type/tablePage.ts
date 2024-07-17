@@ -13,7 +13,7 @@ export interface State<T = object, T2 = T> {
   dFormRules: FormRules
   dict: object
   filterForm: object
-  list: object[]
+  list: T2[]
   multipleSelection: T2[]
   total: number
   pageParam: {
@@ -39,19 +39,16 @@ export interface t_config {
   beforeUpdateOneCallback2?: Function
 }
 
-type t_MyFuncType = (any: any) => Promise<any>
-type t_MyFuncType2 = (...any: any[]) => Promise<any>
-
 export interface t_FuncMap {
-  selectList: t_MyFuncType
-  selectAll?: t_MyFuncType
-  selectById: t_MyFuncType
-  selectByIds?: t_MyFuncType
-  insertOne: t_MyFuncType
-  updateOne: t_MyFuncType
-  insertMore?: t_MyFuncType
-  updateMore?: t_MyFuncType
-  deleteList: t_MyFuncType2
+  selectList: <T = any>(any: any) => Promise<{ list: T[], total: number }>
+  selectAll?: <T = any>(any: any) => Promise<T[]>
+  selectById: <T = any>(any: any) => Promise<T>
+  selectByIds?: <T = any>(any: any[]) => Promise<T[]>
+  insertOne: <T = any>(any: T) => Promise<any>
+  updateOne: <T = any>(any: T) => Promise<any>
+  insertMore?: <T = any>(any: T[]) => Promise<any>
+  updateMore?: <T = any>(any: T[]) => Promise<any>
+  deleteList: (...any: any[]) => Promise<any>
 }
 
 export interface t_funcTablePage_params {

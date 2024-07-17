@@ -83,10 +83,12 @@ defineExpose({
         :unique-opened="true"
         router
     >
-      <AsideMenu
-          :menus="allMenus1"
-          @gotoMenu="go"
-      ></AsideMenu>
+      <el-scrollbar>
+        <AsideMenu
+            :menus="allMenus1"
+            @gotoMenu="go"
+        ></AsideMenu>
+      </el-scrollbar>
     </el-menu>
   </div>
 </template>

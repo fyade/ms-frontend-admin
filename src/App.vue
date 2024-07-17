@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { CONFIG, final } from "@/utils/base.ts";
-
-const functionValueOnClear = () => {
-  return final.DEFAULT_PARENT_ID
-}
 </script>
 
 <template>
@@ -15,11 +11,7 @@ const functionValueOnClear = () => {
         '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
       }"
   >
-    <el-config-provider
-        :value-on-clear="functionValueOnClear"
-    >
-      <router-view/>
-    </el-config-provider>
+    <router-view/>
   </div>
 </template>
 
@@ -28,19 +20,19 @@ const functionValueOnClear = () => {
   width: 100%;
   height: 100%;
 
-  ::-webkit-scrollbar {
-    width: 10px;
-    background-color: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--theme-color-menu-bg-active-lighten);
-    border-radius: 5px;
-    transition: all .2s;
-
-    &:hover {
-      background-color: var(--theme-color-menu-bg-active);
-    }
-  }
+  //::-webkit-scrollbar {
+  //  width: 10px;
+  //  background-color: transparent;
+  //}
+  //
+  //::-webkit-scrollbar-thumb {
+  //  background-color: var(--theme-color-menu-bg-active-lighten);
+  //  border-radius: 5px;
+  //  transition: all .2s;
+  //
+  //  &:hover {
+  //    background-color: var(--theme-color-menu-bg-active);
+  //  }
+  //}
 }
 </style>
