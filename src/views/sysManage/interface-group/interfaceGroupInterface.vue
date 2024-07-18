@@ -170,7 +170,7 @@ const interfaceInterfaceGroupFunc: t_FuncMap = {
    */
   insertOne: (obj: any) => {
     // return interfaceInterfaceGroupIns(obj)
-    return new Promise(resolve => resolve())
+    return new Promise(resolve => resolve(null))
   },
   /**
    * 修改
@@ -178,7 +178,7 @@ const interfaceInterfaceGroupFunc: t_FuncMap = {
    */
   updateOne: (obj: any) => {
     // return interfaceInterfaceGroupUpd(obj)
-    return new Promise(resolve => resolve())
+    return new Promise(resolve => resolve(null))
   },
   /**
    * 新增多个
@@ -186,7 +186,7 @@ const interfaceInterfaceGroupFunc: t_FuncMap = {
    */
   insertMore: (objs: any[]) => {
     // return interfaceInterfaceGroupInss(objs)
-    return new Promise(resolve => resolve())
+    return new Promise(resolve => resolve(null))
   },
   /**
    * 修改多个
@@ -194,7 +194,7 @@ const interfaceInterfaceGroupFunc: t_FuncMap = {
    */
   updateMore: (objs: any[]) => {
     // return interfaceInterfaceGroupUpds(objs)
-    return new Promise(resolve => resolve())
+    return new Promise(resolve => resolve(null))
   },
   /**
    * 删除
@@ -456,7 +456,7 @@ const beforeAddInterface = () => {
   interfaceRefresh()
 }
 const gdelInterfaceInterfaceGroup = () => {
-  const delIds = interfaceInterfaceGroupState.list.filter(item => [interfaceInterfaceGroupState.multipleSelection.map(item => item.id)].indexOf(item.interfaceId)).map(item => item.id);
+  const delIds = interfaceInterfaceGroupState.list.filter(item => interfaceInterfaceGroupState.multipleSelection.map(item => item.id).indexOf(item.interfaceId) > -1).map(item => item.id);
   delInterfaceInterfaceGroup(delIds)
 }
 const tdelInterfaceInterfaceGroup = (interfaceId: number) => {

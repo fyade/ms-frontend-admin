@@ -25,11 +25,11 @@ export class interfaceInterfaceGroupUpdDto extends interfaceInterfaceGroupInsDto
 }
 
 export class interfaceInterfaceGroupUpdIIGDto {
-  interfaceId: number;
-  interfaceGroupId: number[];
+  interfaceId!: number;
+  interfaceGroupId!: number[];
 }
 
 export class interfaceInterfaceGroupUpdIGIDto {
-  interfaceId: number[];
-  interfaceGroupId: number;
+  interfaceId!: number[];
+  interfaceGroupId!: number;
 }
