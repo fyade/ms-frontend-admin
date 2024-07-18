@@ -465,9 +465,9 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
     id: -1,
     userGroupId: -1,
     permissionId: -1,
+    ifLongTerm: final.N,
     ifLimitRequestTimes: final.N,
     ifRejectRequestUseUp: final.N,
-    ifLongTerm: final.N,
     permissionStartTime: new Date(),
     permissionEndTime: new Date(),
     permissionTime: '',
@@ -485,9 +485,9 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
   dFormRules: {
     userGroupId: [{required: true, trigger: 'change'}],
     permissionId: [{required: true, trigger: 'change'}],
+    ifLongTerm: [{required: true, trigger: 'change'}],
     ifLimitRequestTimes: [{required: true, trigger: 'change'}],
     ifRejectRequestUseUp: [{required: true, trigger: 'change'}],
-    ifLongTerm: [{required: true, trigger: 'change'}],
     permissionStartTime: [{required: true, trigger: 'change'}],
     permissionEndTime: [{required: true, trigger: 'change'}],
     permissionTime: [{required: true, trigger: 'change'}],
@@ -503,9 +503,9 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
     ...publicDict,
     userGroupId: '用户组',
     permissionId: '接口组',
+    ifLongTerm: '是否长期权限',
     ifLimitRequestTimes: '是否限制次数',
     ifRejectRequestUseUp: '次数用尽后是否拒绝请求',
-    ifLongTerm: '是否长期权限',
     permissionStartTime: '权限开始时间',
     permissionEndTime: '权限结束时间',
     permissionTime: '权限期限',
@@ -679,6 +679,7 @@ const selectType = ref<typeof USER_GROUP | typeof INTERFACE_GROUP | null>(null)
 
 const userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup = ref<userGroupPermissionDto[]>([])
 
+const leftCardLoading = ref(false)
 const userGroupTableRef = ref<TableInstance | null>(null)
 const selectUserGroupInfo = reactive<userGroupDto>({
   id: -1,
@@ -705,20 +706,24 @@ const userGroupHandleCurrentChange = (row: userGroupDto) => {
     return
   }
   selectType.value = USER_GROUP
+  leftCardLoading.value = true
   userGroupFunc.selectById(row.id).then(res => {
     Object.keys(selectUserGroupInfo).forEach(key => {
       selectUserGroupInfo[key] = res[key]
     })
+    leftCardLoading.value = false
   })
   userGroupHandleCurrentChange2()
 }
 const userGroupHandleCurrentChange2 = () => {
+  rightCardLoading.value = true
   const row = userGroupHandleCurrentChangeSelectRow
   userGroupPermissionFunc.selectAll && userGroupPermissionFunc.selectAll<userGroupPermissionDto>({userGroupId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const interfaceGroupIds = res.map(item => item.permissionId);
     interfaceGroupFunc.selectByIds && interfaceGroupFunc.selectByIds<interfaceGroupDto>(interfaceGroupIds).then(res => {
       interfaceGroupsOfThisUserGroup.value = res
+      rightCardLoading.value = false
     })
   })
 }
@@ -746,6 +751,7 @@ const detailInterfaceGroupOfThisUserGroup = (interfaceGroupId: number) => {
   }
 }
 
+const rightCardLoading = ref(false)
 const interfaceGroupTableRef = ref<TableInstance | null>(null)
 const selectInterfaceGroupInfo = reactive({
   id: -1,
@@ -772,20 +778,24 @@ const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
     return
   }
   selectType.value = INTERFACE_GROUP
+  rightCardLoading.value = true
   interfaceGroupFunc.selectById(row.id).then(res => {
     Object.keys(selectInterfaceGroupInfo).forEach(key => {
       selectInterfaceGroupInfo[key] = res[key]
     })
+    rightCardLoading.value = false
   })
   interfaceGroupHandleCurrentChange2()
 }
 const interfaceGroupHandleCurrentChange2 = () => {
+  leftCardLoading.value = true
   const row = interfaceGroupHandleCurrentChangeSelectRow
   userGroupPermissionFunc.selectAll && userGroupPermissionFunc.selectAll<userGroupPermissionDto>({permissionId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const userGroupIds = res.map(item => item.userGroupId);
     userGroupFunc.selectByIds && userGroupFunc.selectByIds<userGroupDto>(userGroupIds).then(res => {
       userGroupsOfThisInterfaceGroup.value = res
+      leftCardLoading.value = false
     })
   })
 }
@@ -849,11 +859,11 @@ const beforeAddUserGroupPermission = () => {
   userGroupPermissionGIns()
 }
 
-if (userGroupPermissionState.dialogForm['permissionTime']) {
-  watch(userGroupPermissionState.dialogForm['permissionTime'], () => {
+if (Object.keys(userGroupPermissionState.dialogForm).indexOf('permissionTime') > -1) {
+  watch(() => userGroupPermissionState.dialogForm['permissionTime'], () => {
     if (userGroupPermissionState.dialogForm['permissionTime']) {
-      userGroupPermissionState.dialogForm.permissionStartTime = userGroupPermissionState.dialogForm['permissionTime'][0]
-      userGroupPermissionState.dialogForm.permissionEndTime = userGroupPermissionState.dialogForm['permissionTime'][1]
+      userGroupPermissionState.dialogForm.permissionStartTime = new Date(userGroupPermissionState.dialogForm['permissionTime'][0])
+      userGroupPermissionState.dialogForm.permissionEndTime = new Date(userGroupPermissionState.dialogForm['permissionTime'][1])
     } else {
       userGroupPermissionState.dialogForm.permissionStartTime = new Date()
       userGroupPermissionState.dialogForm.permissionEndTime = new Date()
@@ -940,8 +950,7 @@ const shortcuts = [
       <!--  <el-col :span="12"></el-col>-->
       <!--  <el-col :span="12"></el-col>-->
       <!--</el-row>-->
-      <el-form-item v-if="userGroupPermissionState.dialogType.value!==final.ins"
-                    :label="userGroupPermissionState.dict['id']" prop="id">
+      <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['id']" prop="id">
         <span>{{ userGroupPermissionState.dialogForm['id'] }}</span>
       </el-form-item>
       <!--
@@ -961,6 +970,14 @@ const shortcuts = [
           <el-option v-for="item in interfaceGroupState.list" :key="item.id" :label="item.label" :value="item.id"/>
         </el-select>
       </el-form-item>
+      <el-form-item :label="userGroupPermissionState.dict['ifLongTerm']" prop="ifLongTerm">
+        <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLongTerm']"-->
+        <!--          :placeholder="userGroupPermissionState.dict['ifLongTerm']"/>-->
+        <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLongTerm']">
+          <el-radio :label="final.Y">是</el-radio>
+          <el-radio :label="final.N">否</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item :label="userGroupPermissionState.dict['ifLimitRequestTimes']" prop="ifLimitRequestTimes">
         <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLimitRequestTimes']"-->
         <!--          :placeholder="userGroupPermissionState.dict['ifLimitRequestTimes']"/>-->
@@ -973,14 +990,6 @@ const shortcuts = [
         <!--<el-input v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']"-->
         <!--          :placeholder="userGroupPermissionState.dict['ifRejectRequestUseUp']"/>-->
         <el-radio-group v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']">
-          <el-radio :label="final.Y">是</el-radio>
-          <el-radio :label="final.N">否</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['ifLongTerm']" prop="ifLongTerm">
-        <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLongTerm']"-->
-        <!--          :placeholder="userGroupPermissionState.dict['ifLongTerm']"/>-->
-        <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLongTerm']">
           <el-radio :label="final.Y">是</el-radio>
           <el-radio :label="final.N">否</el-radio>
         </el-radio-group>
@@ -1046,7 +1055,7 @@ const shortcuts = [
   <div class="el">
     <div class="el-grid">
       <div>
-        <el-card style="height: 100%;">
+        <el-card style="height: 100%;" v-loading="leftCardLoading">
           <!--用户组信息-->
           <div v-if="selectType===USER_GROUP">
             <p>{{ selectUserGroupInfo.label }}</p>
@@ -1076,7 +1085,7 @@ const shortcuts = [
         <Divider/>
       </div>
       <div>
-        <el-card style="height: 100%;">
+        <el-card style="height: 100%;" v-loading="rightCardLoading">
           <!--接口组信息-->
           <div v-if="selectType===INTERFACE_GROUP">
             <p>{{ selectInterfaceGroupInfo.label }}</p>
@@ -1270,7 +1279,7 @@ const shortcuts = [
 
     <el-row :gutter="20">
       <el-col :span="12">
-        <span>使用说明：左侧中部和右侧中部的表格支持单选及多选，单选时，鼠标点击行即可，随后上方卡片会显示选中行的信息及其权限信息，支持查看权限详情及删除权限，若需要添加权限，请在左侧中部及右侧中部表格中各使用复选框选择一项，随后点击右侧按钮，填写信息后提交即可。</span>
+        <span>使用说明：左侧中部和右侧中部的表格支持单选及多选，单选时，鼠标点击行即可，随后上方卡片会显示选中行的信息及其权限信息，支持查看权限详情及删除权限；若需要添加权限，请在左侧中部及右侧中部表格中各使用复选框选择一项，随后点击右侧按钮，填写信息后提交即可。</span>
       </el-col>
 
       <el-col :span="12">

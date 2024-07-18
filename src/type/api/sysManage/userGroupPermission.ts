@@ -5,9 +5,9 @@ export class userGroupPermissionDto extends baseInterface {
   id!: number;
   userGroupId!: number;
   permissionId!: number;
+  ifLongTerm!: string;
   ifLimitRequestTimes!: string;
   ifRejectRequestUseUp!: string;
-  ifLongTerm!: string;
   permissionStartTime!: Date;
   permissionEndTime!: Date;
   permissionTime?: any;
@@ -25,9 +25,9 @@ export class userGroupPermissionSelAllDto {
 export class userGroupPermissionInsDto {
   userGroupId!: number;
   permissionId!: number;
+  ifLongTerm!: string;
   ifLimitRequestTimes!: string;
   ifRejectRequestUseUp!: string;
-  ifLongTerm!: string;
   permissionStartTime!: string;
   permissionEndTime!: string;
   permissionTime?: string;
