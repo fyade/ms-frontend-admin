@@ -45,7 +45,7 @@ request.interceptors.response.use(
     },
     async error => {
       const response = error.response
-      if (response.config.url && whiteList.indexOf(response.config.url) === -1 && [403].indexOf(response.status) === -1) {
+      if (response.config.url && whiteList.indexOf(response.config.url) === -1 && [401, 403].indexOf(response.status) === -1) {
         await sleep(100)
         for (let i = 0; i < maxReqCount - 1 && count0 < maxReqCount - 1; i++) {
           count0++
