@@ -1,19 +1,19 @@
-export class fileConfigInter {
+export class fileConfigInterface {
   modelName!: string
   businessName!: string
 }
 
-export class chooseTableTableIntre {
+export class chooseTableTableInterface {
   rowIndex!: number
   tableNameEn!: string
   tableNameCn!: string
   tableNameEnInitial!: string
   tableNameCnInitial!: string
-  cols!: chooseTableTableColIntre[]
-  fileConfig!: fileConfigInter
+  cols!: chooseTableTableColInterface[]
+  fileConfig!: fileConfigInterface
 }
 
-export class chooseTableTableColIntre {
+export class chooseTableTableColInterface {
   colName!: string
   colRemark!: string
   colType!: string
@@ -21,7 +21,7 @@ export class chooseTableTableColIntre {
   colInfo!: string
 }
 
-export const chooseTableTableColIntreDict = {
+export const chooseTableTableColInterfaceDict = {
   colName: '列名',
   colRemark: '列备注',
   colType: '列数据类型',

@@ -2,6 +2,10 @@ import { Ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { MORE, ONE } from "@/type/utils/base.ts";
 
+interface dialogForms_error {
+  [key: string]: boolean | string
+}
+
 export interface State<T = object, T2 = T> {
   dialogType: {
     value: string
@@ -9,10 +13,14 @@ export interface State<T = object, T2 = T> {
   }
   dialogForm: T
   dialogForms?: T[]
-  dialogForms_error?: object
+  dialogForms_error?: dialogForms_error
   dFormRules: FormRules
-  dict: object
-  filterForm: object
+  dict: {
+    [P in keyof T]?: string
+  }
+  filterForm: {
+    [P in keyof T]?: string
+  }
   list: T2[]
   multipleSelection: T2[]
   total: number

@@ -21,6 +21,7 @@ const upload1 = async () => {
     return
   }
   isLoading.value = true
+  // @ts-ignore
   const file = await filepicks[0]?.getFile()
   if (file.size > CHUNK_SIZE) {
     // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')

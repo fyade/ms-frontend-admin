@@ -50,6 +50,7 @@ import {
   userGroupPermissionUpds,
   userGroupPermissionDel,
 } from "@/api/module/sysManage/userGroupPermission.ts"
+import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const userGroupState = reactive<State<userGroupDto>>({
   dialogType: {
@@ -699,18 +700,14 @@ const userGroupHandleCurrentChangeSelectRow = reactive<userGroupDto>({
 const userGroupHandleCurrentChange = (row: userGroupDto) => {
   if (row) {
     interfaceGroupTableRef.value?.setCurrentRow(null)
-    Object.keys(userGroupHandleCurrentChangeSelectRow).forEach(key => {
-      userGroupHandleCurrentChangeSelectRow[key] = row[key]
-    })
+    copyObject(userGroupHandleCurrentChangeSelectRow, row)
   } else {
     return
   }
   selectType.value = USER_GROUP
   leftCardLoading.value = true
   userGroupFunc.selectById(row.id).then(res => {
-    Object.keys(selectUserGroupInfo).forEach(key => {
-      selectUserGroupInfo[key] = res[key]
-    })
+    copyObject(selectUserGroupInfo, res)
     leftCardLoading.value = false
   })
   userGroupHandleCurrentChange2()
@@ -738,9 +735,7 @@ const beforeDelInterfaceGroupOfThisUserGroup = (interfaceGroupId: number) => {
 const detailInterfaceGroupOfThisUserGroup = (interfaceGroupId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.permissionId === interfaceGroupId);
   if (find) {
-    Object.keys(userGroupPermissionState.dialogForm).forEach(key => {
-      userGroupPermissionState.dialogForm[key] = find[key]
-    })
+    copyObject(userGroupPermissionState.dialogForm, find)
     userGroupPermissionState.dialogForm.permissionTime = [
       userGroupPermissionState.dialogForm.permissionStartTime,
       userGroupPermissionState.dialogForm.permissionEndTime
@@ -771,18 +766,14 @@ const interfaceGroupHandleCurrentChangeSelectRow = reactive<interfaceGroupDto>({
 const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
   if (row) {
     userGroupTableRef.value?.setCurrentRow(null)
-    Object.keys(interfaceGroupHandleCurrentChangeSelectRow).forEach(key => {
-      interfaceGroupHandleCurrentChangeSelectRow[key] = row[key]
-    })
+    copyObject(interfaceGroupHandleCurrentChangeSelectRow, row)
   } else {
     return
   }
   selectType.value = INTERFACE_GROUP
   rightCardLoading.value = true
   interfaceGroupFunc.selectById(row.id).then(res => {
-    Object.keys(selectInterfaceGroupInfo).forEach(key => {
-      selectInterfaceGroupInfo[key] = res[key]
-    })
+    copyObject(selectInterfaceGroupInfo, res)
     rightCardLoading.value = false
   })
   interfaceGroupHandleCurrentChange2()
@@ -810,9 +801,7 @@ const beforeDelUserGroupOfThisInterfaceGroup = (userGroupId: number) => {
 const detailUserGroupOfThisInterfaceGroup = (userGroupId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.userGroupId === userGroupId);
   if (find) {
-    Object.keys(userGroupPermissionState.dialogForm).forEach(key => {
-      userGroupPermissionState.dialogForm[key] = find[key]
-    })
+    copyObject(userGroupPermissionState.dialogForm, find)
     userGroupPermissionState.dialogForm.permissionTime = [
       userGroupPermissionState.dialogForm.permissionStartTime,
       userGroupPermissionState.dialogForm.permissionEndTime

@@ -1,7 +1,7 @@
 import { pageDto } from "@/type/tablePage.ts";
-import { baseInterface } from "@/utils/base.ts";
+import { baseClass } from "@/utils/base.ts";
 
-export class codeGenColumnDto extends baseInterface {
+export class codeGenColumnDto extends baseClass {
   id!: number;
   tableId!: number;
   colName!: string;

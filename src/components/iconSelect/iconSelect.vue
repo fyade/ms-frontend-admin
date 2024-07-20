@@ -13,7 +13,7 @@ const props = defineProps({
 })
 
 const icons = ref<any[]>([])
-const files = import.meta.glob('/src/assets/icon/*.svg', {eager: true});
+const files = import.meta.glob('/src/assets/icon/*.svg');
 icons.value = Object.keys(files).map((path: any) => {
   const module = files[path] as any;
   const fileName = path?.split('/')?.pop(); // 提取文件名部分
@@ -21,7 +21,7 @@ icons.value = Object.keys(files).map((path: any) => {
   return {
     url: module.default, // 图片相对路径（/public/icon/DNS服务.svg）
     name: fileName, // 文件名(带后缀)
-    label: `${iconEnCn[filenameWithoutSuffix]}_${filenameWithoutSuffix}`,
+    label: Object.keys(iconEnCn).includes(filenameWithoutSuffix) ? `${(iconEnCn as IconEnCn)[filenameWithoutSuffix as string]}_${filenameWithoutSuffix}` : filenameWithoutSuffix,
     value: filenameWithoutSuffix,
   };
 })

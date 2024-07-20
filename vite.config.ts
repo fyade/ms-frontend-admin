@@ -21,7 +21,7 @@ export default defineConfig(({mode}) => {
       vue(),
       visualizer(),
       createSvgIconsPlugin({
-        iconDirs: [path.resolve(process.cwd(), 'src/assets/icon')],
+        iconDirs: [path.resolve(root, 'src/assets/icon')],
         symbolId: '[name]'
       }),
       compressPlugin({
@@ -34,7 +34,7 @@ export default defineConfig(({mode}) => {
             prefix: 'Icon',
           }),
         ],
-        dts: path.resolve(pathSrc, 'auto-imports.d.ts')
+        dts: path.resolve(pathSrc, '.d.ts/auto-imports.d.ts')
       }),
       Components({
         resolvers: [
@@ -43,7 +43,7 @@ export default defineConfig(({mode}) => {
             enabledCollections: ['ep'],
           })
         ],
-        dts: path.resolve(pathSrc, 'components.d.ts')
+        dts: path.resolve(pathSrc, '.d.ts/components.d.ts')
       }),
       Icons({
         autoInstall: true,
@@ -53,7 +53,7 @@ export default defineConfig(({mode}) => {
     resolve: {
       alias: {
         '@': join(__dirname, 'src'),
-        '#': join(__dirname)
+        '~': join(__dirname)
       }
     },
     server: {

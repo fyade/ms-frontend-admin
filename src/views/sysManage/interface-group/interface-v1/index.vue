@@ -32,6 +32,7 @@ import {
   interfaceGroupDel,
 } from "@/api/module/sysManage/interfaceGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const interfaceState = reactive<State<interfaceDto>>({
   dialogType: {
@@ -456,9 +457,7 @@ const selectInterfaceGroup = reactive<interfaceGroupDto>({
 })
 const interfaceManageModel = ref<boolean>(false)
 const manageInterfaceInInterfaceGroup = (row: interfaceGroupDto) => {
-  Object.keys(selectInterfaceGroup).forEach(key => {
-    selectInterfaceGroup[key] = row[key]
-  })
+  copyObject(selectInterfaceGroup, row)
   interfaceManageModel.value = true
 }
 const cancelManageInterfaceInInterfaceGroup = () => {

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "useDefineForClassFields": true,
+    //    "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
       "ES2020",
@@ -23,8 +23,8 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
-    "ignoreDeprecations": "5.0",
-    "suppressImplicitAnyIndexErrors": true,
+    //    "ignoreDeprecations": "5.0",
+    //    "suppressImplicitAnyIndexErrors": false,
     "baseUrl": "./",
     "paths": {
       "@/*": [
@@ -34,9 +34,9 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/.d.ts/*.d.ts",
   ],
   "exclude": [
     "node_modules"

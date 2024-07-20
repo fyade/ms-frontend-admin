@@ -1,9 +1,9 @@
 import request from "@/api/request.ts";
-import { logUserLoginInsDto, logUserLoginSelAllDto, logUserLoginSelDto, logUserLoginUpdDto } from "@/type/api/sysMonitor/logUserLogin.ts";
+import { logUserLoginInsDto, logUserLoginSelAllDto, logUserLoginSelDto, logUserLoginUpdDto } from "@/type/api/sysLog/logUserLogin.ts";
 
 export function logUserLoginSel(params: logUserLoginSelDto) {
   return request({
-    url: '/sys-monitor/log-user-login',
+    url: '/sys-log/log-user-login',
     method: 'GET',
     params: params
   })
@@ -11,7 +11,7 @@ export function logUserLoginSel(params: logUserLoginSelDto) {
 
 export function logUserLoginSelAll(params: logUserLoginSelAllDto) {
   return request({
-    url: '/sys-monitor/log-user-login/all',
+    url: '/sys-log/log-user-login/all',
     method: 'GET',
     params: params
   })
@@ -19,14 +19,14 @@ export function logUserLoginSelAll(params: logUserLoginSelAllDto) {
 
 export function logUserLoginSelById(id: number) {
   return request({
-    url: `/sys-monitor/log-user-login/${id}`,
+    url: `/sys-log/log-user-login/${id}`,
     method: 'GET'
   })
 }
 
 export function logUserLoginSelByIds(ids: any[]) {
   return request({
-    url: `/sys-monitor/log-user-login/ids`,
+    url: `/sys-log/log-user-login/ids`,
     method: 'GET',
     params: ids
   })
@@ -34,7 +34,7 @@ export function logUserLoginSelByIds(ids: any[]) {
 
 export function logUserLoginIns(params: logUserLoginInsDto) {
   return request({
-    url: '/sys-monitor/log-user-login',
+    url: '/sys-log/log-user-login',
     method: 'POST',
     data: params
   })
@@ -42,7 +42,7 @@ export function logUserLoginIns(params: logUserLoginInsDto) {
 
 export function logUserLoginUpd(params: logUserLoginUpdDto) {
   return request({
-    url: '/sys-monitor/log-user-login',
+    url: '/sys-log/log-user-login',
     method: 'PUT',
     data: params
   })
@@ -50,7 +50,7 @@ export function logUserLoginUpd(params: logUserLoginUpdDto) {
 
 export function logUserLoginInss(params: logUserLoginInsDto[]) {
   return request({
-    url: '/sys-monitor/log-user-login/s',
+    url: '/sys-log/log-user-login/s',
     method: 'POST',
     data: params
   })
@@ -58,7 +58,7 @@ export function logUserLoginInss(params: logUserLoginInsDto[]) {
 
 export function logUserLoginUpds(params: logUserLoginUpdDto[]) {
   return request({
-    url: '/sys-monitor/log-user-login/s',
+    url: '/sys-log/log-user-login/s',
     method: 'PUT',
     data: params
   })
@@ -66,7 +66,7 @@ export function logUserLoginUpds(params: logUserLoginUpdDto[]) {
 
 export function logUserLoginDel(ids: any[]) {
   return request({
-    url: '/sys-monitor/log-user-login',
+    url: '/sys-log/log-user-login',
     method: 'DELETE',
     data: ids
   })

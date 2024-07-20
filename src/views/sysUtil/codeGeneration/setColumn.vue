@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, toRaw } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { CONFIG, final, PAGINATION, publicDict, publicDictInterface } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
@@ -20,9 +20,9 @@ import {
   codeGenColumnDel,
 } from "@/api/module/sysUtil/codeGenColumn.ts"
 import {
-  chooseTableTableColIntre,
-  chooseTableTableColIntreDict,
-  chooseTableTableIntre
+  chooseTableTableColInterface,
+  chooseTableTableColInterfaceDict,
+  chooseTableTableInterface
 } from "@/type/api/sysUtil/codeGeneration.ts";
 import { getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
@@ -293,19 +293,23 @@ const selTypeDicts = [
   {label: '%=%', value: 'like'},
 ]
 
-const tablesList = ref<chooseTableTableIntre[]>([])
+const tablesList = ref<chooseTableTableInterface[]>([])
 tablesList.value = []
 getDbInfo().then(res => {
   tablesList.value = res
 })
 
 const dialog2Visible = ref(false)
-const tableCols = ref<chooseTableTableColIntre[]>([])
-const tableColsDict = chooseTableTableColIntreDict
+const tableCols = ref<chooseTableTableColInterface[]>([])
+const tableColsDict = chooseTableTableColInterfaceDict
 const multipleSelection1 = ref([])
 const adict = {
   ...publicDict
 }
+
+interface adictInterface extends publicDictInterface {
+}
+
 const selCol = () => {
   const selectTable = tablesList.value.find(item => item.tableNameEn === props.tableNameEn)
   if (selectTable) {
@@ -327,7 +331,7 @@ const d1Con = () => {
     multipleSelection1.value.forEach((row: any) => {
       const obj: any = deepClone(toRaw(state.dialogForm))
       obj.colName = row.colName
-      obj.colDescr = adict[toCamelCase(row.colName)] || ''
+      obj.colDescr = adict[toCamelCase<keyof adictInterface>(row.colName)] || ''
       obj.mysqlType = row.colType
       obj.tsType = ['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value
       obj.tsName = toCamelCase(row.colName)
@@ -344,7 +348,7 @@ const d1Con = () => {
   if (activeTabName.value === final.one) {
     const row: any = deepClone(toRaw(multipleSelection1.value[0]))
     state.dialogForm.colName = row.colName
-    state.dialogForm.colDescr = adict[toCamelCase(row.colName)] || ''
+    state.dialogForm.colDescr = adict[toCamelCase<keyof adictInterface>(row.colName)] || ''
     state.dialogForm.mysqlType = row.colType
     state.dialogForm.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) as string
     state.dialogForm.tsName = toCamelCase(row.colName)

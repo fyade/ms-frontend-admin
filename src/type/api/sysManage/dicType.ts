@@ -1,7 +1,7 @@
 import { pageDto } from "@/type/tablePage.ts";
-import { baseInterface } from "@/utils/base.ts";
+import { baseClass } from "@/utils/base.ts";
 
-export class dicTypeDto extends baseInterface {
+export class dicTypeDto extends baseClass {
   id!: number;
   name!: string;
   type!: string;

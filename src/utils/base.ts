@@ -19,7 +19,15 @@ export const PAGINATION = {
   pageSize: 10
 }
 
-export class baseInterface {
+export class baseClass {
+  createBy?: string;
+  updateBy?: string;
+  createTime?: Date;
+  updateTime?: Date;
+  deleted?: string;
+}
+
+export interface baseInterface {
   createBy?: string;
   updateBy?: string;
   createTime?: Date;
@@ -38,6 +46,19 @@ export const publicDict = {
   createTime: 'createTime',
   updateTime: 'updateTime',
   deleted: '逻辑删除'
+}
+
+export interface publicDictInterface {
+  id: string,
+  remark: string,
+  orderNum: string,
+  ifDefault: string,
+  ifDisabled: string,
+  createBy: string,
+  updateBy: string,
+  createTime: string,
+  updateTime: string,
+  deleted: string
 }
 
 export const EXPORT_IGNORE_KEYS = [
@@ -69,6 +90,11 @@ export const final: {
   more: 'MORE',
   ins: 'INS',
   upd: 'UPD'
+}
+
+export interface finalIU {
+  'INS': 'INS'
+  'UPD': 'UPD'
 }
 
 export const Operate = {

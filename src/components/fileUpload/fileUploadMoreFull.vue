@@ -29,6 +29,7 @@ const upload2 = async () => {
   isLoading.value = true
   for (let i = 0; i < filepicks.length; i++) {
     if (pageNotUnmounted) {
+      // @ts-ignore
       const file = await filepicks[i]?.getFile()
       if (file.size > CHUNK_SIZE) {
         // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')

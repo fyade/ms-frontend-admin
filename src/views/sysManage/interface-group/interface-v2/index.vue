@@ -32,6 +32,7 @@ import {
   interfaceGroupDel,
 } from "@/api/module/sysManage/interfaceGroup.ts"
 import InterfaceGroupCard from "./interfaceGroupCard.vue";
+import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const interfaceState = reactive<State<interfaceDto>>({
   dialogType: {
@@ -451,9 +452,7 @@ const beforeAddInterfaceGroup = () => {
   addInterfaceGroupModelVisible.value = true
 }
 const editInterfaceGroup = (row: interfaceGroupDto) => {
-  Object.keys(interfaceGroupState.dialogForm).forEach(key => {
-    interfaceGroupState.dialogForm[key] = row[key]
-  })
+  copyObject(interfaceGroupState.dialogForm, row)
   interfaceGroupState.dialogType.value = final.upd
   interfaceGroupState.dialogType.label = '编辑接口组'
   addInterfaceGroupModelVisible.value = true
@@ -484,8 +483,8 @@ const addInterfaceGroupModel = () => {
         }
       } else {
         if (fields) {
-          const arr: string[] = []
-          Object.keys(fields).forEach(item => arr.push(interfaceGroupState.dict[item]))
+          const arr: any[] = []
+          Object.keys(fields).forEach(item => arr.push(interfaceGroupState.dict[item as keyof interfaceGroupDto]))
           ElMessage.warning(`${arr.join('、')}不能为空。`)
         }
       }

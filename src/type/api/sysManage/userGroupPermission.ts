@@ -1,7 +1,7 @@
 import { pageDto } from "@/type/tablePage.ts";
-import { baseInterface } from "@/utils/base.ts";
+import { baseClass } from "@/utils/base.ts";
 
-export class userGroupPermissionDto extends baseInterface {
+export class userGroupPermissionDto extends baseClass {
   id!: number;
   userGroupId!: number;
   permissionId!: number;

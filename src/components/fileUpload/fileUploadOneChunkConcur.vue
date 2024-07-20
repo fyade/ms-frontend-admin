@@ -6,6 +6,7 @@ import { removeElementsByIndices } from "@/utils/ObjectUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
+import { fileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -17,7 +18,7 @@ const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive({
+const state = reactive<fileUploadInterfaceOneChunkConcur>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -51,6 +52,7 @@ const upload6 = async () => {
   }
   state.currentStage = 'b'
   isLoading.value = true
+  // @ts-ignore
   const file = await filepicks[0]?.getFile()
   // 开始
   state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)

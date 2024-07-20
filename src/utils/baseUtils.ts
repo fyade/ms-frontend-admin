@@ -20,8 +20,8 @@ export function toPath(...str: string[]): string {
  * 下划线转驼峰
  * @param str
  */
-export function toCamelCase(str: string): string {
-  return str.replace(/_([a-z])/g, (all, i) => i.toUpperCase());
+export function toCamelCase<T = string>(str: string): T {
+  return str.replace(/_([a-z])/g, (all, i) => i.toUpperCase()) as T;
 }
 
 /**

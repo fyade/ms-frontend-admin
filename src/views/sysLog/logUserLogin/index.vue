@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysMonitor:logUserLogin'
+  name: 'sysLog:logUserLogin'
 }
 </script>
 
@@ -8,12 +8,12 @@ export default {
 import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
-import { logUserLoginDto } from "@/type/api/sysMonitor/logUserLogin.ts";
+import { logUserLoginDto } from "@/type/api/sysLog/logUserLogin.ts";
 import {
   logUserLoginSel,
   logUserLoginSelById,
@@ -24,7 +24,7 @@ import {
   logUserLoginInss,
   logUserLoginUpds,
   logUserLoginDel,
-} from "@/api/module/sysMonitor/logUserLogin.ts"
+} from "@/api/module/sysLog/logUserLogin.ts"
 
 const state = reactive<State<logUserLoginDto>>({
   dialogType: {

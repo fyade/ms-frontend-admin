@@ -25,7 +25,7 @@ import {
   codeGenTableUpds,
   codeGenTableDel,
 } from "@/api/module/sysUtil/codeGenTable.ts"
-import { chooseTableTableIntre } from "@/type/api/sysUtil/codeGeneration.ts";
+import { chooseTableTableInterface } from "@/type/api/sysUtil/codeGeneration.ts";
 import { genCode, genCodeZip, getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
 
@@ -244,7 +244,7 @@ const {
   func
 })
 
-const tablesList = ref<chooseTableTableIntre[]>([])
+const tablesList = ref<chooseTableTableInterface[]>([])
 tablesList.value = []
 const getDbInfos = () => {
   getDbInfo().then(res => {
@@ -284,7 +284,14 @@ const setColumnInfo = (rowid: number) => {
 }
 
 const dialog3Visible = ref(false)
-const codeViewState = reactive({
+
+interface CodeViewState {
+  fileNames: { [key: string]: string }
+  filePaths: { [key: string]: string }
+  codes: { [key: string]: string }
+}
+
+const codeViewState = reactive<CodeViewState>({
   fileNames: {},
   filePaths: {},
   codes: {}
@@ -295,11 +302,13 @@ const codeView = (rowId: any) => {
   codeViewState.filePaths = {}
   codeViewState.codes = {}
   genCode(rowId).then(res => {
-    Object.keys(codeViewState).forEach(key0 => {
-      Object.keys(res.cgRes[key0]).forEach(key1 => {
-        codeViewState[key0][key1] = res.cgRes[key0][key1]
-      })
-    })
+    for (let key0 in codeViewState) {
+      if (res.cgRes && res.cgRes.hasOwnProperty(key0)) {
+        for (let key1 in res.cgRes[key0]) {
+          codeViewState[key0 as keyof CodeViewState][key1] = res.cgRes[key0][key1]
+        }
+      }
+    }
     dialog3Visible.value = true
   })
 }

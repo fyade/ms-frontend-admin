@@ -1,12 +1,12 @@
 import { pageDto } from "@/type/tablePage.ts";
-import { baseInterface } from "@/utils/base.ts";
+import { baseClass } from "@/utils/base.ts";
 
 export type T_MENU = 'mm'
 export type T_COMP = 'mc'
 export type T_Inter = 'mb'
 export type tType = T_MENU | T_COMP | T_Inter
 
-export class menuDto<T = tType> extends baseInterface {
+export class menuDto<T = tType> extends baseClass {
   id!: number;
   label!: string;
   type!: T;

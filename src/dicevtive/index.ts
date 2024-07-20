@@ -1,7 +1,10 @@
 import focus from "@/dicevtive/modules/focus.ts";
 import noMoreClick from "@/dicevtive/modules/noMoreClick.ts";
+import { ObjectDirective } from "vue";
 
-const directivesList = {
+const directivesList: {
+  [key: string]: ObjectDirective
+} = {
   focus,
   noMoreClick
 }

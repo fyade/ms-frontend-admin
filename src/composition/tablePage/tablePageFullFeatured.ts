@@ -1,27 +1,27 @@
 import { nextTick, onMounted, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { EXPORT_IGNORE_KEYS, final, Operate } from "@/utils/base.ts"
+import { EXPORT_IGNORE_KEYS, final, finalIU, Operate } from "@/utils/base.ts"
 import { t_funcTablePage_params } from "@/type/tablePage.ts";
-import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
+import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
 
-export const funcTablePage = ({
-                                config,
-                                state,
-                                // state2,
-                                dialogFormRef,
-                                dialogFormsRef,
-                                filterFormRef,
-                                dialogVisible,
-                                dialogLoadingRef,
-                                tableLoadingRef,
-                                // switchLoadingRef,
-                                activeTabName,
-                                func,
-                                props,
-                                exportIgnoreKeys = EXPORT_IGNORE_KEYS
-                              }: t_funcTablePage_params) => {
+export const funcTablePage = <T = { [key: string]: string }>({
+                                                               config,
+                                                               state,
+                                                               // state2,
+                                                               dialogFormRef,
+                                                               dialogFormsRef,
+                                                               filterFormRef,
+                                                               dialogVisible,
+                                                               dialogLoadingRef,
+                                                               tableLoadingRef,
+                                                               // switchLoadingRef,
+                                                               activeTabName,
+                                                               func,
+                                                               props,
+                                                               exportIgnoreKeys = EXPORT_IGNORE_KEYS
+                                                             }: t_funcTablePage_params) => {
   const initialStateDialogForm = structuredClone(toRaw(state.dialogForm))
   const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
 
@@ -195,7 +195,7 @@ export const funcTablePage = ({
           [final.ins]: () => insData(),
           [final.upd]: () => updData()
         }
-        obj[state.dialogType.value]()
+        obj[state.dialogType.value as keyof finalIU]()
       } else {
         ElMessage.warning(`校验未通过，请完善表格中红框字段。`)
       }
@@ -206,7 +206,7 @@ export const funcTablePage = ({
             [final.ins]: () => insData(),
             [final.upd]: () => updData()
           }
-          obj[state.dialogType.value]()
+          obj[state.dialogType.value as keyof finalIU]()
         } else {
           if (fields) {
             let arr: any[] = []
@@ -326,8 +326,8 @@ export const funcTablePage = ({
           type: 'warning',
         }
     )
-    const rows = deepClone<any[]>(toRaw(state.multipleSelection).map((item: any) => toRaw(item))).map((obj: object) => {
-      exportIgnoreKeys?.forEach(key => delete obj[key])
+    const rows = deepClone<any[]>(toRaw(state.multipleSelection).map((item: any) => toRaw(item))).map((obj: T) => {
+      exportIgnoreKeys?.forEach(key => delete obj[key as keyof T])
       return obj
     });
     const workbook = new Workbook();
@@ -336,6 +336,7 @@ export const funcTablePage = ({
     // sheet默认配置
     worksheet.properties.defaultRowHeight = 20
     // 设置列
+    // @ts-ignore
     worksheet.columns = Object.keys(rows[0]).map(key => ({header: key, key: key, width: 15}))
     // 设置行
     const list = rows
@@ -362,6 +363,7 @@ export const funcTablePage = ({
       return
     }
     const fileHandle = selectFiles[0]
+    // @ts-ignore
     const file = await fileHandle.getFile();
     const reader = new FileReader();
     reader.onload = async (e: any) => {
@@ -378,9 +380,7 @@ export const funcTablePage = ({
       sheetValues.slice(2).forEach(item => {
         const obj = (item as any[]).reduce((a, c, i) => ({...a, [(sheetValues[1] as any[])[i]]: c}), {});
         if (config.selectParam) {
-          Object.keys(config.selectParam).forEach(key => {
-            obj[key] = config.selectParam[key]
-          })
+          copyObject(obj, config.selectParam)
         }
         values.push(obj)
       })
@@ -448,7 +448,7 @@ export const funcTablePage = ({
           activeTabName.value = final.one
         }
         if (config.one2More && config.one2MoreConfig?.oneKey) {
-          func.selectList({[config.one2MoreConfig?.oneKey]: id}).then(res => {
+          func.selectAll && func.selectAll({[config.one2MoreConfig?.oneKey]: id}).then(res => {
             let obj = res[0]
             Object.keys(state.dialogForm).forEach(item => {
               state.dialogForm[item] = obj[item]

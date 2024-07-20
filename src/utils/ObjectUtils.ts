@@ -1,7 +1,7 @@
 /**
  * 类型
- * @param param 
- * @returns 
+ * @param param
+ * @returns
  */
 export function typeOf(param: any) {
   if (typeof param === 'object') {
@@ -67,8 +67,8 @@ export function ifNotValid(val: any) {
 
 /**
  * 深克隆
- * @param any 
- * @returns 
+ * @param any
+ * @returns
  */
 export function deepClone<T>(any: any): T {
   return JSON.parse(JSON.stringify(any))
@@ -76,10 +76,21 @@ export function deepClone<T>(any: any): T {
 
 /**
  * 返回删除数组特定下标位置的数据后的数组
- * @param arr 
- * @param indices 
- * @returns 
+ * @param arr
+ * @param indices
+ * @returns
  */
 export function removeElementsByIndices<T>(arr: T[], ...indices: number[]): T[] {
   return arr.filter((_, index) => !indices.includes(index));
+}
+
+/**
+ * 复制对象
+ * @param to
+ * @param from
+ */
+export function copyObject<T = object>(to: T, from: T) {
+  for (const key in from) {
+    to[key] = from[key]
+  }
 }

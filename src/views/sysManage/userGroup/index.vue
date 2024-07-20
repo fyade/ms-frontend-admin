@@ -211,7 +211,7 @@ const {
   dfIns,
   dfDel,
   ifRequired
-} = funcTablePage({
+} = funcTablePage<userGroupDto>({
   config,
   state,
   state2,

@@ -25,7 +25,7 @@ import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
 import UserUserGroup from "@/views/sysManage/user/userUserGroup.vue";
 import { userUserGroupUpdUUG } from "@/api/module/sysManage/userUserGroup.ts";
 
-const state = reactive<State>({
+const state = reactive({
   dialogType: {
     value: '',
     label: ''
@@ -39,6 +39,7 @@ const state = reactive<State>({
   //   ...
   // }
   dialogForm: {
+    id: '',
     username: '',
     password: '123456'
   },
