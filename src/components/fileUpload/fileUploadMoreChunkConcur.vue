@@ -7,6 +7,13 @@ import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { fileUploadInterfaceMoreChunk, fileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";
+import { selectFiles } from "@/utils/FileUtils.ts";
+
+interface progressI {
+  started: number[],
+  ended: number[],
+  total: number
+}
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -46,10 +53,7 @@ const upload7 = async () => {
   state.chunkTotal = 0
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker({
-      multiple: true
-    }))
+    filepicks.push(...await selectFiles(true))
   } catch (e) {
     state.currentStage = 'o'
     return
@@ -61,8 +65,7 @@ const upload7 = async () => {
     state.fileNum = i + 1
     state.progress_started = 0
     state.progress_ended = 0
-    // @ts-ignore
-    const file = await filepicks[i]?.getFile()
+    const file = filepicks[i]
     // 开始
     state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
     const chunks = createChunks(file)
@@ -129,10 +132,11 @@ const hash = (chunks: Blob[]): Promise<string> => {
       state.fileSize += blob.size
       const reader = new FileReader();
       reader.onload = e => {
-        // @ts-ignore
-        const bytes = e.target.result;
-        spark.append(bytes)
-        _read(i + 1)
+        if (e.target) {
+          const bytes = e.target.result;
+          spark.append(bytes)
+          _read(i + 1)
+        }
       }
       reader.readAsArrayBuffer(blob)
     }
@@ -151,8 +155,7 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
       fileUploadRequests.push(uploading(indexs[i], chunks[i]))
     }
     await concurRequest2(fileUploadRequests, {
-      // @ts-ignore
-      downloadProgress: progress => {
+      downloadProgress: (progress: progressI) => {
         state.progress_started = progress.started.length
         state.progress_ended = progress.ended.length
       }
@@ -216,7 +219,7 @@ function concurRequest2(promises: Promise<any>[],
                           downloadProgress?: Function
                         } = {}
 ): Promise<any[]> {
-  const progress = {
+  const progress: progressI = {
     started: [] as number[],
     ended: [] as number[],
     total: promises.length

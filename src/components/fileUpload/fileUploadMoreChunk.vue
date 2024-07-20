@@ -7,6 +7,7 @@ import { removeElementsByIndices } from "@/utils/ObjectUtils";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { fileUploadInterfaceMoreChunk } from "@/type/demo/fileUpload.ts";
+import { selectFiles } from "@/utils/FileUtils.ts";
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -45,10 +46,7 @@ const upload4 = async () => {
   state.fileTotal = 0
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker({
-      multiple: true
-    }))
+    filepicks.push(...await selectFiles(true))
   } catch (e) {
     state.currentStage = 'o'
     return
@@ -58,8 +56,7 @@ const upload4 = async () => {
     state.fileNum = i + 1
     state.currentStage = 'b'
     isLoading.value = true
-    // @ts-ignore
-    const file = await filepicks[i]?.getFile()
+    const file = filepicks[i]
     // 开始
     state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
     const chunks = createChunks(file)
@@ -123,10 +120,11 @@ const hash = (chunks: Blob[]): Promise<string> => {
       state.fileSize += blob.size
       const reader = new FileReader();
       reader.onload = e => {
-        // @ts-ignore
-        const bytes = e.target.result;
-        spark.append(bytes)
-        _read(i + 1)
+        if (e.target) {
+          const bytes = e.target.result;
+          spark.append(bytes)
+          _read(i + 1)
+        }
       }
       reader.readAsArrayBuffer(blob)
     }

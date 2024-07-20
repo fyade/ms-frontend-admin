@@ -7,6 +7,13 @@ import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { fileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
+import { selectFiles } from "@/utils/FileUtils.ts";
+
+interface progressI {
+  started: number[],
+  ended: number[],
+  total: number
+}
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -44,16 +51,14 @@ const upload6 = async () => {
   state.chunkTotal = 0
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker())
+    filepicks.push(...await selectFiles())
   } catch (e) {
     state.currentStage = 'o'
     return
   }
   state.currentStage = 'b'
   isLoading.value = true
-  // @ts-ignore
-  const file = await filepicks[0]?.getFile()
+  const file = filepicks[0]
   // 开始
   state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
   const chunks = createChunks(file)
@@ -69,8 +74,7 @@ const upload6 = async () => {
     uploadSuccess()
     return
   }
-  // @ts-ignore
-  const indexs = removeElementsByIndices(new Array(chunks.length).fill().map((item, i) => i), ...res1.uploadedIndexs)
+  const indexs = removeElementsByIndices(new Array(chunks.length).fill(null).map((item, i) => i), ...res1.uploadedIndexs)
   const newChunks = removeElementsByIndices(chunks, ...res1.uploadedIndexs);
   // 开始分片上传
   state.currentStage = 'c'
@@ -122,10 +126,11 @@ const hash = (chunks: Blob[]): Promise<string> => {
       state.fileSize += blob.size
       const reader = new FileReader();
       reader.onload = e => {
-        // @ts-ignore
-        const bytes = e.target.result;
-        spark.append(bytes)
-        _read(i + 1)
+        if (e.target) {
+          const bytes = e.target.result;
+          spark.append(bytes)
+          _read(i + 1)
+        }
       }
       reader.readAsArrayBuffer(blob)
     }
@@ -144,8 +149,7 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
       fileUploadRequests.push(uploading(indexs[i], chunks[i]))
     }
     await concurRequest2(fileUploadRequests, {
-      // @ts-ignore
-      downloadProgress: progress => {
+      downloadProgress: (progress: progressI) => {
         state.progress_started = progress.started.length
         state.progress_ended = progress.ended.length
       }
@@ -201,13 +205,13 @@ const uploadFail = (msg?: string) => {
  * @param downloadProgress
  */
 function concurRequest2(promises: Promise<any>[],
-  {
-    maxNum = 8,
-    downloadProgress
-  }: {
-    maxNum?: number
-    downloadProgress?: Function
-  } = {}
+                        {
+                          maxNum = 8,
+                          downloadProgress
+                        }: {
+                          maxNum?: number
+                          downloadProgress?: Function
+                        } = {}
 ): Promise<any[]> {
   const progress = {
     started: [] as number[],
@@ -260,9 +264,9 @@ function concurRequest2(promises: Promise<any>[],
     <span>单文件并发分片上传</span>
     <template v-if="isDisabled">&nbsp;
       <span>({{
-        ['a', 'b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] :
-          `${state.progress_started}/${state.progress_ended}/${state.progress_total}`
-      }})</span>
+          ['a', 'b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] :
+              `${state.progress_started}/${state.progress_ended}/${state.progress_total}`
+        }})</span>
     </template>
   </el-button>
 </template>

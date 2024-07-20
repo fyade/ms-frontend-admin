@@ -5,6 +5,7 @@ import { unitConversion_storage } from "@/utils/NumberUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
+import { selectFiles } from "@/utils/FileUtils.ts";
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -18,10 +19,7 @@ const upload2 = async () => {
   isDisabled.value = true
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker({
-      multiple: true
-    }))
+    filepicks.push(...await selectFiles(true))
   } catch (e) {
     isDisabled.value = false
     return
@@ -29,8 +27,7 @@ const upload2 = async () => {
   isLoading.value = true
   for (let i = 0; i < filepicks.length; i++) {
     if (pageNotUnmounted) {
-      // @ts-ignore
-      const file = await filepicks[i]?.getFile()
+      const file = filepicks[i]
       if (file.size > CHUNK_SIZE) {
         // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
         ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')

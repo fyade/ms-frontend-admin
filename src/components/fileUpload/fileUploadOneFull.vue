@@ -5,6 +5,7 @@ import { unitConversion_storage } from "@/utils/NumberUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
+import { selectFiles } from "@/utils/FileUtils.ts";
 
 const emit = defineEmits(['uploadSuccess', 'uploadFail']);
 const isDisabled = ref(false)
@@ -14,15 +15,13 @@ const upload1 = async () => {
   isDisabled.value = true
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker())
+    filepicks.push(...await selectFiles())
   } catch (e) {
     isDisabled.value = false
     return
   }
   isLoading.value = true
-  // @ts-ignore
-  const file = await filepicks[0]?.getFile()
+  const file = filepicks[0]
   if (file.size > CHUNK_SIZE) {
     // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
     ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')

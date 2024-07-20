@@ -2,7 +2,7 @@ import { FileHandle } from "node:fs/promises";
 
 declare global {
   interface Window {
-    showOpenFilePicker?: () => Promise<FileHandle[]>;
+    showOpenFilePicker: ({multiple}: { multiple: boolean }) => Promise<FileSystemFileHandle[]>;
   }
 }
 

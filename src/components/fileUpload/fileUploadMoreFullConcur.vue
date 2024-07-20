@@ -6,6 +6,13 @@ import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { fileUploadInterfaceMoreFullConcur } from "@/type/demo/fileUpload.ts";
+import { selectFiles } from "@/utils/FileUtils.ts";
+
+interface progressI {
+  started: number[],
+  ended: number[],
+  total: number
+}
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
@@ -36,10 +43,7 @@ const upload5 = async () => {
   state.currentStage = 'a'
   const filepicks = []
   try {
-    // @ts-ignore
-    filepicks.push(...await window?.showOpenFilePicker({
-      multiple: true
-    }))
+    filepicks.push(...await selectFiles(true))
   } catch (e) {
     state.currentStage = 'o'
     return
@@ -48,8 +52,7 @@ const upload5 = async () => {
   state.total = filepicks.length
   state.currentStage = 'b'
   for (let i = 0; i < filepicks.length; i++) {
-    // @ts-ignore
-    const file = await filepicks[i]?.getFile()
+    const file = filepicks[i]
     if (file.size > CHUNK_SIZE) {
       state.beyondMaxSizeNum++
       // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
@@ -63,8 +66,7 @@ const upload5 = async () => {
   state.total -= state.beyondMaxSizeNum
   state.currentStage = 'c'
   await concurRequest2(fileUploadRequests, {
-    // @ts-ignore
-    downloadProgress: progress => {
+    downloadProgress: (progress: progressI) => {
       state.started = progress.started.length
       state.ended = progress.ended.length
     }
@@ -96,13 +98,13 @@ const uploadFail = (msg?: string) => {
  * @param downloadProgress
  */
 function concurRequest2(promises: Promise<any>[],
-  {
-    maxNum = 8,
-    downloadProgress
-  }: {
-    maxNum?: number
-    downloadProgress?: Function
-  } = {}
+                        {
+                          maxNum = 8,
+                          downloadProgress
+                        }: {
+                          maxNum?: number
+                          downloadProgress?: Function
+                        } = {}
 ): Promise<any[]> {
   const progress = {
     started: [] as number[],
@@ -157,8 +159,8 @@ function concurRequest2(promises: Promise<any>[],
       <span>(
         {{
           state.currentStage === 'a' ? state.dictStage[state.currentStage] :
-            (['b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] :
-              `${state.started}/${state.ended}/${state.total}`)
+              (['b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] :
+                  `${state.started}/${state.ended}/${state.total}`)
         }}
         )</span>
     </template>
