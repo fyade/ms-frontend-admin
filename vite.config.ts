@@ -34,7 +34,7 @@ export default defineConfig(({mode}) => {
             prefix: 'Icon',
           }),
         ],
-        dts: path.resolve(pathSrc, '.d.ts/auto-imports.d.ts')
+        dts: path.resolve(root, '.d.ts/auto-imports.d.ts')
       }),
       Components({
         resolvers: [
@@ -43,7 +43,7 @@ export default defineConfig(({mode}) => {
             enabledCollections: ['ep'],
           })
         ],
-        dts: path.resolve(pathSrc, '.d.ts/components.d.ts')
+        dts: path.resolve(root, '.d.ts/components.d.ts')
       }),
       Icons({
         autoInstall: true,
