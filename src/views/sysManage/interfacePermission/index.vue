@@ -467,8 +467,8 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
     userGroupId: -1,
     permissionId: -1,
     ifLongTerm: final.N,
-    ifLimitRequestTimes: final.N,
-    ifRejectRequestUseUp: final.N,
+    ifLimitRequestTimes: final.Y,
+    ifRejectRequestUseUp: final.Y,
     permissionStartTime: new Date(),
     permissionEndTime: new Date(),
     permissionTime: '',
@@ -491,8 +491,6 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
     ifRejectRequestUseUp: [{required: true, trigger: 'change'}],
     permissionStartTime: [{required: true, trigger: 'change'}],
     permissionEndTime: [{required: true, trigger: 'change'}],
-    permissionTime: [{required: true, trigger: 'change'}],
-    limitRequestTimes: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -735,7 +733,11 @@ const beforeDelInterfaceGroupOfThisUserGroup = (interfaceGroupId: number) => {
 const detailInterfaceGroupOfThisUserGroup = (interfaceGroupId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.permissionId === interfaceGroupId);
   if (find) {
-    copyObject(userGroupPermissionState.dialogForm, find)
+    userGroupPermissionDialogLoadingRef.value = true
+    userGroupPermissionFunc.selectById(find.id).then(res => {
+      copyObject(userGroupPermissionState.dialogForm, res)
+      userGroupPermissionDialogLoadingRef.value = false
+    })
     userGroupPermissionState.dialogForm.permissionTime = [
       userGroupPermissionState.dialogForm.permissionStartTime,
       userGroupPermissionState.dialogForm.permissionEndTime
@@ -801,7 +803,11 @@ const beforeDelUserGroupOfThisInterfaceGroup = (userGroupId: number) => {
 const detailUserGroupOfThisInterfaceGroup = (userGroupId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.userGroupId === userGroupId);
   if (find) {
-    copyObject(userGroupPermissionState.dialogForm, find)
+    userGroupPermissionDialogLoadingRef.value = true
+    userGroupPermissionFunc.selectById(find.id).then(res => {
+      copyObject(userGroupPermissionState.dialogForm, res)
+      userGroupPermissionDialogLoadingRef.value = false
+    })
     userGroupPermissionState.dialogForm.permissionTime = [
       userGroupPermissionState.dialogForm.permissionStartTime,
       userGroupPermissionState.dialogForm.permissionEndTime
@@ -848,6 +854,29 @@ const beforeAddUserGroupPermission = () => {
   userGroupPermissionGIns()
 }
 
+watch(() => userGroupPermissionState.dialogForm, () => {
+  // 是否长期权限
+  if (userGroupPermissionState.dialogForm.ifLongTerm === final.N) {
+    userGroupPermissionState.dFormRules.permissionTime = [{required: true, trigger: 'change'}]
+  } else {
+    delete userGroupPermissionState.dFormRules.permissionTime
+  }
+
+  // 是否限制次数
+  if (userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y) {
+    userGroupPermissionState.dFormRules.limitRequestTimes = [{
+      required: true,
+      trigger: 'change',
+      min: 1,
+      type: 'number'
+    }]
+  } else {
+    delete userGroupPermissionState.dFormRules.limitRequestTimes
+  }
+}, {
+  deep: true,
+  immediate: true
+})
 if (Object.keys(userGroupPermissionState.dialogForm).indexOf('permissionTime') > -1) {
   watch(() => userGroupPermissionState.dialogForm['permissionTime'], () => {
     if (userGroupPermissionState.dialogForm['permissionTime']) {
@@ -915,6 +944,11 @@ const shortcuts = [
     },
   },
 ]
+
+const userGroupPermissionDCon2 = () => {
+  delete (userGroupPermissionState.dialogForm as any).count
+  userGroupPermissionDCon()
+}
 </script>
 
 <template>
@@ -934,6 +968,7 @@ const shortcuts = [
         :rules="userGroupPermissionState.dFormRules"
         label-position="top"
         :disabled="!ifAddUserGroupPermission"
+        validate-on-rule-change
     >
       <!--<el-row>-->
       <!--  <el-col :span="12"></el-col>-->
@@ -991,7 +1026,8 @@ const shortcuts = [
       <!--  <el-input v-model="userGroupPermissionState.dialogForm['permissionEndTime']"-->
       <!--            :placeholder="userGroupPermissionState.dict['permissionEndTime']"/>-->
       <!--</el-form-item>-->
-      <el-form-item :label="userGroupPermissionState.dict['permissionTime']" prop="permissionTime">
+      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLongTerm === final.N"
+                    :label="userGroupPermissionState.dict['permissionTime']" prop="permissionTime">
         <el-date-picker
             v-model="userGroupPermissionState.dialogForm['permissionTime']"
             type="datetimerange"
@@ -1003,7 +1039,8 @@ const shortcuts = [
             time-format="A hh:mm:ss"
         />
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['limitRequestTimes']" prop="limitRequestTimes">
+      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y"
+                    :label="userGroupPermissionState.dict['limitRequestTimes']" prop="limitRequestTimes">
         <el-input-number v-model="userGroupPermissionState.dialogForm['limitRequestTimes']"
                          controls-position="right"/>
       </el-form-item>
@@ -1013,7 +1050,7 @@ const shortcuts = [
       </el-form-item>
       <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['ifUseUp']" prop="ifUseUp">
         <el-tag v-if="userGroupPermissionState.dialogForm['ifUseUp'] === final.Y" type="danger">是</el-tag>
-        <el-tag v-else type="success">否</el-tag>
+        <el-tag v-else type="success">已使用{{ (userGroupPermissionState.dialogForm as any)['count'] }}次</el-tag>
       </el-form-item>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="userGroupPermissionState.dict['orderNum']" prop='orderNum'>-->
@@ -1036,7 +1073,7 @@ const shortcuts = [
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="userGroupPermissionDCan">取消</el-button>
-        <el-button type="primary" @click="userGroupPermissionDCon" v-if="ifAddUserGroupPermission">确认</el-button>
+        <el-button type="primary" @click="userGroupPermissionDCon2" v-if="ifAddUserGroupPermission">确认</el-button>
       </span>
     </template>
   </el-dialog>
