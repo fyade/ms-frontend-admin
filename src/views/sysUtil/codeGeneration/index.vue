@@ -9,22 +9,12 @@ import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { codeGenTableDto } from "@/type/api/sysUtil/codeGenTable.ts";
-import {
-  codeGenTableSel,
-  codeGenTableSelById,
-  codeGenTableSelByIds,
-  codeGenTableSelAll,
-  codeGenTableIns,
-  codeGenTableUpd,
-  codeGenTableInss,
-  codeGenTableUpds,
-  codeGenTableDel,
-} from "@/api/module/sysUtil/codeGenTable.ts"
+import { codeGenTableFunc } from "@/api/module/sysUtil/codeGenTable.ts"
 import { chooseTableTableInterface } from "@/type/api/sysUtil/codeGeneration.ts";
 import { genCode, genCodeZip, getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
 import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
@@ -143,72 +133,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return codeGenTableSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return codeGenTableSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return codeGenTableSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return codeGenTableSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return codeGenTableIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return codeGenTableUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return codeGenTableInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return codeGenTableUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return codeGenTableDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -241,7 +165,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: codeGenTableFunc
 })
 
 const tablesList = ref<chooseTableTableInterface[]>([])

@@ -1,12 +1,20 @@
 import request from "@/api/request.ts";
 import {
-  userDeptSelAllDto,
+  userDeptDto,
   userDeptSelDto,
-  userDeptUpdDUDto,
-  userDeptUpdUDDto
+  userDeptSelAllDto,
+  userDeptInsDto,
+  userDeptUpdDto, userDeptUpdUDDto, userDeptUpdDUDto
 } from "@/type/api/sysManage/userDept.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function userDeptSel(params: userDeptSelDto) {
+export function userDeptSel(params: userDeptSelDto): t_funcMap_selList_ret<userDeptDto> {
   return request({
     url: '/sys-manage/user-dept',
     method: 'GET',
@@ -14,7 +22,7 @@ export function userDeptSel(params: userDeptSelDto) {
   })
 }
 
-export function userDeptSelAll(params: userDeptSelAllDto) {
+export function userDeptSelAll(params: userDeptSelAllDto): t_funcMap_selMore_ret<userDeptDto> {
   return request({
     url: '/sys-manage/user-dept/all',
     method: 'GET',
@@ -22,18 +30,58 @@ export function userDeptSelAll(params: userDeptSelAllDto) {
   })
 }
 
-export function userDeptSelById(id: number) {
+export function userDeptSelById(id: number): t_funcMap_selOne_ret<userDeptDto> {
   return request({
     url: `/sys-manage/user-dept/${id}`,
     method: 'GET'
   })
 }
 
-export function userDeptSelByIds(ids: any[]) {
+export function userDeptSelByIds(ids: any[]): t_funcMap_selMore_ret<userDeptDto> {
   return request({
     url: `/sys-manage/user-dept/ids`,
     method: 'GET',
     params: ids
+  })
+}
+
+export function userDeptIns(params: userDeptInsDto): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-dept',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function userDeptUpd(params: userDeptUpdDto): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-dept',
+    method: 'PUT',
+    data: params
+  })
+}
+
+export function userDeptInss(params: userDeptInsDto[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-dept/s',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function userDeptUpds(params: userDeptUpdDto[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-dept/s',
+    method: 'PUT',
+    data: params
+  })
+}
+
+export function userDeptDel(ids: any[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-dept',
+    method: 'DELETE',
+    data: ids
   })
 }
 
@@ -53,10 +101,68 @@ export function userDeptUpdDU(params: userDeptUpdDUDto) {
   })
 }
 
-export function userDeptDel(ids: any[]) {
-  return request({
-    url: '/sys-manage/user-dept',
-    method: 'DELETE',
-    data: ids
-  })
+export const userDeptFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: userDeptSelDto) => {
+    return userDeptSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: userDeptSelAllDto) => {
+    return userDeptSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return userDeptSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return userDeptSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: userDeptInsDto) => {
+    return userDeptIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: userDeptUpdDto) => {
+    return userDeptUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: userDeptInsDto[]) => {
+    return userDeptInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: userDeptUpdDto[]) => {
+    return userDeptUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return userDeptDel(ids)
+  }
 }

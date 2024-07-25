@@ -9,24 +9,13 @@ import { reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { dicTypeDto } from "@/type/api/sysManage/dicType.ts";
-import {
-  dicTypeSel,
-  dicTypeSelById,
-  dicTypeSelByIds,
-  dicTypeSelAll,
-  dicTypeIns,
-  dicTypeUpd,
-  dicTypeInss,
-  dicTypeUpds,
-  dicTypeDel,
-} from "@/api/module/sysManage/dicType.ts"
+import { dicTypeFunc } from "@/api/module/sysManage/dicType.ts"
 import DicData from "@/views/sysManage/dict/dicData.vue";
-import RoleUser from "@/views/sysManage/role/roleUser.vue";
 
 const state = reactive<State<dicTypeDto>>({
   dialogType: {
@@ -129,72 +118,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return dicTypeSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return dicTypeSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return dicTypeSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return dicTypeSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return dicTypeIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return dicTypeUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return dicTypeInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return dicTypeUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return dicTypeDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -227,7 +150,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: dicTypeFunc
 })
 
 const drawer = ref(false)
@@ -496,7 +419,8 @@ const setDicData = (row: any) => {
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span
+            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>

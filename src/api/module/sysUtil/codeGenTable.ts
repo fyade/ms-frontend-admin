@@ -1,7 +1,20 @@
 import request from "@/api/request.ts";
-import { codeGenTableInsDto, codeGenTableSelAllDto, codeGenTableSelDto, codeGenTableUpdDto } from "@/type/api/sysUtil/codeGenTable.ts";
+import {
+  codeGenTableDto,
+  codeGenTableSelDto,
+  codeGenTableSelAllDto,
+  codeGenTableInsDto,
+  codeGenTableUpdDto
+} from "@/type/api/sysUtil/codeGenTable.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function codeGenTableSel(params: codeGenTableSelDto) {
+export function codeGenTableSel(params: codeGenTableSelDto): t_funcMap_selList_ret<codeGenTableDto> {
   return request({
     url: '/sys-util/code-gen-table',
     method: 'GET',
@@ -9,7 +22,7 @@ export function codeGenTableSel(params: codeGenTableSelDto) {
   })
 }
 
-export function codeGenTableSelAll(params: codeGenTableSelAllDto) {
+export function codeGenTableSelAll(params: codeGenTableSelAllDto): t_funcMap_selMore_ret<codeGenTableDto> {
   return request({
     url: '/sys-util/code-gen-table/all',
     method: 'GET',
@@ -17,14 +30,14 @@ export function codeGenTableSelAll(params: codeGenTableSelAllDto) {
   })
 }
 
-export function codeGenTableSelById(id: number) {
+export function codeGenTableSelById(id: number): t_funcMap_selOne_ret<codeGenTableDto> {
   return request({
     url: `/sys-util/code-gen-table/${id}`,
     method: 'GET'
   })
 }
 
-export function codeGenTableSelByIds(ids: any[]) {
+export function codeGenTableSelByIds(ids: any[]): t_funcMap_selMore_ret<codeGenTableDto> {
   return request({
     url: `/sys-util/code-gen-table/ids`,
     method: 'GET',
@@ -32,7 +45,7 @@ export function codeGenTableSelByIds(ids: any[]) {
   })
 }
 
-export function codeGenTableIns(params: codeGenTableInsDto) {
+export function codeGenTableIns(params: codeGenTableInsDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table',
     method: 'POST',
@@ -40,7 +53,7 @@ export function codeGenTableIns(params: codeGenTableInsDto) {
   })
 }
 
-export function codeGenTableUpd(params: codeGenTableUpdDto) {
+export function codeGenTableUpd(params: codeGenTableUpdDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table',
     method: 'PUT',
@@ -48,7 +61,7 @@ export function codeGenTableUpd(params: codeGenTableUpdDto) {
   })
 }
 
-export function codeGenTableInss(params: codeGenTableInsDto[]) {
+export function codeGenTableInss(params: codeGenTableInsDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table/s',
     method: 'POST',
@@ -56,7 +69,7 @@ export function codeGenTableInss(params: codeGenTableInsDto[]) {
   })
 }
 
-export function codeGenTableUpds(params: codeGenTableUpdDto[]) {
+export function codeGenTableUpds(params: codeGenTableUpdDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table/s',
     method: 'PUT',
@@ -64,10 +77,76 @@ export function codeGenTableUpds(params: codeGenTableUpdDto[]) {
   })
 }
 
-export function codeGenTableDel(ids: any[]) {
+export function codeGenTableDel(ids: any[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table',
     method: 'DELETE',
     data: ids
   })
+}
+
+export const codeGenTableFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: codeGenTableSelDto) => {
+    return codeGenTableSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: codeGenTableSelAllDto) => {
+    return codeGenTableSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return codeGenTableSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return codeGenTableSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: codeGenTableInsDto) => {
+    return codeGenTableIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: codeGenTableUpdDto) => {
+    return codeGenTableUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: codeGenTableInsDto[]) => {
+    return codeGenTableInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: codeGenTableUpdDto[]) => {
+    return codeGenTableUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return codeGenTableDel(ids)
+  }
 }

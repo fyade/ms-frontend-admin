@@ -9,25 +9,14 @@ import { computed, reactive, ref } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
-import {
-  userGroupSel,
-  userGroupSelById,
-  userGroupSelByIds,
-  userGroupSelAll,
-  userGroupIns,
-  userGroupUpd,
-  userGroupInss,
-  userGroupUpds,
-  userGroupDel,
-} from "@/api/module/sysManage/userGroup.ts"
+import { userGroupFunc } from "@/api/module/sysManage/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import UserGroupUser from "@/views/sysManage/userGroup/userGroupUser.vue";
-import RoleUser from "@/views/sysManage/role/roleUser.vue";
 
 const state = reactive<State<userGroupDto>>({
   dialogType: {
@@ -125,72 +114,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return userGroupSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return userGroupSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return userGroupSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return userGroupSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return userGroupIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return userGroupUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return userGroupInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return userGroupUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return userGroupDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -223,7 +146,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: userGroupFunc
 })
 
 const expandRowKeys = ref<any[]>([])

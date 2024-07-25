@@ -1,7 +1,20 @@
 import request from "@/api/request.ts";
-import { codeGenColumnInsDto, codeGenColumnSelAllDto, codeGenColumnSelDto, codeGenColumnUpdDto } from "@/type/api/sysUtil/codeGenColumn.ts";
+import {
+  codeGenColumnDto,
+  codeGenColumnSelDto,
+  codeGenColumnSelAllDto,
+  codeGenColumnInsDto,
+  codeGenColumnUpdDto
+} from "@/type/api/sysUtil/codeGenColumn.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function codeGenColumnSel(params: codeGenColumnSelDto) {
+export function codeGenColumnSel(params: codeGenColumnSelDto): t_funcMap_selList_ret<codeGenColumnDto> {
   return request({
     url: '/sys-util/code-gen-column',
     method: 'GET',
@@ -9,7 +22,7 @@ export function codeGenColumnSel(params: codeGenColumnSelDto) {
   })
 }
 
-export function codeGenColumnSelAll(params: codeGenColumnSelAllDto) {
+export function codeGenColumnSelAll(params: codeGenColumnSelAllDto): t_funcMap_selMore_ret<codeGenColumnDto> {
   return request({
     url: '/sys-util/code-gen-column/all',
     method: 'GET',
@@ -17,14 +30,14 @@ export function codeGenColumnSelAll(params: codeGenColumnSelAllDto) {
   })
 }
 
-export function codeGenColumnSelById(id: number) {
+export function codeGenColumnSelById(id: number): t_funcMap_selOne_ret<codeGenColumnDto> {
   return request({
     url: `/sys-util/code-gen-column/${id}`,
     method: 'GET'
   })
 }
 
-export function codeGenColumnSelByIds(ids: any[]) {
+export function codeGenColumnSelByIds(ids: any[]): t_funcMap_selMore_ret<codeGenColumnDto> {
   return request({
     url: `/sys-util/code-gen-column/ids`,
     method: 'GET',
@@ -32,7 +45,7 @@ export function codeGenColumnSelByIds(ids: any[]) {
   })
 }
 
-export function codeGenColumnIns(params: codeGenColumnInsDto) {
+export function codeGenColumnIns(params: codeGenColumnInsDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column',
     method: 'POST',
@@ -40,7 +53,7 @@ export function codeGenColumnIns(params: codeGenColumnInsDto) {
   })
 }
 
-export function codeGenColumnUpd(params: codeGenColumnUpdDto) {
+export function codeGenColumnUpd(params: codeGenColumnUpdDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column',
     method: 'PUT',
@@ -48,7 +61,7 @@ export function codeGenColumnUpd(params: codeGenColumnUpdDto) {
   })
 }
 
-export function codeGenColumnInss(params: codeGenColumnInsDto[]) {
+export function codeGenColumnInss(params: codeGenColumnInsDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column/s',
     method: 'POST',
@@ -56,7 +69,7 @@ export function codeGenColumnInss(params: codeGenColumnInsDto[]) {
   })
 }
 
-export function codeGenColumnUpds(params: codeGenColumnUpdDto[]) {
+export function codeGenColumnUpds(params: codeGenColumnUpdDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column/s',
     method: 'PUT',
@@ -64,10 +77,76 @@ export function codeGenColumnUpds(params: codeGenColumnUpdDto[]) {
   })
 }
 
-export function codeGenColumnDel(ids: any[]) {
+export function codeGenColumnDel(ids: any[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column',
     method: 'DELETE',
     data: ids
   })
+}
+
+export const codeGenColumnFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: codeGenColumnSelDto) => {
+    return codeGenColumnSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: codeGenColumnSelAllDto) => {
+    return codeGenColumnSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return codeGenColumnSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return codeGenColumnSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: codeGenColumnInsDto) => {
+    return codeGenColumnIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: codeGenColumnUpdDto) => {
+    return codeGenColumnUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: codeGenColumnInsDto[]) => {
+    return codeGenColumnInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: codeGenColumnUpdDto[]) => {
+    return codeGenColumnUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return codeGenColumnDel(ids)
+  }
 }

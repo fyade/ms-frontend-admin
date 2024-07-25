@@ -1,24 +1,13 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
+import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { deptDto } from "@/type/api/sysManage/dept.ts";
-import {
-  deptSel,
-  deptSelById,
-  deptSelByIds,
-  deptSelAll,
-  deptIns,
-  deptUpd,
-  deptInss,
-  deptUpds,
-  deptDel,
-} from "@/api/module/sysManage/dept.ts"
+import { deptFunc, } from "@/api/module/sysManage/dept.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 
 const props = defineProps({
@@ -129,72 +118,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return deptSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return deptSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return deptSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return deptSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return deptIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return deptUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return deptInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return deptUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return deptDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -226,7 +149,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: deptFunc
 })
 
 const selectDeptTree = ref<any>(null)

@@ -74,7 +74,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
                    } = {}
   ) => {
     if (ifImport || activeTabName && activeTabName.value === final.more) {
-      func.insertMore && func.insertMore(ifImport ? dataFromExcel : state.dialogForms).then(res => {
+      func.insertMore(ifImport ? dataFromExcel : state.dialogForms).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -97,7 +97,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
   const updData = () => {
     tableLoadingRef.value = true
     if (activeTabName?.value === final.more) {
-      func.updateMore && func.updateMore(state.dialogForms).then(res => {
+      func.updateMore(state.dialogForms).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -448,7 +448,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
           activeTabName.value = final.one
         }
         if (config.one2More && config.one2MoreConfig?.oneKey) {
-          func.selectAll && func.selectAll({[config.one2MoreConfig?.oneKey]: id}).then(res => {
+          func.selectAll({[config.one2MoreConfig?.oneKey]: id}).then(res => {
             let obj = res[0]
             Object.keys(state.dialogForm).forEach(item => {
               state.dialogForm[item] = obj[item]

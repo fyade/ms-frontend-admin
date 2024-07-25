@@ -9,22 +9,12 @@ import { computed, reactive, ref, watch } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload, Sort } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { menuDto, tType } from "@/type/api/sysManage/menu.ts";
-import {
-  menuSel,
-  menuSelById,
-  menuSelByIds,
-  menuSelAll,
-  menuIns,
-  menuUpd,
-  menuInss,
-  menuUpds,
-  menuDel,
-} from "@/api/module/sysManage/menu.ts"
+import { menuFunc } from "@/api/module/sysManage/menu.ts"
 import { useRouterStore } from "@/store/module/router.ts";
 import { ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
@@ -146,72 +136,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return menuSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return menuSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return menuSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return menuSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return menuIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return menuUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return menuInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return menuUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return menuDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -244,7 +168,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: menuFunc
 })
 
 const routerStore = useRouterStore();

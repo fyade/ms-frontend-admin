@@ -3,22 +3,12 @@ import { reactive, ref, toRaw } from "vue"
 import { CONFIG, final, PAGINATION, publicDict, publicDictInterface } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { codeGenColumnDto } from "@/type/api/sysUtil/codeGenColumn.ts";
-import {
-  codeGenColumnSel,
-  codeGenColumnSelById,
-  codeGenColumnSelByIds,
-  codeGenColumnSelAll,
-  codeGenColumnIns,
-  codeGenColumnUpd,
-  codeGenColumnInss,
-  codeGenColumnUpds,
-  codeGenColumnDel,
-} from "@/api/module/sysUtil/codeGenColumn.ts"
+import { codeGenColumnFunc, } from "@/api/module/sysUtil/codeGenColumn.ts"
 import {
   chooseTableTableColInterface,
   chooseTableTableColInterfaceDict,
@@ -176,72 +166,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return codeGenColumnSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return codeGenColumnSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return codeGenColumnSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return codeGenColumnSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return codeGenColumnIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return codeGenColumnUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return codeGenColumnInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return codeGenColumnUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return codeGenColumnDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -274,7 +198,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: codeGenColumnFunc
 })
 
 const tsTypeDicts = [

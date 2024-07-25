@@ -3,7 +3,7 @@ import { computed, reactive, ref } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config, t_funcMap } from "@/type/tablePage.ts"
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
@@ -137,7 +137,7 @@ const interfaceConfig: t_config = reactive({
   }
 })
 
-const interfaceFunc: t_FuncMap = {
+const interfaceFunc: t_funcMap = {
   /**
    * 分页查询
    * @param params
@@ -334,7 +334,7 @@ const interfaceGroupConfig: t_config = reactive({
   }
 })
 
-const interfaceGroupFunc: t_FuncMap = {
+const interfaceGroupFunc: t_funcMap = {
   /**
    * 分页查询
    * @param params

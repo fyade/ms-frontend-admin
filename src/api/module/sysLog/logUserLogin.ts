@@ -1,7 +1,20 @@
 import request from "@/api/request.ts";
-import { logUserLoginInsDto, logUserLoginSelAllDto, logUserLoginSelDto, logUserLoginUpdDto } from "@/type/api/sysLog/logUserLogin.ts";
+import {
+  logUserLoginDto,
+  logUserLoginSelDto,
+  logUserLoginSelAllDto,
+  logUserLoginInsDto,
+  logUserLoginUpdDto
+} from "@/type/api/sysLog/logUserLogin.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function logUserLoginSel(params: logUserLoginSelDto) {
+export function logUserLoginSel(params: logUserLoginSelDto): t_funcMap_selList_ret<logUserLoginDto> {
   return request({
     url: '/sys-log/log-user-login',
     method: 'GET',
@@ -9,7 +22,7 @@ export function logUserLoginSel(params: logUserLoginSelDto) {
   })
 }
 
-export function logUserLoginSelAll(params: logUserLoginSelAllDto) {
+export function logUserLoginSelAll(params: logUserLoginSelAllDto): t_funcMap_selMore_ret<logUserLoginDto> {
   return request({
     url: '/sys-log/log-user-login/all',
     method: 'GET',
@@ -17,14 +30,14 @@ export function logUserLoginSelAll(params: logUserLoginSelAllDto) {
   })
 }
 
-export function logUserLoginSelById(id: number) {
+export function logUserLoginSelById(id: number): t_funcMap_selOne_ret<logUserLoginDto> {
   return request({
     url: `/sys-log/log-user-login/${id}`,
     method: 'GET'
   })
 }
 
-export function logUserLoginSelByIds(ids: any[]) {
+export function logUserLoginSelByIds(ids: any[]): t_funcMap_selMore_ret<logUserLoginDto> {
   return request({
     url: `/sys-log/log-user-login/ids`,
     method: 'GET',
@@ -32,7 +45,7 @@ export function logUserLoginSelByIds(ids: any[]) {
   })
 }
 
-export function logUserLoginIns(params: logUserLoginInsDto) {
+export function logUserLoginIns(params: logUserLoginInsDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login',
     method: 'POST',
@@ -40,7 +53,7 @@ export function logUserLoginIns(params: logUserLoginInsDto) {
   })
 }
 
-export function logUserLoginUpd(params: logUserLoginUpdDto) {
+export function logUserLoginUpd(params: logUserLoginUpdDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login',
     method: 'PUT',
@@ -48,7 +61,7 @@ export function logUserLoginUpd(params: logUserLoginUpdDto) {
   })
 }
 
-export function logUserLoginInss(params: logUserLoginInsDto[]) {
+export function logUserLoginInss(params: logUserLoginInsDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login/s',
     method: 'POST',
@@ -56,7 +69,7 @@ export function logUserLoginInss(params: logUserLoginInsDto[]) {
   })
 }
 
-export function logUserLoginUpds(params: logUserLoginUpdDto[]) {
+export function logUserLoginUpds(params: logUserLoginUpdDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login/s',
     method: 'PUT',
@@ -64,10 +77,76 @@ export function logUserLoginUpds(params: logUserLoginUpdDto[]) {
   })
 }
 
-export function logUserLoginDel(ids: any[]) {
+export function logUserLoginDel(ids: any[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login',
     method: 'DELETE',
     data: ids
   })
+}
+
+export const logUserLoginFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: logUserLoginSelDto) => {
+    return logUserLoginSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: logUserLoginSelAllDto) => {
+    return logUserLoginSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return logUserLoginSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return logUserLoginSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: logUserLoginInsDto) => {
+    return logUserLoginIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: logUserLoginUpdDto) => {
+    return logUserLoginUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: logUserLoginInsDto[]) => {
+    return logUserLoginInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: logUserLoginUpdDto[]) => {
+    return logUserLoginUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return logUserLoginDel(ids)
+  }
 }

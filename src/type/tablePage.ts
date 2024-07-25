@@ -47,16 +47,28 @@ export interface t_config {
   beforeUpdateOneCallback2?: Function
 }
 
-export interface t_FuncMap {
-  selectList: <T = any>(any: any) => Promise<{ list: T[], total: number }>
-  selectAll?: <T = any>(any: any) => Promise<T[]>
-  selectById: <T = any>(any: any) => Promise<T>
-  selectByIds?: <T = any>(any: any[]) => Promise<T[]>
-  insertOne: <T = any>(any: T) => Promise<any>
-  updateOne: <T = any>(any: T) => Promise<any>
-  insertMore?: <T = any>(any: T[]) => Promise<any>
-  updateMore?: <T = any>(any: T[]) => Promise<any>
-  deleteList: (...any: any[]) => Promise<any>
+export type t_funcMap_selList_ret<T = any> = Promise<{ list: T[], total: number }>
+export type t_funcMap_selMore_ret<T = any> = Promise<T[]>
+export type t_funcMap_selOne_ret<T = any> = Promise<T>
+export type t_funcMap_iud_ret = Promise<any>
+export type t_funcMap_selList<T = any, T2 = any> = (any: T) => t_funcMap_selList_ret<T2>
+export type t_funcMap_selAll<T = any, T2 = any> = (any: T) => t_funcMap_selMore_ret<T2>
+export type t_funcMap_selById<T = any> = (any: any) => t_funcMap_selOne_ret<T>
+export type t_funcMap_selByIds<T = any> = (any: any[]) => t_funcMap_selMore_ret<T>
+export type t_funcMap_updOne<T = any> = (any: T) => t_funcMap_iud_ret
+export type t_funcMap_updMore<T = any> = (any: T[]) => t_funcMap_iud_ret
+export type t_funcMap_del = (...any: any[]) => t_funcMap_iud_ret
+
+export interface t_funcMap {
+  selectList: t_funcMap_selList
+  selectAll: t_funcMap_selAll
+  selectById: t_funcMap_selById
+  selectByIds: t_funcMap_selByIds
+  insertOne: t_funcMap_updOne
+  updateOne: t_funcMap_updOne
+  insertMore: t_funcMap_updMore
+  updateMore: t_funcMap_updMore
+  deleteList: t_funcMap_del
 }
 
 export interface t_funcTablePage_params {
@@ -71,7 +83,7 @@ export interface t_funcTablePage_params {
   tableLoadingRef: Ref<boolean>
   switchLoadingRef: Ref<boolean>
   activeTabName?: Ref<ONE | MORE>
-  func: t_FuncMap
+  func: t_funcMap
   props?: any
   exportIgnoreKeys?: string[]
 }

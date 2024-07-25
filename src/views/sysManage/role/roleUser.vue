@@ -54,7 +54,7 @@ const allUsers = ref([])
 const filterFormRef = ref<any>(null)
 const table1LoadingRef = ref(false)
 // 此角色的用户
-const usersOfThisRole = ref([])
+const usersOfThisRole = ref<userDto[]>([])
 // 此角色的用户角色对
 const userRolesOfThisRole = ref<userRoleDto[]>([])
 // 分页查询当前部分用户

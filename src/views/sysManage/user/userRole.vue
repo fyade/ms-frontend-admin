@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { inject, nextTick, reactive, Ref, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import { ElTable, FormRules } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/sysManage/role.ts";
-import {
-  roleSel,
-  roleSelById,
-  roleSelByIds,
-  roleSelAll,
-  roleIns,
-  roleUpd,
-  roleInss,
-  roleUpds,
-  roleDel,
-} from "@/api/module/sysManage/role.ts"
+import { roleFunc, } from "@/api/module/sysManage/role.ts"
 
 const props = defineProps({
   user: {
@@ -132,72 +122,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return roleSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return roleSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return roleSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return roleSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return roleIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return roleUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return roleInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return roleUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return roleDel(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -229,7 +153,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: roleFunc
 })
 
 const selectRole: Ref<any[]> | undefined = inject('changeSelectRole')

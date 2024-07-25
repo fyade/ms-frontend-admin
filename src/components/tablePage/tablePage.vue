@@ -3,7 +3,7 @@
 <!--import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"-->
 <!--import Pagination from "@/components/pagination/pagination.vue"-->
 <!--import { funcTablePage } from "@/composition/tablePage/tablePage.js"-->
-<!--import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";-->
+<!--import { State, t_config, t_funcMap } from "@/type/tablePage.ts";-->
 <!--import type { FormRules } from 'element-plus'-->
 <!--import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue";-->
 <!--import { MORE, ONE } from "@/type/utils/base.ts";-->
@@ -93,7 +93,7 @@
 <!--  }-->
 <!--})-->
 
-<!--const func: t_FuncMap = {-->
+<!--const func: t_funcMap = {-->
 <!--  /**-->
 <!--   * 查询列表-->
 <!--   * @param params-->

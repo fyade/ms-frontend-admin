@@ -54,7 +54,7 @@ const allUsers = ref([])
 const filterFormRef = ref<any>(null)
 const table1LoadingRef = ref(false)
 // 此部门的用户
-const usersOfThisDept = ref([])
+const usersOfThisDept = ref<userDto[]>([])
 // 此部门的用户部门对
 const userDeptsOfThisDept = ref<userDeptDto[]>([])
 // 分页查询当前部分用户

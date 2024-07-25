@@ -9,12 +9,12 @@ import { provide, reactive, Ref, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts";
+import { t_config } from "@/type/tablePage.ts";
 import { ElMessage, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";
-import { newUser, resetUserPsd, userSelList } from "@/api/module/sysManage/user.ts";
+import { resetUserPsd, userFunc } from "@/api/module/sysManage/user.ts";
 import UserRole from "./userRole.vue";
-import { userDto, userDto2 } from "@/type/api/sysManage/user.ts";
+import { userDto2 } from "@/type/api/sysManage/user.ts";
 import { userRoleUpdUR } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { fileBaseUrl } from "@/api/request.ts";
@@ -114,53 +114,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 查询列表
-   * @param params
-   */
-  selectList: (params: any) => {
-    return userSelList(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    // return func(id)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return newUser(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    // return func(obj)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    // return func(...ids)
-    return new Promise((resolve, reject) => {
-      reject()
-    })
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -186,7 +139,7 @@ const {
   dialogLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
-  func
+  func: userFunc
 })
 
 // 重置密码

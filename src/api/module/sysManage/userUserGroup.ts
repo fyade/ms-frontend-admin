@@ -1,12 +1,20 @@
 import request from "@/api/request.ts";
 import {
-  userUserGroupSelAllDto,
+  userUserGroupDto,
   userUserGroupSelDto,
-  userUserGroupUpdUGUDtp,
-  userUserGroupUpdUUGDtp
+  userUserGroupSelAllDto,
+  userUserGroupInsDto,
+  userUserGroupUpdDto, userUserGroupUpdUUGDtp, userUserGroupUpdUGUDtp
 } from "@/type/api/sysManage/userUserGroup.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function userUserGroupSel(params: userUserGroupSelDto) {
+export function userUserGroupSel(params: userUserGroupSelDto): t_funcMap_selList_ret<userUserGroupDto> {
   return request({
     url: '/sys-manage/user-user-group',
     method: 'GET',
@@ -14,7 +22,7 @@ export function userUserGroupSel(params: userUserGroupSelDto) {
   })
 }
 
-export function userUserGroupSelAll(params: userUserGroupSelAllDto) {
+export function userUserGroupSelAll(params: userUserGroupSelAllDto): t_funcMap_selMore_ret<userUserGroupDto> {
   return request({
     url: '/sys-manage/user-user-group/all',
     method: 'GET',
@@ -22,18 +30,58 @@ export function userUserGroupSelAll(params: userUserGroupSelAllDto) {
   })
 }
 
-export function userUserGroupSelById(id: number) {
+export function userUserGroupSelById(id: number): t_funcMap_selOne_ret<userUserGroupDto> {
   return request({
     url: `/sys-manage/user-user-group/${id}`,
     method: 'GET'
   })
 }
 
-export function userUserGroupSelByIds(ids: any[]) {
+export function userUserGroupSelByIds(ids: any[]): t_funcMap_selMore_ret<userUserGroupDto> {
   return request({
     url: `/sys-manage/user-user-group/ids`,
     method: 'GET',
     params: ids
+  })
+}
+
+export function userUserGroupIns(params: userUserGroupInsDto): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-user-group',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function userUserGroupUpd(params: userUserGroupUpdDto): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-user-group',
+    method: 'PUT',
+    data: params
+  })
+}
+
+export function userUserGroupInss(params: userUserGroupInsDto[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-user-group/s',
+    method: 'POST',
+    data: params
+  })
+}
+
+export function userUserGroupUpds(params: userUserGroupUpdDto[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-user-group/s',
+    method: 'PUT',
+    data: params
+  })
+}
+
+export function userUserGroupDel(ids: any[]): t_funcMap_iud_ret {
+  return request({
+    url: '/sys-manage/user-user-group',
+    method: 'DELETE',
+    data: ids
   })
 }
 
@@ -53,10 +101,68 @@ export function userUserGroupUpdUGU(param: userUserGroupUpdUGUDtp) {
   })
 }
 
-export function userUserGroupDel(ids: any[]) {
-  return request({
-    url: '/sys-manage/user-user-group',
-    method: 'DELETE',
-    data: ids
-  })
+export const userUserGroupFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: userUserGroupSelDto) => {
+    return userUserGroupSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: userUserGroupSelAllDto) => {
+    return userUserGroupSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return userUserGroupSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return userUserGroupSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: userUserGroupInsDto) => {
+    return userUserGroupIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: userUserGroupUpdDto) => {
+    return userUserGroupUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: userUserGroupInsDto[]) => {
+    return userUserGroupInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: userUserGroupUpdDto[]) => {
+    return userUserGroupUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return userUserGroupDel(ids)
+  }
 }

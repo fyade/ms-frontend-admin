@@ -12,6 +12,9 @@ export class rolePermissionDto extends baseClass {
 export class rolePermissionSelDto extends pageDto {
 }
 
+export class rolePermissionSelAllDto {
+}
+
 export class rolePermissionInsDto {
   roleId!: number;
   permissionId!: number[];

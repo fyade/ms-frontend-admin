@@ -9,47 +9,17 @@ import { reactive, ref, toRaw, watch } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
+import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
-import {
-  userGroupSel,
-  userGroupSelById,
-  userGroupSelByIds,
-  userGroupSelAll,
-  userGroupIns,
-  userGroupUpd,
-  userGroupInss,
-  userGroupUpds,
-  userGroupDel,
-} from "@/api/module/sysManage/userGroup.ts"
+import { userGroupFunc } from "@/api/module/sysManage/userGroup.ts"
 import { interfaceGroupDto } from "@/type/api/sysManage/interfaceGroup.ts";
-import {
-  interfaceGroupSel,
-  interfaceGroupSelById,
-  interfaceGroupSelByIds,
-  interfaceGroupSelAll,
-  interfaceGroupIns,
-  interfaceGroupUpd,
-  interfaceGroupInss,
-  interfaceGroupUpds,
-  interfaceGroupDel,
-} from "@/api/module/sysManage/interfaceGroup.ts"
+import { interfaceGroupFunc } from "@/api/module/sysManage/interfaceGroup.ts"
 import Divider from "@/views/sysManage/interfacePermission/divider.vue";
 import { userGroupPermissionDto } from "@/type/api/sysManage/userGroupPermission.ts";
-import {
-  userGroupPermissionSel,
-  userGroupPermissionSelById,
-  userGroupPermissionSelByIds,
-  userGroupPermissionSelAll,
-  userGroupPermissionIns,
-  userGroupPermissionUpd,
-  userGroupPermissionInss,
-  userGroupPermissionUpds,
-  userGroupPermissionDel,
-} from "@/api/module/sysManage/userGroupPermission.ts"
+import { userGroupPermissionFunc } from "@/api/module/sysManage/userGroupPermission.ts"
 import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const userGroupState = reactive<State<userGroupDto>>({
@@ -149,72 +119,6 @@ const userGroupConfig: t_config = reactive({
   beforeUpdateOneCallback2: (res: any) => {
   }
 })
-
-const userGroupFunc: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return userGroupSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return userGroupSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return userGroupSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return userGroupSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return userGroupIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return userGroupUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return userGroupInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return userGroupUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return userGroupDel(ids)
-  }
-}
 
 const {
   refresh: userGroupRefresh,
@@ -348,72 +252,6 @@ const interfaceGroupConfig: t_config = reactive({
   beforeUpdateOneCallback2: (res: any) => {
   }
 })
-
-const interfaceGroupFunc: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return interfaceGroupSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return interfaceGroupSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return interfaceGroupSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return interfaceGroupSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return interfaceGroupIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return interfaceGroupUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return interfaceGroupInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return interfaceGroupUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return interfaceGroupDel(ids)
-  }
-}
 
 const {
   refresh: interfaceGroupRefresh,
@@ -571,72 +409,6 @@ const userGroupPermissionConfig: t_config = reactive({
   }
 })
 
-const userGroupPermissionFunc: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return userGroupPermissionSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return userGroupPermissionSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return userGroupPermissionSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return userGroupPermissionSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return userGroupPermissionIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return userGroupPermissionUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return userGroupPermissionInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return userGroupPermissionUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return userGroupPermissionDel(ids)
-  }
-}
-
 const {
   refresh: userGroupPermissionRefresh,
   dCan: userGroupPermissionDCan,
@@ -713,10 +485,10 @@ const userGroupHandleCurrentChange = (row: userGroupDto) => {
 const userGroupHandleCurrentChange2 = () => {
   rightCardLoading.value = true
   const row = userGroupHandleCurrentChangeSelectRow
-  userGroupPermissionFunc.selectAll && userGroupPermissionFunc.selectAll<userGroupPermissionDto>({userGroupId: row.id}).then(res => {
+  userGroupPermissionFunc.selectAll({userGroupId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const interfaceGroupIds = res.map(item => item.permissionId);
-    interfaceGroupFunc.selectByIds && interfaceGroupFunc.selectByIds<interfaceGroupDto>(interfaceGroupIds).then(res => {
+    interfaceGroupFunc.selectByIds(interfaceGroupIds).then(res => {
       interfaceGroupsOfThisUserGroup.value = res
       rightCardLoading.value = false
     })
@@ -783,10 +555,10 @@ const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
 const interfaceGroupHandleCurrentChange2 = () => {
   leftCardLoading.value = true
   const row = interfaceGroupHandleCurrentChangeSelectRow
-  userGroupPermissionFunc.selectAll && userGroupPermissionFunc.selectAll<userGroupPermissionDto>({permissionId: row.id}).then(res => {
+  userGroupPermissionFunc.selectAll({permissionId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const userGroupIds = res.map(item => item.userGroupId);
-    userGroupFunc.selectByIds && userGroupFunc.selectByIds<userGroupDto>(userGroupIds).then(res => {
+    userGroupFunc.selectByIds(userGroupIds).then(res => {
       userGroupsOfThisInterfaceGroup.value = res
       leftCardLoading.value = false
     })

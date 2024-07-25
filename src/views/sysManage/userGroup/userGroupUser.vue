@@ -54,7 +54,7 @@ const allUsers = ref([])
 const filterFormRef = ref<any>(null)
 const table1LoadingRef = ref(false)
 // 此用户组的用户
-const usersOfThisUserGroup = ref([])
+const usersOfThisUserGroup = ref<userDto[]>([])
 // 此用户组的用户用户组对
 const userUserGroupsOfThisUserGroup = ref<userUserGroupDto[]>([])
 // 分页查询当前部分用户

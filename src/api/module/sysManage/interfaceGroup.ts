@@ -1,7 +1,20 @@
 import request from "@/api/request.ts";
-import { interfaceGroupInsDto, interfaceGroupSelAllDto, interfaceGroupSelDto, interfaceGroupUpdDto } from "@/type/api/sysManage/interfaceGroup.ts";
+import {
+  interfaceGroupDto,
+  interfaceGroupSelDto,
+  interfaceGroupSelAllDto,
+  interfaceGroupInsDto,
+  interfaceGroupUpdDto
+} from "@/type/api/sysManage/interfaceGroup.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function interfaceGroupSel(params: interfaceGroupSelDto) {
+export function interfaceGroupSel(params: interfaceGroupSelDto): t_funcMap_selList_ret<interfaceGroupDto> {
   return request({
     url: '/sys-manage/interface-group',
     method: 'GET',
@@ -9,7 +22,7 @@ export function interfaceGroupSel(params: interfaceGroupSelDto) {
   })
 }
 
-export function interfaceGroupSelAll(params: interfaceGroupSelAllDto) {
+export function interfaceGroupSelAll(params: interfaceGroupSelAllDto): t_funcMap_selMore_ret<interfaceGroupDto> {
   return request({
     url: '/sys-manage/interface-group/all',
     method: 'GET',
@@ -17,14 +30,14 @@ export function interfaceGroupSelAll(params: interfaceGroupSelAllDto) {
   })
 }
 
-export function interfaceGroupSelById(id: number) {
+export function interfaceGroupSelById(id: number): t_funcMap_selOne_ret<interfaceGroupDto> {
   return request({
     url: `/sys-manage/interface-group/${id}`,
     method: 'GET'
   })
 }
 
-export function interfaceGroupSelByIds(ids: any[]) {
+export function interfaceGroupSelByIds(ids: any[]): t_funcMap_selMore_ret<interfaceGroupDto> {
   return request({
     url: `/sys-manage/interface-group/ids`,
     method: 'GET',
@@ -32,7 +45,7 @@ export function interfaceGroupSelByIds(ids: any[]) {
   })
 }
 
-export function interfaceGroupIns(params: interfaceGroupInsDto) {
+export function interfaceGroupIns(params: interfaceGroupInsDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-group',
     method: 'POST',
@@ -40,7 +53,7 @@ export function interfaceGroupIns(params: interfaceGroupInsDto) {
   })
 }
 
-export function interfaceGroupUpd(params: interfaceGroupUpdDto) {
+export function interfaceGroupUpd(params: interfaceGroupUpdDto): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-group',
     method: 'PUT',
@@ -48,7 +61,7 @@ export function interfaceGroupUpd(params: interfaceGroupUpdDto) {
   })
 }
 
-export function interfaceGroupInss(params: interfaceGroupInsDto[]) {
+export function interfaceGroupInss(params: interfaceGroupInsDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-group/s',
     method: 'POST',
@@ -56,7 +69,7 @@ export function interfaceGroupInss(params: interfaceGroupInsDto[]) {
   })
 }
 
-export function interfaceGroupUpds(params: interfaceGroupUpdDto[]) {
+export function interfaceGroupUpds(params: interfaceGroupUpdDto[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-group/s',
     method: 'PUT',
@@ -64,10 +77,76 @@ export function interfaceGroupUpds(params: interfaceGroupUpdDto[]) {
   })
 }
 
-export function interfaceGroupDel(ids: any[]) {
+export function interfaceGroupDel(ids: any[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-group',
     method: 'DELETE',
     data: ids
   })
+}
+
+export const interfaceGroupFunc: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: interfaceGroupSelDto) => {
+    return interfaceGroupSel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: interfaceGroupSelAllDto) => {
+    return interfaceGroupSelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return interfaceGroupSelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return interfaceGroupSelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: interfaceGroupInsDto) => {
+    return interfaceGroupIns(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: interfaceGroupUpdDto) => {
+    return interfaceGroupUpd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: interfaceGroupInsDto[]) => {
+    return interfaceGroupInss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: interfaceGroupUpdDto[]) => {
+    return interfaceGroupUpds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return interfaceGroupDel(ids)
+  }
 }
