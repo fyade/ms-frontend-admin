@@ -162,7 +162,7 @@ export function resetUserPsd(params: any) {
   })
 }
 
-export const userFunc: t_funcMap = {
+export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto, userUpdDto> = {
   /**
    * 分页查询
    * @param params

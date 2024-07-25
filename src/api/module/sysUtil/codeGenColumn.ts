@@ -85,7 +85,7 @@ export function codeGenColumnDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const codeGenColumnFunc: t_funcMap = {
+export const codeGenColumnFunc: t_funcMap<codeGenColumnDto, codeGenColumnSelDto, codeGenColumnSelAllDto, codeGenColumnInsDto, codeGenColumnUpdDto> = {
   /**
    * 分页查询
    * @param params

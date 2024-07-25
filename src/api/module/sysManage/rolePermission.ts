@@ -85,7 +85,7 @@ export function rolePermissionDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const rolePermissionFunc: t_funcMap = {
+export const rolePermissionFunc: t_funcMap<rolePermissionDto, rolePermissionSelDto, rolePermissionSelAllDto, rolePermissionInsDto, rolePermissionUpdDto> = {
   /**
    * 分页查询
    * @param params

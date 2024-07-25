@@ -93,7 +93,7 @@ export function deptPermissionUpdDP(data: updManyDPDto) {
   })
 }
 
-export const deptPermissionFunc: t_funcMap = {
+export const deptPermissionFunc: t_funcMap<deptPermissionDto, deptPermissionSelDto, deptPermissionSelAllDto, deptPermissionInsDto, deptPermissionUpdDto> = {
   /**
    * 分页查询
    * @param params

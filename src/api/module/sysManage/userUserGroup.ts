@@ -101,7 +101,7 @@ export function userUserGroupUpdUGU(param: userUserGroupUpdUGUDtp) {
   })
 }
 
-export const userUserGroupFunc: t_funcMap = {
+export const userUserGroupFunc: t_funcMap<userUserGroupDto, userUserGroupSelDto, userUserGroupSelAllDto, userUserGroupInsDto, userUserGroupUpdDto> = {
   /**
    * 分页查询
    * @param params

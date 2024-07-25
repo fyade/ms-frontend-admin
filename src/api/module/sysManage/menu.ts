@@ -85,7 +85,7 @@ export function menuDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const menuFunc: t_funcMap = {
+export const menuFunc: t_funcMap<menuDto, menuSelDto, menuSelAllDto, menuInsDto, menuUpdDto> = {
   /**
    * 分页查询
    * @param params

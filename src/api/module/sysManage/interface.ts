@@ -85,7 +85,7 @@ export function interfaceDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const interfaceFunc: t_funcMap = {
+export const interfaceFunc: t_funcMap<interfaceDto, interfaceSelDto, interfaceSelAllDto, interfaceInsDto, interfaceUpdDto> = {
   /**
    * 分页查询
    * @param params

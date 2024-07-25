@@ -101,7 +101,7 @@ export function userDeptUpdDU(params: userDeptUpdDUDto) {
   })
 }
 
-export const userDeptFunc: t_funcMap = {
+export const userDeptFunc: t_funcMap<userDeptDto, userDeptSelDto, userDeptSelAllDto, userDeptInsDto, userDeptUpdDto> = {
   /**
    * 分页查询
    * @param params

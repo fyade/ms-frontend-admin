@@ -101,7 +101,7 @@ export function interfaceInterfaceGroupUpdIGI(params: interfaceInterfaceGroupUpd
   })
 }
 
-export const interfaceInterfaceGroupFunc: t_funcMap = {
+export const interfaceInterfaceGroupFunc: t_funcMap<interfaceInterfaceGroupDto, interfaceInterfaceGroupSelDto, interfaceInterfaceGroupSelAllDto, interfaceInterfaceGroupInsDto, interfaceInterfaceGroupUpdDto> = {
   /**
    * 分页查询
    * @param params

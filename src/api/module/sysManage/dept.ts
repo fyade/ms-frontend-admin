@@ -85,7 +85,7 @@ export function deptDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const deptFunc: t_funcMap = {
+export const deptFunc: t_funcMap<deptDto, deptSelDto, deptSelAllDto, deptInsDto, deptUpdDto> = {
   /**
    * 分页查询
    * @param params

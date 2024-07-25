@@ -85,7 +85,7 @@ export function dicDataDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const dicDataFunc: t_funcMap = {
+export const dicDataFunc: t_funcMap<dicDataDto, dicDataSelDto, dicDataSelAllDto, dicDataInsDto, dicDataUpdDto> = {
   /**
    * 分页查询
    * @param params

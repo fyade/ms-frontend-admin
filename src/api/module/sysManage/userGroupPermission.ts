@@ -93,7 +93,7 @@ export function userGroupPermissionDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const userGroupPermissionFunc: t_funcMap = {
+export const userGroupPermissionFunc: t_funcMap<userGroupPermissionDto, userGroupPermissionSelDto, userGroupPermissionSelAllDto, userGroupPermissionInsDto, userGroupPermissionUpdDto> = {
   /**
    * 分页查询
    * @param params

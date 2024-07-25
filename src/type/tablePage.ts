@@ -59,15 +59,15 @@ export type t_funcMap_updOne<T = any> = (any: T) => t_funcMap_iud_ret
 export type t_funcMap_updMore<T = any> = (any: T[]) => t_funcMap_iud_ret
 export type t_funcMap_del = (...any: any[]) => t_funcMap_iud_ret
 
-export interface t_funcMap {
-  selectList: t_funcMap_selList
-  selectAll: t_funcMap_selAll
-  selectById: t_funcMap_selById
-  selectByIds: t_funcMap_selByIds
-  insertOne: t_funcMap_updOne
-  updateOne: t_funcMap_updOne
-  insertMore: t_funcMap_updMore
-  updateMore: t_funcMap_updMore
+export interface t_funcMap<T = any, T2 = any, T3 = any, T4 = any, T5 = any> {
+  selectList: t_funcMap_selList<T2, T>
+  selectAll: t_funcMap_selAll<T3, T>
+  selectById: t_funcMap_selById<T>
+  selectByIds: t_funcMap_selByIds<T>
+  insertOne: t_funcMap_updOne<T4>
+  updateOne: t_funcMap_updOne<T5>
+  insertMore: t_funcMap_updMore<T4>
+  updateMore: t_funcMap_updMore<T5>
   deleteList: t_funcMap_del
 }
 

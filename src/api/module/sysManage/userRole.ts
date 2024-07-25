@@ -101,7 +101,7 @@ export function userRoleUpdRU(params: userRoleUpdRUDto) {
   })
 }
 
-export const userRoleFunc: t_funcMap = {
+export const userRoleFunc: t_funcMap<userRoleDto, userRoleSelDto, userRoleSelAllDto, userRoleInsDto, userRoleUpdDto> = {
   /**
    * 分页查询
    * @param params

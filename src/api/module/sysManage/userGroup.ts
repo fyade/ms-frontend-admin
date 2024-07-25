@@ -85,7 +85,7 @@ export function userGroupDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const userGroupFunc: t_funcMap = {
+export const userGroupFunc: t_funcMap<userGroupDto, userGroupSelDto, userGroupSelAllDto, userGroupInsDto, userGroupUpdDto> = {
   /**
    * 分页查询
    * @param params

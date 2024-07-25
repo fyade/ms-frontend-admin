@@ -85,7 +85,7 @@ export function logUserLoginDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const logUserLoginFunc: t_funcMap = {
+export const logUserLoginFunc: t_funcMap<logUserLoginDto, logUserLoginSelDto, logUserLoginSelAllDto, logUserLoginInsDto, logUserLoginUpdDto> = {
   /**
    * 分页查询
    * @param params

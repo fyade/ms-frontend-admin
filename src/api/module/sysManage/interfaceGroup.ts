@@ -85,7 +85,7 @@ export function interfaceGroupDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const interfaceGroupFunc: t_funcMap = {
+export const interfaceGroupFunc: t_funcMap<interfaceGroupDto, interfaceGroupSelDto, interfaceGroupSelAllDto, interfaceGroupInsDto, interfaceGroupUpdDto> = {
   /**
    * 分页查询
    * @param params
