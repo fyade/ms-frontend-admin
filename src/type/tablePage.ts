@@ -11,8 +11,8 @@ export interface State<T = object, T2 = T> {
     value: string
     label: string
   }
-  dialogForm: T
-  dialogForms?: T[]
+  dialogForm: T2
+  dialogForms?: T2[]
   dialogForms_error?: dialogForms_error
   dFormRules: FormRules
   dict: {
@@ -21,8 +21,8 @@ export interface State<T = object, T2 = T> {
   filterForm: {
     [P in keyof T]?: string
   }
-  list: T2[]
-  multipleSelection: T2[]
+  list: T[]
+  multipleSelection: T[]
   total: number
   pageParam: {
     pageNum: number
