@@ -1,7 +1,7 @@
 import { nextTick, onMounted, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { EXPORT_IGNORE_KEYS, final, finalIU, Operate } from "@/utils/base.ts"
-import { t_funcTablePage_params } from "@/type/tablePage.ts";
+import { t_config, t_funcTablePage_params } from "@/type/tablePage.ts";
 import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
@@ -22,8 +22,11 @@ export const funcTablePage = <T = { [key: string]: string }>({
                                                                props,
                                                                exportIgnoreKeys = EXPORT_IGNORE_KEYS
                                                              }: t_funcTablePage_params) => {
-  const initialStateDialogForm = structuredClone(toRaw(state.dialogForm))
+  const initialStateDialogForm = structuredClone(toRaw(state.dialogForm));
   const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
+  const ifHasConfig = (key: keyof t_config, value: any) => {
+    return Object.keys(config).includes(key) && config[key] === value
+  }
 
   const ifRequired = (key: string) => state.dFormRules[key] && (state.dFormRules[key] as any[]).some((item: any) => item.required)
 
@@ -33,9 +36,9 @@ export const funcTablePage = <T = { [key: string]: string }>({
   const getData = () => {
     tableLoadingRef.value = true
     state.list = []
-    const ifByPage = !Object.keys(config).includes('pageQuery') || config?.pageQuery !== false;
+    const ifByPage = !ifHasConfig('pageQuery', false)
     const funcOfSelect = (!ifByPage && func.selectAll) ? func.selectAll : func.selectList
-    const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...config?.selectParam} : {...state.filterForm, ...config?.selectParam}
+    const obj = ifByPage ? {...state.pageParam, ...state.filterForm, ...(config.selectParam || {})} : {...state.filterForm, ...(config.selectParam || {})}
     funcOfSelect(obj).then((res: any) => {
       if (ifByPage) {
         state.list = res.list
@@ -141,11 +144,11 @@ export const funcTablePage = <T = { [key: string]: string }>({
   }
 
   onMounted(() => {
-    if (config?.getDataOnMounted !== false) {
+    if (!ifHasConfig('getDataOnMounted', false)) {
       getData()
     }
   })
-  if (config?.watchDialogVisible !== false) {
+  if (!ifHasConfig('watchDialogVisible', false)) {
     watch(dialogVisible, (newVal) => {
       nextTick(() => {
         if (newVal) {
@@ -258,7 +261,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
     // if (state.multipleSelection.length !== 1) {
     //   return ElMessage.warning('请选择 1 条数据。')
     // }
-    await tUpd(state.multipleSelection[0].id, config.bulkOperation && state.multipleSelection.length > 1)
+    await tUpd(state.multipleSelection[0].id, !!config.bulkOperation && state.multipleSelection.length > 1)
   }
   // 删除
   const gDel = ({

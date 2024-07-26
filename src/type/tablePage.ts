@@ -31,19 +31,49 @@ export interface State<T = object, T2 = T> {
 }
 
 export interface t_config {
-  selectParam: object
+  /**
+   * 补充的查询参数
+   */
+  selectParam?: object
+  /**
+   * 页面加载时获取数据，默认true
+   */
   getDataOnMounted?: boolean
-  pageQuery: boolean
-  watchDialogVisible: boolean
+  /**
+   * 分页，默认true
+   */
+  pageQuery?: boolean
+  /**
+   * 监听dialogVisible变化，默认true
+   */
+  watchDialogVisible?: boolean
+  /**
+   * dialogVisible变化时的回调，可不传
+   * @param visible 变化后的值
+   */
   dialogVisibleCallback?: Function
+  /**
+   * selectList回调，可不传
+   */
   selectListCallback?: Function
+  /**
+   * 弹出表单是否支持批量操作，默认false
+   */
   bulkOperation?: boolean
   one2More?: boolean
   one2MoreConfig?: {
     oneKey: string
     moreKey: string
   }
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为true时调这个
+   * @param res
+   */
   beforeUpdateOneCallback1?: Function
+  /**
+   * 修改单个前的查询的回调，可不传，one2More为false时调这个
+   * @param res
+   */
   beforeUpdateOneCallback2?: Function
 }
 

@@ -92,32 +92,7 @@ const userGroupTableLoadingRef = ref(false)
 const userGroupSwitchLoadingRef = ref(false)
 const userGroupActiveTabName = ref<ONE | MORE>(final.one)
 const userGroupConfig: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
-  getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
-  watchDialogVisible: true, // 监听dialogVisible变化，默认true
-  /**
-   * dialogVisible变化时的回调，可不传
-   * @param visible 变化后的值
-   */
-  dialogVisibleCallback: (visible: boolean) => {
-  },
-  /**
-   * selectList回调，可不传
-   */
-  selectListCallback: () => {
-  },
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为true时调这个
-   */
-  beforeUpdateOneCallback1: (res: any[]) => {
-  },
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为false时调这个
-   */
-  beforeUpdateOneCallback2: (res: any) => {
-  }
 })
 
 const {
@@ -225,32 +200,7 @@ const interfaceGroupTableLoadingRef = ref(false)
 const interfaceGroupSwitchLoadingRef = ref(false)
 const interfaceGroupActiveTabName = ref<ONE | MORE>(final.one)
 const interfaceGroupConfig: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
-  getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
-  watchDialogVisible: true, // 监听dialogVisible变化，默认true
-  /**
-   * dialogVisible变化时的回调，可不传
-   * @param visible 变化后的值
-   */
-  dialogVisibleCallback: (visible: boolean) => {
-  },
-  /**
-   * selectList回调，可不传
-   */
-  selectListCallback: () => {
-  },
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为true时调这个
-   */
-  beforeUpdateOneCallback1: (res: any[]) => {
-  },
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为false时调这个
-   */
-  beforeUpdateOneCallback2: (res: any) => {
-  }
 })
 
 const {
@@ -375,16 +325,8 @@ const userGroupPermissionTableLoadingRef = ref(false)
 const userGroupPermissionSwitchLoadingRef = ref(false)
 const userGroupPermissionActiveTabName = ref<ONE | MORE>(final.one)
 const userGroupPermissionConfig: t_config = reactive({
-  selectParam: {}, // 查询参数（补充
   getDataOnMounted: false, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
-  watchDialogVisible: true, // 监听dialogVisible变化，默认true
-  /**
-   * dialogVisible变化时的回调，可不传
-   * @param visible 变化后的值
-   */
-  dialogVisibleCallback: (visible: boolean) => {
-  },
   /**
    * selectList回调，可不传
    */
@@ -397,16 +339,6 @@ const userGroupPermissionConfig: t_config = reactive({
     }
   },
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为true时调这个
-   */
-  beforeUpdateOneCallback1: (res: any[]) => {
-  },
-  /**
-   * 修改单个前的查询的回调，可不传，one2More为false时调这个
-   */
-  beforeUpdateOneCallback2: (res: any) => {
-  }
 })
 
 const {

@@ -101,17 +101,6 @@ const config: t_config = reactive({
   selectParam: {
     ifWithRole: final.Y
   }, // 查询参数（补充
-  getDataOnMounted: true, // 页面加载时获取数据，默认true
-  pageQuery: true, // 分页，默认true
-  watchDialogVisible: true, // 监听dialogVisible变化，默认true
-  /**
-   * dialogVisible变化时的回调函数，可不传
-   * @param visible 变化后的值
-   */
-  dialogVisibleCallback: (visible: boolean) => {
-  },
-  selectListCallback: () => {
-  }
 })
 
 const {
