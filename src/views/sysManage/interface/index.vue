@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { provide, reactive, Ref, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -15,6 +15,12 @@ import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/ico
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { interfaceDto } from "@/type/api/sysManage/interface.ts";
 import { interfaceFunc } from "@/api/module/sysManage/interface.ts"
+import InterfaceInterfaceGroup from "@/views/sysManage/interface/interfaceInterfaceGroup.vue";
+import {
+  interfaceInterfaceGroupSelAll,
+  interfaceInterfaceGroupUpdIIG
+} from "@/api/module/sysManage/interfaceInterfaceGroup.ts";
+import { interfaceInterfaceGroupDto } from "@/type/api/sysManage/interfaceInterfaceGroup.ts";
 
 const state = reactive<State<interfaceDto>>({
   dialogType: {
@@ -133,9 +139,63 @@ const {
   activeTabName,
   func: interfaceFunc
 })
+
+const selectInterface = ref<interfaceDto>({
+  id: -1,
+  label: '',
+  icon: '',
+  orderNum: -1,
+  ifDisabled: '',
+  ifPublic: '',
+  perms: '',
+  remark: '',
+})
+const drawer2 = ref(false)
+const selectInterfaceGroups = ref<interfaceInterfaceGroupDto[]>([])
+const manageInterfaceGroup = (row: any) => {
+  selectInterface.value = row
+  interfaceInterfaceGroupSelAll({interfaceId: selectInterface.value.id}).then(res => {
+    selectInterfaceGroups.value = res
+    drawer2.value = true
+  })
+}
+const drawerConfirmInterfaceInterfaceGroup = () => {
+  const param = {
+    interfaceId: selectInterface.value.id,
+    interfaceGroupId: selectInterfaceGroups.value.map(item=>item.id)
+  }
+  interfaceInterfaceGroupUpdIIG(param).then(res => {
+    if (res) {
+      drawer2.value = false
+      gRefresh()
+    }
+  })
+}
+const drawerCancelInterfaceInterfaceGroup = () => {
+  drawer2.value = false
+}
+provide('changeSelectInterfaceGroup', selectInterfaceGroups)
 </script>
 
 <template>
+  <!--接口接口组-->
+  <el-dialog
+      v-model="drawer2"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="分配接口组"
+  >
+    <InterfaceInterfaceGroup
+        :interface="selectInterface"
+    />
+    <template #footer>
+      <el-button plain @click="drawerCancelInterfaceInterfaceGroup">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmInterfaceInterfaceGroup">提交</el-button>
+    </template>
+  </el-dialog>
+
   <!--弹框-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
@@ -430,7 +490,7 @@ const {
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="primary" size="small">分配接口组</el-button>
+        <el-button link type="primary" size="small" @click="manageInterfaceGroup(row)">分配接口组</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>

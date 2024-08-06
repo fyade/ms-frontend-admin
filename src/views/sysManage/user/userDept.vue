@@ -9,10 +9,11 @@ import { MORE, ONE } from "@/type/utils/base.ts"
 import { deptDto } from "@/type/api/sysManage/dept.ts";
 import { deptFunc, } from "@/api/module/sysManage/dept.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { userDto2 } from "@/type/api/sysManage/user.ts";
 
 const props = defineProps({
   user: {
-    type: Object,
+    type: userDto2,
     required: true
   }
 });

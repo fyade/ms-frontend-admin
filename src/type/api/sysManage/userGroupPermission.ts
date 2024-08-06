@@ -13,6 +13,7 @@ export class userGroupPermissionDto extends baseClass {
   permissionTime?: any;
   limitRequestTimes!: number;
   ifUseUp!: string;
+  orderNum!: number;
   remark!: string;
 }
 
@@ -33,6 +34,7 @@ export class userGroupPermissionInsDto {
   permissionTime?: string;
   limitRequestTimes!: number;
   ifUseUp!: string;
+  orderNum!: number;
   remark!: string;
 }
 

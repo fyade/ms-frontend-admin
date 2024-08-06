@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
-import { final, PAGINATION, publicDict } from "@/utils/base.ts"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
-import { Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
-import { menuDto } from "@/type/api/sysManage/menu.ts";
+import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue";
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage.js";
+import { State, t_config } from "@/type/tablePage.ts";
+import type { FormRules } from 'element-plus';
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { MORE, ONE } from "@/type/utils/base.ts";
+import { interfaceGroupDto, interfaceGroupUpdDto } from "@/type/api/sysManage/interfaceGroup.ts";
+import { interfaceGroupFunc } from "@/api/module/sysManage/interfaceGroup.ts";
+import { interfaceDto } from "@/type/api/sysManage/interface.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { menuFunc } from "@/api/module/sysManage/menu.ts";
+import { interfaceInterfaceGroupDto } from "@/type/api/sysManage/interfaceInterfaceGroup.ts";
 
 const props = defineProps({
-  selectDept: {
-    type: Object,
+  interface: {
+    type: interfaceDto,
     required: true
   }
-})
+});
 
-const state = reactive<State<menuDto<string>>>({
+const state = reactive<State<interfaceGroupDto, interfaceGroupUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -32,17 +35,8 @@ const state = reactive<State<menuDto<string>>>({
   dialogForm: {
     id: -1,
     label: '',
-    type: '',
-    path: '',
     parentId: final.DEFAULT_PARENT_ID,
-    component: '',
-    icon: '',
     orderNum: final.DEFAULT_ORDER_NUM,
-    ifLink: '',
-    ifVisible: '',
-    ifDisabled: final.N,
-    ifPublic: '',
-    perms: '',
     remark: '',
   },
   dialogForms: [],
@@ -54,17 +48,8 @@ const state = reactive<State<menuDto<string>>>({
   // }
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
-    type: [{required: true, trigger: 'change'}],
-    path: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
-    component: [{required: true, trigger: 'change'}],
-    icon: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
-    ifLink: [{required: true, trigger: 'change'}],
-    ifVisible: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-    ifPublic: [{required: true, trigger: 'change'}],
-    perms: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -74,16 +59,8 @@ const state = reactive<State<menuDto<string>>>({
   // }
   dict: {
     ...publicDict,
-    label: '菜单名',
-    type: '菜单类型',
-    path: '菜单路径',
-    parentId: '父级菜单',
-    component: '组件路径',
-    icon: '图标',
-    ifLink: '是否外链',
-    ifVisible: '是否显示',
-    ifPublic: '是否公共接口',
-    perms: '权限标识',
+    label: '接口组名',
+    parentId: '父级接口组',
   },
   // 筛选表单
   // 格式: {
@@ -111,7 +88,6 @@ const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
 const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
-  pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
 
@@ -147,21 +123,21 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func: menuFunc
+  func: interfaceGroupFunc
 })
 
-const selectPermissionTree = ref<any>(null)
+const selectInterfaceGroupTree = ref<any>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
-const selectPermission: Ref<any[]> | undefined = inject('changeSelectPermission')
-const selectPermission2 = ref<any[]>(selectPermission ? selectPermission.value.map(item => item.permissionId) : [])
+const selectInterfaceGroup: Ref<any[]> | undefined = inject('changeSelectInterfaceGroup')
+const selectInterfaceGroup2 = ref<any[]>(selectInterfaceGroup ? selectInterfaceGroup.value.map(item=>item.interfaceGroupId) : [])
 nextTick(() => {
-  if (selectPermissionTree) {
-    selectPermissionTree.value?.setCheckedKeys(selectPermission2.value)
+  if (selectInterfaceGroupTree) {
+    selectInterfaceGroupTree.value?.setCheckedKeys(selectInterfaceGroup2.value)
   }
 })
-watch(selectPermission2, () => {
-  if (selectPermission) {
-    selectPermission.value = state.list.filter((item: any) => selectPermission2.value.indexOf(item.id) > -1)
+watch(selectInterfaceGroup2, () => {
+  if (selectInterfaceGroup) {
+    selectInterfaceGroup.value = state.list.filter((item: any) => selectInterfaceGroup2.value.indexOf(item.id) > -1)
   }
 }, {
   deep: true
@@ -173,36 +149,43 @@ const handleCheckChange = (
     indeterminate: boolean
 ) => {
   if (checked) {
-    selectPermission2.value.push(data.id)
+    selectInterfaceGroup2.value.push(data.id)
   } else {
-    if (selectPermission) {
-      selectPermission2.value.splice(selectPermission2.value.indexOf(data.id), 1)
+    if (selectInterfaceGroup) {
+      selectInterfaceGroup2.value.splice(selectInterfaceGroup2.value.indexOf(data.id), 1)
     }
   }
 }
 </script>
 
 <template>
+  <!--接口信息-->
   <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">部门信息</el-text>
+    <el-text size="large" style="font-weight: bold;">接口信息</el-text>
   </el-divider>
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="部门id">
-          <el-input disabled v-model="props.selectDept.id"></el-input>
+        <el-form-item label="接口id">
+          <el-input disabled v-model="props.interface.id"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="部门名">
-          <el-input disabled v-model="props.selectDept.label"></el-input>
+        <el-form-item label="接口名">
+          <el-input disabled v-model="props.interface.label"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="接口权限标识">
+          <el-input disabled v-model="props.interface.perms"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
 
+  <!--接口组列表-->
   <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">权限列表</el-text>
+    <el-text size="large" style="font-weight: bold;">接口组列表</el-text>
   </el-divider>
   <!--操作按钮-->
   <div>
@@ -211,15 +194,15 @@ const handleCheckChange = (
 
   <br/>
   <el-form>
-    <el-form-item label="权限列表">
+    <el-form-item label="接口组列表">
       <el-tree
-          ref="selectPermissionTree"
+          ref="selectInterfaceGroupTree"
           node-key="id"
           style="width: 100%;"
           :data="tableData2"
           show-checkbox
           :check-strictly="true"
-          :default-expanded-keys="selectPermission2"
+          :default-expanded-keys="selectInterfaceGroup2"
           default-expand-all
           @check-change="handleCheckChange"
       />
