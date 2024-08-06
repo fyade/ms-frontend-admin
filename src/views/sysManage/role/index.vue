@@ -285,6 +285,7 @@ provide('changeSelectPermission', selectPermission)
       :model="state.filterForm"
       :inline="true"
       @keyup.enter="fEnter"
+      @submit.prevent
   >
     <!--在此下方添加表单项-->
     <el-form-item :label="state.dict['label']" prop="label">

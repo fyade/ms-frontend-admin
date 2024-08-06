@@ -851,6 +851,7 @@ const userGroupPermissionDCon2 = () => {
               :model="userGroupState.filterForm"
               :inline="true"
               @keyup.enter="userGroupFEnter"
+              @submit.prevent
           >
             <!--在此下方添加表单项-->
             <el-form-item :label="userGroupState.dict['label']" prop="label">
@@ -934,6 +935,7 @@ const userGroupPermissionDCon2 = () => {
               :model="interfaceGroupState.filterForm"
               :inline="true"
               @keyup.enter="interfaceGroupFEnter"
+              @submit.prevent
           >
             <!--在此下方添加表单项-->
             <el-form-item :label="interfaceGroupState.dict['label']" prop="label">
