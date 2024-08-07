@@ -5,16 +5,16 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import { reactive, ref } from "vue";
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage.js";
+import { State, t_config } from "@/type/tablePage.ts";
+import type { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE } from "@/type/utils/base.ts";
 import { dicTypeDto } from "@/type/api/sysManage/dicType.ts";
-import { dicTypeFunc } from "@/api/module/sysManage/dicType.ts"
+import { dicTypeFunc } from "@/api/module/sysManage/dicType.ts";
 import DicData from "@/views/sysManage/dict/dicData.vue";
 
 const state = reactive<State<dicTypeDto>>({
@@ -267,13 +267,10 @@ const setDicData = (row: any) => {
           </el-table-column>
           <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="200">
             <template #header>
-              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{
-                  state.dict['ifDisabled']
-                }}</span>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ state.dict['ifDisabled'] }}</span>
             </template>
             <template #default="{$index}">
-              <div
-                  :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-radio-group v-model="state.dialogForms[$index]['ifDisabled']">
                   <el-radio :label="final.Y">是</el-radio>
                   <el-radio :label="final.N">否</el-radio>
@@ -297,8 +294,7 @@ const setDicData = (row: any) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"
-                          :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
               </div>
             </template>
           </el-table-column>
@@ -351,15 +347,9 @@ const setDicData = (row: any) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit"
-               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
-               @click="gUpd">修改
-    </el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
-    </el-button>
-    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">
-      导出
-    </el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>
     <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </el-space>
@@ -395,8 +385,7 @@ const setDicData = (row: any) => {
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span
-            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>

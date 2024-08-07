@@ -272,7 +272,9 @@ const deleteUserUserGroup = (userId: string) => {
       <el-table-column prop="email" :label="userDict['email']" width="120"/>
       <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
       <template #append>
+        <div class="el-table-append-box">
         <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows2.length} 条数据。` }}</span>
+        </div>
       </template>
     </el-table>
     <Pagination
@@ -324,9 +326,11 @@ const deleteUserUserGroup = (userId: string) => {
       </template>
     </el-table-column>
     <template #append>
+      <div class="el-table-append-box">
       <span>此表格的多选<span class="underline">不支持</span>{{
           `跨分页保存，当前已选 ${selectRows1.length} 条数据。`
         }}</span>
+      </div>
     </template>
   </el-table>
   <Pagination

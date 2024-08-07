@@ -1011,8 +1011,10 @@ const userGroupPermissionDCon2 = () => {
             <!--  </template>-->
             <!--</el-table-column>-->
             <template #append>
+              <div class="el-table-append-box">
           <span>此表格的多选<span class="underline">不支持</span>
             {{ `跨分页保存，当前已选 ${userGroupState.multipleSelection.length} 条数据。` }}</span>
+              </div>
             </template>
           </el-table>
 
@@ -1096,8 +1098,10 @@ const userGroupPermissionDCon2 = () => {
             <!--  </template>-->
             <!--</el-table-column>-->
             <template #append>
+              <div class="el-table-append-box">
           <span>此表格的多选<span class="underline">不支持</span>
             {{ `跨分页保存，当前已选 ${interfaceGroupState.multipleSelection.length} 条数据。` }}</span>
+              </div>
             </template>
           </el-table>
 

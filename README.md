@@ -14,9 +14,9 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
-## 使用说明 Description
+## 运行教程 How to run
 
-项目名在 /config/config.ts 中；
+在 /config/config.ts 中设置你的项目名；
 
 在项目根目录中新建 .env.test 文件，配置项与 .env.dev 一样，用于测试环境；
 
