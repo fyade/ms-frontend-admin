@@ -30,7 +30,7 @@ export class deptPermissionUpdDto {
   remark!: string;
 }
 
-export class updManyDPDto {
+export class deptPermissionUpdDPDto {
   deptId!: number;
   permissionId!: number[];
 }

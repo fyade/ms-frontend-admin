@@ -37,7 +37,7 @@ export function roleSelById(id: number): t_funcMap_selOne_ret<roleDto> {
   })
 }
 
-export function roleSelByIds(ids: any[]): t_funcMap_selMore_ret<roleDto> {
+export function roleSelByIds(ids: number[]): t_funcMap_selMore_ret<roleDto> {
   return request({
     url: `/sys-manage/role/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function roleUpds(params: roleUpdDto[]): t_funcMap_iud_ret {
   })
 }
 
-export function roleDel(ids: any[]): t_funcMap_iud_ret {
+export function roleDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/role',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const roleFunc: t_funcMap<roleDto, roleSelDto, roleSelAllDto, roleInsDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return roleSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return roleSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const roleFunc: t_funcMap<roleDto, roleSelDto, roleSelAllDto, roleInsDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return roleDel(ids)
   }
 }

@@ -3,7 +3,7 @@ import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import type { FormRules, TreeInstance } from 'element-plus'
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
 import { userGroupFunc, } from "@/api/module/sysManage/userGroup.ts"
@@ -123,25 +123,25 @@ const {
   func: userGroupFunc
 })
 
-const selectUserGroupTree = ref<any>(null)
+const selectUserGroupTree = ref<TreeInstance | null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
-const selectUserGroup: Ref<any[]> | undefined = inject('changeSelectUserGroup')
-const selectUserGroup2 = ref<any[]>(selectUserGroup ? selectUserGroup.value.map(item => item.id) : [])
+const selectUserGroup: Ref<number[]> | undefined = inject('changeSelectUserGroup')
+const selectUserGroup2 = ref<number[]>(selectUserGroup ? selectUserGroup.value : [])
 nextTick(() => {
-  if (selectUserGroupTree) {
-    selectUserGroupTree.value?.setCheckedKeys(selectUserGroup2.value)
+  if (selectUserGroupTree.value) {
+    selectUserGroupTree.value.setCheckedKeys(selectUserGroup2.value)
   }
 })
 watch(selectUserGroup2, () => {
   if (selectUserGroup) {
-    selectUserGroup.value = state.list.filter((item: any) => selectUserGroup2.value.indexOf(item.id) > -1)
+    selectUserGroup.value = state.list.filter(item => selectUserGroup2.value.indexOf(item.id) > -1).map(item => item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: any,
+    data: userGroupDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

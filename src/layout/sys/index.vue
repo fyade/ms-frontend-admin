@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
-import { useRouterStore } from "@/store/module/router.ts";
+import { allMenus2I, useRouterStore } from "@/store/module/router.ts";
 import { Ref, ref, watch } from "vue";
 import { homerouter, routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
@@ -20,7 +20,7 @@ const deleteMenu = (index: number) => {
   routerStore.deleteMenu(index)
 }
 
-const contextMenu = (info: any, index: number) => [
+const contextMenu = (info: allMenus2I, index: number) => [
   [
     {
       label: '关闭此标签页',

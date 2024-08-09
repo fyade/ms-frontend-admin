@@ -2,8 +2,8 @@
  * v-focus 页面挂载后自动聚焦
  */
 const focus = {
-  mounted: (el: any) => {
-    el.querySelector('input').focus()
+  mounted: (el: HTMLElement) => {
+    el.querySelector('input')?.focus()
   }
 }
 

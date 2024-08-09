@@ -168,11 +168,11 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
 /**
  * 上传完成
  */
-const uploadSuccess = (param?: any) => {
+const uploadSuccess = () => {
   state.currentStage = 'd'
   state.chunkNum = 0
   isLoading.value = false
-  emit('uploadSuccess', param)
+  emit('uploadSuccess')
 }
 /**
  * 上传失败

@@ -30,10 +30,10 @@ export class userDeptUpdDto {
 
 export class userDeptUpdUDDto {
   userId!: string
-  deptId!: string[]
+  deptId!: number[]
 }
 
 export class userDeptUpdDUDto {
   userId!: string[]
-  deptId!: string
+  deptId!: number
 }

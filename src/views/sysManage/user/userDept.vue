@@ -3,7 +3,7 @@ import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import type { FormRules, TreeInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { deptDto } from "@/type/api/sysManage/dept.ts";
@@ -129,25 +129,25 @@ const {
   func: deptFunc
 })
 
-const selectDeptTree = ref<any>(null)
+const selectDeptTree = ref<TreeInstance | null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
-const selectDept: Ref<any[]> | undefined = inject('changeSelectDept')
-const selectDept2 = ref<any[]>(selectDept ? selectDept.value.map(item => item.id) : [])
+const selectDept: Ref<number[]> | undefined = inject('changeSelectDept')
+const selectDept2 = ref<number[]>(selectDept ? selectDept.value : [])
 nextTick(() => {
-  if (selectDeptTree) {
-    selectDeptTree.value?.setCheckedKeys(selectDept2.value)
+  if (selectDeptTree.value) {
+    selectDeptTree.value.setCheckedKeys(selectDept2.value)
   }
 })
 watch(selectDept2, () => {
   if (selectDept) {
-    selectDept.value = state.list.filter((item: any) => selectDept2.value.indexOf(item.id) > -1)
+    selectDept.value = state.list.filter(item => selectDept2.value.indexOf(item.id) > -1).map(item => item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: any,
+    data: deptDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

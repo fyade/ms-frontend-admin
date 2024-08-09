@@ -37,7 +37,7 @@ export function menuSelById(id: number): t_funcMap_selOne_ret<menuDto> {
   })
 }
 
-export function menuSelByIds(ids: any[]): t_funcMap_selMore_ret<menuDto> {
+export function menuSelByIds(ids: number[]): t_funcMap_selMore_ret<menuDto> {
   return request({
     url: `/sys-manage/menu/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function menuUpds(params: menuUpdDto[]): t_funcMap_iud_ret {
   })
 }
 
-export function menuDel(ids: any[]): t_funcMap_iud_ret {
+export function menuDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/menu',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const menuFunc: t_funcMap<menuDto, menuSelDto, menuSelAllDto, menuInsDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return menuSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return menuSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const menuFunc: t_funcMap<menuDto, menuSelDto, menuSelAllDto, menuInsDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return menuDel(ids)
   }
 }

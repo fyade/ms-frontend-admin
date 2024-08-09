@@ -37,7 +37,7 @@ export function userGroupPermissionSelById(id: number): t_funcMap_selOne_ret<use
   })
 }
 
-export function userGroupPermissionSelByIds(ids: any[]): t_funcMap_selMore_ret<userGroupPermissionDto> {
+export function userGroupPermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<userGroupPermissionDto> {
   return request({
     url: `/sys-manage/user-group-permission/ids`,
     method: 'GET',
@@ -85,7 +85,7 @@ export function userGroupPermissionUpds(params: userGroupPermissionUpdDto[]): t_
   })
 }
 
-export function userGroupPermissionDel(ids: any[]): t_funcMap_iud_ret {
+export function userGroupPermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/user-group-permission',
     method: 'DELETE',
@@ -112,14 +112,14 @@ export const userGroupPermissionFunc: t_funcMap<userGroupPermissionDto, userGrou
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return userGroupPermissionSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return userGroupPermissionSelByIds(ids)
   },
   /**
@@ -154,7 +154,7 @@ export const userGroupPermissionFunc: t_funcMap<userGroupPermissionDto, userGrou
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return userGroupPermissionDel(ids)
   }
 }

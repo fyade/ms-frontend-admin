@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowRight } from '@element-plus/icons-vue'
-import { useRoute, useRouter } from "vue-router";
+import { RouteRecordNormalized, useRoute, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useRouterStore } from "@/store/module/router.ts";
 import { toPath } from "@/utils/baseUtils.ts";
@@ -12,7 +12,7 @@ const router = useRouter()
 const routerStore = useRouterStore();
 const userStore = useUserStore()
 
-const list = ref<any[]>([])
+const list = ref<RouteRecordNormalized[]>([])
 
 watch(() => route.path, () => {
   const menus = routerStore.allMenus2.find(item => item.path === route.path)
@@ -40,7 +40,8 @@ watch(() => route.path, () => {
     <div class="right">
       <router-link to="/user">
         <el-space>
-          <el-image v-if="userStore.userinfo.avatar" style="width: 30px;height: 30px;border-radius: 8px;" :src="fileBaseUrl+userStore.userinfo.avatar" fit="contain"></el-image>
+          <el-image v-if="userStore.userinfo.avatar" style="width: 30px;height: 30px;border-radius: 8px;"
+                    :src="fileBaseUrl+userStore.userinfo.avatar" fit="contain"></el-image>
           <SvgIcon v-else name="user" color="#000000"/>
           {{ userStore.userinfo.nickname }}
         </el-space>

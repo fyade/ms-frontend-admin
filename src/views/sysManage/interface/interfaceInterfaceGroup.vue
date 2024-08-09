@@ -4,7 +4,7 @@ import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage.js";
 import { State, t_config } from "@/type/tablePage.ts";
-import type { FormRules } from 'element-plus';
+import type { FormRules, TreeInstance } from 'element-plus';
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
 import { interfaceGroupDto, interfaceGroupUpdDto } from "@/type/api/sysManage/interfaceGroup.ts";
@@ -126,25 +126,25 @@ const {
   func: interfaceGroupFunc
 })
 
-const selectInterfaceGroupTree = ref<any>(null)
+const selectInterfaceGroupTree = ref<TreeInstance|null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
-const selectInterfaceGroup: Ref<any[]> | undefined = inject('changeSelectInterfaceGroup')
-const selectInterfaceGroup2 = ref<any[]>(selectInterfaceGroup ? selectInterfaceGroup.value.map(item=>item.interfaceGroupId) : [])
+const selectInterfaceGroup: Ref<number[]> | undefined = inject('changeSelectInterfaceGroup')
+const selectInterfaceGroup2 = ref<number[]>(selectInterfaceGroup ? selectInterfaceGroup.value : [])
 nextTick(() => {
-  if (selectInterfaceGroupTree) {
-    selectInterfaceGroupTree.value?.setCheckedKeys(selectInterfaceGroup2.value)
+  if (selectInterfaceGroupTree.value) {
+    selectInterfaceGroupTree.value.setCheckedKeys(selectInterfaceGroup2.value)
   }
 })
 watch(selectInterfaceGroup2, () => {
   if (selectInterfaceGroup) {
-    selectInterfaceGroup.value = state.list.filter((item: any) => selectInterfaceGroup2.value.indexOf(item.id) > -1)
+    selectInterfaceGroup.value = state.list.filter(item => selectInterfaceGroup2.value.indexOf(item.id) > -1).map(item=>item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: any,
+    data: interfaceGroupDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

@@ -17,10 +17,16 @@ export class rolePermissionSelAllDto {
 
 export class rolePermissionInsDto {
   roleId!: number;
-  permissionId!: number[];
-  remark?: string;
+  type!: string;
+  permissionId!: number;
+  remark!: string;
 }
 
 export class rolePermissionUpdDto extends rolePermissionInsDto {
-  // id: number
+  id!: number;
+}
+
+export class rolePermissionUpdRpDto {
+  roleId!: number;
+  permissionId!: number[];
 }

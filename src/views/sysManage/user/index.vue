@@ -6,24 +6,25 @@ export default {
 
 <script setup lang="ts">
 import { provide, reactive, Ref, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { CONFIG, final, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { t_config } from "@/type/tablePage.ts";
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";
-import { resetUserPsd, userFunc } from "@/api/module/sysManage/user.ts";
+import { newUser, resetUserPsd, userFunc } from "@/api/module/sysManage/user.ts";
 import UserRole from "./userRole.vue";
-import { userDto2 } from "@/type/api/sysManage/user.ts";
-import { userRoleUpdUR } from "@/api/module/sysManage/userRole.ts";
+import { userDto, userDto2, userDto_ } from "@/type/api/sysManage/user.ts";
+import { userRoleSelAll, userRoleUpdUR } from "@/api/module/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import UserDept from "@/views/sysManage/user/userDept.vue";
-import { userDeptUpdUD } from "@/api/module/sysManage/userDept.ts";
+import { userDeptSelAll, userDeptUpdUD } from "@/api/module/sysManage/userDept.ts";
 import { deptDto } from "@/type/api/sysManage/dept.ts";
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
 import UserUserGroup from "@/views/sysManage/user/userUserGroup.vue";
-import { userUserGroupUpdUUG } from "@/api/module/sysManage/userUserGroup.ts";
+import { userUserGroupSelAll, userUserGroupUpdUUG } from "@/api/module/sysManage/userUserGroup.ts";
+import { roleDto } from "@/type/api/sysManage/role.ts";
 
 const state = reactive({
   dialogType: {
@@ -91,7 +92,7 @@ const state = reactive({
 const state2 = reactive({
   orderNum: 0
 })
-const dialogFormRef = ref(null)
+const dialogFormRef = ref<FormInstance | null>(null)
 const filterFormRef = ref(null)
 const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
@@ -141,7 +142,7 @@ const newPsdRule = {
   password: [{required: true, trigger: 'change'}],
 }
 const newpsdDialog = ref(false)
-const resetPsd = (id: any) => {
+const resetPsd = (id: string) => {
   newPsd.id = id
   newPsd.password = defaultNewPsd
   newpsdDialog.value = true
@@ -155,25 +156,51 @@ const npCon = () => {
     ElMessage.success('密码已重置。')
   })
 }
+const dCon2 = () => {
+  if (dialogFormRef.value) {
+    dialogFormRef.value.validate((valid, fields) => {
+      if (valid) {
+        newUser({
+          username: state.dialogForm['username'],
+          password: state.dialogForm['password']
+        }).then(res => {
+          if (res) {
+            ElMessage.success(Operate.success)
+            dialogVisible.value = false
+            refresh()
+          }
+        })
+      } else {
+        if (fields) {
+          let arr: string[] = []
+          Object.keys(fields).forEach(item => arr.push((state.dict as Record<string, string>)[item]))
+          ElMessage.warning(`${arr.join('、')}不能为空。`)
+        }
+      }
+    })
+  }
+}
 
 // 用户角色
-const userRole: Ref<InstanceType<typeof UserRole> | null> = ref<InstanceType<typeof UserRole> | null>(null)
+// const userRole: Ref<InstanceType<typeof UserRole> | null> = ref<InstanceType<typeof UserRole> | null>(null)
 const drawer = ref(false)
 const selectUser = ref<userDto2>({
   id: '',
   username: '',
   nickname: ''
 })
-const selectRole = ref<any[]>([])
-const manageRole = (row: any) => {
+const selectRole = ref<number[]>([])
+const manageRole = (row: userDto_) => {
   selectUser.value = deepClone(row)
-  selectRole.value = deepClone(row.roles)
-  drawer.value = true
+  userRoleSelAll({userId: selectUser.value.id}).then(res => {
+    selectRole.value = res.map(item => item.roleId)
+    drawer.value = true
+  })
 }
 const drawerConfirmUserRole = () => {
   const obj = {
     userId: selectUser.value.id,
-    roleId: selectRole.value.map(item => item.id)
+    roleId: selectRole.value
   }
   userRoleUpdUR(obj).then(res => {
     if (res) {
@@ -188,18 +215,20 @@ const drawerCancelUserRole = () => {
 provide('changeSelectRole', selectRole)
 
 // 用户部门
-const userDept: Ref<InstanceType<typeof UserDept> | null> = ref<InstanceType<typeof UserDept> | null>(null)
+// const userDept: Ref<InstanceType<typeof UserDept> | null> = ref<InstanceType<typeof UserDept> | null>(null)
 const drawer2 = ref(false)
-const selectDept = ref<any[]>([])
-const manageDept = (row: any) => {
+const selectDept = ref<number[]>([])
+const manageDept = (row: userDto_) => {
   selectUser.value = deepClone(row)
-  selectDept.value = deepClone(row.depts)
-  drawer2.value = true
+  userDeptSelAll({userId: selectUser.value.id}).then(res => {
+    selectDept.value = res.map(item => item.deptId)
+    drawer2.value = true
+  })
 }
 const drawerConfirmUserDept = () => {
   const param = {
     userId: selectUser.value.id,
-    deptId: selectDept.value.map(item => item.id)
+    deptId: selectDept.value
   }
   userDeptUpdUD(param).then(res => {
     if (res) {
@@ -214,18 +243,20 @@ const drawerCancelUserDept = () => {
 provide('changeSelectDept', selectDept)
 
 // 用户用户组
-const userUserGroup: Ref<InstanceType<typeof UserUserGroup> | null> = ref<InstanceType<typeof UserUserGroup> | null>(null)
+// const userUserGroup: Ref<InstanceType<typeof UserUserGroup> | null> = ref<InstanceType<typeof UserUserGroup> | null>(null)
 const drawer3 = ref(false)
-const selectUserGroup = ref<any[]>([])
-const manageUserGroup = (row: any) => {
+const selectUserGroup = ref<number[]>([])
+const manageUserGroup = (row: userDto_) => {
   selectUser.value = deepClone(row)
-  selectUserGroup.value = deepClone(row.ugs)
-  drawer3.value = true
+  userUserGroupSelAll({userId: selectUser.value.id}).then(res => {
+    selectUserGroup.value = res.map(item => item.userGroupId)
+    drawer3.value = true
+  })
 }
 const drawerConfirmUserUserGroup = () => {
   const param = {
     userId: selectUser.value.id,
-    userGroupId: selectUserGroup.value.map(item => item.id)
+    userGroupId: selectUserGroup.value
   }
   userUserGroupUpdUUG(param).then(res => {
     if (res) {
@@ -251,7 +282,6 @@ provide('changeSelectUserGroup', selectUserGroup)
       title="分配角色"
   >
     <UserRole
-        ref="userRole"
         :user="selectUser"
     />
     <template #footer>
@@ -270,7 +300,6 @@ provide('changeSelectUserGroup', selectUserGroup)
       title="分配部门"
   >
     <UserDept
-        ref="userDept"
         :user="selectUser"
     />
     <template #footer>
@@ -289,7 +318,6 @@ provide('changeSelectUserGroup', selectUserGroup)
       title="分配用户组"
   >
     <UserUserGroup
-        ref="userUserGroup"
         :user="selectUser"
     />
     <template #footer>
@@ -366,7 +394,7 @@ provide('changeSelectUserGroup', selectUserGroup)
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button type="primary" @click="dCon2">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -428,7 +456,7 @@ provide('changeSelectUserGroup', selectUserGroup)
       <template #default="{row}">
         <el-space wrap>
           <el-tag v-if="row.ifTopAdmin" type="success">超级管理员</el-tag>
-          <el-tag v-for="item in row.roles as any[]" :key="item.id" type="primary">{{ item.label }}</el-tag>
+          <el-tag v-for="item in row.roles as roleDto[]" :key="item.id" type="primary">{{ item.label }}</el-tag>
         </el-space>
       </template>
     </el-table-column>

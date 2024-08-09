@@ -37,7 +37,7 @@ export function dicTypeSelById(id: number): t_funcMap_selOne_ret<dicTypeDto> {
   })
 }
 
-export function dicTypeSelByIds(ids: any[]): t_funcMap_selMore_ret<dicTypeDto> {
+export function dicTypeSelByIds(ids: number[]): t_funcMap_selMore_ret<dicTypeDto> {
   return request({
     url: `/sys-manage/dic-type/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function dicTypeUpds(params: dicTypeUpdDto[]): t_funcMap_iud_ret {
   })
 }
 
-export function dicTypeDel(ids: any[]): t_funcMap_iud_ret {
+export function dicTypeDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/dic-type',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const dicTypeFunc: t_funcMap<dicTypeDto, dicTypeSelDto, dicTypeSelAllDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return dicTypeSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return dicTypeSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const dicTypeFunc: t_funcMap<dicTypeDto, dicTypeSelDto, dicTypeSelAllDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return dicTypeDel(ids)
   }
 }

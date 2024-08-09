@@ -33,6 +33,6 @@ export const selectFiles = (function createSelectFiles() {
  * @param fileName
  * @param type
  */
-export const blobToFile = (blob: Blob, fileName: string, type: any): File => {
+export const blobToFile = (blob: Blob, fileName: string, type: string): File => {
   return new File([blob], fileName, {type})
 }

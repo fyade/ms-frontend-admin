@@ -10,6 +10,7 @@ import { MORE, ONE } from "@/type/utils/base.ts"
 import { dicDataDto } from "@/type/api/sysManage/dicData.ts";
 import { dicDataFunc } from "@/api/module/sysManage/dicData.ts"
 import { dicTypeSelAll } from "@/api/module/sysManage/dicType.ts";
+import { dicTypeDto } from "@/type/api/sysManage/dicType.ts";
 
 const props = defineProps({
   dicType: {
@@ -138,7 +139,7 @@ const {
   props
 })
 
-const allDicTypes = ref<any[]>([])
+const allDicTypes = ref<dicTypeDto[]>([])
 dicTypeSelAll({}).then(res => {
   allDicTypes.value = res
 })

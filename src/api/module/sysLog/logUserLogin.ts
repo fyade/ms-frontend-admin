@@ -37,7 +37,7 @@ export function logUserLoginSelById(id: number): t_funcMap_selOne_ret<logUserLog
   })
 }
 
-export function logUserLoginSelByIds(ids: any[]): t_funcMap_selMore_ret<logUserLoginDto> {
+export function logUserLoginSelByIds(ids: number[]): t_funcMap_selMore_ret<logUserLoginDto> {
   return request({
     url: `/sys-log/log-user-login/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function logUserLoginUpds(params: logUserLoginUpdDto[]): t_funcMap_iud_re
   })
 }
 
-export function logUserLoginDel(ids: any[]): t_funcMap_iud_ret {
+export function logUserLoginDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-log/log-user-login',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const logUserLoginFunc: t_funcMap<logUserLoginDto, logUserLoginSelDto, lo
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return logUserLoginSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return logUserLoginSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const logUserLoginFunc: t_funcMap<logUserLoginDto, logUserLoginSelDto, lo
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return logUserLoginDel(ids)
   }
 }

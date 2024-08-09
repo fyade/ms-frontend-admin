@@ -44,10 +44,10 @@ const upload2 = async () => {
   }
   uploadSuccess()
 }
-const uploadSuccess = (param?: any) => {
+const uploadSuccess = () => {
   isDisabled.value = false
   isLoading.value = false
-  emit('uploadSuccess', param)
+  emit('uploadSuccess')
 }
 const uploadFail = (msg?: string) => {
   isDisabled.value = false

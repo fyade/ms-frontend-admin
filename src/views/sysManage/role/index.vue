@@ -15,9 +15,10 @@ import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/ico
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/sysManage/role.ts";
 import { roleFunc } from "@/api/module/sysManage/role.ts"
-import { rolePermissionSelAll, rolePermissionUpd } from "@/api/module/sysManage/rolePermission.ts";
+import { rolePermissionSelAll, rolePermissionUpd, rolePermissionUpdRp } from "@/api/module/sysManage/rolePermission.ts";
 import RoleUser from "@/views/sysManage/role/roleUser.vue";
 import RolePermission from "@/views/sysManage/role/rolePermission.vue";
+import { rolePermissionDto } from "@/type/api/sysManage/rolePermission.ts";
 
 const state = reactive<State<roleDto>>({
   dialogType: {
@@ -132,19 +133,19 @@ const {
 })
 
 
-let selectRoleInfo: any = {}
+let selectRoleInfo: roleDto = new roleDto()
 const drawer2 = ref(false)
-const selectPermission = ref<any[]>([])
-const manageUser = (row: any) => {
+const selectPermission = ref<number[]>([])
+const manageUser = (row: roleDto) => {
   selectRoleInfo = row
   drawer2.value = true
 }
 
 const drawer = ref(false)
-const setPermission = (row: any) => {
+const setPermission = (row: roleDto) => {
   selectRoleInfo = row
   rolePermissionSelAll({roleId: selectRoleInfo.id}).then(res => {
-    selectPermission.value = res
+    selectPermission.value = res.map(item => item.permissionId)
     drawer.value = true
   })
 }
@@ -154,9 +155,9 @@ const drawerCancelRolePermission = () => {
 const drawerConfirmRolePermission = () => {
   const param = {
     roleId: selectRoleInfo.id,
-    permissionId: selectPermission.value.map(item => item.id)
+    permissionId: selectPermission.value
   }
-  rolePermissionUpd(param).then(res => {
+  rolePermissionUpdRp(param).then(res => {
     if (res) {
       drawer.value = false
       gRefresh()
@@ -321,7 +322,9 @@ provide('changeSelectPermission', selectPermission)
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
     </el-button>
-    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>
+    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">
+      导出
+    </el-button>
     <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>

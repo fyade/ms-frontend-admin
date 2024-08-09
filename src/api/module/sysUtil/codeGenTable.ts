@@ -37,7 +37,7 @@ export function codeGenTableSelById(id: number): t_funcMap_selOne_ret<codeGenTab
   })
 }
 
-export function codeGenTableSelByIds(ids: any[]): t_funcMap_selMore_ret<codeGenTableDto> {
+export function codeGenTableSelByIds(ids: number[]): t_funcMap_selMore_ret<codeGenTableDto> {
   return request({
     url: `/sys-util/code-gen-table/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function codeGenTableUpds(params: codeGenTableUpdDto[]): t_funcMap_iud_re
   })
 }
 
-export function codeGenTableDel(ids: any[]): t_funcMap_iud_ret {
+export function codeGenTableDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-table',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const codeGenTableFunc: t_funcMap<codeGenTableDto, codeGenTableSelDto, co
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return codeGenTableSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return codeGenTableSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const codeGenTableFunc: t_funcMap<codeGenTableDto, codeGenTableSelDto, co
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return codeGenTableDel(ids)
   }
 }

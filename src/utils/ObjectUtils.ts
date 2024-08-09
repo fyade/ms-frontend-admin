@@ -94,3 +94,13 @@ export function copyObject<T = object>(to: T, from: T) {
     to[key] = from[key]
   }
 }
+
+/**
+ * 清除对象所有值
+ * @param to
+ */
+export function clearObject<T = object>(to: T) {
+  for (const key in to) {
+    (to as Record<string, string>)![key] = ''
+  }
+}

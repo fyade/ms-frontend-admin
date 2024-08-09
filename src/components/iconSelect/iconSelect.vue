@@ -12,14 +12,21 @@ const props = defineProps({
   }
 })
 
-const icons = ref<any[]>([])
+interface iconI {
+  url: string
+  name: string
+  label: string
+  value: string
+}
+
+const icons = ref<iconI[]>([])
 const files = import.meta.glob('/src/assets/icon/*.svg');
-icons.value = Object.keys(files).map((path: any) => {
-  const module = files[path] as any;
-  const fileName = path?.split('/')?.pop(); // 提取文件名部分
+icons.value = Object.keys(files).map((path) => {
+  const module = files[path];
+  const fileName = path!.split('/')!.pop() as string; // 提取文件名部分
   const filenameWithoutSuffix = getFilenameWithoutSuffix(fileName);
   return {
-    url: module.default, // 图片相对路径（/public/icon/DNS服务.svg）
+    url: (module as unknown as { default: string }).default, // 图片相对路径（/public/icon/DNS服务.svg）
     name: fileName, // 文件名(带后缀)
     label: Object.keys(iconEnCn).includes(filenameWithoutSuffix) ? `${(iconEnCn as IconEnCn)[filenameWithoutSuffix as string]}_${filenameWithoutSuffix}` : filenameWithoutSuffix,
     value: filenameWithoutSuffix,

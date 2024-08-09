@@ -1,27 +1,35 @@
 import { defineStore } from 'pinia'
-import { computed, Ref, ref } from "vue";
+import { computed, ComputedRef, Ref, ref } from "vue";
 import router, { routerPinList } from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
+import { RouteRecordName, RouteRecordNormalized } from "vue-router";
+
+export interface allMenus2I {
+  path: string
+  name: RouteRecordName
+  meta: RouteRecordNormalized['meta']
+  ar: RouteRecordNormalized[]
+}
 
 export const useRouterStore = defineStore('routerStore', () => {
-  // const allMenus1: any[] = routes.filter(item => item.path === '/');
-  const allMenus1: any[] = router.getRoutes().filter(item => {
+  // const allMenus1: RouteRecordNormalized[] = routes.filter(item => item.path === '/');
+  const allMenus1: RouteRecordNormalized[] = router.getRoutes().filter(item => {
     return (item.meta && item.meta.asideMenu) &&
         ((item.path.length - item.path.replace(/\//g, '').length === 1) || ifWebsiteLink(item.path, '/'))
   })
-  const allMenus2 = diguiObjToArr2(allMenus1).map(ar => {
+  const allMenus2 = diguiObjToArr2<RouteRecordNormalized>(allMenus1).map(ar => {
     const meta = ar[ar.length - 1].meta;
-    meta.fullPath = ar.map((item: any) => item.path).join('/')
+    meta.fullPath = ar.map(item => item.path).join('/')
     return {
-      path: ar.map((item: any, index: number) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
-      name: ar[ar.length - 1].name,
+      path: ar.map((item, index) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
+      name: ar[ar.length - 1].name || '',
       meta: meta,
       ar: ar
     }
   });
-  const menuList: Ref<any[]> = ref(allMenus2.filter(item => routerPinList.indexOf(item.path) > -1))
-  const addMenu = (menu: any) => {
+  const menuList: Ref<allMenus2I[]> = ref(allMenus2.filter(item => routerPinList.indexOf(item.path) > -1))
+  const addMenu = (menu: allMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
       menuList.value.push(menu)
     }
@@ -51,7 +59,7 @@ export const useRouterStore = defineStore('routerStore', () => {
     return menuList.value
   }
   const getMenuListNames = computed(() => {
-    return menuList.value.map((item: any) => item.name) as string[]
+    return menuList.value.map(item => item.name) as string[]
   })
   return {
     addMenu,

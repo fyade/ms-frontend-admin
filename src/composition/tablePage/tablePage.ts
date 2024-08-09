@@ -1,10 +1,11 @@
 import { nextTick, onMounted, toRaw, watch } from "vue"
-import { ElMessage, ElMessageBox } from "element-plus"
+import { ElMessage, ElMessageBox, FormItemRule } from "element-plus"
 import { EXPORT_IGNORE_KEYS, final, finalIU, Operate } from "@/utils/base.ts"
-import { t_config, t_funcTablePage_params } from "@/type/tablePage.ts";
+import { State, t_config, t_funcTablePage_params } from "@/type/tablePage.ts";
 import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
+import { selectFiles } from "@/utils/FileUtils.ts";
 
 export const funcTablePage = <T = { [key: string]: string }>({
                                                                config,
@@ -24,11 +25,11 @@ export const funcTablePage = <T = { [key: string]: string }>({
                                                              }: t_funcTablePage_params) => {
   const initialStateDialogForm = structuredClone(toRaw(state.dialogForm));
   const initialStateDFormRules = structuredClone(toRaw(state.dFormRules));
-  const ifHasConfig = (key: keyof t_config, value: any) => {
+  const ifHasConfig = (key: keyof t_config, value: string | boolean) => {
     return Object.keys(config).includes(key) && config[key] === value
   }
 
-  const ifRequired = (key: string) => state.dFormRules[key] && (state.dFormRules[key] as any[]).some((item: any) => item.required)
+  const ifRequired = (key: string) => state.dFormRules[key] && (state.dFormRules[key] as FormItemRule[]).some(item => item.required)
 
   /**
    * 查询
@@ -51,18 +52,6 @@ export const funcTablePage = <T = { [key: string]: string }>({
       tableLoadingRef.value = false
     })
   }
-  // /**
-  //  * 查询单个
-  //  * @param id
-  //  */
-  // const getDataById = (id: any) => {
-  //   // tableLoadingRef.value = true
-  //   // func.selectById(id).then(res => {
-  //   //   state.list[state.list.findIndex((item: any) => item.id === id)] = res
-  //   // }).finally(() => {
-  //   //   tableLoadingRef.value = false
-  //   // })
-  // }
   /**
    * 新增
    * @param ifImport
@@ -77,7 +66,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
                    } = {}
   ) => {
     if (ifImport || activeTabName && activeTabName.value === final.more) {
-      func.insertMore(ifImport ? dataFromExcel : state.dialogForms).then(res => {
+      func.insertMore(ifImport ? dataFromExcel : state.dialogForms!).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -100,7 +89,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
   const updData = () => {
     tableLoadingRef.value = true
     if (activeTabName?.value === final.more) {
-      func.updateMore(state.dialogForms).then(res => {
+      func.updateMore(state.dialogForms!).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -129,7 +118,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
    * 删除
    * @param ids
    */
-  const delData = (...ids: any[]) => {
+  const delData = (...ids: (number | string)[]) => {
     tableLoadingRef.value = true
     func.deleteList(...ids).then(res => {
       if (ifValid(res)) {
@@ -155,7 +144,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
         } else {
           if (state.dialogForms_error) {
             Object.keys(state.dialogForms_error).forEach(key => {
-              delete state.dialogForms_error[key]
+              delete state.dialogForms_error![key]
             })
           }
           dialogFormRef.value?.resetFields()
@@ -171,26 +160,26 @@ export const funcTablePage = <T = { [key: string]: string }>({
   }
   // 弹窗确定
   const dCon = () => {
-    Object.keys(state.dialogForm).forEach(item => {
-      if (typeof state.dialogForm[item] === 'string') {
-        state.dialogForm[item] = state.dialogForm[item].trim()
+    Object.keys((state.dialogForm as Record<string, any>)).forEach(item => {
+      if (typeof (state.dialogForm as Record<string, any>)[item] === 'string') {
+        (state.dialogForm as Record<string, any>)[item] = (state.dialogForm as Record<string, any>)[item].trim()
       }
     })
     if (activeTabName && activeTabName.value === final.more && dialogFormsRef) {
-      Object.keys(state.dialogForms_error).forEach(key => {
-        delete state.dialogForms_error[key]
+      Object.keys(state.dialogForms_error!).forEach(key => {
+        delete state.dialogForms_error![key]
       })
       const keys = Object.keys(initialStateDFormRules)
-      for (let i = 0; i < state.dialogForms.length; i++) {
+      for (let i = 0; i < state.dialogForms!.length; i++) {
         keys.forEach(key => {
-          const value = state.dialogForms[i][key]
-          const rule = state.dFormRules[key][0]
+          const value = (state.dialogForms as Record<string, any>[])[i][key]
+          const rule = (state.dFormRules[key] as FormItemRule[])[0]
           if (rule.required && value === '') {
-            state.dialogForms_error[`${i}-${key}`] = 'error'
+            state.dialogForms_error![`${i}-${key}`] = 'error'
           }
         })
       }
-      if (Object.keys(state.dialogForms_error).length === 0) {
+      if (Object.keys(state.dialogForms_error!).length === 0) {
         const obj = {
           [final.ins]: () => insData(),
           [final.upd]: () => updData()
@@ -209,8 +198,8 @@ export const funcTablePage = <T = { [key: string]: string }>({
           obj[state.dialogType.value as keyof finalIU]()
         } else {
           if (fields) {
-            let arr: any[] = []
-            Object.keys(fields).forEach(item => arr.push(state.dict[item]))
+            let arr: string[] = []
+            Object.keys(fields).forEach(item => arr.push((state.dict as Record<string, string>)[item]))
             ElMessage.warning(`${arr.join('、')}不能为空。`)
           }
         }
@@ -219,7 +208,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
   }
   // 筛选
   const fEnter = () => {
-    const hasValue = Object.values(state.filterForm).some((item: any) => !!item.toString().trim())
+    const hasValue = Object.values(state.filterForm).some(item => !!item.toString().trim())
     if (hasValue) {
       fCon()
     } else {
@@ -229,8 +218,8 @@ export const funcTablePage = <T = { [key: string]: string }>({
   // 筛选
   const fCon = () => {
     Object.keys(state.filterForm).forEach(item => {
-      if (typeof state.filterForm[item] === 'string') {
-        state.filterForm[item] = state.filterForm[item].trim()
+      if (typeof (state.filterForm as Record<string, any>)[item] === 'string') {
+        (state.filterForm as Record<string, any>)[item] = (state.filterForm as Record<string, any>)[item].trim()
       }
     })
     state.pageParam.pageNum = 1
@@ -261,13 +250,15 @@ export const funcTablePage = <T = { [key: string]: string }>({
     // if (state.multipleSelection.length !== 1) {
     //   return ElMessage.warning('请选择 1 条数据。')
     // }
-    await tUpd(state.multipleSelection[0].id, !!config.bulkOperation && state.multipleSelection.length > 1)
+    await tUpd((state.multipleSelection[0] as T & {
+      id: number
+    }).id, !!config.bulkOperation && state.multipleSelection.length > 1)
   }
   // 删除
   const gDel = ({
                   delids = []
                 }: {
-                  delids?: any[]
+                  delids?: (number | string)[]
                 } = {}
   ) => {
     if (state.multipleSelection.length === 0) {
@@ -283,7 +274,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
           draggable: true
         }
     ).then(() => {
-      let arr: any[] = state.multipleSelection.map((item: any) => item.id)
+      let arr: (number | string)[] = state.multipleSelection.map(item => (item as T & { id: number }).id)
       delData(...arr)
     })
   }
@@ -303,17 +294,16 @@ export const funcTablePage = <T = { [key: string]: string }>({
           type: 'warning',
         }
     )
-    const rows = deepClone<any[]>(toRaw(state.multipleSelection).map((item: any) => toRaw(item))).map((obj: T) => {
+    const rows = deepClone<T[]>(toRaw(state.multipleSelection).map((item) => toRaw(item))).map(obj => {
       exportIgnoreKeys?.forEach(key => delete obj[key as keyof T])
       return obj
-    });
+    }) as {}[];
     const workbook = new Workbook();
     // 添加sheet
     const worksheet = workbook.addWorksheet('sheet');
     // sheet默认配置
     worksheet.properties.defaultRowHeight = 20
     // 设置列
-    // @ts-ignore
     worksheet.columns = Object.keys(rows[0]).map(key => ({header: key, key: key, width: 15}))
     // 设置行
     const list = rows
@@ -334,17 +324,14 @@ export const funcTablePage = <T = { [key: string]: string }>({
           type: 'warning',
         }
     )
-    // @ts-ignore
-    const selectFiles = await window?.showOpenFilePicker();
-    if (selectFiles.length === 0) {
+    const sFiles = await selectFiles()
+    if (sFiles.length === 0) {
       return
     }
-    const fileHandle = selectFiles[0]
-    // @ts-ignore
-    const file = await fileHandle.getFile();
+    const file = sFiles[0]
     const reader = new FileReader();
-    reader.onload = async (e: any) => {
-      const buffer: ArrayBuffer = e.target.result;
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
+      const buffer = e.target!.result! as ArrayBuffer
       const workbook_ = new Workbook();
       const workbook = await workbook_.xlsx.load(buffer)
       const worksheet = workbook.getWorksheet(1)
@@ -369,7 +356,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
     reader.readAsArrayBuffer(file);
   }
   // 修改
-  const tUpd = async (id: any, ifMore?: boolean) => {
+  const tUpd = async (id: number | string, ifMore?: boolean) => {
     state.dialogType.value = final.upd
     state.dialogType.label = '修改'
     dialogVisible.value = true
@@ -379,14 +366,12 @@ export const funcTablePage = <T = { [key: string]: string }>({
         if (activeTabName) {
           activeTabName.value = final.more
         }
-        state.dialogForms.splice(0, state.dialogForms.length)
+        state.dialogForms!.splice(0, state.dialogForms!.length)
         if (func.selectByIds) {
-          func.selectByIds(state.multipleSelection.map((item: any) => item.id)).then(res => {
-            res.forEach((obj: any, i: number) => {
-              state.dialogForms[i] = structuredClone(initialStateDialogForm)
-              Object.keys(state.dialogForm).forEach(item => {
-                state.dialogForms[i][item] = obj[item]
-              })
+          func.selectByIds(state.multipleSelection.map(item => (item as T & { id: number }).id)).then(res => {
+            res.forEach((obj, i: number) => {
+              state.dialogForms![i] = structuredClone(initialStateDialogForm)
+              copyObject(state.dialogForms![i], obj)
             })
             config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res)
           }).catch((e) => {
@@ -397,9 +382,9 @@ export const funcTablePage = <T = { [key: string]: string }>({
         } else {
           const datas: any[] = []
           for (let i = 0; i < state.multipleSelection.length; i++) {
-            state.dialogForms[i] = structuredClone(initialStateDialogForm)
+            state.dialogForms![i] = structuredClone(initialStateDialogForm)
             try {
-              const res = await func.selectById(state.multipleSelection[i].id)
+              const res = await func.selectById((state.multipleSelection[i] as T & { id: number }).id)
               let obj = res
               datas.push(obj)
               // Object.keys(state.dialogForm).forEach(item => {
@@ -413,9 +398,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
             }
           }
           datas.forEach((_, i) => {
-            Object.keys(state.dialogForm).forEach(item => {
-              state.dialogForms[i][item] = datas[i][item]
-            })
+            copyObject(state.dialogForms![i], datas[i])
           })
           config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(datas)
           dialogLoadingRef.value = false
@@ -426,9 +409,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
         }
         func.selectById(id).then(res => {
           let obj = res
-          Object.keys(state.dialogForm).forEach(item => {
-            state.dialogForm[item] = obj[item]
-          })
+          copyObject(state.dialogForm, obj)
           config.beforeUpdateOneCallback2 && config.beforeUpdateOneCallback2(res)
         }).catch(() => {
           dialogVisible.value = false
@@ -439,7 +420,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
     })
   }
   // 删除
-  const tDel = (id: any) => {
+  const tDel = (id: number | string) => {
     ElMessageBox.confirm(
         `此操作将删除选中的 1 条数据，且无法撤销，请确认是否继续？`,
         '警告',
@@ -453,10 +434,10 @@ export const funcTablePage = <T = { [key: string]: string }>({
       delData(id)
     })
   }
-  const handleSelectionChange = (val: any) => {
+  const handleSelectionChange = (val: object[]) => {
     state.multipleSelection = val
   }
-  const pageChange = (newVal: any) => {
+  const pageChange = (newVal: State['pageParam']) => {
     state.pageParam.pageNum = newVal.pageNum
     state.pageParam.pageSize = newVal.pageSize
     getData()
@@ -467,11 +448,11 @@ export const funcTablePage = <T = { [key: string]: string }>({
   }
 
   const dfIns = () => {
-    state.dialogForms.push(structuredClone(initialStateDialogForm))
+    state.dialogForms!.push(structuredClone(initialStateDialogForm))
   }
 
   const dfDel = (index: number) => {
-    state.dialogForms.splice(index, 1)
+    state.dialogForms!.splice(index, 1)
   }
 
   return {

@@ -32,17 +32,17 @@ const upload1 = async () => {
   const fd = new FormData();
   fd.append('file', file)
   fileUploadOneFull(fd, file.name).then(res => {
-    uploadSuccess(res.data)
+    uploadSuccess()
   }).catch(err => {
     uploadFail(`${file.name}上传失败。`)
   }).finally(() => {
     fd.delete('file')
   })
 }
-const uploadSuccess = (param?: any) => {
+const uploadSuccess = () => {
   isDisabled.value = false
   isLoading.value = false
-  emit('uploadSuccess', param)
+  emit('uploadSuccess')
 }
 const uploadFail = (msg?: string) => {
   isDisabled.value = false

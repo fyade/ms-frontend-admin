@@ -15,6 +15,7 @@ export class userGroupPermissionDto extends baseClass {
   ifUseUp!: string;
   orderNum!: number;
   remark!: string;
+  count?: number;
 }
 
 export class userGroupPermissionSelDto extends pageDto {

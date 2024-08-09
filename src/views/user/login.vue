@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useUserStore } from "@/store/module/user.ts";
-import Loginbg from "@/views/user/loginbg.vue";
+import { useSysStore } from "@/store/module/sys.ts";
 
-let userStore = useUserStore();
+const userStore = useUserStore();
+const sysStore = useSysStore();
 const form = reactive({
   username: '',
   password: ''
@@ -47,7 +48,10 @@ const activeName = ref('a')
     </el-form>
   </div>
 
-  <!--<Loginbg class="bg"/>-->
+  <div style="position: absolute;bottom: 0;left: 50%;transform: translateX(-50%);">
+    <p>前端版本：{{ sysStore.version.qd }}</p>
+    <p>后端版本：{{ sysStore.version.hd }}</p>
+  </div>
 </template>
 
 <style scoped lang="scss">

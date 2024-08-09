@@ -18,6 +18,9 @@ import FileUploadMoreFullConcur from '@/components/fileUpload/fileUploadMoreFull
 import FileUploadOneChunkConcur from '@/components/fileUpload/fileUploadOneChunkConcur.vue';
 import FileUploadMoreChunkConcur from '@/components/fileUpload/fileUploadMoreChunkConcur.vue';
 import { FormInstance, Instance, SpaceInstance } from "element-plus";
+import { State } from "@/type/tablePage.ts";
+import { fileDto, fileDto2 } from "@/type/demo/file.ts";
+import { AxiosProgressEvent } from "axios";
 
 const btnGroup = ref<SpaceInstance | null>(null)
 
@@ -51,7 +54,7 @@ const init = () => {
   })
 }
 
-const form2 = ref<FormInstance>()
+const form2 = ref<FormInstance | null>(null)
 const formData2 = reactive({
   filterSame: final.Y
 })
@@ -63,7 +66,6 @@ const onCancelFilter = () => {
   init()
 }
 const filterFormReset = () => {
-  // @ts-ignore
   form2.value?.resetFields()
 }
 
@@ -71,15 +73,14 @@ const filterFormReset = () => {
 const tableHeight = ref(0)
 const selectedRowKeys = ref([])
 const loading = ref(false)
-const downloadProgresses = reactive<any>({})
-const onlineView = (row: any) => {
+const downloadProgresses = reactive<Record<string, number>>({})
+const onlineView = (row: fileDto2) => {
   window.open(`${fileBaseUrl}${row.file_new_name}`)
 }
-const download = async (row: any) => {
+const download = async (row: fileDto2) => {
   downloadProgresses[row.id] = 0
-  // @ts-ignore
-  downloadFullFile(row.file_new_name, row.file_name, evt => {
-    const downloadProgress = Number((evt.progress * 100).toFixed(2))
+  downloadFullFile(row.file_new_name, row.file_name, (evt: AxiosProgressEvent) => {
+    const downloadProgress = Number(((evt.progress || 0) * 100).toFixed(2))
     downloadProgresses[row.id] = downloadProgress
     if (evt.progress === 1) {
       delete downloadProgresses[row.id]
@@ -91,9 +92,9 @@ const paginationref = ref<HTMLElement | null>(null)
 const pageParam = reactive({
   ...PAGINATION
 })
-const onChange = (pageInfo: any) => {
-  pageParam.pageNum = pageInfo.current
-  pageParam.pageSize = pageInfo.pageSize
+const onChange = (currentPage: number, pageSize: number) => {
+  pageParam.pageNum = currentPage
+  pageParam.pageSize = pageSize
   init()
 }
 </script>

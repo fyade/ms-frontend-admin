@@ -4,7 +4,7 @@ const strArr = [
   'o', 'p', 'q', 'r', 's', 't',
   'u', 'v', 'w', 'x', 'y', 'z'
 ]
-const idsOfLengthStr: any[] = []
+const idsOfLengthStr: string[] = []
 
 /**
  * 生成id

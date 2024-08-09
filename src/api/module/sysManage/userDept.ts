@@ -37,7 +37,7 @@ export function userDeptSelById(id: number): t_funcMap_selOne_ret<userDeptDto> {
   })
 }
 
-export function userDeptSelByIds(ids: any[]): t_funcMap_selMore_ret<userDeptDto> {
+export function userDeptSelByIds(ids: number[]): t_funcMap_selMore_ret<userDeptDto> {
   return request({
     url: `/sys-manage/user-dept/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function userDeptUpds(params: userDeptUpdDto[]): t_funcMap_iud_ret {
   })
 }
 
-export function userDeptDel(ids: any[]): t_funcMap_iud_ret {
+export function userDeptDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/user-dept',
     method: 'DELETE',
@@ -120,14 +120,14 @@ export const userDeptFunc: t_funcMap<userDeptDto, userDeptSelDto, userDeptSelAll
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return userDeptSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return userDeptSelByIds(ids)
   },
   /**
@@ -162,7 +162,7 @@ export const userDeptFunc: t_funcMap<userDeptDto, userDeptSelDto, userDeptSelAll
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return userDeptDel(ids)
   }
 }

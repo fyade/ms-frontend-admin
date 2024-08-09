@@ -103,7 +103,7 @@ export interface t_funcMap<T = any, T2 = any, T3 = any, T4 = any, T5 = any> {
 
 export interface t_funcTablePage_params {
   config: t_config
-  state: any
+  state: State
   state2: any
   dialogFormRef: Ref<FormInstance | null>
   dialogFormsRef?: Ref<FormInstance | null>

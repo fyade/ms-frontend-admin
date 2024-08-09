@@ -37,7 +37,7 @@ export function interfaceInterfaceGroupSelById(id: number): t_funcMap_selOne_ret
   })
 }
 
-export function interfaceInterfaceGroupSelByIds(ids: any[]): t_funcMap_selMore_ret<interfaceInterfaceGroupDto> {
+export function interfaceInterfaceGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<interfaceInterfaceGroupDto> {
   return request({
     url: `/sys-manage/interface-interface-group/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function interfaceInterfaceGroupUpds(params: interfaceInterfaceGroupUpdDt
   })
 }
 
-export function interfaceInterfaceGroupDel(ids: any[]): t_funcMap_iud_ret {
+export function interfaceInterfaceGroupDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/interface-interface-group',
     method: 'DELETE',
@@ -120,14 +120,14 @@ export const interfaceInterfaceGroupFunc: t_funcMap<interfaceInterfaceGroupDto, 
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return interfaceInterfaceGroupSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return interfaceInterfaceGroupSelByIds(ids)
   },
   /**
@@ -162,7 +162,7 @@ export const interfaceInterfaceGroupFunc: t_funcMap<interfaceInterfaceGroupDto, 
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return interfaceInterfaceGroupDel(ids)
   }
 }

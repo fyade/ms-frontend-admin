@@ -37,7 +37,7 @@ export function codeGenColumnSelById(id: number): t_funcMap_selOne_ret<codeGenCo
   })
 }
 
-export function codeGenColumnSelByIds(ids: any[]): t_funcMap_selMore_ret<codeGenColumnDto> {
+export function codeGenColumnSelByIds(ids: number[]): t_funcMap_selMore_ret<codeGenColumnDto> {
   return request({
     url: `/sys-util/code-gen-column/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function codeGenColumnUpds(params: codeGenColumnUpdDto[]): t_funcMap_iud_
   })
 }
 
-export function codeGenColumnDel(ids: any[]): t_funcMap_iud_ret {
+export function codeGenColumnDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-util/code-gen-column',
     method: 'DELETE',
@@ -104,14 +104,14 @@ export const codeGenColumnFunc: t_funcMap<codeGenColumnDto, codeGenColumnSelDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return codeGenColumnSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return codeGenColumnSelByIds(ids)
   },
   /**
@@ -146,7 +146,7 @@ export const codeGenColumnFunc: t_funcMap<codeGenColumnDto, codeGenColumnSelDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return codeGenColumnDel(ids)
   }
 }

@@ -4,9 +4,9 @@ import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
 import { computed, reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox, FormInstance } from "element-plus";
 import { userRoleDel, userRoleSel, userRoleUpdRU } from "@/api/module/sysManage/userRole.ts";
-import { userSelByIds, userSelList } from "@/api/module/sysManage/user.ts";
+import { userSelByIds, userSel } from "@/api/module/sysManage/user.ts";
 import { userRoleDto } from "@/type/api/sysManage/userRole.ts";
 import { pageDto } from "@/type/tablePage.ts";
 import { userDto } from "@/type/api/sysManage/user.ts";
@@ -49,9 +49,9 @@ const userDict = {
   ugs: '用户组'
 }
 // 所有用户
-const allUsers = ref([])
+const allUsers = ref<userDto[]>([])
 // 筛选表单
-const filterFormRef = ref<any>(null)
+const filterFormRef = ref<FormInstance | null>(null)
 const table1LoadingRef = ref(false)
 // 此角色的用户
 const usersOfThisRole = ref<userDto[]>([])
@@ -81,7 +81,7 @@ const pageChange1 = (newVal: pageDto) => {
 // 选中行
 const selectRows1 = ref<userDto[]>([])
 // 修改选中行
-const handleSelectionChange1 = (val: any) => {
+const handleSelectionChange1 = (val: userDto[]) => {
   selectRows1.value = val
 }
 
@@ -124,7 +124,7 @@ const userDialogGetData = () => {
   }
   table2LoadingRef.value = true
   allUsers.value = []
-  userSelList({...state.pageParam2, ...state.dialogForm}).then(res => {
+  userSel({...state.pageParam2, ...state.dialogForm}).then(res => {
     state.total2 = res.total
     allUsers.value = res.list
     table2LoadingRef.value = false
@@ -144,7 +144,7 @@ const pageChange2 = (newVal: pageDto) => {
 // 选中行
 const selectRows2 = ref<userDto[]>([])
 // 修改选中行
-const handleSelectionChange2 = (val: any) => {
+const handleSelectionChange2 = (val: userDto[]) => {
   selectRows2.value = val
 }
 // 取消新增用户角色
@@ -278,7 +278,9 @@ const deleteUserRole = (userId: string) => {
       <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
       <template #append>
         <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows2.length} 条数据。` }}</span>
+          <span>此表格的多选<span class="underline">不支持</span>{{
+              `跨分页保存，当前已选 ${selectRows2.length} 条数据。`
+            }}</span>
         </div>
       </template>
     </el-table>
@@ -332,7 +334,7 @@ const deleteUserRole = (userId: string) => {
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-      <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows1.length} 条数据。` }}</span>
+        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows1.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>

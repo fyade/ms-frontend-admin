@@ -2,12 +2,12 @@
 import { CONFIG, final } from "@/utils/base.ts";
 import { computed } from "vue";
 import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
-import { useRoute } from "vue-router";
+import { RouteRecordNormalized, useRoute } from "vue-router";
 
 const route = useRoute()
 const props = defineProps({
   menus: {
-    type: Array,
+    type: Array as () => RouteRecordNormalized[],
     required: true
   },
   parentPath: {
@@ -16,13 +16,13 @@ const props = defineProps({
   }
 });
 const menus2 = computed(() => {
-  return (deepClone(props.menus) as any[]).sort((a: any, b: any) => {
+  return (deepClone<RouteRecordNormalized[]>(props.menus)).sort((a, b) => {
     return (ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
   })
 })
 const emits = defineEmits(['gotoMenu']);
 
-const menuClick = (path: any, ifLink: boolean = false, i = 0) => {
+const menuClick = (path: string, ifLink: boolean = false, i = 0) => {
   if (ifLink) {
     openSite(path)
   } else {
@@ -35,7 +35,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
 <template>
   <div
       class="asideMenu"
-      v-for="(item, index) in menus2 as any[]"
+      v-for="(item, index) in menus2"
       :key="index"
   >
     <template v-if="item.children && item.children?.length > 0">
@@ -45,7 +45,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
       >
         <template #title>
           <el-space class="elSpace">
-            <SvgIcon :name="item.meta.icon"
+            <SvgIcon :name="item.meta.icon as string"
                      :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
             <span>{{ item.meta ? item.meta.label : item.name }}</span>
           </el-space>
@@ -56,7 +56,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
           </div>
         </template>
         <AsideMenu
-            :menus="item.children"
+            :menus="item.children as  RouteRecordNormalized[]"
             :parent-path="`${props.parentPath}/${item.path}`"
             @gotoMenu="menuClick"
         ></AsideMenu>
@@ -72,7 +72,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
           <a :href="item.path.replace('/http', 'http')" target="_blank"
              style="position: absolute;left: 0;display: block;padding: inherit;width: 100%;" @click.stop>
             <el-space class="elSpace">
-              <SvgIcon :name="item.meta.icon"
+              <SvgIcon :name="item.meta.icon as string"
                        :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
               <span>{{ item.meta ? item.meta.label : item.name }}</span>
             </el-space>
@@ -85,7 +85,7 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
         </template>
         <template v-else>
           <el-space class="elSpace">
-            <SvgIcon :name="item.meta.icon"
+            <SvgIcon :name="item.meta.icon as string"
                      :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
             <span>{{ item.meta ? item.meta.label : item.name }}</span>
           </el-space>

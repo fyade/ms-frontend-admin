@@ -3,7 +3,7 @@ import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import type { FormRules, TreeInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { menuDto } from "@/type/api/sysManage/menu.ts";
@@ -150,25 +150,25 @@ const {
   props
 })
 
-const selectPermissionTree = ref<any>(null)
+const selectPermissionTree = ref<TreeInstance | null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
-const selectPermission: Ref<any[]> | undefined = inject('changeSelectPermission')
-const selectPermission2 = ref<any[]>(selectPermission ? selectPermission.value.map(item => item.permissionId) : [])
+const selectPermission: Ref<number[]> | undefined = inject('changeSelectPermission')
+const selectPermission2 = ref<number[]>(selectPermission ? selectPermission.value : [])
 nextTick(() => {
-  if (selectPermissionTree) {
-    selectPermissionTree.value?.setCheckedKeys(selectPermission2.value)
+  if (selectPermissionTree.value) {
+    selectPermissionTree.value.setCheckedKeys(selectPermission2.value)
   }
 })
 watch(selectPermission2, () => {
   if (selectPermission) {
-    selectPermission.value = state.list.filter((item: any) => selectPermission2.value.indexOf(item.id) > -1)
+    selectPermission.value = state.list.filter(item => selectPermission2.value.indexOf(item.id) > -1).map(item => item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: any,
+    data: menuDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

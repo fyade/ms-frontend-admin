@@ -197,7 +197,7 @@ watch(() => [state.dialogForm.parentId, activeTabName.value], () => {
   if (state.dialogForm.parentId === final.DEFAULT_PARENT_ID) {
     canChooseTypes.value = [T_MENU, T_COMP]
   } else {
-    const data: any = state.list.find((item: any) => item.id === state.dialogForm.parentId);
+    const data = state.list.find(item => item.id === state.dialogForm.parentId);
     if (data) {
       if (data.type === T_MENU) {
         canChooseTypes.value = [T_MENU, T_COMP]
@@ -230,16 +230,16 @@ const tableData2 = computed(() => {
   return diguiObj
 })
 const tableData3 = computed(() => {
-  return arr2ToDiguiObj(state.list.filter((item: any) => checkVisible(item.type, [T_MENU, T_COMP])))
+  return arr2ToDiguiObj(state.list.filter(item => checkVisible(item.type, [T_MENU, T_COMP])))
 })
 
-const expandRowKeys = ref<any[]>([])
+const expandRowKeys = ref<string[]>([])
 let level = 0
 const expendAll = () => {
   if (level % 3 === 0) {
-    expandRowKeys.value = routerStore.allMenus2.filter((item: any) => item.meta.parentId === 0).map((item: any) => item.meta.id.toString())
+    expandRowKeys.value = routerStore.allMenus2.filter(item => item.meta.parentId === 0).map(item => item.meta.id!.toString())
   } else if (level % 3 === 1) {
-    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item).map(item => item.toString())
+    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item).map(item => item!.toString())
   } else if (level % 3 === 2) {
     expandRowKeys.value = []
   }

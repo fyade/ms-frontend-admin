@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { inject, nextTick, reactive, Ref, ref } from "vue"
+import { inject, nextTick, reactive, Ref, ref, toRaw } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
-import { ElTable, FormRules } from 'element-plus'
+import { ElTable, FormRules, TableInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/sysManage/role.ts";
@@ -136,23 +136,23 @@ const {
   func: roleFunc
 })
 
-const selectRole: Ref<any[]> | undefined = inject('changeSelectRole')
-const multipleTable: Ref<InstanceType<typeof ElTable> | null> = ref<InstanceType<typeof ElTable> | null>(null)
+const selectRole: Ref<number[]> | undefined = inject('changeSelectRole')
+const multipleTable = ref<TableInstance | null>(null)
 const handleDataChange = () => {
   if (selectRole && selectRole.value && multipleTable && multipleTable.value) {
-    const selectRoleIds = selectRole.value.map(item => item.id);
-    state.list.forEach((item: any) => {
-      if (selectRoleIds.indexOf(item.id) > -1) {
+    const value = toRaw(selectRole.value);
+    state.list.forEach(item => {
+      if (value.indexOf(item.id) > -1) {
         multipleTable.value?.toggleRowSelection(item, true)
       }
     })
-    state.multipleSelection = selectRole.value
+    state.multipleSelection = state.list.filter(item => selectRole.value.indexOf(item.id) > -1)
   }
 }
-const handleSelectionChange = (val: any[]) => {
+const handleSelectionChange = (val: roleDto[]) => {
   state.multipleSelection = val
   if (selectRole) {
-    selectRole.value = state.multipleSelection
+    selectRole.value = state.multipleSelection.map(item => item.id)
   }
 }
 </script>

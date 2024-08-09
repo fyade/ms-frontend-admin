@@ -37,7 +37,7 @@ export function userUserGroupSelById(id: number): t_funcMap_selOne_ret<userUserG
   })
 }
 
-export function userUserGroupSelByIds(ids: any[]): t_funcMap_selMore_ret<userUserGroupDto> {
+export function userUserGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<userUserGroupDto> {
   return request({
     url: `/sys-manage/user-user-group/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function userUserGroupUpds(params: userUserGroupUpdDto[]): t_funcMap_iud_
   })
 }
 
-export function userUserGroupDel(ids: any[]): t_funcMap_iud_ret {
+export function userUserGroupDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/user-user-group',
     method: 'DELETE',
@@ -120,14 +120,14 @@ export const userUserGroupFunc: t_funcMap<userUserGroupDto, userUserGroupSelDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return userUserGroupSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return userUserGroupSelByIds(ids)
   },
   /**
@@ -162,7 +162,7 @@ export const userUserGroupFunc: t_funcMap<userUserGroupDto, userUserGroupSelDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return userUserGroupDel(ids)
   }
 }

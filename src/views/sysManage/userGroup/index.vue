@@ -125,7 +125,7 @@ const {
   func: userGroupFunc
 })
 
-const expandRowKeys = ref<any[]>([])
+const expandRowKeys = ref<string[]>([])
 const tableData2 = computed(() => {
   return arr2ToDiguiObj(state.list)
 })
@@ -133,14 +133,13 @@ const gIns2 = () => {
   state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   gIns()
 }
-const tIns = (id: any) => {
+const tIns = (id: number) => {
   state.dialogForm.parentId = id
   gIns()
 }
-let selectUserGroupInfo: any = {}
+let selectUserGroupInfo: userGroupDto = new userGroupDto()
 const drawer2 = ref(false)
-const selectPermission = ref<any[]>([])
-const manageUser = (row: any) => {
+const manageUser = (row: userGroupDto) => {
   selectUserGroupInfo = row
   drawer2.value = true
 }

@@ -4,7 +4,7 @@ import {
   deptPermissionSelDto,
   deptPermissionSelAllDto,
   deptPermissionInsDto,
-  deptPermissionUpdDto, updManyDPDto
+  deptPermissionUpdDto, deptPermissionUpdDPDto
 } from "@/type/api/sysManage/deptPermission.ts";
 import {
   t_funcMap,
@@ -37,7 +37,7 @@ export function deptPermissionSelById(id: number): t_funcMap_selOne_ret<deptPerm
   })
 }
 
-export function deptPermissionSelByIds(ids: any[]): t_funcMap_selMore_ret<deptPermissionDto> {
+export function deptPermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<deptPermissionDto> {
   return request({
     url: `/sys-manage/dept-permission/ids`,
     method: 'GET',
@@ -77,7 +77,7 @@ export function deptPermissionUpds(params: deptPermissionUpdDto[]): t_funcMap_iu
   })
 }
 
-export function deptPermissionDel(ids: any[]): t_funcMap_iud_ret {
+export function deptPermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/dept-permission',
     method: 'DELETE',
@@ -85,7 +85,7 @@ export function deptPermissionDel(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export function deptPermissionUpdDP(data: updManyDPDto) {
+export function deptPermissionUpdDP(data: deptPermissionUpdDPDto) {
   return request({
     url: `/sys-manage/dept-permission/dp`,
     method: 'POST',
@@ -112,14 +112,14 @@ export const deptPermissionFunc: t_funcMap<deptPermissionDto, deptPermissionSelD
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return deptPermissionSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return deptPermissionSelByIds(ids)
   },
   /**
@@ -154,7 +154,7 @@ export const deptPermissionFunc: t_funcMap<deptPermissionDto, deptPermissionSelD
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return deptPermissionDel(ids)
   }
 }

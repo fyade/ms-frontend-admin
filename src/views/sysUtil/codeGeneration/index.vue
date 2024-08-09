@@ -161,19 +161,19 @@ const tableNameChange = (val: string) => {
   }
 }
 const tableNameChange2 = ($index: number) => {
-  const table = tablesList.value.find(item => item.tableNameEn === (state.dialogForms as any[])[$index]['tableName'])
+  const table = tablesList.value.find(item => item.tableNameEn === state.dialogForms![$index]['tableName'])
   if (table) {
-    (state.dialogForms as any[])[$index]['tableDescr'] = table.tableNameCn
+    state.dialogForms![$index]['tableDescr'] = table.tableNameCn
   } else {
-    (state.dialogForms as any[])[$index]['tableDescr'] = ''
+    state.dialogForms![$index]['tableDescr'] = ''
   }
 }
 
-const selectTableId = ref<any>()
-const selectTableNameEn = ref<any>()
+const selectTableId = ref<number>(-1)
+const selectTableNameEn = ref<string>('')
 const drawer = ref(false)
 const setColumnInfo = (rowid: number) => {
-  const row: any = state.list.find((item: any) => item.id === rowid)
+  const row = state.list.find(item => item.id === rowid)
   if (!row) {
     return
   }
@@ -196,7 +196,7 @@ const codeViewState = reactive<CodeViewState>({
   codes: {}
 })
 const activeNameOfCodeView = ref('')
-const codeView = (rowId: any) => {
+const codeView = (rowId: number) => {
   codeViewState.fileNames = {}
   codeViewState.filePaths = {}
   codeViewState.codes = {}
@@ -211,7 +211,7 @@ const codeView = (rowId: any) => {
     dialog3Visible.value = true
   })
 }
-const codeViewZip = (rowId: any) => {
+const codeViewZip = (rowId: number) => {
   genCodeZip(rowId).then(res => {
   })
 }

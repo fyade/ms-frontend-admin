@@ -27,6 +27,14 @@ export class baseClass {
   deleted?: string;
 }
 
+export class baseClass2 {
+  create_by?: string;
+  update_by?: string;
+  create_time?: Date;
+  update_time?: Date;
+  deleted?: string;
+}
+
 export interface baseInterface {
   createBy?: string;
   updateBy?: string;

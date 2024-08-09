@@ -1,5 +1,7 @@
 import { deepClone } from "@/utils/ObjectUtils.ts";
 
+// todo 下面几个使用了any类型的以后得改掉
+
 /**
  * sleep
  * @param ms
@@ -48,6 +50,10 @@ export function toSnakeCases(strs: string[]): string[] {
   return strs.map(str => toSnakeCase(str));
 }
 
+type arr2ToDiguiObjI<T, K extends string, V> = T & {
+  [P in K]: V
+}
+
 /**
  * 二维数组转递归对象
  * @param list
@@ -55,13 +61,17 @@ export function toSnakeCases(strs: string[]): string[] {
  * @param defaultParent
  * @param ifDeepClone
  */
-export function arr2ToDiguiObj(list: any[], {
-                                 key = 'parentId', defaultParent = 0, ifDeepClone = true
-                               }: {
-                                 key?: string, defaultParent?: number, ifDeepClone?: boolean
-                               } = {}
-) {
-  const list2 = ifDeepClone ? deepClone<any[]>(list) : list
+export function arr2ToDiguiObj<T = any>(list: T[], {
+                                          key = 'parentId',
+                                          defaultParent = 0,
+                                          ifDeepClone = true
+                                        }: {
+                                          key?: string,
+                                          defaultParent?: number,
+                                          ifDeepClone?: boolean
+                                        } = {}
+): arr2ToDiguiObjI<T, typeof key, number>[] {
+  const list2 = (ifDeepClone ? deepClone(list) : list) as any[]
   if (list2.length === 0) {
     return []
   }
@@ -98,7 +108,7 @@ export function arr2ToDiguiObj(list: any[], {
  * @param key
  * @param jumppaths
  */
-export function diguiObjToArr2(objs: any[], key: string = 'children', jumppaths = ['']) {
+export function diguiObjToArr2<T = any>(objs: any[], key: string = 'children', jumppaths = ['']): T[][] {
   return diguiObjToArr2_(objs, key, [], [], jumppaths)
 }
 

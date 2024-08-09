@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
 import { computed, reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
-import { userSelByIds, userSelList } from "@/api/module/sysManage/user.ts";
+import { ElMessageBox, FormInstance } from "element-plus";
+import { userSelByIds, userSel } from "@/api/module/sysManage/user.ts";
 import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/module/sysManage/userUserGroup.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
@@ -49,9 +49,9 @@ const userDict = {
   ugs: '用户组'
 }
 // 所有用户
-const allUsers = ref([])
+const allUsers = ref<userDto[]>([])
 // 筛选表单
-const filterFormRef = ref<any>(null)
+const filterFormRef = ref<FormInstance | null>(null)
 const table1LoadingRef = ref(false)
 // 此用户组的用户
 const usersOfThisUserGroup = ref<userDto[]>([])
@@ -81,7 +81,7 @@ const pageChange1 = (newVal: pageDto) => {
 // 选中行
 const selectRows1 = ref<userDto[]>([])
 // 修改选中行
-const handleSelectionChange1 = (val: any) => {
+const handleSelectionChange1 = (val: userDto[]) => {
   selectRows1.value = val
 }
 
@@ -124,7 +124,7 @@ const userDialogGetData = () => {
   }
   table2LoadingRef.value = true
   allUsers.value = []
-  userSelList({...state.pageParam2, ...state.dialogForm}).then(res => {
+  userSel({...state.pageParam2, ...state.dialogForm}).then(res => {
     state.total2 = res.total
     allUsers.value = res.list
     table2LoadingRef.value = false
@@ -144,7 +144,7 @@ const pageChange2 = (newVal: pageDto) => {
 // 选中行
 const selectRows2 = ref<userDto[]>([])
 // 修改选中行
-const handleSelectionChange2 = (val: any) => {
+const handleSelectionChange2 = (val: userDto[]) => {
   selectRows2.value = val
 }
 // 取消新增用户用户组
@@ -273,7 +273,9 @@ const deleteUserUserGroup = (userId: string) => {
       <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
       <template #append>
         <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows2.length} 条数据。` }}</span>
+          <span>此表格的多选<span class="underline">不支持</span>{{
+              `跨分页保存，当前已选 ${selectRows2.length} 条数据。`
+            }}</span>
         </div>
       </template>
     </el-table>

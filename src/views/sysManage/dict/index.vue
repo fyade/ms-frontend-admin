@@ -130,7 +130,7 @@ const {
 
 const drawer = ref(false)
 const selectDicType = ref('')
-const setDicData = (row: any) => {
+const setDicData = (row: dicTypeDto) => {
   selectDicType.value = row.type
   drawer.value = true
 }

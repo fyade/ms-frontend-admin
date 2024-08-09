@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CONFIG, final } from "@/utils/base.ts";
+import { CONFIG } from "@/utils/base.ts";
 </script>
 
 <template>

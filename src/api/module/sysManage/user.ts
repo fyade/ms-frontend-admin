@@ -4,7 +4,7 @@ import {
   userSelDto,
   userSelAllDto,
   userInsDto,
-  userUpdDto, registDto, loginDto
+  userUpdDto, registDto, loginDto, userUpdPsdDto, adminResetUserPsdDto
 } from "@/type/api/sysManage/user.ts";
 import {
   t_funcMap,
@@ -31,14 +31,14 @@ export function userSelAll(params: userSelAllDto): t_funcMap_selMore_ret<userDto
   })
 }
 
-export function userSelById(id: number): t_funcMap_selOne_ret<userDto> {
+export function userSelById(id: string): t_funcMap_selOne_ret<userDto> {
   return request({
     url: `/sys-manage/user/${id}`,
     method: 'GET'
   })
 }
 
-export function userSelByIds(ids: any[]): t_funcMap_selMore_ret<userDto> {
+export function userSelByIds(ids: string[]): t_funcMap_selMore_ret<userDto> {
   return request({
     url: `/sys-manage/user/ids`,
     method: 'GET',
@@ -78,7 +78,7 @@ export function userUpds(params: userUpdDto[]): t_funcMap_iud_ret {
   })
 }
 
-export function userDel(ids: any[]): t_funcMap_iud_ret {
+export function userDel(ids: string[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/user',
     method: 'DELETE',
@@ -112,15 +112,7 @@ export function getSelfInfo() {
   })
 }
 
-export function userSelList(params: any) {
-  return request({
-    url: '/sys-manage/user/page',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function newUser(params: any) {
+export function newUser(params: registDto) {
   return request({
     url: '/sys-manage/user',
     method: 'POST',
@@ -131,7 +123,7 @@ export function newUser(params: any) {
   })
 }
 
-export function updUser(params: any) {
+export function updUser(params: userUpdDto) {
   return request({
     url: '/sys-manage/user/upd-user',
     method: 'POST',
@@ -139,7 +131,7 @@ export function updUser(params: any) {
   })
 }
 
-export function updPsd(params: any) {
+export function updPsd(params: userUpdPsdDto) {
   return request({
     url: '/sys-manage/user/upd-psd',
     method: 'POST',
@@ -151,7 +143,7 @@ export function updPsd(params: any) {
   })
 }
 
-export function resetUserPsd(params: any) {
+export function resetUserPsd(params: adminResetUserPsdDto) {
   return request({
     url: '/sys-manage/user/admin-reset-user-psd',
     method: 'POST',
@@ -168,7 +160,7 @@ export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto,
    * @param params
    */
   selectList: (params: userSelDto) => {
-    return userSelList(params)
+    return userSel(params)
   },
   /**
    * 查询所有
@@ -181,14 +173,14 @@ export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto,
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: string) => {
     return userSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: string[]) => {
     return userSelByIds(ids)
   },
   /**
@@ -196,7 +188,7 @@ export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto,
    * @param obj
    */
   insertOne: (obj: userInsDto) => {
-    return newUser(obj)
+    return userIns(obj)
   },
   /**
    * 修改
@@ -223,7 +215,7 @@ export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto,
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: string[]) => {
     return userDel(ids)
   }
 }

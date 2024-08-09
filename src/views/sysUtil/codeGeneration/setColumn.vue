@@ -203,7 +203,7 @@ getDbInfo().then(res => {
 const dialog2Visible = ref(false)
 const tableCols = ref<chooseTableTableColInterface[]>([])
 const tableColsDict = chooseTableTableColInterfaceDict
-const multipleSelection1 = ref([])
+const multipleSelection1 = ref<chooseTableTableColInterface[]>([])
 const adict = {
   ...publicDict
 }
@@ -229,25 +229,25 @@ const d1Con = () => {
   }
   if (activeTabName.value === final.more) {
     state.dialogForms = []
-    multipleSelection1.value.forEach((row: any) => {
-      const obj: any = deepClone(toRaw(state.dialogForm))
+    multipleSelection1.value.forEach(row => {
+      const obj = deepClone<codeGenColumnDto>(toRaw(state.dialogForm))
       obj.colName = row.colName
       obj.colDescr = adict[toCamelCase<keyof adictInterface>(row.colName)] || ''
       obj.mysqlType = row.colType
-      obj.tsType = ['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value
+      obj.tsType = (['Int'].indexOf(row.colType) > -1 ? tsTypeDicts.find(item => item.value === 'number')?.value : tsTypeDicts.find(item => item.value !== 'number')?.value) || ''
       obj.tsName = toCamelCase(row.colName)
       obj.ifIns = final.Y
       obj.ifUpd = final.Y
       obj.ifSelOne = final.Y
       obj.ifSelMore = final.Y
       obj.ifRequired = row.ifMust ? final.Y : final.N
-      obj.formType = formTypeDicts.find(item => item.value === 'input')?.value
-      obj.selType = selTypeDicts.find(item => item.value === 'like')?.value
+      obj.formType = formTypeDicts.find(item => item.value === 'input')?.value || ''
+      obj.selType = selTypeDicts.find(item => item.value === 'like')?.value || ''
       state.dialogForms && state.dialogForms.push(obj)
     })
   }
   if (activeTabName.value === final.one) {
-    const row: any = deepClone(toRaw(multipleSelection1.value[0]))
+    const row = deepClone<chooseTableTableColInterface>(toRaw(multipleSelection1.value[0]))
     state.dialogForm.colName = row.colName
     state.dialogForm.colDescr = adict[toCamelCase<keyof adictInterface>(row.colName)] || ''
     state.dialogForm.mysqlType = row.colType
@@ -263,7 +263,7 @@ const d1Con = () => {
   }
   dialog2Visible.value = false
 }
-const handleSelectionChange1 = (val: any) => {
+const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
   multipleSelection1.value = val
 }
 </script>

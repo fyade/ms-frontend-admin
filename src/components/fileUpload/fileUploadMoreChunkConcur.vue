@@ -6,7 +6,7 @@ import { removeElementsByIndices } from "@/utils/ObjectUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { fileUploadInterfaceMoreChunk, fileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";
+import { fileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
 interface progressI {
@@ -19,7 +19,7 @@ let pageNotUnmounted = true
 onBeforeUnmount(() => {
   pageNotUnmounted = false
 })
-const fileUploadRequests: any[] = []
+const fileUploadRequests: (() => Promise<null>)[] = []
 const emit = defineEmits(['uploadSuccess', 'uploadFail']);
 const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
@@ -183,11 +183,11 @@ const uploading = (chunkIndex: number, blob: Blob) => {
 /**
  * 上传完成
  */
-const uploadSuccess = (param?: any) => {
+const uploadSuccess = () => {
   state.currentStage = 'd'
   state.chunkNum = 0
   isLoading.value = false
-  emit('uploadSuccess', param)
+  emit('uploadSuccess')
 }
 /**
  * 上传失败
@@ -210,15 +210,15 @@ const uploadFail = (msg?: string) => {
  * @param maxNum
  * @param downloadProgress
  */
-function concurRequest2(promises: Promise<any>[],
+function concurRequest2(promises: (() => Promise<null>)[],
                         {
-                          maxNum = 8,
+                          maxNum = 4,
                           downloadProgress
                         }: {
                           maxNum?: number
                           downloadProgress?: Function
                         } = {}
-): Promise<any[]> {
+): Promise<(string | boolean | null)[]> {
   const progress: progressI = {
     started: [] as number[],
     ended: [] as number[],
@@ -230,7 +230,7 @@ function concurRequest2(promises: Promise<any>[],
     }
     let index = 0
     let count = 0
-    const result: any[] = []
+    const result: (string | boolean | null)[] = []
 
     async function request() {
       const i = index
@@ -238,9 +238,9 @@ function concurRequest2(promises: Promise<any>[],
       index++
       try {
         progress.started.push(i)
-        result[i] = await (await pormis)()
+        result[i] = await (pormis)()
       } catch (err) {
-        result[i] = err
+        result[i] = err as string
       } finally {
         progress.ended.push(i)
         count++

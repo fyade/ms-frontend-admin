@@ -151,18 +151,18 @@ const selectInterface = ref<interfaceDto>({
   remark: '',
 })
 const drawer2 = ref(false)
-const selectInterfaceGroups = ref<interfaceInterfaceGroupDto[]>([])
-const manageInterfaceGroup = (row: any) => {
+const selectInterfaceGroups = ref<number[]>([])
+const manageInterfaceGroup = (row: interfaceDto) => {
   selectInterface.value = row
   interfaceInterfaceGroupSelAll({interfaceId: selectInterface.value.id}).then(res => {
-    selectInterfaceGroups.value = res
+    selectInterfaceGroups.value = res.map(item => item.interfaceGroupId)
     drawer2.value = true
   })
 }
 const drawerConfirmInterfaceInterfaceGroup = () => {
   const param = {
     interfaceId: selectInterface.value.id,
-    interfaceGroupId: selectInterfaceGroups.value.map(item=>item.id)
+    interfaceGroupId: selectInterfaceGroups.value
   }
   interfaceInterfaceGroupUpdIIG(param).then(res => {
     if (res) {

@@ -4,7 +4,7 @@ import {
   rolePermissionSelDto,
   rolePermissionSelAllDto,
   rolePermissionInsDto,
-  rolePermissionUpdDto
+  rolePermissionUpdDto, rolePermissionUpdRpDto
 } from "@/type/api/sysManage/rolePermission.ts";
 import {
   t_funcMap,
@@ -37,7 +37,7 @@ export function rolePermissionSelById(id: number): t_funcMap_selOne_ret<rolePerm
   })
 }
 
-export function rolePermissionSelByIds(ids: any[]): t_funcMap_selMore_ret<rolePermissionDto> {
+export function rolePermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<rolePermissionDto> {
   return request({
     url: `/sys-manage/role-permission/ids`,
     method: 'GET',
@@ -77,11 +77,19 @@ export function rolePermissionUpds(params: rolePermissionUpdDto[]): t_funcMap_iu
   })
 }
 
-export function rolePermissionDel(ids: any[]): t_funcMap_iud_ret {
+export function rolePermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
     url: '/sys-manage/role-permission',
     method: 'DELETE',
     data: ids
+  })
+}
+
+export function rolePermissionUpdRp(params: rolePermissionUpdRpDto) {
+  return request({
+    url: '/sys-manage/role-permission/rp',
+    method: 'POST',
+    data: params
   })
 }
 
@@ -104,14 +112,14 @@ export const rolePermissionFunc: t_funcMap<rolePermissionDto, rolePermissionSelD
    * 查询单个
    * @param id
    */
-  selectById: (id: any) => {
+  selectById: (id: number) => {
     return rolePermissionSelById(id)
   },
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: any[]) => {
+  selectByIds: (ids: number[]) => {
     return rolePermissionSelByIds(ids)
   },
   /**
@@ -146,7 +154,7 @@ export const rolePermissionFunc: t_funcMap<rolePermissionDto, rolePermissionSelD
    * 删除
    * @param ids
    */
-  deleteList: (...ids: any[]) => {
+  deleteList: (...ids: number[]) => {
     return rolePermissionDel(ids)
   }
 }

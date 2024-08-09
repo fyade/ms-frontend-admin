@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, provide, reactive, ref } from "vue"
+import { computed, provide, reactive, ref, watch } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -130,7 +130,7 @@ const {
   func: deptFunc
 })
 
-const expandRowKeys = ref<any[]>([])
+const expandRowKeys = ref<string[]>([])
 const tableData2 = computed(() => {
   return arr2ToDiguiObj(state.list)
 })
@@ -138,31 +138,31 @@ const gIns2 = () => {
   state.dialogForm.parentId = final.DEFAULT_PARENT_ID
   gIns()
 }
-const tIns = (id: any) => {
+const tIns = (id: number) => {
   state.dialogForm.parentId = id
   gIns()
 }
 
-let selectDept: any = {}
+let selectDept: deptDto = new deptDto()
 const drawer = ref(false)
-const manageUser = (row: any) => {
+const manageUser = (row: deptDto) => {
   selectDept = row
   drawer.value = true
 }
 
 const drawer2 = ref(false)
-const selectPermission = ref<any[]>([])
-const managePermission = (row: any) => {
+const selectPermission = ref<number[]>([])
+const managePermission = (row: deptDto) => {
   selectDept = row
   deptPermissionSelAll({deptId: selectDept.id}).then(res => {
-    selectPermission.value = res
+    selectPermission.value = res.map(item => item.permissionId)
     drawer2.value = true
   })
 }
 const drawerConfirmDeptPermission = () => {
   const param = {
     deptId: selectDept.id,
-    permissionId: selectPermission.value.map(item => item.id)
+    permissionId: selectPermission.value
   }
   deptPermissionUpdDP(param).then(res => {
     if (res) {
@@ -458,7 +458,8 @@ provide('changeSelectPermission', selectPermission)
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span
+            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>

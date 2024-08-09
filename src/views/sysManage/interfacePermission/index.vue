@@ -670,7 +670,7 @@ const shortcuts = [
 ]
 
 const userGroupPermissionDCon2 = () => {
-  delete (userGroupPermissionState.dialogForm as any).count
+  delete userGroupPermissionState.dialogForm.count
   userGroupPermissionDCon()
 }
 </script>
@@ -776,7 +776,8 @@ const userGroupPermissionDCon2 = () => {
       </el-form-item>
       <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['ifUseUp']" prop="ifUseUp">
         <el-tag v-if="userGroupPermissionState.dialogForm['ifUseUp'] === final.Y" type="danger">是</el-tag>
-        <el-tag v-else type="success">已使用{{ (userGroupPermissionState.dialogForm as any)['count'] }}次</el-tag>
+        <el-tag v-else type="success">已使用{{userGroupPermissionState.dialogForm['count'] }}次
+        </el-tag>
       </el-form-item>
       <!--在此上方添加表单项-->
       <!--<el-form-item :label="userGroupPermissionState.dict['orderNum']" prop='orderNum'>-->
@@ -823,13 +824,15 @@ const userGroupPermissionDCon2 = () => {
                   <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']" width="120">
+              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"
+                               width="120">
                 <template #default="{row}">
                   <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="ifRejectRequestUseUp" :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
+              <el-table-column prop="ifRejectRequestUseUp"
+                               :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
                 <template #default="{row}">
                   <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>
@@ -850,8 +853,12 @@ const userGroupPermissionDCon2 = () => {
               <el-table-column prop="remark" :label="userGroupPermissionState.dict['remark']" width="120"/>
               <el-table-column fixed="right" label="操作" min-width="120">
                 <template #default="{row}">
-                  <el-button link type="primary" size="small" @click="detailUserGroupOfThisInterfaceGroup(row.id)">查看详情</el-button>
-                  <el-button link type="danger" size="small" @click="beforeDelUserGroupOfThisInterfaceGroup(row.id)">删除</el-button>
+                  <el-button link type="primary" size="small" @click="detailUserGroupOfThisInterfaceGroup(row.id)">
+                    查看详情
+                  </el-button>
+                  <el-button link type="danger" size="small" @click="beforeDelUserGroupOfThisInterfaceGroup(row.id)">
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -894,13 +901,15 @@ const userGroupPermissionDCon2 = () => {
                   <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']" width="120">
+              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"
+                               width="120">
                 <template #default="{row}">
                   <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="ifRejectRequestUseUp" :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
+              <el-table-column prop="ifRejectRequestUseUp"
+                               :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
                 <template #default="{row}">
                   <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>
@@ -921,8 +930,12 @@ const userGroupPermissionDCon2 = () => {
               <el-table-column prop="remark" :label="userGroupPermissionState.dict['remark']" width="120"/>
               <el-table-column fixed="right" label="操作" min-width="120">
                 <template #default="{row}">
-                  <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.id)">查看详情|</el-button>
-                  <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.id)">删除</el-button>
+                  <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.id)">
+                    查看详情|
+                  </el-button>
+                  <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.id)">
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
