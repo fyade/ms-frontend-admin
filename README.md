@@ -20,9 +20,9 @@
 
 在项目根目录中新建 .env.test 文件，配置项与 .env.dev 一样，用于测试环境；
 
-在项目根目录中新建 .env.prod 文件，配置项与 .env.dev 一样，用于生产环境。
+在项目根目录中新建 .env.prod 文件，配置项与 .env.dev 一样，用于生产环境；
 
-在 /config 目录下新建 authConfig.ts 文件，随后将 authConfig.txt 内的内容复制进去并根据自身情况做修改；
+在 /config 目录下新建 authConfig.ts 文件，随后将 authConfig.txt 内的内容复制进去并根据自身情况做修改。
 
 ## 注意 NOTICE
 

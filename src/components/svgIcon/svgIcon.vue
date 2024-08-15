@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, ref } from "vue";
 
 const props = defineProps({
   name: {
@@ -16,10 +16,22 @@ const props = defineProps({
   }
 });
 const symbolId = computed(() => `#${props.name}`)
+
+const offsetNumber = ref(200)
+const el = ref<HTMLElement | null>(null)
+nextTick(() => {
+  offsetNumber.value = props.size
+  if (el.value) {
+    // 0这个值太过极限，取一个大一点点的10
+    if (el.value.getBoundingClientRect().x + props.size - offsetNumber.value <= 10) {
+      offsetNumber.value = -offsetNumber.value
+    }
+  }
+})
 </script>
 
 <template>
-  <div class="svgicon" :style="{
+  <div ref="el" class="svgicon" :id="`svg-icon-${props.name}`" :style="{
     position: 'relative',
     width: `${props.size}px`,
     height: `${props.size}px`,
@@ -31,8 +43,8 @@ const symbolId = computed(() => `#${props.name}`)
       display: 'block',
       fontSize: `${props.size}px`,
       color: props.color,
-      filter: `drop-shadow(100px 0 0 ${props.color})`,
-      transform: 'translate(-100px, -30px)'
+      filter: `drop-shadow(${offsetNumber}px 0 0 ${props.color})`,
+      transform: `translate(${-offsetNumber}px, -30px)`
   }">
       <use :href="symbolId" :fill="props.color"/>
     </svg>
