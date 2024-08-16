@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { CONFIG, final } from "@/utils/base.ts";
 import { computed } from "vue";
-import { deepClone, ifValid } from "@/utils/ObjectUtils.ts";
+import { deepClone, ifNull, ifUndefined, ifValid } from "@/utils/ObjectUtils.ts";
 import { RouteRecordNormalized, useRoute } from "vue-router";
+import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
 const route = useRoute()
 const props = defineProps({
@@ -30,6 +31,11 @@ const menuClick = (path: string, ifLink: boolean = false, i = 0) => {
   }
 }
 const openSite = (item: string) => window.open(item.replace('/http', 'http'))
+
+const sysConfigStore = useSysConfigStore();
+const ifParentMenuItem = (item: RouteRecordNormalized) => {
+  return item.meta.parentId === final.DEFAULT_PARENT_ID || ifUndefined(item.meta.parentId) || ifNull(item.meta.parentId)
+}
 </script>
 
 <template>
@@ -44,7 +50,11 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
           :index="`${props.parentPath}/${item.path}`.replace(/\/{2,}/g, '/')"
       >
         <template #title>
-          <el-space class="elSpace">
+          <template v-if="sysConfigStore.getMenuCollapse()&&ifParentMenuItem(item)">
+            <SvgIcon :name="item.meta.icon as string"
+                     :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
+          </template>
+          <el-space v-else class="elSpace">
             <SvgIcon :name="item.meta.icon as string"
                      :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
             <span>{{ item.meta ? item.meta.label : item.name }}</span>
@@ -87,7 +97,9 @@ const openSite = (item: string) => window.open(item.replace('/http', 'http'))
           <el-space class="elSpace">
             <SvgIcon :name="item.meta.icon as string"
                      :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
-            <span>{{ item.meta ? item.meta.label : item.name }}</span>
+            <template v-if="!sysConfigStore.getMenuCollapse()||(sysConfigStore.getMenuCollapse()&&!ifParentMenuItem(item))">
+              <span>{{ item.meta ? item.meta.label : item.name }}</span>
+            </template>
           </el-space>
           <div v-if="item.meta&&item.meta.fullPath===route.path" class="bg">
             <div class="r0"></div>

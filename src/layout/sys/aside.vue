@@ -3,7 +3,7 @@ import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import AsideMenu from "@/components/menu/asideMenu.vue";
-import { CONFIG } from "@/utils/base.ts";
+import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
 const defaultActive = ref('')
 const go = (url: string) => {
@@ -71,17 +71,23 @@ const addToStore = (i: number) => {
   routerStore.addMenu(allMenus2[i])
 }
 
+const sysConfigStore = useSysConfigStore();
+const changeMenuCollapse = () => {
+  sysConfigStore.setMenuCollapse(!sysConfigStore.getMenuCollapse())
+}
+
 defineExpose({
   gotoMenu
 })
 </script>
 <template>
-  <div class="el">
+  <div :class="`el ${sysConfigStore.getMenuCollapse()?'menuCollapseTrue':''}`">
     <el-menu
         :default-active="defaultActive"
-        :collapse="false"
+        :collapse="sysConfigStore.getMenuCollapse()"
         :unique-opened="true"
         router
+        style="border-right: 0;"
     >
       <el-scrollbar>
         <AsideMenu
@@ -90,16 +96,48 @@ defineExpose({
         ></AsideMenu>
       </el-scrollbar>
     </el-menu>
+    <div class="bottom">
+      <div class="row">
+        <div @click="changeMenuCollapse">
+          <SvgIcon :name="sysConfigStore.getMenuCollapse()?'indent-right':'indent-left'" color="#000"
+                   style="cursor: pointer;"/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .el {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100%;
-  overflow: hidden auto;
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+
+  &.menuCollapseTrue {
+    :deep(.el-sub-menu__icon-arrow) {
+      display: none;
+    }
+  }
 
   > * {
-    height: 100%;
+    &:first-child {
+      flex: 1;
+      overflow: hidden auto;
+    }
+  }
+
+  > .bottom {
+    flex: 0;
+
+    > .row {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 40px;
+    }
   }
 }
 </style>

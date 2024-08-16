@@ -5,6 +5,7 @@ import { allMenus2I, useRouterStore } from "@/store/module/router.ts";
 import { Ref, ref, watch } from "vue";
 import { homerouter, routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
+import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
 const route = useRoute()
 const routerStore = useRouterStore();
@@ -69,12 +70,14 @@ const contextMenu = (info: allMenus2I, index: number) => [
     }
   ]
 ]
+
+const sysConfigStore = useSysConfigStore();
 </script>
 
 <template>
   <PublicIndex>
     <el-container style="height: calc(100% - 50px)">
-      <el-aside width="200px">
+      <el-aside :width="sysConfigStore.getMenuCollapse()?'64px':'200px'">
         <Aside ref="aside"/>
       </el-aside>
       <el-main class="content">
