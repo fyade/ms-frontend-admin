@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { provide, reactive, Ref, ref } from "vue"
+import { provide, reactive, ref } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
@@ -13,16 +13,15 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
-import { interfaceDto } from "@/type/api/sysManage/interface.ts";
+import { interfaceDto, interfaceUpdDto } from "@/type/api/sysManage/interface.ts";
 import { interfaceFunc } from "@/api/module/sysManage/interface.ts"
 import InterfaceInterfaceGroup from "@/views/sysManage/interface/interfaceInterfaceGroup.vue";
 import {
   interfaceInterfaceGroupSelAll,
   interfaceInterfaceGroupUpdIIG
 } from "@/api/module/sysManage/interfaceInterfaceGroup.ts";
-import { interfaceInterfaceGroupDto } from "@/type/api/sysManage/interfaceInterfaceGroup.ts";
 
-const state = reactive<State<interfaceDto>>({
+const state = reactive<State<interfaceDto, interfaceUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -42,6 +41,7 @@ const state = reactive<State<interfaceDto>>({
     ifDisabled: final.N,
     ifPublic: final.N,
     perms: '',
+    url: '',
     remark: '',
   },
   dialogForms: [],
@@ -57,6 +57,7 @@ const state = reactive<State<interfaceDto>>({
     ifDisabled: [{required: true, trigger: 'change'}],
     ifPublic: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
+    url: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -70,6 +71,7 @@ const state = reactive<State<interfaceDto>>({
     icon: '图标',
     ifPublic: '是否公共接口',
     perms: '权限标识',
+    url: '请求url',
   },
   // 筛选表单
   // 格式: {
@@ -140,16 +142,7 @@ const {
   func: interfaceFunc
 })
 
-const selectInterface = ref<interfaceDto>({
-  id: -1,
-  label: '',
-  icon: '',
-  orderNum: -1,
-  ifDisabled: '',
-  ifPublic: '',
-  perms: '',
-  remark: '',
-})
+const selectInterface = ref<interfaceDto>(new interfaceDto())
 const drawer2 = ref(false)
 const selectInterfaceGroups = ref<number[]>([])
 const manageInterfaceGroup = (row: interfaceDto) => {
@@ -273,6 +266,13 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
         </el-row>
         <el-row>
           <el-col :span="24">
+            <el-form-item :label="state.dict['url']" prop="url">
+              <el-input v-model="state.dialogForm['url']" :placeholder="state.dict['url']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
               <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
@@ -378,6 +378,16 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="url" :label="state.dict['url']" width="300">
+            <template #header>
+              <span :class="ifRequired('url')?'tp-table-header-required':''">{{ state.dict['url'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-url`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['url']" :placeholder="state.dict['url']"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" :label="state.dict['remark']" width="300">
             <template #header>
               <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
@@ -479,6 +489,7 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
     <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
     <el-table-column prop="ifPublic" :label="state.dict['ifPublic']" width="120"/>
     <el-table-column prop="perms" :label="state.dict['perms']" width="240"/>
+    <el-table-column prop="url" :label="state.dict['url']" width="240"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
@@ -487,7 +498,7 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
     <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="primary" size="small" @click="manageInterfaceGroup(row)">分配接口组</el-button>

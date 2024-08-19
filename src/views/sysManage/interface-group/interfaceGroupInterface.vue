@@ -7,7 +7,7 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
-import { interfaceDto } from "@/type/api/sysManage/interface.ts";
+import { interfaceDto, interfaceUpdDto } from "@/type/api/sysManage/interface.ts";
 import { interfaceFunc, } from "@/api/module/sysManage/interface.ts"
 import { interfaceInterfaceGroupDto } from "@/type/api/sysManage/interfaceInterfaceGroup.ts";
 import {
@@ -138,7 +138,7 @@ const {
   func: interfaceInterfaceGroupFunc
 })
 
-const interfaceState = reactive<State<interfaceDto>>({
+const interfaceState = reactive<State<interfaceDto, interfaceUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -156,8 +156,9 @@ const interfaceState = reactive<State<interfaceDto>>({
     icon: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     ifDisabled: final.N,
-    ifPublic: '',
+    ifPublic: final.N,
     perms: '',
+    url: '',
     remark: '',
   },
   dialogForms: [],
@@ -173,6 +174,7 @@ const interfaceState = reactive<State<interfaceDto>>({
     ifDisabled: [{required: true, trigger: 'change'}],
     ifPublic: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
+    url: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -186,6 +188,7 @@ const interfaceState = reactive<State<interfaceDto>>({
     icon: '图标',
     ifPublic: '是否公共接口',
     perms: '权限标识',
+    url: '请求url',
   },
   // 筛选表单
   // 格式: {
@@ -383,6 +386,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
     <el-table-column prop="ifDisabled" :label="interfaceState.dict['ifDisabled']" width="120"/>
     <el-table-column prop="ifPublic" :label="interfaceState.dict['ifPublic']" width="120"/>
     <el-table-column prop="perms" :label="interfaceState.dict['perms']" width="240"/>
+    <el-table-column prop="url" :label="interfaceState.dict['url']" width="240"/>
     <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
@@ -398,7 +402,9 @@ const confirmAddInterfaceInterfaceGroup = () => {
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${interfaceInterfaceGroupState.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span class="underline">不支持</span>{{
+            `跨分页保存，当前已选 ${interfaceInterfaceGroupState.multipleSelection.length} 条数据。`
+          }}</span>
       </div>
     </template>
   </el-table>
@@ -492,6 +498,13 @@ const confirmAddInterfaceInterfaceGroup = () => {
             <el-col :span="12">
               <el-form-item :label="interfaceState.dict['perms']" prop="perms">
                 <el-input v-model="interfaceState.dialogForm['perms']" :placeholder="interfaceState.dict['perms']"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item :label="interfaceState.dict['url']" prop="url">
+                <el-input v-model="interfaceState.dialogForm['url']" :placeholder="interfaceState.dict['url']"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -619,6 +632,19 @@ const confirmAddInterfaceInterfaceGroup = () => {
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="url" :label="interfaceState.dict['url']" width="300">
+              <template #header>
+                <span
+                    :class="interfaceIfRequired('url')?'tp-table-header-required':''">{{ interfaceState.dict['url'] }}</span>
+              </template>
+              <template #default="{$index}">
+                <div
+                    :class="interfaceState.dialogForms_error?.[`${$index}-url`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="interfaceState.dialogForms[$index]['url']"
+                            :placeholder="interfaceState.dict['url']"/>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="300">
               <template #header>
                 <span :class="interfaceIfRequired('remark')?'tp-table-header-required':''">{{
@@ -721,6 +747,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
       <el-table-column prop="ifDisabled" :label="interfaceState.dict['ifDisabled']" width="120"/>
       <el-table-column prop="ifPublic" :label="interfaceState.dict['ifPublic']" width="120"/>
       <el-table-column prop="perms" :label="interfaceState.dict['perms']" width="240"/>
+      <el-table-column prop="url" :label="interfaceState.dict['url']" width="240"/>
       <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="interfaceState.dict['createBy']" width="120"/>-->

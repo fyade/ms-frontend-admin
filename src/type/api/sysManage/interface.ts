@@ -9,6 +9,7 @@ export class interfaceDto extends baseClass {
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
+  url!: string;
   remark!: string;
 }
 
@@ -20,10 +21,12 @@ export class interfaceSelAllDto {
 
 export class interfaceInsDto {
   label!: string;
+  icon!: string;
   orderNum!: number;
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
+  url!: string;
   remark!: string;
 }
 

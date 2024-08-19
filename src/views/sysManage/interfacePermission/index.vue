@@ -931,7 +931,7 @@ const userGroupPermissionDCon2 = () => {
               <el-table-column fixed="right" label="操作" min-width="120">
                 <template #default="{row}">
                   <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.id)">
-                    查看详情|
+                    查看详情
                   </el-button>
                   <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.id)">
                     删除
