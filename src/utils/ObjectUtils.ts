@@ -67,11 +67,28 @@ export function ifNotValid(val: any) {
 
 /**
  * 深克隆
- * @param any
- * @returns
+ * @param value
  */
-export function deepClone<T>(any: any): T {
-  return JSON.parse(JSON.stringify(any))
+export function deepClone<T>(value: T): T {
+  const cache = new Map()
+
+  function _deepClone(value: any) {
+    if (value === null || typeof value !== 'object') {
+      return value
+    }
+    if (cache.has(value)) {
+      return cache.get(value)
+    }
+    // 构造函数及原型等可在这里做处理
+    const result = Array.isArray(value) ? [] : {} as any
+    cache.set(value, result)
+    for (const key in value) {
+      result[key] = _deepClone(value[key])
+    }
+    return result
+  }
+
+  return _deepClone(value)
 }
 
 /**

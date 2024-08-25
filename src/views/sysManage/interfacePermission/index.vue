@@ -818,33 +818,33 @@ const userGroupPermissionDCon2 = () => {
           <div v-if="selectType===INTERFACE_GROUP">
             <!--{{ userGroupsOfThisInterfaceGroup }}-->
             <el-table :data="userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup">
-              <el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"
-                               width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="ifRejectRequestUseUp"
-                               :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>
-                </template>
-              </el-table-column>
+              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"-->
+              <!--                 width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <!--<el-table-column prop="ifRejectRequestUseUp"-->
+              <!--                 :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
               <el-table-column prop="ifUseUp" :label="userGroupPermissionState.dict['ifUseUp']" width="120">
                 <template #default="{row}">
                   <el-tag type="danger" v-if="row.ifUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifUseUp === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>
+              <!--<el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>-->
               <el-table-column :label="userGroupState.dict['label']" width="120">
                 <template #default="{row}">
                   {{ userGroupsOfThisInterfaceGroup.find(item => item.id === row.userGroupId)?.label }}
@@ -895,33 +895,33 @@ const userGroupPermissionDCon2 = () => {
           <div v-if="selectType===USER_GROUP">
             <!--{{ interfaceGroupsOfThisUserGroup }}-->
             <el-table :data="userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup">
-              <el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"
-                               width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="ifRejectRequestUseUp"
-                               :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">
-                <template #default="{row}">
-                  <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>
-                  <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>
-                </template>
-              </el-table-column>
+              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"-->
+              <!--                 width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <!--<el-table-column prop="ifRejectRequestUseUp"-->
+              <!--                 :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>-->
+              <!--    <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
               <el-table-column prop="ifUseUp" :label="userGroupPermissionState.dict['ifUseUp']" width="120">
                 <template #default="{row}">
                   <el-tag type="danger" v-if="row.ifUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifUseUp === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>
+              <!--<el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>-->
               <el-table-column :label="interfaceGroupState.dict['label']" width="120">
                 <template #default="{row}">
                   {{ interfaceGroupsOfThisUserGroup.find(item => item.id === row.permissionId)?.label }}
