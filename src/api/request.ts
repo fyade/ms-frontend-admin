@@ -5,7 +5,7 @@ import { sleep } from "@/utils/baseUtils.ts";
 
 export const baseURL = import.meta.env.VITE_API_PREFIX
 export const fileBaseUrl = import.meta.env.VITE_API_FILE_PREFIX + '/'
-const maxReqCount = 3
+const maxReqCount = 1
 // const whiteList: string[] = []
 const whiteList: string[] = ['/sys/user/adminlogin']
 const request = axios.create({

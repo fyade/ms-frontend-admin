@@ -136,9 +136,18 @@ const sysConfigStore = useSysConfigStore();
     align-items: center;
     gap: 4px;
     flex: none;
-    padding: 8px;
+    padding: 8px 0;
     height: 30px;
     //overflow: auto hidden;
+    > * {
+      &:first-child {
+        padding-left: 8px;
+      }
+
+      &:last-child {
+        padding-right: 8px;
+      }
+    }
   }
 
   > .main {

@@ -132,7 +132,7 @@ const {
 </script>
 
 <template>
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"

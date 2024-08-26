@@ -141,6 +141,15 @@ const config: t_config = reactive({
   }, // 查询参数（补充
   pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+  changeActiveTabNameCallback: newVal => {
+    changeActiveTabName(newVal)
+  },
+  activeTabMoreInsCallback: () => {
+    activeTabMoreIns()
+  },
+  activeTabMoreDelCallback: index => {
+    activeTabMoreDel(index)
+  }
 })
 
 const {
@@ -229,7 +238,7 @@ const d1Con = () => {
   }
   if (activeTabName.value === final.more) {
     state.dialogForms = []
-    multipleSelection1.value.forEach(row => {
+    multipleSelection1.value.forEach((row, rowIndex) => {
       const obj = deepClone<codeGenColumnDto>(toRaw(state.dialogForm))
       obj.colName = row.colName
       obj.colDescr = adict[toCamelCase<keyof adictInterface>(row.colName)] || ''
@@ -243,7 +252,8 @@ const d1Con = () => {
       obj.ifRequired = row.ifMust ? final.Y : final.N
       obj.formType = formTypeDicts.find(item => item.value === 'input')?.value || ''
       obj.selType = selTypeDicts.find(item => item.value === 'like')?.value || ''
-      state.dialogForms && state.dialogForms.push(obj)
+      state.dialogForms.push(obj)
+      dialogFormTableNameTypes.value[rowIndex] = A
     })
   }
   if (activeTabName.value === final.one) {
@@ -266,10 +276,27 @@ const d1Con = () => {
 const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
   multipleSelection1.value = val
 }
+
+const A = 'a', B = 'b'
+type AB = 'a' | 'b'
+const dialogFormTableNameType = ref<AB>(A)
+const dialogFormTableNameTypes = ref<AB[]>([A])
+const changeActiveTabName = newVal => {
+  if (newVal === final.one) {
+    dialogFormTableNameType.value = A
+  } else if (newVal === final.more) {
+  }
+}
+const activeTabMoreIns = () => {
+  dialogFormTableNameTypes.value.push(A)
+}
+const activeTabMoreDel = index => {
+  dialogFormTableNameTypes.value.splice(index, 1)
+}
 </script>
 
 <template>
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="CONFIG.dialog_width_wider"
       v-model="dialog2Visible"
@@ -293,7 +320,7 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -326,13 +353,28 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
         -->
         <!--在此下方添加表单项-->
         <el-row>
+          <el-col :span="24">
+            <el-form-item label="列选择方式">
+              <el-radio-group v-model="dialogFormTableNameType">
+                <el-radio :value="A">从数据库中选择列</el-radio>
+                <el-radio :value="B">自定义列</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['colName']" prop="colName">
-              <el-input disabled v-model="state.dialogForm['colName']" :placeholder="state.dict['colName']">
-                <template #append>
-                  <el-button @click="selCol">选择</el-button>
-                </template>
-              </el-input>
+              <template v-if="dialogFormTableNameType===A">
+                <el-input disabled v-model="state.dialogForm['colName']" :placeholder="state.dict['colName']">
+                  <template #append>
+                    <el-button @click="selCol">选择</el-button>
+                  </template>
+                </el-input>
+              </template>
+              <template v-else-if="dialogFormTableNameType===B">
+                <el-input v-model="state.dialogForm['colName']" :placeholder="state.dict['colName']"/>
+              </template>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -344,7 +386,12 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['mysqlType']" prop="mysqlType">
-              <el-input disabled v-model="state.dialogForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+              <template v-if="dialogFormTableNameType===A">
+                <el-input disabled v-model="state.dialogForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+              </template>
+              <template v-else-if="dialogFormTableNameType===B">
+                <el-input v-model="state.dialogForm['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+              </template>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -369,8 +416,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifIns']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -384,8 +431,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifUpd']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -397,8 +444,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifSelOne']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -412,8 +459,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifSelMore']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -425,8 +472,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifRequired']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -464,8 +511,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
         <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
+        <!--    <el-radio :value="final.Y">是</el-radio>-->
+        <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
@@ -490,17 +537,33 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
+          <el-table-column fixed label="列选择方式" width="200">
+            <template #default="{$index}">
+              <div>
+                <el-radio-group v-model="dialogFormTableNameTypes[$index]">
+                  <el-radio :value="A">从数据库中选择列</el-radio>
+                  <el-radio :value="B">自定义列</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column fixed prop="colName" :label="state.dict['colName']" width="200">
             <template #header>
               <span :class="ifRequired('colName')?'tp-table-header-required':''">{{ state.dict['colName'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-colName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input disabled v-model="state.dialogForms[$index]['colName']" :placeholder="state.dict['colName']">
-                  <template #append>
-                    <el-button @click="selCol">选择</el-button>
-                  </template>
-                </el-input>
+                <template v-if="dialogFormTableNameTypes[$index]===A">
+                  <el-input disabled v-model="state.dialogForms[$index]['colName']"
+                            :placeholder="state.dict['colName']">
+                    <template #append>
+                      <el-button @click="selCol">选择</el-button>
+                    </template>
+                  </el-input>
+                </template>
+                <template v-else-if="dialogFormTableNameTypes[$index]===B">
+                  <el-input v-model="state.dialogForms[$index]['colName']" :placeholder="state.dict['colName']"/>
+                </template>
               </div>
             </template>
           </el-table-column>
@@ -520,8 +583,13 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-mysqlType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input disabled v-model="state.dialogForms[$index]['mysqlType']"
-                          :placeholder="state.dict['mysqlType']"/>
+                <template v-if="dialogFormTableNameTypes[$index]===A">
+                  <el-input disabled v-model="state.dialogForms[$index]['mysqlType']"
+                            :placeholder="state.dict['mysqlType']"/>
+                </template>
+                <template v-else-if="dialogFormTableNameTypes[$index]===B">
+                  <el-input v-model="state.dialogForms[$index]['mysqlType']" :placeholder="state.dict['mysqlType']"/>
+                </template>
               </div>
             </template>
           </el-table-column>
@@ -555,7 +623,7 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifIns`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifIns']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifIns']" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -567,7 +635,7 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifUpd`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifUpd']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifUpd']" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -579,8 +647,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelOne`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifSelOne']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifSelOne']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -594,8 +662,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifSelMore`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifSelMore']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifSelMore']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -610,8 +678,8 @@ const handleSelectionChange1 = (val: chooseTableTableColInterface[]) => {
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifRequired`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifRequired']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifRequired']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>

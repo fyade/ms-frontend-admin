@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CONFIG, final } from "@/utils/base.ts";
 import { computed } from "vue";
-import { deepClone, ifNull, ifUndefined, ifValid } from "@/utils/ObjectUtils.ts";
+import { ifNull, ifUndefined, ifValid } from "@/utils/ObjectUtils.ts";
 import { RouteRecordNormalized, useRoute } from "vue-router";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
@@ -17,7 +17,7 @@ const props = defineProps({
   }
 });
 const menus2 = computed(() => {
-  return (deepClone<RouteRecordNormalized[]>(props.menus)).sort((a, b) => {
+  return props.menus.toSorted((a, b) => {
     return (ifValid(a.meta.orderNum) && typeof a.meta.orderNum === 'number' ? a.meta.orderNum : 0) - (ifValid(b.meta.orderNum) && typeof b.meta.orderNum === 'number' ? b.meta.orderNum : 0)
   })
 })
@@ -97,7 +97,8 @@ const ifParentMenuItem = (item: RouteRecordNormalized) => {
           <el-space class="elSpace">
             <SvgIcon :name="item.meta.icon as string"
                      :color="item.meta&&item.meta.fullPath===route.path?CONFIG.icon_white:CONFIG.theme_color_menu_bg_active"/>
-            <template v-if="!sysConfigStore.getMenuCollapse()||(sysConfigStore.getMenuCollapse()&&!ifParentMenuItem(item))">
+            <template
+                v-if="!sysConfigStore.getMenuCollapse()||(sysConfigStore.getMenuCollapse()&&!ifParentMenuItem(item))">
               <span>{{ item.meta ? item.meta.label : item.name }}</span>
             </template>
           </el-space>

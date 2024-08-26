@@ -189,7 +189,7 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -243,8 +243,8 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
           <el-col :span="12">
             <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
               <el-radio-group v-model="state.dialogForm['ifDisabled']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -253,8 +253,8 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
           <el-col :span="12">
             <el-form-item :label="state.dict['ifPublic']" prop="ifPublic">
               <el-radio-group v-model="state.dialogForm['ifPublic']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -287,8 +287,8 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->
         <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
+        <!--    <el-radio :value="final.Y">是</el-radio>-->
+        <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
@@ -352,8 +352,8 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -363,8 +363,8 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>

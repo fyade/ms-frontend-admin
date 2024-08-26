@@ -60,6 +60,21 @@ export interface t_config {
    * 弹出表单是否支持批量操作，默认false
    */
   bulkOperation?: boolean
+  /**
+   * 弹出表单切换操作单个与操作多个前调用的事件
+   */
+  changeActiveTabNameCallback?: Function
+  /**
+   * 弹出表单为操作多个时，新增的回调函数
+   */
+  activeTabMoreInsCallback?: Function
+  /**
+   * 弹出表单为操作多个时，删除的回调函数
+   */
+  activeTabMoreDelCallback?: Function
+  /**
+   * 下方配置项不再建议使用
+   */
   one2More?: boolean
   one2MoreConfig?: {
     oneKey: string

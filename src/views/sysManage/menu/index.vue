@@ -248,7 +248,7 @@ const expendAll = () => {
 </script>
 
 <template>
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -302,13 +302,13 @@ const expendAll = () => {
                 </Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['type']">
-                <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
+                <el-radio :value="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
                   {{ menuTypeDict[T_MENU] }}
                 </el-radio>
-                <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
+                <el-radio :value="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
                   {{ menuTypeDict[T_COMP] }}
                 </el-radio>
-                <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
+                <el-radio :value="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
                   {{ menuTypeDict[T_Inter] }}
                 </el-radio>
               </el-radio-group>
@@ -341,8 +341,8 @@ const expendAll = () => {
                 <Tooltip content="若选是，则点击会跳转至外部链接。">{{ state.dict['ifLink'] }}</Tooltip>
               </template>
               <el-radio-group v-model="state.dialogForm['ifLink']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -359,16 +359,16 @@ const expendAll = () => {
           <el-col :span="12">
             <el-form-item :label="state.dict['ifVisible']" prop="ifVisible">
               <el-radio-group v-model="state.dialogForm['ifVisible']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
               <el-radio-group v-model="state.dialogForm['ifDisabled']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -393,8 +393,8 @@ const expendAll = () => {
           <el-col :span="12" v-show="checkVisible(state.dialogForm['type'], [T_Inter])">
             <el-form-item :label="state.dict['ifPublic']" prop="ifPublic">
               <el-radio-group v-model="state.dialogForm['ifPublic']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -451,13 +451,13 @@ const expendAll = () => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-radio-group v-model="state.dialogForms[$index]['type']">
-                  <el-radio :label="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
+                  <el-radio :value="T_MENU" :disabled="canChooseTypes.indexOf(T_MENU)===-1">
                     {{ menuTypeDict[T_MENU] }}
                   </el-radio>
-                  <el-radio :label="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
+                  <el-radio :value="T_COMP" :disabled="canChooseTypes.indexOf(T_COMP)===-1">
                     {{ menuTypeDict[T_COMP] }}
                   </el-radio>
-                  <el-radio :label="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
+                  <el-radio :value="T_Inter" :disabled="canChooseTypes.indexOf(T_Inter)===-1">
                     {{ menuTypeDict[T_Inter] }}
                   </el-radio>
                 </el-radio-group>
@@ -503,11 +503,11 @@ const expendAll = () => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifLink`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-radio-group v-model="state.dialogForms[$index]['ifLink']">-->
-                <!--  <el-radio :label="final.Y">是</el-radio>-->
-                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifLink']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifLink']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -530,11 +530,11 @@ const expendAll = () => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifVisible`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-radio-group v-model="state.dialogForms[$index]['ifVisible']">-->
-                <!--  <el-radio :label="final.Y">是</el-radio>-->
-                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifVisible']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifVisible']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -548,11 +548,11 @@ const expendAll = () => {
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-radio-group v-model="state.dialogForms[$index]['ifDisabled']">-->
-                <!--  <el-radio :label="final.Y">是</el-radio>-->
-                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -589,11 +589,11 @@ const expendAll = () => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-radio-group v-model="state.dialogForms[$index]['ifPublic']">-->
-                <!--  <el-radio :label="final.Y">是</el-radio>-->
-                <!--  <el-radio :label="final.N">否</el-radio>-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
                 <!--</el-radio-group>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifPublic']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>

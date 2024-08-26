@@ -21,6 +21,7 @@ import Divider from "@/views/sysManage/interfacePermission/divider.vue";
 import { userGroupPermissionDto } from "@/type/api/sysManage/userGroupPermission.ts";
 import { userGroupPermissionFunc } from "@/api/module/sysManage/userGroupPermission.ts"
 import { copyObject, deepClone } from "@/utils/ObjectUtils.ts";
+import LogAlgorithmCall from "@/views/sysManage/interfacePermission/logAlgorithmCall.vue";
 
 const userGroupState = reactive<State<userGroupDto>>({
   dialogType: {
@@ -451,12 +452,12 @@ const detailInterfaceGroupOfThisUserGroup = (userGroupPermissionId: number) => {
     userGroupPermissionDialogLoadingRef.value = true
     userGroupPermissionFunc.selectById(find.id).then(res => {
       copyObject(userGroupPermissionState.dialogForm, res)
+      userGroupPermissionState.dialogForm.permissionTime = [
+        userGroupPermissionState.dialogForm.permissionStartTime,
+        userGroupPermissionState.dialogForm.permissionEndTime
+      ]
       userGroupPermissionDialogLoadingRef.value = false
     })
-    userGroupPermissionState.dialogForm.permissionTime = [
-      userGroupPermissionState.dialogForm.permissionStartTime,
-      userGroupPermissionState.dialogForm.permissionEndTime
-    ]
     ifAddUserGroupPermission.value = false
     userGroupPermissionState.dialogType.label = '查看权限详情'
     userGroupPermissionDialogVisible.value = true
@@ -530,12 +531,12 @@ const detailUserGroupOfThisInterfaceGroup = (userGroupPermissionId: number) => {
     userGroupPermissionDialogLoadingRef.value = true
     userGroupPermissionFunc.selectById(find.id).then(res => {
       copyObject(userGroupPermissionState.dialogForm, res)
+      userGroupPermissionState.dialogForm.permissionTime = [
+        userGroupPermissionState.dialogForm.permissionStartTime,
+        userGroupPermissionState.dialogForm.permissionEndTime
+      ]
       userGroupPermissionDialogLoadingRef.value = false
     })
-    userGroupPermissionState.dialogForm.permissionTime = [
-      userGroupPermissionState.dialogForm.permissionStartTime,
-      userGroupPermissionState.dialogForm.permissionEndTime
-    ]
     ifAddUserGroupPermission.value = false
     userGroupPermissionState.dialogType.label = '查看权限详情'
     userGroupPermissionDialogVisible.value = true
@@ -669,6 +670,12 @@ const shortcuts = [
   },
 ]
 
+const useLogVisible = ref(false)
+const selectUGPId = ref<number>(-1)
+const showUseLog = () => {
+  selectUGPId.value = userGroupPermissionState.dialogForm['id']
+  useLogVisible.value = true
+}
 const userGroupPermissionDCon2 = () => {
   delete userGroupPermissionState.dialogForm.count
   userGroupPermissionDCon()
@@ -676,7 +683,21 @@ const userGroupPermissionDCon2 = () => {
 </script>
 
 <template>
-  <!--弹框-->
+  <!--调用日志弹窗-->
+  <el-dialog
+      :width="CONFIG.dialog_width_wider"
+      v-model="useLogVisible"
+      title="算法调用日志"
+      draggable
+      append-to-body
+      destroy-on-close
+  >
+    <LogAlgorithmCall
+        :select-u-g-p-id="selectUGPId"
+    />
+  </el-dialog>
+
+  <!--弹窗-->
   <el-dialog
       :width="CONFIG.dialog_width"
       v-model="userGroupPermissionDialogVisible"
@@ -722,24 +743,24 @@ const userGroupPermissionDCon2 = () => {
         <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLongTerm']"-->
         <!--          :placeholder="userGroupPermissionState.dict['ifLongTerm']"/>-->
         <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLongTerm']">
-          <el-radio :label="final.Y">是</el-radio>
-          <el-radio :label="final.N">否</el-radio>
+          <el-radio :value="final.Y">是</el-radio>
+          <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="userGroupPermissionState.dict['ifLimitRequestTimes']" prop="ifLimitRequestTimes">
         <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLimitRequestTimes']"-->
         <!--          :placeholder="userGroupPermissionState.dict['ifLimitRequestTimes']"/>-->
         <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLimitRequestTimes']">
-          <el-radio :label="final.Y">是</el-radio>
-          <el-radio :label="final.N">否</el-radio>
+          <el-radio :value="final.Y">是</el-radio>
+          <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" prop="ifRejectRequestUseUp">
         <!--<el-input v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']"-->
         <!--          :placeholder="userGroupPermissionState.dict['ifRejectRequestUseUp']"/>-->
         <el-radio-group v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']">
-          <el-radio :label="final.Y">是</el-radio>
-          <el-radio :label="final.N">否</el-radio>
+          <el-radio :value="final.Y">是</el-radio>
+          <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
       <!--<el-form-item :label="userGroupPermissionState.dict['permissionStartTime']" prop="permissionStartTime">-->
@@ -776,7 +797,7 @@ const userGroupPermissionDCon2 = () => {
       </el-form-item>
       <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['ifUseUp']" prop="ifUseUp">
         <el-tag v-if="userGroupPermissionState.dialogForm['ifUseUp'] === final.Y" type="danger">是</el-tag>
-        <el-tag v-else type="success">已使用{{userGroupPermissionState.dialogForm['count'] }}次
+        <el-tag v-else type="success">已使用{{ userGroupPermissionState.dialogForm['count'] }}次
         </el-tag>
       </el-form-item>
       <!--在此上方添加表单项-->
@@ -788,8 +809,8 @@ const userGroupPermissionDCon2 = () => {
       <!--</el-form-item>-->
       <!--<el-form-item :label="userGroupPermissionState.dict['ifDisabled']" prop='ifDisabled'>-->
       <!--  <el-radio-group v-model="userGroupPermissionState.dialogForm['ifDisabled']">-->
-      <!--    <el-radio :label="final.Y">是</el-radio>-->
-      <!--    <el-radio :label="final.N">否</el-radio>-->
+      <!--    <el-radio :value="final.Y">是</el-radio>-->
+      <!--    <el-radio :value="final.N">否</el-radio>-->
       <!--  </el-radio-group>-->
       <!--</el-form-item>-->
       <!--<el-form-item :label="userGroupPermissionState.dict['ifDisabled']" prop="ifDisabled">-->
@@ -799,6 +820,7 @@ const userGroupPermissionDCon2 = () => {
     </el-form>
     <template #footer>
       <span class="dialog-footer">
+        <el-button type="primary" @click="showUseLog" v-if="!ifAddUserGroupPermission">查看调用日志</el-button>
         <el-button @click="userGroupPermissionDCan">取消</el-button>
         <el-button type="primary" @click="userGroupPermissionDCon2" v-if="ifAddUserGroupPermission">确认</el-button>
       </span>

@@ -17,7 +17,7 @@ import { codeGenTableDto } from "@/type/api/sysUtil/codeGenTable.ts";
 import { codeGenTableFunc } from "@/api/module/sysUtil/codeGenTable.ts"
 import { chooseTableTableInterface } from "@/type/api/sysUtil/codeGeneration.ts";
 import { genCode, genCodeZip, getDbInfo } from "@/api/module/sysUtil/codeGeneration.ts";
-import SetColumn from "@/views/sysUtil/codeGeneration/setColumn.vue";
+import Column from "@/views/sysUtil/codeGeneration/column.vue";
 
 const state = reactive<State<codeGenTableDto>>({
   dialogType: {
@@ -106,6 +106,15 @@ const switchLoadingRef = ref(false)
 const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+  changeActiveTabNameCallback: newVal => {
+    changeActiveTabName(newVal)
+  },
+  activeTabMoreInsCallback: () => {
+    activeTabMoreIns()
+  },
+  activeTabMoreDelCallback: index => {
+    activeTabMoreDel(index)
+  }
 })
 
 const {
@@ -230,6 +239,23 @@ const gRefresh2 = () => {
   getDbInfos()
   gRefresh()
 }
+
+const A = 'a', B = 'b'
+type AB = 'a' | 'b'
+const dialogFormTableNameType = ref<AB>(A)
+const dialogFormTableNameTypes = ref<AB[]>([A])
+const changeActiveTabName = newVal => {
+  if (newVal === final.one) {
+    dialogFormTableNameType.value = A
+  } else if (newVal === final.more) {
+  }
+}
+const activeTabMoreIns = () => {
+  dialogFormTableNameTypes.value.push(A)
+}
+const activeTabMoreDel = index => {
+  dialogFormTableNameTypes.value.splice(index, 1)
+}
 </script>
 
 <template>
@@ -266,7 +292,7 @@ const gRefresh2 = () => {
       destroy-on-close
       title="列字段设置"
   >
-    <SetColumn
+    <Column
         :table-id="selectTableId"
         :table-name-en="selectTableNameEn"
     />
@@ -275,7 +301,7 @@ const gRefresh2 = () => {
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -308,23 +334,42 @@ const gRefresh2 = () => {
         -->
         <!--在此下方添加表单项-->
         <el-row>
+          <el-col :span="24">
+            <el-form-item label="表选择方式">
+              <el-radio-group v-model="dialogFormTableNameType">
+                <el-radio :value="A">从数据库中选择表</el-radio>
+                <el-radio :value="B">自定义表</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['tableName']" prop="tableName">
-              <!--<el-input v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']"/>-->
-              <el-select v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']" clearable
-                         filterable @change="tableNameChange">
-                <el-option
-                    v-for="item in tablesList"
-                    :key="item.tableNameEn"
-                    :label="item.tableNameEn"
-                    :value="item.tableNameEn"
-                />
-              </el-select>
+              <template v-if="dialogFormTableNameType===A">
+                <el-select v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']" clearable
+                           filterable @change="tableNameChange">
+                  <el-option
+                      v-for="item in tablesList"
+                      :key="item.tableNameEn"
+                      :label="item.tableNameEn"
+                      :value="item.tableNameEn"
+                  />
+                </el-select>
+              </template>
+              <template v-else-if="dialogFormTableNameType===B">
+                <el-input v-model="state.dialogForm['tableName']" :placeholder="state.dict['tableName']"/>
+              </template>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="state.dict['tableDescr']" prop="tableDescr">
-              <el-input disabled v-model="state.dialogForm['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+              <template v-if="dialogFormTableNameType===A">
+                <el-input disabled v-model="state.dialogForm['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+              </template>
+              <template v-else-if="dialogFormTableNameType===B">
+                <el-input v-model="state.dialogForm['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+              </template>
             </el-form-item>
           </el-col>
         </el-row>
@@ -379,8 +424,8 @@ const gRefresh2 = () => {
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
         <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
+        <!--    <el-radio :value="final.Y">是</el-radio>-->
+        <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
@@ -415,22 +460,36 @@ const gRefresh2 = () => {
           <!--  </template>-->
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
+          <el-table-column label="表选择方式" width="300">
+            <template #default="{$index}">
+              <div>
+                <el-radio-group v-model="dialogFormTableNameTypes[$index]">
+                  <el-radio :value="A">从数据库中选择表</el-radio>
+                  <el-radio :value="B">自定义表</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="tableName" :label="state.dict['tableName']" width="300">
             <template #header>
               <span :class="ifRequired('tableName')?'tp-table-header-required':''">{{ state.dict['tableName'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-tableName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <!--<el-input v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"/>-->
-                <el-select v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"
-                           clearable filterable @change="tableNameChange2($index)">
-                  <el-option
-                      v-for="item in tablesList"
-                      :key="item.tableNameEn"
-                      :label="item.tableNameEn"
-                      :value="item.tableNameEn"
-                  />
-                </el-select>
+                <template v-if="dialogFormTableNameTypes[$index]===A">
+                  <el-select v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"
+                             clearable filterable @change="tableNameChange2($index)">
+                    <el-option
+                        v-for="item in tablesList"
+                        :key="item.tableNameEn"
+                        :label="item.tableNameEn"
+                        :value="item.tableNameEn"
+                    />
+                  </el-select>
+                </template>
+                <template v-else-if="dialogFormTableNameTypes[$index]===B">
+                  <el-input v-model="state.dialogForms[$index]['tableName']" :placeholder="state.dict['tableName']"/>
+                </template>
               </div>
             </template>
           </el-table-column>
@@ -443,8 +502,13 @@ const gRefresh2 = () => {
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-tableDescr`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input disabled v-model="state.dialogForms[$index]['tableDescr']"
-                          :placeholder="state.dict['tableDescr']"/>
+                <template v-if="dialogFormTableNameTypes[$index]===A">
+                  <el-input disabled v-model="state.dialogForms[$index]['tableDescr']"
+                            :placeholder="state.dict['tableDescr']"/>
+                </template>
+                <template v-else-if="dialogFormTableNameTypes[$index]===B">
+                  <el-input v-model="state.dialogForms[$index]['tableDescr']" :placeholder="state.dict['tableDescr']"/>
+                </template>
               </div>
             </template>
           </el-table-column>

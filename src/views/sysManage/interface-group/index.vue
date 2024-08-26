@@ -165,7 +165,7 @@ const manageInterface = (row: interfaceGroupDto) => {
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -237,8 +237,8 @@ const manageInterface = (row: interfaceGroupDto) => {
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->
         <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
+        <!--    <el-radio :value="final.Y">是</el-radio>-->
+        <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
         <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->

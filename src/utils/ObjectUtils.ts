@@ -1,3 +1,5 @@
+import { isProxy, toRaw } from "vue";
+
 /**
  * 类型
  * @param param
@@ -66,29 +68,44 @@ export function ifNotValid(val: any) {
 }
 
 /**
+ * 是否vue组件
+ * @param val
+ */
+export function ifVueComponent(val: any) {
+  if (!val) {
+    return false
+  }
+  return false
+}
+
+/**
  * 深克隆
  * @param value
+ * @param ignoreKeys
  */
-export function deepClone<T>(value: T): T {
-  const cache = new Map()
+export function deepClone<T>(value: any, {
+                               ignoreKeys = []
+                             }: {
+                               ignoreKeys?: string[]
+                             } = {}
+): T {
+  const value1 = isProxy(value) ? toRaw(value) : value;
 
-  function _deepClone(value: any) {
-    if (value === null || typeof value !== 'object') {
+  function _deepClone(value: any, key?: string) {
+    if ((key && ignoreKeys.includes(key)) || value === null || !['array', 'object'].includes(typeOf(value))) {
       return value
     }
-    if (cache.has(value)) {
-      return cache.get(value)
-    }
+    // =====
     // 构造函数及原型等可在这里做处理
+    // =====
     const result = Array.isArray(value) ? [] : {} as any
-    cache.set(value, result)
     for (const key in value) {
-      result[key] = _deepClone(value[key])
+      result[key] = _deepClone(value[key], key)
     }
     return result
   }
 
-  return _deepClone(value)
+  return _deepClone(value1)
 }
 
 /**

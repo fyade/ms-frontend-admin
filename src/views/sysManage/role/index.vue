@@ -204,7 +204,7 @@ provide('changeSelectPermission', selectPermission)
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -247,16 +247,16 @@ provide('changeSelectPermission', selectPermission)
         <el-col :span="12">
           <el-form-item :label="state.dict['ifAdmin']" prop="ifAdmin">
             <el-radio-group v-model="state.dialogForm['ifAdmin']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
+              <el-radio :value="final.Y">是</el-radio>
+              <el-radio :value="final.N">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
             <el-radio-group v-model="state.dialogForm['ifDisabled']">
-              <el-radio :label="final.Y">是</el-radio>
-              <el-radio :label="final.N">否</el-radio>
+              <el-radio :value="final.Y">是</el-radio>
+              <el-radio :value="final.N">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

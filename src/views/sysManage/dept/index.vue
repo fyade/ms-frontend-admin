@@ -213,7 +213,7 @@ provide('changeSelectPermission', selectPermission)
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -254,8 +254,8 @@ provide('changeSelectPermission', selectPermission)
           <el-col :span="12">
             <el-form-item :label="state.dict['ifAdmin']" prop="ifAdmin">
               <el-radio-group v-model="state.dialogForm['ifAdmin']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -321,8 +321,8 @@ provide('changeSelectPermission', selectPermission)
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifAdmin`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <!--<el-input v-model="state.dialogForms[$index]['ifAdmin']" :placeholder="state.dict['ifAdmin']"/>-->
-                <el-checkbox v-model="state.dialogForms[$index]['ifAdmin']" :true-label="final.Y"
-                             :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['ifAdmin']" :true-value="final.Y"
+                             :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>

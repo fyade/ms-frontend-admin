@@ -153,6 +153,12 @@ export const funcTablePage = <T = { [key: string]: string }>({
       })
     })
   }
+  if (ifHasConfig('bulkOperation', true)) {
+    watch(activeTabName, newVal => {
+      dialogFormRef.value?.resetFields()
+      config.changeActiveTabNameCallback && config.changeActiveTabNameCallback(newVal)
+    })
+  }
 
   // 弹窗取消
   const dCan = () => {
@@ -448,10 +454,12 @@ export const funcTablePage = <T = { [key: string]: string }>({
   }
 
   const dfIns = () => {
+    config.activeTabMoreInsCallback && config.activeTabMoreInsCallback()
     state.dialogForms!.push(structuredClone(initialStateDialogForm))
   }
 
   const dfDel = (index: number) => {
+    config.activeTabMoreDelCallback && config.activeTabMoreDelCallback(index)
     state.dialogForms!.splice(index, 1)
   }
 

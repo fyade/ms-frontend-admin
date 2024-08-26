@@ -425,7 +425,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
       draggable
       append-to-body
   >
-    <!--弹框-->
+    <!--弹窗-->
     <el-dialog
         :width="interfaceActiveTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
         v-model="interfaceDialogVisible"
@@ -480,8 +480,8 @@ const confirmAddInterfaceInterfaceGroup = () => {
             <el-col :span="12">
               <el-form-item :label="interfaceState.dict['ifDisabled']" prop="ifDisabled">
                 <el-radio-group v-model="interfaceState.dialogForm['ifDisabled']">
-                  <el-radio :label="final.Y">是</el-radio>
-                  <el-radio :label="final.N">否</el-radio>
+                  <el-radio :value="final.Y">是</el-radio>
+                  <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -490,8 +490,8 @@ const confirmAddInterfaceInterfaceGroup = () => {
             <el-col :span="12">
               <el-form-item :label="interfaceState.dict['ifPublic']" prop="ifPublic">
                 <el-radio-group v-model="interfaceState.dialogForm['ifPublic']">
-                  <el-radio :label="final.Y">是</el-radio>
-                  <el-radio :label="final.N">否</el-radio>
+                  <el-radio :value="final.Y">是</el-radio>
+                  <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -524,8 +524,8 @@ const confirmAddInterfaceInterfaceGroup = () => {
           <!--</el-form-item>-->
           <!--<el-form-item :label="interfaceState.dict['ifDisabled']" prop='ifDisabled'>-->
           <!--  <el-radio-group v-model="interfaceState.dialogForm['ifDisabled']">-->
-          <!--    <el-radio :label="final.Y">是</el-radio>-->
-          <!--    <el-radio :label="final.N">否</el-radio>-->
+          <!--    <el-radio :value="final.Y">是</el-radio>-->
+          <!--    <el-radio :value="final.N">否</el-radio>-->
           <!--  </el-radio-group>-->
           <!--</el-form-item>-->
           <!--<el-form-item :label="interfaceState.dict['ifDisabled']" prop="ifDisabled">-->
@@ -599,8 +599,8 @@ const confirmAddInterfaceInterfaceGroup = () => {
               <template #default="{$index}">
                 <div
                     :class="interfaceState.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifDisabled']" :true-label="final.Y"
-                               :false-label="final.N"/>
+                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifDisabled']" :true-value="final.Y"
+                               :false-value="final.N"/>
                 </div>
               </template>
             </el-table-column>
@@ -613,8 +613,8 @@ const confirmAddInterfaceInterfaceGroup = () => {
               <template #default="{$index}">
                 <div
                     :class="interfaceState.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifPublic']" :true-label="final.Y"
-                               :false-label="final.N"/>
+                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifPublic']" :true-value="final.Y"
+                               :false-value="final.N"/>
                 </div>
               </template>
             </el-table-column>

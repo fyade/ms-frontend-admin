@@ -354,7 +354,7 @@ provide('changeSelectUserGroup', selectUserGroup)
     </template>
   </el-dialog>
 
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="CONFIG.dialog_width"
       v-model="dialogVisible"

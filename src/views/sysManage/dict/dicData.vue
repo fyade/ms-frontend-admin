@@ -146,7 +146,7 @@ dicTypeSelAll({}).then(res => {
 </script>
 
 <template>
-  <!--弹框-->
+  <!--弹窗-->
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
@@ -194,8 +194,8 @@ dicTypeSelAll({}).then(res => {
           <el-col :span="12">
             <el-form-item :label="state.dict['ifDefault']" prop="ifDefault">
               <el-radio-group v-model="state.dialogForm['ifDefault']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -211,8 +211,8 @@ dicTypeSelAll({}).then(res => {
           <el-col :span="12">
             <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
               <el-radio-group v-model="state.dialogForm['ifDisabled']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -282,8 +282,8 @@ dicTypeSelAll({}).then(res => {
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDefault`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-radio-group v-model="state.dialogForms[$index]['ifDefault']">
-                  <el-radio :label="final.Y">是</el-radio>
-                  <el-radio :label="final.N">否</el-radio>
+                  <el-radio :value="final.Y">是</el-radio>
+                  <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
               </div>
             </template>
@@ -310,8 +310,8 @@ dicTypeSelAll({}).then(res => {
               <div
                   :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-radio-group v-model="state.dialogForms[$index]['ifDisabled']">
-                  <el-radio :label="final.Y">是</el-radio>
-                  <el-radio :label="final.N">否</el-radio>
+                  <el-radio :value="final.Y">是</el-radio>
+                  <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
               </div>
             </template>
