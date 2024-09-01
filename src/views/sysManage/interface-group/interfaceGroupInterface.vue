@@ -6,7 +6,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { interfaceDto, interfaceUpdDto } from "@/type/api/sysManage/interface.ts";
 import { interfaceFunc, } from "@/api/module/sysManage/interface.ts"
 import { interfaceInterfaceGroupDto } from "@/type/api/sysManage/interfaceInterfaceGroup.ts";
@@ -86,7 +86,7 @@ const interfaceInterfaceGroupDialogVisible = ref(false)
 const interfaceInterfaceGroupDialogLoadingRef = ref(false)
 const interfaceInterfaceGroupTableLoadingRef = ref(false)
 const interfaceInterfaceGroupSwitchLoadingRef = ref(false)
-const interfaceInterfaceGroupActiveTabName = ref<ONE | MORE>(final.one)
+const interfaceInterfaceGroupActiveTabName = ref<typeOM>(final.one)
 const interfaceInterfaceGroupConfig: t_config = reactive({
   selectParam: {
     interfaceGroupId: props.selectInterfaceGroupInfo.id
@@ -219,7 +219,7 @@ const interfaceDialogVisible = ref(false)
 const interfaceDialogLoadingRef = ref(false)
 const interfaceTableLoadingRef = ref(false)
 const interfaceSwitchLoadingRef = ref(false)
-const interfaceActiveTabName = ref<ONE | MORE>(final.one)
+const interfaceActiveTabName = ref<typeOM>(final.one)
 const interfaceConfig: t_config = reactive({
   getDataOnMounted: false, // 页面加载时获取数据，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false

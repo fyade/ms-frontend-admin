@@ -6,7 +6,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import { ElTable, FormRules, TableInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/sysManage/role.ts";
 import { roleFunc, } from "@/api/module/sysManage/role.ts"
 
@@ -89,7 +89,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE | MORE>(final.one)
+const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   /**
    * selectList回调，可不传

@@ -1,6 +1,6 @@
 import { Ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
-import { MORE, ONE } from "@/type/utils/base.ts";
+import { typeOM } from "@/type/utils/base.ts";
 
 interface dialogForms_error {
   [key: string]: boolean | string
@@ -63,7 +63,7 @@ export interface t_config {
   /**
    * 弹出表单切换操作单个与操作多个前调用的事件
    */
-  changeActiveTabNameCallback?: Function
+  changeActiveTabNameCallback?: (newVal: typeOM) => any
   /**
    * 弹出表单为操作多个时，新增的回调函数
    */
@@ -71,7 +71,7 @@ export interface t_config {
   /**
    * 弹出表单为操作多个时，删除的回调函数
    */
-  activeTabMoreDelCallback?: Function
+  activeTabMoreDelCallback?: (index: number) => any
   /**
    * 下方配置项不再建议使用
    */
@@ -127,7 +127,7 @@ export interface t_funcTablePage_params {
   dialogLoadingRef: Ref<boolean>
   tableLoadingRef: Ref<boolean>
   switchLoadingRef: Ref<boolean>
-  activeTabName?: Ref<ONE | MORE>
+  activeTabName?: Ref<typeOM>
   func: t_funcMap
   props?: any
   exportIgnoreKeys?: string[]

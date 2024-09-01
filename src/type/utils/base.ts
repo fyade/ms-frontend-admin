@@ -3,5 +3,6 @@ export type N = 'N'
 export type typeYN = Y | N
 export type ONE = 'ONE'
 export type MORE = 'MORE'
+export type typeOM = ONE | MORE
 export type INS = 'INS'
 export type UPD = 'UPD'

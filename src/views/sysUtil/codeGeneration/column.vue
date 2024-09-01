@@ -6,7 +6,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { codeGenColumnDto } from "@/type/api/sysUtil/codeGenColumn.ts";
 import { codeGenColumnFunc, } from "@/api/module/sysUtil/codeGenColumn.ts"
 import {
@@ -134,7 +134,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE | MORE>(final.one)
+const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   selectParam: {
     tableId: props.tableId
@@ -252,7 +252,9 @@ const d1Con = () => {
       obj.ifRequired = row.ifMust ? final.Y : final.N
       obj.formType = formTypeDicts.find(item => item.value === 'input')?.value || ''
       obj.selType = selTypeDicts.find(item => item.value === 'like')?.value || ''
-      state.dialogForms.push(obj)
+      if (state.dialogForms) {
+        state.dialogForms.push(obj)
+      }
       dialogFormTableNameTypes.value[rowIndex] = A
     })
   }
@@ -281,7 +283,7 @@ const A = 'a', B = 'b'
 type AB = 'a' | 'b'
 const dialogFormTableNameType = ref<AB>(A)
 const dialogFormTableNameTypes = ref<AB[]>([A])
-const changeActiveTabName = newVal => {
+const changeActiveTabName = (newVal: typeOM) => {
   if (newVal === final.one) {
     dialogFormTableNameType.value = A
   } else if (newVal === final.more) {
@@ -290,8 +292,16 @@ const changeActiveTabName = newVal => {
 const activeTabMoreIns = () => {
   dialogFormTableNameTypes.value.push(A)
 }
-const activeTabMoreDel = index => {
+const activeTabMoreDel = (index: number) => {
   dialogFormTableNameTypes.value.splice(index, 1)
+}
+
+const gUpd2 = () => {
+  dialogFormTableNameTypes.value = []
+  for (let i = 0; i < state.multipleSelection.length; i++) {
+    dialogFormTableNameTypes.value.push(A)
+  }
+  gUpd()
 }
 </script>
 
@@ -791,7 +801,7 @@ const activeTabMoreDel = index => {
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增列</el-button>
     <el-button type="success" plain :icon="Edit"
                :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
-               @click="gUpd">修改列
+               @click="gUpd2">修改列
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除列
     </el-button>

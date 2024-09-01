@@ -12,7 +12,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { codeGenTableDto } from "@/type/api/sysUtil/codeGenTable.ts";
 import { codeGenTableFunc } from "@/api/module/sysUtil/codeGenTable.ts"
 import { chooseTableTableInterface } from "@/type/api/sysUtil/codeGeneration.ts";
@@ -103,7 +103,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE | MORE>(final.one)
+const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   changeActiveTabNameCallback: newVal => {
@@ -244,7 +244,7 @@ const A = 'a', B = 'b'
 type AB = 'a' | 'b'
 const dialogFormTableNameType = ref<AB>(A)
 const dialogFormTableNameTypes = ref<AB[]>([A])
-const changeActiveTabName = newVal => {
+const changeActiveTabName = (newVal: typeOM) => {
   if (newVal === final.one) {
     dialogFormTableNameType.value = A
   } else if (newVal === final.more) {
@@ -253,7 +253,7 @@ const changeActiveTabName = newVal => {
 const activeTabMoreIns = () => {
   dialogFormTableNameTypes.value.push(A)
 }
-const activeTabMoreDel = index => {
+const activeTabMoreDel = (index: number) => {
   dialogFormTableNameTypes.value.splice(index, 1)
 }
 </script>

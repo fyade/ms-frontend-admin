@@ -12,7 +12,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
 import { userGroupFunc } from "@/api/module/sysManage/userGroup.ts"
 import { interfaceGroupDto } from "@/type/api/sysManage/interfaceGroup.ts";
@@ -91,7 +91,7 @@ const userGroupDialogVisible = ref(false)
 const userGroupDialogLoadingRef = ref(false)
 const userGroupTableLoadingRef = ref(false)
 const userGroupSwitchLoadingRef = ref(false)
-const userGroupActiveTabName = ref<ONE | MORE>(final.one)
+const userGroupActiveTabName = ref<typeOM>(final.one)
 const userGroupConfig: t_config = reactive({
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
@@ -202,7 +202,7 @@ const interfaceGroupDialogVisible = ref(false)
 const interfaceGroupDialogLoadingRef = ref(false)
 const interfaceGroupTableLoadingRef = ref(false)
 const interfaceGroupSwitchLoadingRef = ref(false)
-const interfaceGroupActiveTabName = ref<ONE | MORE>(final.one)
+const interfaceGroupActiveTabName = ref<typeOM>(final.one)
 const interfaceGroupConfig: t_config = reactive({
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
@@ -329,7 +329,7 @@ const userGroupPermissionDialogVisible = ref(false)
 const userGroupPermissionDialogLoadingRef = ref(false)
 const userGroupPermissionTableLoadingRef = ref(false)
 const userGroupPermissionSwitchLoadingRef = ref(false)
-const userGroupPermissionActiveTabName = ref<ONE | MORE>(final.one)
+const userGroupPermissionActiveTabName = ref<typeOM>(final.one)
 const userGroupPermissionConfig: t_config = reactive({
   getDataOnMounted: false, // 页面加载时获取数据，默认true
   pageQuery: false, // 分页，默认true
@@ -482,13 +482,7 @@ class userGroupDto2 extends userGroupDto {
 }
 
 const userGroupsOfThisInterfaceGroup = ref<userGroupDto[]>([])
-const interfaceGroupHandleCurrentChangeSelectRow = reactive<interfaceGroupDto>({
-  id: -1,
-  label: '',
-  parentId: -1,
-  orderNum: -1,
-  remark: '',
-})
+const interfaceGroupHandleCurrentChangeSelectRow = reactive<interfaceGroupDto>(new interfaceGroupDto())
 const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
   if (row) {
     userGroupTableRef.value?.setCurrentRow(null)

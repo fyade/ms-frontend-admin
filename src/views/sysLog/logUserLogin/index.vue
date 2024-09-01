@@ -12,7 +12,7 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { logUserLoginDto } from "@/type/api/sysLog/logUserLogin.ts";
 import { logUserLoginFunc } from "@/api/module/sysLog/logUserLogin.ts"
 
@@ -90,7 +90,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE | MORE>(final.one)
+const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })

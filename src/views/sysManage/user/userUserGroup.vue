@@ -4,7 +4,7 @@ import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules, TreeInstance } from 'element-plus'
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/sysManage/userGroup.ts";
 import { userGroupFunc, } from "@/api/module/sysManage/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
@@ -82,7 +82,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE | MORE>(final.one)
+const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false

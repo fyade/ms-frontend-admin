@@ -153,7 +153,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
       })
     })
   }
-  if (ifHasConfig('bulkOperation', true)) {
+  if (ifHasConfig('bulkOperation', true) && activeTabName) {
     watch(activeTabName, newVal => {
       dialogFormRef.value?.resetFields()
       config.changeActiveTabNameCallback && config.changeActiveTabNameCallback(newVal)
