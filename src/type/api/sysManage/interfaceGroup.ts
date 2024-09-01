@@ -5,6 +5,7 @@ export class interfaceGroupDto extends baseClass {
   id!: number;
   label!: string;
   parentId!: number;
+  baseURL!: string;
   orderNum!: number;
   remark!: string;
 }
@@ -18,6 +19,7 @@ export class interfaceGroupSelAllDto {
 export class interfaceGroupInsDto {
   label!: string;
   parentId!: number;
+  baseURL!: string;
   orderNum!: number;
   remark!: string;
 }

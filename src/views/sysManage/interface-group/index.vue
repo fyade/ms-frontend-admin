@@ -34,6 +34,7 @@ const state = reactive<State<interfaceGroupDto>>({
     id: -1,
     label: '',
     parentId: final.DEFAULT_PARENT_ID,
+    baseURL: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
@@ -47,6 +48,7 @@ const state = reactive<State<interfaceGroupDto>>({
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
+    baseURL: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -59,6 +61,7 @@ const state = reactive<State<interfaceGroupDto>>({
     ...publicDict,
     label: '接口组名',
     parentId: '父级接口组',
+    baseURL: 'baseURL',
   },
   // 筛选表单
   // 格式: {
@@ -218,11 +221,18 @@ const manageInterface = (row: interfaceGroupDto) => {
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item :label="state.dict['baseURL']" prop="baseURL">
+              <el-input v-model="state.dialogForm['baseURL']" :placeholder="state.dict['baseURL']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="state.dict['orderNum']" prop="orderNum">
               <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
               <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
@@ -286,6 +296,16 @@ const manageInterface = (row: interfaceGroupDto) => {
                     clearable
                     :value-on-clear="final.DEFAULT_PARENT_ID"
                 />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="baseURL" :label="state.dict['baseURL']" width="300">
+            <template #header>
+              <span :class="ifRequired('baseURL')?'tp-table-header-required':''">{{ state.dict['baseURL'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-baseURL`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['baseURL']" :placeholder="state.dict['baseURL']"/>
               </div>
             </template>
           </el-table-column>
@@ -383,6 +403,7 @@ const manageInterface = (row: interfaceGroupDto) => {
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="240"/>
     <!--<el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
+    <el-table-column prop="baseURL" :label="state.dict['baseURL']" width="240"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->

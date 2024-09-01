@@ -147,6 +147,7 @@ const interfaceGroupState = reactive<State<interfaceGroupDto>>({
     id: -1,
     label: '',
     parentId: final.DEFAULT_PARENT_ID,
+    baseURL: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
@@ -160,6 +161,7 @@ const interfaceGroupState = reactive<State<interfaceGroupDto>>({
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
+    baseURL: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -172,6 +174,7 @@ const interfaceGroupState = reactive<State<interfaceGroupDto>>({
     ...publicDict,
     label: '接口组名',
     parentId: '父级接口组',
+    baseURL: 'baseURL',
   },
   // 筛选表单
   // 格式: {
