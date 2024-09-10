@@ -57,6 +57,7 @@ export default defineConfig(({mode}) => {
       }
     },
     server: {
+      host: '0.0.0.0',
       proxy: {
         [env.VITE_API_PREFIX]: {
           target: env.VITE_BASEURL,
