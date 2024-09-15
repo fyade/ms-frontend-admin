@@ -256,6 +256,14 @@ const activeTabMoreIns = () => {
 const activeTabMoreDel = (index: number) => {
   dialogFormTableNameTypes.value.splice(index, 1)
 }
+
+const gUpd2 = () => {
+  dialogFormTableNameTypes.value = []
+  for (let i = 0; i < state.multipleSelection.length; i++) {
+    dialogFormTableNameTypes.value.push(A)
+  }
+  gUpd()
+}
 </script>
 
 <template>
@@ -642,7 +650,7 @@ const activeTabMoreDel = (index: number) => {
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增表</el-button>
     <el-button type="success" plain :icon="Edit"
                :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
-               @click="gUpd">修改表
+               @click="gUpd2">修改表
     </el-button>
     <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除表
     </el-button>
