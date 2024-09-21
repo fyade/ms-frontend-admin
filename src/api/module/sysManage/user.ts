@@ -86,13 +86,13 @@ export function userDel(ids: string[]): t_funcMap_iud_ret {
   })
 }
 
-export function registApi(data: registDto) {
-  return request({
-    url: '/sys/user/regist',
-    method: 'POST',
-    data: data
-  })
-}
+// export function registApi(data: registDto) {
+//   return request({
+//     url: '/sys/user/regist',
+//     method: 'POST',
+//     data: data
+//   })
+// }
 
 export function loginApi(data: loginDto) {
   return request({
@@ -100,7 +100,8 @@ export function loginApi(data: loginDto) {
     method: 'POST',
     data: {
       ...data,
-      password: encrypt(data.password)
+      password: encrypt(data.password),
+      psdType: 'b'
     }
   })
 }
@@ -118,7 +119,8 @@ export function newUser(params: registDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password)
+      password: encrypt(params.password),
+      psdType: 'b'
     }
   })
 }
@@ -138,7 +140,10 @@ export function updPsd(params: userUpdPsdDto) {
     data: {
       oldp: encrypt(params.oldp),
       newp1: encrypt(params.newp1),
-      newp2: encrypt(params.newp2)
+      newp2: encrypt(params.newp2),
+      oldpType: 'b',
+      newp1Type: 'b',
+      newp2Type: 'b'
     }
   })
 }
@@ -149,7 +154,8 @@ export function resetUserPsd(params: adminResetUserPsdDto) {
     method: 'POST',
     data: {
       ...params,
-      password: encrypt(params.password)
+      password: encrypt(params.password),
+      psdType: 'b'
     }
   })
 }
