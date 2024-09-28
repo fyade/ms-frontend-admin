@@ -8,7 +8,7 @@ export default {
 import { provide, reactive, Ref, ref } from "vue"
 import { CONFIG, final, Operate, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { t_config } from "@/type/tablePage.ts";
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";

@@ -2,7 +2,7 @@
 import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue";
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
-import { funcTablePage } from "@/composition/tablePage/tablePage.js";
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
 import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules, TreeInstance } from 'element-plus';
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";

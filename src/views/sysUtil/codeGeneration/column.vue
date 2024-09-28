@@ -2,7 +2,7 @@
 import { reactive, ref, toRaw } from "vue"
 import { CONFIG, final, PAGINATION, publicDict, publicDictInterface } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
@@ -421,7 +421,7 @@ const gUpd2 = () => {
           <el-col :span="12">
             <el-form-item :label="state.dict['ifIns']" prop="ifIns">
               <template #label>
-                <Tooltip content="若选是，则在[新建及修改表单]中会显示">
+                <Tooltip content="若选是，则在[新增及修改表单]中会显示">
                   {{ state.dict['ifIns'] }}
                 </Tooltip>
               </template>
@@ -477,7 +477,7 @@ const gUpd2 = () => {
           <el-col :span="12">
             <el-form-item :label="state.dict['ifRequired']" prop="ifRequired">
               <template #label>
-                <Tooltip content="若选是，则在[新建及修改表单]中会有必填校验">
+                <Tooltip content="若选是，则在[新增及修改表单]中会有必填校验">
                   {{ state.dict['ifRequired'] }}
                 </Tooltip>
               </template>
@@ -627,7 +627,7 @@ const gUpd2 = () => {
           </el-table-column>
           <el-table-column prop="ifIns" :label="state.dict['ifIns']" width="90">
             <template #header>
-              <Tooltip content="若选是，则在[新建及修改表单]中会显示">
+              <Tooltip content="若选是，则在[新增及修改表单]中会显示">
                 <span :class="ifRequired('ifIns')?'tp-table-header-required':''">{{ state.dict['ifIns'] }}</span>
               </Tooltip>
             </template>
@@ -679,7 +679,7 @@ const gUpd2 = () => {
           </el-table-column>
           <el-table-column prop="ifRequired" :label="state.dict['ifRequired']" width="90">
             <template #header>
-              <Tooltip content="若选是，则在[新建及修改表单]中会有必填校验">
+              <Tooltip content="若选是，则在[新增及修改表单]中会有必填校验">
               <span :class="ifRequired('ifRequired')?'tp-table-header-required':''">
                 {{ state.dict['ifRequired'] }}
               </span>

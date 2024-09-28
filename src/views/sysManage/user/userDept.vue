@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules, TreeInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";

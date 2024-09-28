@@ -125,10 +125,6 @@ export const cascaderProps3 = {
   expandTrigger: 'hover',
   emitPath: false // 在选中节点改变时，是否返回由该节点所在的各级菜单的值所组成的数组，若设置 false，则只返回该节点的值
 } as CascaderProps
-export const cascaderProps1 = {
-  ...publicCascaderProps,
-  ...cascaderProps3
-} as CascaderProps
 // 可以选择任何层
 export const cascaderProps2 = {
   ...publicCascaderProps,
@@ -140,4 +136,16 @@ export const cascaderProps2 = {
 export const cascaderProps4 = {
   ...cascaderProps2,
   multiple: true
+} as CascaderProps
+export const cascaderProps1 = {
+  ...publicCascaderProps,
+  ...cascaderProps3
+} as CascaderProps
+export const cascaderProps1_ = {
+  ...{
+    ...publicCascaderProps,
+    value: 'perms',
+    label: 'name',
+  },
+  ...cascaderProps3
 } as CascaderProps

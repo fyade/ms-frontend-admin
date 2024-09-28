@@ -2,7 +2,7 @@
 import { inject, nextTick, reactive, Ref, ref, toRaw } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
+import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import { ElTable, FormRules, TableInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";

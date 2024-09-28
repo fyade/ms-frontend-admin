@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysLog:logOperation'
+  name: 'sysManage:sys'
 }
 </script>
 
@@ -12,11 +12,11 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
 import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts";
-import { logOperationDto, logOperationUpdDto } from "@/type/api/sysLog/logOperation.ts";
-import { logOperationFunc } from "@/api/module/sysLog/logOperation.ts";
+import { typeOM } from "@/type/utils/base.ts";
+import { sysDto, sysUpdDto } from "@/type/api/sysManage/sys.ts";
+import { sysFunc } from "@/api/module/sysManage/sys.ts";
 
-const state = reactive<State<logOperationDto, logOperationUpdDto>>({
+const state = reactive<State<sysDto, sysUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -30,12 +30,9 @@ const state = reactive<State<logOperationDto, logOperationUpdDto>>({
   // }
   dialogForm: {
     id: -1,
+    name: '',
     perms: '',
-    userId: '',
-    reqParam: '',
-    oldValue: '',
-    operateType: '',
-    ifSuccess: '',
+    orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
   dialogForms: [],
@@ -46,12 +43,9 @@ const state = reactive<State<logOperationDto, logOperationUpdDto>>({
   //   ...
   // }
   dFormRules: {
+    name: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
-    userId: [{required: true, trigger: 'change'}],
-    reqParam: [{required: true, trigger: 'change'}],
-    oldValue: [{required: true, trigger: 'change'}],
-    operateType: [{required: true, trigger: 'change'}],
-    ifSuccess: [{required: true, trigger: 'change'}],
+    orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -61,22 +55,15 @@ const state = reactive<State<logOperationDto, logOperationUpdDto>>({
   // }
   dict: {
     ...publicDict,
-    perms: '权限标识',
-    userId: '用户id',
-    reqParam: '请求参数',
-    oldValue: '旧值',
-    operateType: '操作类型',
-    ifSuccess: '是否成功',
+    name: '系统名',
+    perms: '权限字符',
   },
   // 筛选表单
   // 格式: {
   //   name: '',
   //   ...
   // }
-  filterForm: {
-    perms: '',
-    userId: '',
-  },
+  filterForm: {},
   list: [],
   multipleSelection: [],
   total: -1,
@@ -132,7 +119,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func: logOperationFunc
+  func: sysFunc
 })
 </script>
 
@@ -171,45 +158,23 @@ const {
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
+            <el-form-item :label="state.dict['name']" prop="name">
+              <el-input v-model="state.dialogForm['name']" :placeholder="state.dict['name']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="state.dict['perms']" prop="perms">
               <el-input v-model="state.dialogForm['perms']" :placeholder="state.dict['perms']"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item :label="state.dict['userId']" prop="userId">
-              <el-input v-model="state.dialogForm['userId']" :placeholder="state.dict['userId']"/>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="state.dict['reqParam']" prop="reqParam">
-              <el-input v-model="state.dialogForm['reqParam']" :placeholder="state.dict['reqParam']"/>
+            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="state.dict['oldValue']" prop="oldValue">
-              <el-input v-model="state.dialogForm['oldValue']" :placeholder="state.dict['oldValue']"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="state.dict['operateType']" prop="operateType">
-              <el-input v-model="state.dialogForm['operateType']" :placeholder="state.dict['operateType']"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="state.dict['ifSuccess']" prop="ifSuccess">
-              <el-radio-group v-model="state.dialogForm['ifSuccess']">
-                <el-radio :value="final.Y">是</el-radio>
-                <el-radio :value="final.N">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
               <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
@@ -249,6 +214,16 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
+          <el-table-column prop="name" :label="state.dict['name']" width="300">
+            <template #header>
+              <span :class="ifRequired('name')?'tp-table-header-required':''">{{ state.dict['name'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-name`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['name']" :placeholder="state.dict['name']"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="perms" :label="state.dict['perms']" width="300">
             <template #header>
               <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ state.dict['perms'] }}</span>
@@ -259,53 +234,13 @@ const {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="userId" :label="state.dict['userId']" width="300">
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
             <template #header>
-              <span :class="ifRequired('userId')?'tp-table-header-required':''">{{ state.dict['userId'] }}</span>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-userId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['userId']" :placeholder="state.dict['userId']"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reqParam" :label="state.dict['reqParam']" width="300">
-            <template #header>
-              <span :class="ifRequired('reqParam')?'tp-table-header-required':''">{{ state.dict['reqParam'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-reqParam`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['reqParam']" :placeholder="state.dict['reqParam']"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="oldValue" :label="state.dict['oldValue']" width="300">
-            <template #header>
-              <span :class="ifRequired('oldValue')?'tp-table-header-required':''">{{ state.dict['oldValue'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-oldValue`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['oldValue']" :placeholder="state.dict['oldValue']"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="operateType" :label="state.dict['operateType']" width="300">
-            <template #header>
-              <span :class="ifRequired('operateType')?'tp-table-header-required':''">{{ state.dict['operateType'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-operateType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['operateType']" :placeholder="state.dict['operateType']"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="ifSuccess" :label="state.dict['ifSuccess']" width="70">
-            <template #header>
-              <span :class="ifRequired('ifSuccess')?'tp-table-header-required':''">{{ state.dict['ifSuccess'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ifSuccess`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifSuccess']" :true-value="final.Y" :false-value="final.N"/>
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
@@ -350,12 +285,9 @@ const {
       @submit.prevent
   >
     <!--在此下方添加表单项-->
-    <el-form-item :label="state.dict['perms']" prop="perms">
-      <el-input v-model="state.filterForm['perms']" :placeholder="state.dict['perms']"/>
-    </el-form-item>
-    <el-form-item :label="state.dict['userId']" prop="userId">
-      <el-input v-model="state.filterForm['userId']" :placeholder="state.dict['userId']"/>
-    </el-form-item>
+    <!--<el-form-item :label="state.dict['']" prop="">-->
+    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
+    <!--</el-form-item>-->
     <!--在此上方添加表单项-->
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
@@ -367,11 +299,11 @@ const {
   <div>
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
     <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>
-    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
 
@@ -385,24 +317,21 @@ const {
     <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="perms" :label="state.dict['perms']" width="300"/>
-    <el-table-column prop="userId" :label="state.dict['userId']" width="120"/>
-    <el-table-column prop="reqParam" :label="state.dict['reqParam']" width="120"/>
-    <el-table-column prop="oldValue" :label="state.dict['oldValue']" width="120"/>
-    <el-table-column prop="operateType" :label="state.dict['operateType']" width="120"/>
-    <el-table-column prop="ifSuccess" :label="state.dict['ifSuccess']" width="120"/>
+    <el-table-column prop="name" :label="state.dict['name']" width="120"/>
+    <el-table-column prop="perms" :label="state.dict['perms']" width="120"/>
+    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
     <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
-    <el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>
+    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
     <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
     <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
-        <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
-        <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
+        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>

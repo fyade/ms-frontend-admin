@@ -3,8 +3,9 @@ import { baseClass } from "@/utils/base.ts";
 
 export type T_MENU = 'mm'
 export type T_COMP = 'mc'
+export type T_IS = 'ma'
 export type T_Inter = 'mb'
-export type tType = T_MENU | T_COMP | T_Inter
+export type tType = T_MENU | T_COMP | T_IS | T_Inter
 
 export class menuDto<T = tType> extends baseClass {
   id!: number;
@@ -20,13 +21,16 @@ export class menuDto<T = tType> extends baseClass {
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
+  sysPerms!: string;
   remark!: string;
 }
 
 export class menuSelDto extends pageDto {
 }
 
-export class menuSelAllDto {
+export class menuSelAllDto<T = tType> {
+  type?: T;
+  parentId?: number;
 }
 
 export class menuInsDto<T = tType> {
@@ -42,6 +46,7 @@ export class menuInsDto<T = tType> {
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
+  sysPerms!: string;
   remark!: string;
 }
 
