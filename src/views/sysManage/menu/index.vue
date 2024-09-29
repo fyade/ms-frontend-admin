@@ -525,7 +525,9 @@ const configI2: t_config = reactive({
     parentId: selectInterGroup.id
   },
   activeTabMoreInsFinishCallback: () => {
-    stateI2.dialogForms[stateI2.dialogForms.length - 1]['parentId'] = selectInterGroup.id
+    if (stateI2.dialogForms) {
+      stateI2.dialogForms[stateI2.dialogForms.length - 1]['parentId'] = selectInterGroup.id
+    }
   }
 })
 

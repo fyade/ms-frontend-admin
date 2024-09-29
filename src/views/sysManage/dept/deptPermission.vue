@@ -193,7 +193,7 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
   menuFunc.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
     type: {in: {value: [T_IS, T_Inter]}}
-  }).then((res: menuDto[]) => {
+  } as any).then((res: menuDto[]) => {
     resolve(res)
   })
 }
