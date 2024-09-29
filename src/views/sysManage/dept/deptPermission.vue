@@ -118,6 +118,10 @@ const config: t_config = reactive({
   selectParam: {
     type: {in: {value: [T_MENU, T_COMP]}}
   },
+  selectListCallback: () => {
+    selectPermissionLeft.value = selectPermission?.value.filter(n => state.list.findIndex(m => m.id === n) > -1)
+    selectPermissionRight.value = selectPermission?.value.filter(n => selectPermissionLeft.value.indexOf(n) === -1)
+  }
 })
 
 const {
@@ -156,39 +160,28 @@ const {
 })
 
 // 左侧菜单/组件列表
-const selectPermissionTree = ref<TreeInstance | null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
 const selectPermission: Ref<number[]> | undefined = inject('changeSelectPermission')
-const selectPermission2 = ref<number[]>(selectPermission ? selectPermission.value : [])
-nextTick(() => {
-  if (selectPermissionTree.value) {
-    selectPermissionTree.value.setCheckedKeys(selectPermission2.value)
-  }
-})
-watch(selectPermission2, () => {
-  if (selectPermission) {
-    selectPermission.value = state.list.filter(item => selectPermission2.value.indexOf(item.id) > -1).map(item => item.id)
-  }
-}, {
-  deep: true
-})
-
+const selectPermissionLeft = ref<number[]>([])
+const selectPermissionRight = ref<number[]>([])
 const handleCheckChange = (
     data: menuDto,
     checked: boolean,
     indeterminate: boolean
 ) => {
   if (checked) {
-    selectPermission2.value.push(data.id)
+    if (selectPermission?.value.indexOf(data.id) === -1) {
+      selectPermission?.value.push(data.id)
+    }
   } else {
-    if (selectPermission) {
-      selectPermission2.value.splice(selectPermission2.value.indexOf(data.id), 1)
+    const indexOf = selectPermission?.value.indexOf(data.id);
+    if (indexOf > -1) {
+      selectPermission?.value.splice(indexOf, 1)
     }
   }
 }
 
 // 右侧接口列表
-const selectPermission3: Ref<number[]> | undefined = inject('changeSelectPermission3')
 const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
   menuFunc.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
@@ -196,20 +189,6 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
   } as any).then((res: menuDto[]) => {
     resolve(res)
   })
-}
-const handleCheckChange2 = (
-    data: menuDto,
-    checked: boolean,
-    indeterminate: boolean
-) => {
-  if (checked) {
-    selectPermission3?.value.push(data.id)
-  } else {
-    selectPermission3?.value.splice(selectPermission3?.value.indexOf(data.id), 1)
-  }
-  if (selectPermission2.value.includes(data.id)) {
-    selectPermission2.value.splice(selectPermission2.value.indexOf(data.id), 1)
-  }
 }
 </script>
 
@@ -247,13 +226,12 @@ const handleCheckChange2 = (
         <el-form-item label="菜单/组件列表">
           <el-tree
               style="width: 100%;"
-              ref="selectPermissionTree"
               node-key="id"
               :data="tableData2"
               show-checkbox
               :check-strictly="true"
-              :default-expanded-keys="selectPermission2"
               default-expand-all
+              :default-checked-keys="selectPermissionLeft"
               @check-change="handleCheckChange"
           />
         </el-form-item>
@@ -267,8 +245,8 @@ const handleCheckChange2 = (
               show-checkbox
               :load="loadNode"
               :check-strictly="true"
-              :default-checked-keys="selectPermission2"
-              @check-change="handleCheckChange2"
+              :default-checked-keys="selectPermissionRight"
+              @check-change="handleCheckChange"
           />
         </el-form-item>
       </el-col>

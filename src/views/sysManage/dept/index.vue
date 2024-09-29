@@ -158,14 +158,13 @@ const managePermission = (row: deptDto) => {
   selectDept = row
   deptPermissionSelAll({deptId: selectDept.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
-    selectPermission3.value = []
     drawer2.value = true
   })
 }
 const drawerConfirmDeptPermission = () => {
   const param = {
     deptId: selectDept.id,
-    permissionId: [...selectPermission.value, ...selectPermission3.value]
+    permissionId: selectPermission.value
   }
   deptPermissionUpdDP(param).then(res => {
     if (res) {
@@ -178,9 +177,6 @@ const drawerCancelDeptPermission = () => {
   drawer2.value = false
 }
 provide('changeSelectPermission', selectPermission)
-
-const selectPermission3 = ref<number[]>([])
-provide('changeSelectPermission3', selectPermission3)
 </script>
 
 <template>

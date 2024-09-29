@@ -205,7 +205,6 @@ const handleCheckChange = (
           :data="tableData2"
           show-checkbox
           :check-strictly="true"
-          :default-expanded-keys="selectInterfaceGroup2"
           default-expand-all
           @check-change="handleCheckChange"
       />
