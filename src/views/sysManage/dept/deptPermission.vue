@@ -119,8 +119,10 @@ const config: t_config = reactive({
     type: {in: {value: [T_MENU, T_COMP]}}
   },
   selectListCallback: () => {
-    selectPermissionLeft.value = selectPermission?.value.filter(n => state.list.findIndex(m => m.id === n) > -1)
-    selectPermissionRight.value = selectPermission?.value.filter(n => selectPermissionLeft.value.indexOf(n) === -1)
+    if (selectPermission) {
+      selectPermissionLeft.value = selectPermission.value.filter(n => state.list.findIndex(m => m.id === n) > -1)
+      selectPermissionRight.value = selectPermission.value.filter(n => selectPermissionLeft.value.indexOf(n) === -1)
+    }
   }
 })
 
@@ -169,14 +171,12 @@ const handleCheckChange = (
     checked: boolean,
     indeterminate: boolean
 ) => {
-  if (checked) {
-    if (selectPermission?.value.indexOf(data.id) === -1) {
-      selectPermission?.value.push(data.id)
-    }
-  } else {
-    const indexOf = selectPermission?.value.indexOf(data.id);
+  if (checked && selectPermission && selectPermission.value.indexOf(data.id) === -1) {
+    selectPermission.value.push(data.id)
+  } else if (!checked && selectPermission) {
+    const indexOf = selectPermission.value.indexOf(data.id);
     if (indexOf > -1) {
-      selectPermission?.value.splice(indexOf, 1)
+      selectPermission.value.splice(indexOf, 1)
     }
   }
 }
