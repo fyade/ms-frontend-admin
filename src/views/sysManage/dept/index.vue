@@ -143,6 +143,7 @@ const tIns = (id: number) => {
   gIns()
 }
 
+// 选择的部门信息
 let selectDept: deptDto = new deptDto()
 const drawer = ref(false)
 const manageUser = (row: deptDto) => {
@@ -150,19 +151,21 @@ const manageUser = (row: deptDto) => {
   drawer.value = true
 }
 
+// 部门权限
 const drawer2 = ref(false)
 const selectPermission = ref<number[]>([])
 const managePermission = (row: deptDto) => {
   selectDept = row
   deptPermissionSelAll({deptId: selectDept.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
+    selectPermission3.value = []
     drawer2.value = true
   })
 }
 const drawerConfirmDeptPermission = () => {
   const param = {
     deptId: selectDept.id,
-    permissionId: selectPermission.value
+    permissionId: [...selectPermission.value, ...selectPermission3.value]
   }
   deptPermissionUpdDP(param).then(res => {
     if (res) {
@@ -175,6 +178,9 @@ const drawerCancelDeptPermission = () => {
   drawer2.value = false
 }
 provide('changeSelectPermission', selectPermission)
+
+const selectPermission3 = ref<number[]>([])
+provide('changeSelectPermission3', selectPermission3)
 </script>
 
 <template>

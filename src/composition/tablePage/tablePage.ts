@@ -456,6 +456,7 @@ export const funcTablePage = <T = { [key: string]: string }>({
   const dfIns = () => {
     config.activeTabMoreInsCallback && config.activeTabMoreInsCallback()
     state.dialogForms!.push(structuredClone(initialStateDialogForm))
+    config.activeTabMoreInsFinishCallback && config.activeTabMoreInsFinishCallback()
   }
 
   const dfDel = (index: number) => {

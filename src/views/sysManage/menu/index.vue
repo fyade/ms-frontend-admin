@@ -6,34 +6,20 @@ export default {
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue"
-import {
-  cascaderProps1,
-  cascaderProps1_,
-  cascaderProps2,
-  cascaderProps3,
-  CONFIG,
-  final,
-  PAGINATION,
-  publicDict
-} from "@/utils/base.ts"
+import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
-import { ElMessage, FormRules } from 'element-plus'
+import { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload, Sort } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { menuDto, menuSelAllDto, menuSelDto, menuUpdDto, tType } from "@/type/api/sysManage/menu.ts";
+import { typeOM } from "@/type/utils/base.ts"
+import { menuDto, menuUpdDto, tType, T_MENU, T_COMP, T_IS, T_Inter } from "@/type/api/sysManage/menu.ts";
 import { menuFunc } from "@/api/module/sysManage/menu.ts"
 import { useRouterStore } from "@/store/module/router.ts";
 import { copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { sysDto } from "@/type/api/sysManage/sys.ts";
 import { sysFunc } from "@/api/module/sysManage/sys.ts";
-
-const T_MENU = 'mm'
-const T_COMP = 'mc'
-const T_IS = 'ma'
-const T_Inter = 'mb'
 
 const state = reactive<State<menuDto, menuDto>>({
   dialogType: {
@@ -537,6 +523,9 @@ const configI2: t_config = reactive({
   selectParam: {
     type: {in: {value: [T_Inter]}},
     parentId: selectInterGroup.id
+  },
+  activeTabMoreInsFinishCallback: () => {
+    stateI2.dialogForms[stateI2.dialogForms.length - 1]['parentId'] = selectInterGroup.id
   }
 })
 
@@ -574,6 +563,11 @@ const {
   activeTabName: activeTabNameI2,
   func: menuFunc
 })
+
+const gInsI22 = () => {
+  stateI2.dialogForm['parentId'] = selectInterGroup.id
+  gInsI2()
+}
 </script>
 
 <template>
@@ -645,6 +639,7 @@ const {
                     :props="cascaderProps2"
                     clearable
                     :value-on-clear="final.DEFAULT_PARENT_ID"
+                    disabled
                 />
               </el-form-item>
             </el-col>
@@ -728,6 +723,7 @@ const {
                       :props="cascaderProps2"
                       clearable
                       :value-on-clear="final.DEFAULT_PARENT_ID"
+                      disabled
                   />
                 </div>
               </template>
@@ -852,7 +848,7 @@ const {
     <div>
       <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="gRefreshI2">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gInsI2">新增</el-button>
+      <el-button type="primary" plain :icon="Plus" @click="gInsI22">新增</el-button>
       <el-button type="success" plain :icon="Edit"
                  :disabled="configI2.bulkOperation?stateI2.multipleSelection.length===0:stateI2.multipleSelection.length!==1"
                  @click="gUpdI2">修改

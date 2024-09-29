@@ -65,9 +65,13 @@ export interface t_config {
    */
   changeActiveTabNameCallback?: (newVal: typeOM) => any
   /**
-   * 弹出表单为操作多个时，新增的回调函数
+   * 弹出表单为操作多个时，新增之前的回调函数
    */
   activeTabMoreInsCallback?: Function
+  /**
+   * 弹出表单为操作多个时，新增之后的回调函数
+   */
+  activeTabMoreInsFinishCallback?: Function
   /**
    * 弹出表单为操作多个时，删除的回调函数
    */

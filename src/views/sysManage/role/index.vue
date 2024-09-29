@@ -132,7 +132,7 @@ const {
   func: roleFunc
 })
 
-
+// 选择的角色信息
 let selectRoleInfo: roleDto = new roleDto()
 const drawer2 = ref(false)
 const selectPermission = ref<number[]>([])
@@ -141,11 +141,13 @@ const manageUser = (row: roleDto) => {
   drawer2.value = true
 }
 
+// 角色权限
 const drawer = ref(false)
 const setPermission = (row: roleDto) => {
   selectRoleInfo = row
   rolePermissionSelAll({roleId: selectRoleInfo.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
+    selectPermission3.value = []
     drawer.value = true
   })
 }
@@ -155,7 +157,7 @@ const drawerCancelRolePermission = () => {
 const drawerConfirmRolePermission = () => {
   const param = {
     roleId: selectRoleInfo.id,
-    permissionId: selectPermission.value
+    permissionId: [...selectPermission.value, ...selectPermission3.value]
   }
   rolePermissionUpdRp(param).then(res => {
     if (res) {
@@ -165,6 +167,9 @@ const drawerConfirmRolePermission = () => {
   })
 }
 provide('changeSelectPermission', selectPermission)
+
+const selectPermission3 = ref<number[]>([])
+provide('changeSelectPermission3', selectPermission3)
 </script>
 
 <template>

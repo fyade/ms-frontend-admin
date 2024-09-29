@@ -197,9 +197,9 @@ const handleCheckChange = (
   <el-form>
     <el-form-item label="所属部门">
       <el-tree
+          style="width: 100%;"
           ref="selectDeptTree"
           node-key="id"
-          style="width: 100%;"
           :data="tableData2"
           show-checkbox
           :check-strictly="true"

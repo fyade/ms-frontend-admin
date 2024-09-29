@@ -1,6 +1,10 @@
 import { pageDto } from "@/type/tablePage.ts";
 import { baseClass } from "@/utils/base.ts";
 
+export const T_MENU = 'mm'
+export const T_COMP = 'mc'
+export const T_IS = 'ma'
+export const T_Inter = 'mb'
 export type T_MENU = 'mm'
 export type T_COMP = 'mc'
 export type T_IS = 'ma'

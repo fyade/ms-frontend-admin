@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
-import { final, PAGINATION, publicDict } from "@/utils/base.ts"
+import { computed, inject, nextTick, reactive, Ref, ref, toRaw, toRef, watch } from "vue"
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules, TreeInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { menuDto } from "@/type/api/sysManage/menu.ts";
+import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/api/sysManage/menu.ts";
 import { menuFunc, } from "@/api/module/sysManage/menu.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import type Node from 'element-plus/es/components/tree/src/model/node'
 
 const props = defineProps({
   selectRole: {
@@ -114,6 +115,9 @@ const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+  selectParam: {
+    type: {in: {value: [T_MENU, T_COMP]}}
+  },
 })
 
 const {
@@ -151,6 +155,7 @@ const {
   props
 })
 
+// 左侧菜单/组件列表
 const selectPermissionTree = ref<TreeInstance | null>(null)
 const tableData2 = computed(() => arr2ToDiguiObj(state.list))
 const selectPermission: Ref<number[]> | undefined = inject('changeSelectPermission')
@@ -179,6 +184,31 @@ const handleCheckChange = (
     if (selectPermission) {
       selectPermission2.value.splice(selectPermission2.value.indexOf(data.id), 1)
     }
+  }
+}
+
+// 右侧接口列表
+const selectPermission3: Ref<number[]> | undefined = inject('changeSelectPermission3')
+const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
+  menuFunc.selectAll({
+    parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
+    type: {in: {value: [T_IS, T_Inter]}}
+  }).then((res: menuDto[]) => {
+    resolve(res)
+  })
+}
+const handleCheckChange2 = (
+    data: menuDto,
+    checked: boolean,
+    indeterminate: boolean
+) => {
+  if (checked) {
+    selectPermission3?.value.push(data.id)
+  } else {
+    selectPermission3?.value.splice(selectPermission3?.value.indexOf(data.id), 1)
+  }
+  if (selectPermission2.value.includes(data.id)) {
+    selectPermission2.value.splice(selectPermission2.value.indexOf(data.id), 1)
   }
 }
 </script>
@@ -219,19 +249,37 @@ const handleCheckChange = (
 
   <br/>
   <el-form>
-    <el-form-item label="权限列表">
-      <el-tree
-          ref="selectPermissionTree"
-          node-key="id"
-          style="width: 100%;"
-          :data="tableData2"
-          show-checkbox
-          :check-strictly="true"
-          :default-expanded-keys="selectPermission2"
-          default-expand-all
-          @check-change="handleCheckChange"
-      />
-    </el-form-item>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="菜单/组件列表">
+          <el-tree
+              style="width: 100%;"
+              ref="selectPermissionTree"
+              node-key="id"
+              :data="tableData2"
+              show-checkbox
+              :check-strictly="true"
+              :default-expanded-keys="selectPermission2"
+              default-expand-all
+              @check-change="handleCheckChange"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="接口列表">
+          <el-tree
+              style="width: 100%;"
+              node-key="id"
+              lazy
+              show-checkbox
+              :load="loadNode"
+              :check-strictly="true"
+              :default-checked-keys="selectPermission2"
+              @check-change="handleCheckChange2"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 

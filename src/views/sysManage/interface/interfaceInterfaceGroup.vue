@@ -199,9 +199,9 @@ const handleCheckChange = (
   <el-form>
     <el-form-item label="接口组列表">
       <el-tree
+          style="width: 100%;"
           ref="selectInterfaceGroupTree"
           node-key="id"
-          style="width: 100%;"
           :data="tableData2"
           show-checkbox
           :check-strictly="true"
