@@ -2,30 +2,25 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/module/user.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
-export const homerouter = '/index'
+export const homeRouter = '/home'
 export const routerPinList = [
-  homerouter
+  homeRouter
 ]
 export const routes: RouteRecordRaw[] = [
   {
+    path: '/home',
+    name: 'home',
+    component: () => import('@/views/home/index.vue')
+  },
+  {
     path: '/',
     name: '/',
-    redirect: '/index',
+    redirect: '/home',
     meta: {
       label: '首页'
     },
     component: () => import('@/layout/sys/index.vue'),
     children: [
-      {
-        path: 'index',
-        name: 'index',
-        meta: {
-          asideMenu: true,
-          label: '总览',
-          icon: 'workbench'
-        },
-        component: () => import('@/views/home/index.vue')
-      },
       // {
       //   path: 'sys',
       //   name: 'sys',

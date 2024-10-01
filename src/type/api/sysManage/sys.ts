@@ -6,6 +6,7 @@ export class sysDto extends baseClass {
   name!: string;
   perms!: string;
   orderNum!: number;
+  path!: string;
   remark!: string;
 }
 
@@ -19,6 +20,7 @@ export class sysInsDto {
   name!: string;
   perms!: string;
   orderNum!: number;
+  path!: string;
   remark!: string;
 }
 

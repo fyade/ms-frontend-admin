@@ -10,7 +10,7 @@ import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
 import { State, t_config } from "@/type/tablePage.ts";
-import type { FormRules } from "element-plus";
+import { ElMessageBox, FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { typeOM } from "@/type/utils/base.ts";
 import { sysDto, sysUpdDto } from "@/type/api/sysManage/sys.ts";
@@ -33,6 +33,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     name: '',
     perms: '',
     orderNum: final.DEFAULT_ORDER_NUM,
+    path: '',
     remark: '',
   },
   dialogForms: [],
@@ -46,6 +47,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     name: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
+    path: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -57,6 +59,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     ...publicDict,
     name: '系统名',
     perms: '权限字符',
+    path: 'url路径',
   },
   // 筛选表单
   // 格式: {
@@ -121,6 +124,13 @@ const {
   activeTabName,
   func: sysFunc
 })
+
+const gDel2 = () => {
+  gDel()
+}
+const tDel2 = (value: any) => {
+  tDel(value)
+}
 </script>
 
 <template>
@@ -175,8 +185,15 @@ const {
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item :label="state.dict['path']" prop="path">
+              <el-input v-model="state.dialogForm['path']" :placeholder="state.dict['path']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
-              <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -244,13 +261,24 @@ const {
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="path" :label="state.dict['path']" width="300">
+            <template #header>
+              <span :class="ifRequired('path')?'tp-table-header-required':''">{{ state.dict['path'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-path`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['path']" :placeholder="state.dict['path']"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" :label="state.dict['remark']" width="300">
             <template #header>
               <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']"
+                          :placeholder="state.dict['remark']"/>
               </div>
             </template>
           </el-table-column>
@@ -300,9 +328,15 @@ const {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
-    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>
+    <el-button type="success" plain :icon="Edit"
+               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
+               @click="gUpd">修改
+    </el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel2()">删除
+    </el-button>
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">
+      导出
+    </el-button>
     <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
@@ -320,6 +354,7 @@ const {
     <el-table-column prop="name" :label="state.dict['name']" width="120"/>
     <el-table-column prop="perms" :label="state.dict['perms']" width="120"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
+    <el-table-column prop="path" :label="state.dict['path']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
@@ -331,12 +366,13 @@ const {
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+        <el-button link type="danger" size="small" @click="tDel2(row.id)">删除</el-button>
       </template>
     </el-table-column>
     <template #append>
       <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
+        <span>此表格的多选<span
+            class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
       </div>
     </template>
   </el-table>
