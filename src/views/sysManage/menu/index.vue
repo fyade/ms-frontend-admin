@@ -47,7 +47,7 @@ const state = reactive<State<menuDto, menuDto>>({
     ifDisabled: final.N,
     ifPublic: final.N,
     perms: '',
-    sysPerms: 'main',
+    sysId: final.DEFAULT_PARENT_ID,
     remark: '',
   },
   dialogForms: [],
@@ -77,7 +77,7 @@ const state = reactive<State<menuDto, menuDto>>({
     ifDisabled: '是否禁用',
     ifPublic: '是否公共接口',
     perms: '权限标识',
-    sysPerms: '所属系统',
+    sysId: '所属系统',
   },
   // 筛选表单
   // 格式: {
@@ -110,9 +110,11 @@ const config: t_config = reactive({
   pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   selectParam: {
-    type: {in: {value: [T_MENU, T_COMP]}}
+    type: {in: {value: [T_MENU, T_COMP]}},
+    sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
+    selAllSyss()
   }
 })
 
@@ -177,7 +179,7 @@ const stateInter = reactive<State<menuDto, menuDto>>({
     ifDisabled: final.N,
     ifPublic: final.N,
     perms: '',
-    sysPerms: 'main',
+    sysId: final.DEFAULT_PARENT_ID,
     remark: '',
   },
   dialogForms: [],
@@ -193,7 +195,7 @@ const stateInter = reactive<State<menuDto, menuDto>>({
     orderNum: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
     ifPublic: [{required: true, trigger: 'change'}],
-    sysPerms: [{required: true, trigger: 'change'}],
+    sysId: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -214,7 +216,7 @@ const stateInter = reactive<State<menuDto, menuDto>>({
     ifDisabled: '是否禁用',
     ifPublic: '是否公共接口',
     perms: '权限标识',
-    sysPerms: '所属系统',
+    sysId: '所属系统',
   },
   // 筛选表单
   // 格式: {
@@ -247,9 +249,11 @@ const configInter: t_config = reactive({
   pageQuery: false,
   bulkOperation: true,
   selectParam: {
-    type: {in: {value: [T_IS]}}
+    type: {in: {value: [T_IS]}},
+    sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
+    selAllSyss()
   }
 })
 
@@ -314,7 +318,7 @@ watch(() => [state.dialogForm.type, activeTabName.value], () => {
     component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
-    sysPerms: [{required: true, trigger: 'change'}],
+    sysId: [{required: true, trigger: 'change'}],
   }
   if ([T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1) {
     state.dFormRules = {
@@ -400,17 +404,30 @@ const expendAll = () => {
 }
 
 // 系统
+const selectSys = ref<number | null>(null)
 const allSyss = ref<sysDto[]>([])
 const allSysLoading = ref(false)
 const selAllSyss = () => {
   allSysLoading.value = true
+  allSyss.value = []
   sysFunc.selectAll({}).then(res => {
     allSyss.value = res
   }).finally(() => {
     allSysLoading.value = false
   })
 }
-selAllSyss()
+const selectSysChange = (value: number | null) => {
+  const selectSys = value || 0;
+  state.dialogForm['sysId'] = selectSys;
+  stateInter.dialogForm['sysId'] = selectSys;
+  stateI2.dialogForm['sysId'] = selectSys;
+  (config.selectParam as any)['sysId'] = selectSys;
+  (configInter.selectParam as any)['sysId'] = selectSys;
+  (configI2.selectParam as any)['sysId'] = selectSys;
+  gRefresh();
+  gRefreshInter();
+  // gRefreshI2();
+}
 
 // 接口组
 const tableData3Inter = computed(() => {
@@ -455,7 +472,7 @@ const stateI2 = reactive<State<menuDto, menuUpdDto>>({
     ifDisabled: final.N,
     ifPublic: final.N,
     perms: '',
-    sysPerms: 'main',
+    sysId: final.DEFAULT_PARENT_ID,
     remark: '',
   },
   dialogForms: [],
@@ -471,7 +488,7 @@ const stateI2 = reactive<State<menuDto, menuUpdDto>>({
     orderNum: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
     ifPublic: [{required: true, trigger: 'change'}],
-    sysPerms: [{required: true, trigger: 'change'}],
+    sysId: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -491,7 +508,7 @@ const stateI2 = reactive<State<menuDto, menuUpdDto>>({
     ifVisible: '是否显示',
     ifPublic: '是否公共接口',
     perms: '权限标识',
-    sysPerms: '所属系统',
+    sysId: '所属系统',
   },
   // 筛选表单
   // 格式: {
@@ -519,10 +536,12 @@ const tableLoadingRefI2 = ref(false)
 const switchLoadingRefI2 = ref(false)
 const activeTabNameI2 = ref<typeOM>(final.one)
 const configI2: t_config = reactive({
+  getDataOnMounted: false,
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   selectParam: {
     type: {in: {value: [T_Inter]}},
-    parentId: selectInterGroup.id
+    parentId: selectInterGroup.id,
+    sysId: final.DEFAULT_PARENT_ID,
   },
   activeTabMoreInsFinishCallback: () => {
     if (stateI2.dialogForms) {
@@ -1545,7 +1564,27 @@ const gInsI22 = () => {
     </template>
   </el-dialog>
 
-  <el-tabs v-model="activeTab2Name">
+  <el-form label-position="top">
+    <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口：">
+      <el-select
+          v-model="selectSys"
+          placeholder="系统"
+          clearable
+          @change="selectSysChange"
+      >
+        <el-option
+            v-for="item in allSyss"
+            :key="item.id"
+            :value="item.id"
+            :label="`${item.name} - ${item.perms}`"
+        />
+      </el-select>
+    </el-form-item>
+  </el-form>
+
+  <!--<el-divider/>-->
+
+  <el-tabs v-model="activeTab2Name" type="card">
     <el-tab-pane label="菜单及组件" name="a">
       <!--顶部筛选表单-->
       <el-form

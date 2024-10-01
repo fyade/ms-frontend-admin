@@ -13,8 +13,8 @@ import { dicTypeSelAll } from "@/api/module/sysManage/dicType.ts";
 import { dicTypeDto } from "@/type/api/sysManage/dicType.ts";
 
 const props = defineProps({
-  dicType: {
-    type: String,
+  dicTypeId: {
+    type: Number,
     required: true
   }
 })
@@ -35,7 +35,7 @@ const state = reactive<State<dicDataDto>>({
     id: -1,
     label: '',
     value: '',
-    dicType: props.dicType,
+    dicTypeId: props.dicTypeId,
     ifDefault: final.N,
     ifDisabled: final.N,
     orderNum: final.DEFAULT_ORDER_NUM,
@@ -51,7 +51,7 @@ const state = reactive<State<dicDataDto>>({
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
     value: [{required: true, trigger: 'change'}],
-    dicType: [{required: true, trigger: 'change'}],
+    dicTypeId: [{required: true, trigger: 'change'}],
     ifDefault: [{required: true, trigger: 'change'}],
     ifDisabled: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
@@ -66,7 +66,7 @@ const state = reactive<State<dicDataDto>>({
     ...publicDict,
     label: '标签',
     value: '值',
-    dicType: '字典类型',
+    dicTypeId: '字典类型',
   },
   // 筛选表单
   // 格式: {
@@ -98,7 +98,7 @@ const switchLoadingRef = ref(false)
 const activeTabName = ref<typeOM>(final.one)
 const config: t_config = reactive({
   selectParam: {
-    dicType: props.dicType
+    dicTypeId: props.dicTypeId
   }, // 查询参数（补充
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
@@ -200,15 +200,6 @@ dicTypeSelAll({}).then(res => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="state.dict['dicType']" prop="dicType">
-              <el-select v-model="state.dialogForm['dicType']" clearable filterable disabled>
-                <el-option v-for="item in allDicTypes" :key="item.id" :label="item.name" :value="item.type"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
             <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
               <el-radio-group v-model="state.dialogForm['ifDisabled']">
                 <el-radio :value="final.Y">是</el-radio>
@@ -216,6 +207,8 @@ dicTypeSelAll({}).then(res => {
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['orderNum']" prop="orderNum">
               <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
@@ -285,18 +278,6 @@ dicTypeSelAll({}).then(res => {
                   <el-radio :value="final.Y">是</el-radio>
                   <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="dicType" :label="state.dict['dicType']" width="300">
-            <template #header>
-              <span :class="ifRequired('dicType')?'tp-table-header-required':''">{{ state.dict['dicType'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-dicType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-select v-model="state.dialogForms[$index]['dicType']" clearable filterable disabled>
-                  <el-option v-for="item in allDicTypes" :key="item.id" :label="item.name" :value="item.type"/>
-                </el-select>
               </div>
             </template>
           </el-table-column>

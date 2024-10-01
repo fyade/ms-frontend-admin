@@ -129,9 +129,9 @@ const {
 })
 
 const drawer = ref(false)
-const selectDicType = ref('')
+const selectDicType = ref(-1)
 const setDicData = (row: dicTypeDto) => {
-  selectDicType.value = row.type
+  selectDicType.value = row.id
   drawer.value = true
 }
 </script>
@@ -147,7 +147,7 @@ const setDicData = (row: dicTypeDto) => {
       title="字典数据"
   >
     <DicData
-        :dic-type="selectDicType"
+        :dic-type-id="selectDicType"
     />
     <template #footer>
       <el-button plain @click="drawer=false">取消</el-button>

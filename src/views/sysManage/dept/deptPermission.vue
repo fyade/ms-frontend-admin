@@ -44,7 +44,7 @@ const state = reactive<State<menuDto<string>>>({
     ifDisabled: final.N,
     ifPublic: '',
     perms: '',
-    sysPerms: 'main',
+    sysId: final.DEFAULT_PARENT_ID,
     remark: '',
   },
   dialogForms: [],

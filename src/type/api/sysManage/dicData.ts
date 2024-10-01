@@ -5,7 +5,7 @@ export class dicDataDto extends baseClass {
   id!: number;
   label!: string;
   value!: string;
-  dicType!: string;
+  dicTypeId!: number;
   ifDefault!: string;
   ifDisabled!: string;
   orderNum!: number;
@@ -21,7 +21,7 @@ export class dicDataSelAllDto {
 export class dicDataInsDto {
   label!: string;
   value!: string;
-  dicType!: string;
+  dicTypeId!: number;
   ifDefault!: string;
   ifDisabled!: string;
   orderNum!: number;

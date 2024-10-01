@@ -25,7 +25,7 @@ export class menuDto<T = tType> extends baseClass {
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
-  sysPerms!: string;
+  sysId!: number;
   remark!: string;
 }
 
@@ -50,7 +50,7 @@ export class menuInsDto<T = tType> {
   ifDisabled!: string;
   ifPublic!: string;
   perms!: string;
-  sysPerms!: string;
+  sysId!: number;
   remark!: string;
 }
 
