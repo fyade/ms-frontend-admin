@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ImageCrop from "@/components/imageCrop/imageCrop.vue";
-import { updUser } from "@/api/module/sysManage/user.ts";
+import { updUser } from "@/api/module/main/sysManage/user.ts";
 import { useUserStore } from "@/store/module/user.ts";
 
 const userStore = useUserStore();

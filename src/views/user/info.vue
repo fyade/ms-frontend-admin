@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSelfInfo, updUser } from '@/api/module/sysManage/user';
+import { getSelfInfo, updUser } from '@/api/module/main/sysManage/user';
 import { reactive } from 'vue';
 import { ElMessage } from "element-plus";
 

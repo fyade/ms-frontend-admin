@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { getSysVersion } from "@/api/module/sys.ts";
+import { getSysVersion } from "@/api/sys.ts";
 import { currentVersion } from "../../../config/config.ts";
 
 export const useSysStore = defineStore('sysStore', () => {
