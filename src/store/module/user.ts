@@ -2,14 +2,11 @@ import { defineStore } from "pinia";
 import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle } from "element-plus";
-import { RouteRecordNormalized, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { loginDto, userDto } from "@/type/api/main/sysManage/user.ts";
 import { loginApi } from "@/api/module/main/sysManage/user.ts";
-import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { clearObject, copyObject, deepClone } from "@/utils/ObjectUtils.ts";
+import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
-import { final } from "@/utils/base.ts";
-import { menuDto } from "@/type/api/main/sysManage/menu.ts";
 
 // const modules = import.meta.glob("../../views/**/**/**/**.vue")
 
@@ -31,7 +28,7 @@ export const useUserStore = defineStore('userStore', () => {
     return new Promise((resolve, reject) => {
       loginApi(user).then(async res => {
         if (res) {
-          let notification: NotificationHandle = ElNotification({
+          const notification: NotificationHandle = ElNotification({
             title: '提示',
             message: '登录成功，系统资源加载中。。。',
             type: 'success',

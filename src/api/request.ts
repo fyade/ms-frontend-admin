@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { useUserStore } from "@/store/module/user.ts";
 import { ElMessage } from "element-plus";
 import { sleep } from "@/utils/baseUtils.ts";
@@ -75,6 +75,6 @@ request.interceptors.response.use(
     }
 )
 
-export default function (param: any): Promise<any> {
+export default function (param: AxiosRequestConfig): Promise<any> {
   return request(param)
 }

@@ -3,7 +3,7 @@ import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
 import { allMenus2I, useRouterStore } from "@/store/module/router.ts";
 import { Ref, ref, watch } from "vue";
-import { homerouter, routerPinList } from "@/router";
+import { homeRouter, routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
@@ -16,7 +16,7 @@ const gotoMenu = (path: string) => {
 }
 const deleteMenu = (index: number) => {
   if (route.path === routerStore.getMenuList()[index].path) {
-    aside.value && aside.value.gotoMenu(homerouter)
+    aside.value && aside.value.gotoMenu(homeRouter)
   }
   routerStore.deleteMenu(index)
 }
@@ -36,7 +36,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭左侧标签页',
       operate: () => {
         if (routerStore.getMenuList().slice(0, index).findIndex(item => item.path === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(homerouter)
+          aside.value && aside.value.gotoMenu(homeRouter)
         }
         routerStore.deleteLeftMenu(index)
       }
@@ -45,7 +45,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭右侧标签页',
       operate: () => {
         if (routerStore.getMenuList().slice(index + 1, routerStore.getMenuList().length).findIndex(item => item.path === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(homerouter)
+          aside.value && aside.value.gotoMenu(homeRouter)
         }
         routerStore.deleteRightMenu(index)
       }
@@ -54,7 +54,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭其他标签页',
       operate: () => {
         if (route.path !== info.path) {
-          aside.value && aside.value.gotoMenu(homerouter)
+          aside.value && aside.value.gotoMenu(homeRouter)
         }
         routerStore.deleteOtherMenu(index, routerPinList.indexOf(info.path) > -1)
       }
@@ -63,7 +63,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭全部标签页',
       operate: () => {
         if (routerPinList.indexOf(route.path) === -1) {
-          aside.value && aside.value.gotoMenu(homerouter)
+          aside.value && aside.value.gotoMenu(homeRouter)
         }
         routerStore.deleteAllMenu()
       }
