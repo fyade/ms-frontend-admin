@@ -94,7 +94,7 @@ const state = reactive<State<codeGenTableDto>>({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref(null)
 const dialogFormsRef = ref(null)
@@ -418,7 +418,7 @@ const gUpd2 = () => {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="state.dict['tableRemark']" prop="tableRemark">
-              <el-input v-model="state.dialogForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
+              <el-input type="textarea" v-model="state.dialogForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -583,7 +583,7 @@ const gUpd2 = () => {
             <template #default="{$index}">
               <div
                   :class="state.dialogForms_error?.[`${$index}-tableRemark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['tableRemark']" :placeholder="state.dict['tableRemark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['tableRemark']" :placeholder="state.dict['tableRemark']"/>
               </div>
             </template>
           </el-table-column>

@@ -16,7 +16,7 @@ import {
 
 export function dicTypeSel(params: dicTypeSelDto): t_funcMap_selList_ret<dicTypeDto> {
   return request({
-    url: '/sys-manage/dic-type',
+    url: '/main/sys-manage/dic-type',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function dicTypeSel(params: dicTypeSelDto): t_funcMap_selList_ret<dicType
 
 export function dicTypeSelAll(params: dicTypeSelAllDto): t_funcMap_selMore_ret<dicTypeDto> {
   return request({
-    url: '/sys-manage/dic-type/all',
+    url: '/main/sys-manage/dic-type/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function dicTypeSelAll(params: dicTypeSelAllDto): t_funcMap_selMore_ret<d
 
 export function dicTypeSelById(id: number): t_funcMap_selOne_ret<dicTypeDto> {
   return request({
-    url: `/sys-manage/dic-type/${id}`,
+    url: `/main/sys-manage/dic-type/${id}`,
     method: 'GET'
   })
 }
 
 export function dicTypeSelByIds(ids: number[]): t_funcMap_selMore_ret<dicTypeDto> {
   return request({
-    url: `/sys-manage/dic-type/ids`,
+    url: `/main/sys-manage/dic-type/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function dicTypeSelByIds(ids: number[]): t_funcMap_selMore_ret<dicTypeDto
 
 export function dicTypeIns(params: dicTypeInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-type',
+    url: '/main/sys-manage/dic-type',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function dicTypeIns(params: dicTypeInsDto): t_funcMap_iud_ret {
 
 export function dicTypeUpd(params: dicTypeUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-type',
+    url: '/main/sys-manage/dic-type',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function dicTypeUpd(params: dicTypeUpdDto): t_funcMap_iud_ret {
 
 export function dicTypeInss(params: dicTypeInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-type/s',
+    url: '/main/sys-manage/dic-type/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function dicTypeInss(params: dicTypeInsDto[]): t_funcMap_iud_ret {
 
 export function dicTypeUpds(params: dicTypeUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-type/s',
+    url: '/main/sys-manage/dic-type/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function dicTypeUpds(params: dicTypeUpdDto[]): t_funcMap_iud_ret {
 
 export function dicTypeDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-type',
+    url: '/main/sys-manage/dic-type',
     method: 'DELETE',
     data: ids
   })

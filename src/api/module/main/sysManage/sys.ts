@@ -16,7 +16,7 @@ import {
 
 export function sysSel(params: sysSelDto): t_funcMap_selList_ret<sysDto> {
   return request({
-    url: '/sys-manage/sys',
+    url: '/main/sys-manage/sys',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function sysSel(params: sysSelDto): t_funcMap_selList_ret<sysDto> {
 
 export function sysSelAll(params: sysSelAllDto): t_funcMap_selMore_ret<sysDto> {
   return request({
-    url: '/sys-manage/sys/all',
+    url: '/main/sys-manage/sys/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function sysSelAll(params: sysSelAllDto): t_funcMap_selMore_ret<sysDto> {
 
 export function sysSelById(id: number): t_funcMap_selOne_ret<sysDto> {
   return request({
-    url: `/sys-manage/sys/${id}`,
+    url: `/main/sys-manage/sys/${id}`,
     method: 'GET'
   })
 }
 
 export function sysSelByIds(ids: number[]): t_funcMap_selMore_ret<sysDto> {
   return request({
-    url: `/sys-manage/sys/ids`,
+    url: `/main/sys-manage/sys/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function sysSelByIds(ids: number[]): t_funcMap_selMore_ret<sysDto> {
 
 export function sysIns(params: sysInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/sys',
+    url: '/main/sys-manage/sys',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function sysIns(params: sysInsDto): t_funcMap_iud_ret {
 
 export function sysUpd(params: sysUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/sys',
+    url: '/main/sys-manage/sys',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function sysUpd(params: sysUpdDto): t_funcMap_iud_ret {
 
 export function sysInss(params: sysInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/sys/s',
+    url: '/main/sys-manage/sys/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function sysInss(params: sysInsDto[]): t_funcMap_iud_ret {
 
 export function sysUpds(params: sysUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/sys/s',
+    url: '/main/sys-manage/sys/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function sysUpds(params: sysUpdDto[]): t_funcMap_iud_ret {
 
 export function sysDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/sys',
+    url: '/main/sys-manage/sys',
     method: 'DELETE',
     data: ids
   })

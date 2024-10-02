@@ -16,7 +16,7 @@ import {
 
 export function userDeptSel(params: userDeptSelDto): t_funcMap_selList_ret<userDeptDto> {
   return request({
-    url: '/sys-manage/user-dept',
+    url: '/main/sys-manage/user-dept',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function userDeptSel(params: userDeptSelDto): t_funcMap_selList_ret<userD
 
 export function userDeptSelAll(params: userDeptSelAllDto): t_funcMap_selMore_ret<userDeptDto> {
   return request({
-    url: '/sys-manage/user-dept/all',
+    url: '/main/sys-manage/user-dept/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function userDeptSelAll(params: userDeptSelAllDto): t_funcMap_selMore_ret
 
 export function userDeptSelById(id: number): t_funcMap_selOne_ret<userDeptDto> {
   return request({
-    url: `/sys-manage/user-dept/${id}`,
+    url: `/main/sys-manage/user-dept/${id}`,
     method: 'GET'
   })
 }
 
 export function userDeptSelByIds(ids: number[]): t_funcMap_selMore_ret<userDeptDto> {
   return request({
-    url: `/sys-manage/user-dept/ids`,
+    url: `/main/sys-manage/user-dept/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function userDeptSelByIds(ids: number[]): t_funcMap_selMore_ret<userDeptD
 
 export function userDeptIns(params: userDeptInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-dept',
+    url: '/main/sys-manage/user-dept',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function userDeptIns(params: userDeptInsDto): t_funcMap_iud_ret {
 
 export function userDeptUpd(params: userDeptUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-dept',
+    url: '/main/sys-manage/user-dept',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function userDeptUpd(params: userDeptUpdDto): t_funcMap_iud_ret {
 
 export function userDeptInss(params: userDeptInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-dept/s',
+    url: '/main/sys-manage/user-dept/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function userDeptInss(params: userDeptInsDto[]): t_funcMap_iud_ret {
 
 export function userDeptUpds(params: userDeptUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-dept/s',
+    url: '/main/sys-manage/user-dept/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function userDeptUpds(params: userDeptUpdDto[]): t_funcMap_iud_ret {
 
 export function userDeptDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-dept',
+    url: '/main/sys-manage/user-dept',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function userDeptDel(ids: number[]): t_funcMap_iud_ret {
 
 export function userDeptUpdUD(params: userDeptUpdUDDto) {
   return request({
-    url: `/sys-manage/user-dept/ud`,
+    url: `/main/sys-manage/user-dept/ud`,
     method: 'POST',
     data: params
   })
@@ -95,7 +95,7 @@ export function userDeptUpdUD(params: userDeptUpdUDDto) {
 
 export function userDeptUpdDU(params: userDeptUpdDUDto) {
   return request({
-    url: `/sys-manage/user-dept/du`,
+    url: `/main/sys-manage/user-dept/du`,
     method: 'POST',
     data: params
   })

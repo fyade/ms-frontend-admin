@@ -16,7 +16,7 @@ import {
 
 export function logAlgorithmCallSel(params: logAlgorithmCallSelDto): t_funcMap_selList_ret<logAlgorithmCallDto> {
   return request({
-    url: '/sys-log/log-algorithm-call',
+    url: '/main/sys-log/log-algorithm-call',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function logAlgorithmCallSel(params: logAlgorithmCallSelDto): t_funcMap_s
 
 export function logAlgorithmCallSelAll(params: logAlgorithmCallSelAllDto): t_funcMap_selMore_ret<logAlgorithmCallDto> {
   return request({
-    url: '/sys-log/log-algorithm-call/all',
+    url: '/main/sys-log/log-algorithm-call/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function logAlgorithmCallSelAll(params: logAlgorithmCallSelAllDto): t_fun
 
 export function logAlgorithmCallSelById(id: number): t_funcMap_selOne_ret<logAlgorithmCallDto> {
   return request({
-    url: `/sys-log/log-algorithm-call/${id}`,
+    url: `/main/sys-log/log-algorithm-call/${id}`,
     method: 'GET'
   })
 }
 
 export function logAlgorithmCallSelByIds(ids: number[]): t_funcMap_selMore_ret<logAlgorithmCallDto> {
   return request({
-    url: `/sys-log/log-algorithm-call/ids`,
+    url: `/main/sys-log/log-algorithm-call/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function logAlgorithmCallSelByIds(ids: number[]): t_funcMap_selMore_ret<l
 
 export function logAlgorithmCallIns(params: logAlgorithmCallInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-algorithm-call',
+    url: '/main/sys-log/log-algorithm-call',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function logAlgorithmCallIns(params: logAlgorithmCallInsDto): t_funcMap_i
 
 export function logAlgorithmCallUpd(params: logAlgorithmCallUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-algorithm-call',
+    url: '/main/sys-log/log-algorithm-call',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function logAlgorithmCallUpd(params: logAlgorithmCallUpdDto): t_funcMap_i
 
 export function logAlgorithmCallInss(params: logAlgorithmCallInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-algorithm-call/s',
+    url: '/main/sys-log/log-algorithm-call/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function logAlgorithmCallInss(params: logAlgorithmCallInsDto[]): t_funcMa
 
 export function logAlgorithmCallUpds(params: logAlgorithmCallUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-algorithm-call/s',
+    url: '/main/sys-log/log-algorithm-call/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function logAlgorithmCallUpds(params: logAlgorithmCallUpdDto[]): t_funcMa
 
 export function logAlgorithmCallDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-algorithm-call',
+    url: '/main/sys-log/log-algorithm-call',
     method: 'DELETE',
     data: ids
   })

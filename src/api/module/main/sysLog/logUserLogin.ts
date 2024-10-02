@@ -16,7 +16,7 @@ import {
 
 export function logUserLoginSel(params: logUserLoginSelDto): t_funcMap_selList_ret<logUserLoginDto> {
   return request({
-    url: '/sys-log/log-user-login',
+    url: '/main/sys-log/log-user-login',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function logUserLoginSel(params: logUserLoginSelDto): t_funcMap_selList_r
 
 export function logUserLoginSelAll(params: logUserLoginSelAllDto): t_funcMap_selMore_ret<logUserLoginDto> {
   return request({
-    url: '/sys-log/log-user-login/all',
+    url: '/main/sys-log/log-user-login/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function logUserLoginSelAll(params: logUserLoginSelAllDto): t_funcMap_sel
 
 export function logUserLoginSelById(id: number): t_funcMap_selOne_ret<logUserLoginDto> {
   return request({
-    url: `/sys-log/log-user-login/${id}`,
+    url: `/main/sys-log/log-user-login/${id}`,
     method: 'GET'
   })
 }
 
 export function logUserLoginSelByIds(ids: number[]): t_funcMap_selMore_ret<logUserLoginDto> {
   return request({
-    url: `/sys-log/log-user-login/ids`,
+    url: `/main/sys-log/log-user-login/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function logUserLoginSelByIds(ids: number[]): t_funcMap_selMore_ret<logUs
 
 export function logUserLoginIns(params: logUserLoginInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-user-login',
+    url: '/main/sys-log/log-user-login',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function logUserLoginIns(params: logUserLoginInsDto): t_funcMap_iud_ret {
 
 export function logUserLoginUpd(params: logUserLoginUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-user-login',
+    url: '/main/sys-log/log-user-login',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function logUserLoginUpd(params: logUserLoginUpdDto): t_funcMap_iud_ret {
 
 export function logUserLoginInss(params: logUserLoginInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-user-login/s',
+    url: '/main/sys-log/log-user-login/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function logUserLoginInss(params: logUserLoginInsDto[]): t_funcMap_iud_re
 
 export function logUserLoginUpds(params: logUserLoginUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-user-login/s',
+    url: '/main/sys-log/log-user-login/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function logUserLoginUpds(params: logUserLoginUpdDto[]): t_funcMap_iud_re
 
 export function logUserLoginDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-user-login',
+    url: '/main/sys-log/log-user-login',
     method: 'DELETE',
     data: ids
   })

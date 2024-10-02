@@ -16,7 +16,7 @@ import {
 
 export function deptPermissionSel(params: deptPermissionSelDto): t_funcMap_selList_ret<deptPermissionDto> {
   return request({
-    url: '/sys-manage/dept-permission',
+    url: '/main/sys-manage/dept-permission',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function deptPermissionSel(params: deptPermissionSelDto): t_funcMap_selLi
 
 export function deptPermissionSelAll(params: deptPermissionSelAllDto): t_funcMap_selMore_ret<deptPermissionDto> {
   return request({
-    url: '/sys-manage/dept-permission/all',
+    url: '/main/sys-manage/dept-permission/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function deptPermissionSelAll(params: deptPermissionSelAllDto): t_funcMap
 
 export function deptPermissionSelById(id: number): t_funcMap_selOne_ret<deptPermissionDto> {
   return request({
-    url: `/sys-manage/dept-permission/${id}`,
+    url: `/main/sys-manage/dept-permission/${id}`,
     method: 'GET'
   })
 }
 
 export function deptPermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<deptPermissionDto> {
   return request({
-    url: `/sys-manage/dept-permission/ids`,
+    url: `/main/sys-manage/dept-permission/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function deptPermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<dep
 
 export function deptPermissionIns(params: deptPermissionInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-permission',
+    url: '/main/sys-manage/dept-permission',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function deptPermissionIns(params: deptPermissionInsDto): t_funcMap_iud_r
 
 export function deptPermissionUpd(params: deptPermissionUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-permission',
+    url: '/main/sys-manage/dept-permission',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function deptPermissionUpd(params: deptPermissionUpdDto): t_funcMap_iud_r
 
 export function deptPermissionInss(params: deptPermissionInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-permission/s',
+    url: '/main/sys-manage/dept-permission/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function deptPermissionInss(params: deptPermissionInsDto[]): t_funcMap_iu
 
 export function deptPermissionUpds(params: deptPermissionUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-permission/s',
+    url: '/main/sys-manage/dept-permission/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function deptPermissionUpds(params: deptPermissionUpdDto[]): t_funcMap_iu
 
 export function deptPermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-permission',
+    url: '/main/sys-manage/dept-permission',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function deptPermissionDel(ids: number[]): t_funcMap_iud_ret {
 
 export function deptPermissionUpdDP(data: deptPermissionUpdDPDto) {
   return request({
-    url: `/sys-manage/dept-permission/dp`,
+    url: `/main/sys-manage/dept-permission/dp`,
     method: 'POST',
     data: data
   })

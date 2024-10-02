@@ -16,7 +16,7 @@ import {
 
 export function codeGenColumnSel(params: codeGenColumnSelDto): t_funcMap_selList_ret<codeGenColumnDto> {
   return request({
-    url: '/sys-util/code-gen-column',
+    url: '/main/sys-util/code-gen-column',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function codeGenColumnSel(params: codeGenColumnSelDto): t_funcMap_selList
 
 export function codeGenColumnSelAll(params: codeGenColumnSelAllDto): t_funcMap_selMore_ret<codeGenColumnDto> {
   return request({
-    url: '/sys-util/code-gen-column/all',
+    url: '/main/sys-util/code-gen-column/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function codeGenColumnSelAll(params: codeGenColumnSelAllDto): t_funcMap_s
 
 export function codeGenColumnSelById(id: number): t_funcMap_selOne_ret<codeGenColumnDto> {
   return request({
-    url: `/sys-util/code-gen-column/${id}`,
+    url: `/main/sys-util/code-gen-column/${id}`,
     method: 'GET'
   })
 }
 
 export function codeGenColumnSelByIds(ids: number[]): t_funcMap_selMore_ret<codeGenColumnDto> {
   return request({
-    url: `/sys-util/code-gen-column/ids`,
+    url: `/main/sys-util/code-gen-column/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function codeGenColumnSelByIds(ids: number[]): t_funcMap_selMore_ret<code
 
 export function codeGenColumnIns(params: codeGenColumnInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-column',
+    url: '/main/sys-util/code-gen-column',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function codeGenColumnIns(params: codeGenColumnInsDto): t_funcMap_iud_ret
 
 export function codeGenColumnUpd(params: codeGenColumnUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-column',
+    url: '/main/sys-util/code-gen-column',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function codeGenColumnUpd(params: codeGenColumnUpdDto): t_funcMap_iud_ret
 
 export function codeGenColumnInss(params: codeGenColumnInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-column/s',
+    url: '/main/sys-util/code-gen-column/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function codeGenColumnInss(params: codeGenColumnInsDto[]): t_funcMap_iud_
 
 export function codeGenColumnUpds(params: codeGenColumnUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-column/s',
+    url: '/main/sys-util/code-gen-column/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function codeGenColumnUpds(params: codeGenColumnUpdDto[]): t_funcMap_iud_
 
 export function codeGenColumnDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-column',
+    url: '/main/sys-util/code-gen-column',
     method: 'DELETE',
     data: ids
   })

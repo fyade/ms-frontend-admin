@@ -16,7 +16,7 @@ import {
 
 export function deptSysSel(params: deptSysSelDto): t_funcMap_selList_ret<deptSysDto> {
   return request({
-    url: '/sys-manage/dept-sys',
+    url: '/main/sys-manage/dept-sys',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function deptSysSel(params: deptSysSelDto): t_funcMap_selList_ret<deptSys
 
 export function deptSysSelAll(params: deptSysSelAllDto): t_funcMap_selMore_ret<deptSysDto> {
   return request({
-    url: '/sys-manage/dept-sys/all',
+    url: '/main/sys-manage/dept-sys/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function deptSysSelAll(params: deptSysSelAllDto): t_funcMap_selMore_ret<d
 
 export function deptSysSelById(id: number): t_funcMap_selOne_ret<deptSysDto> {
   return request({
-    url: `/sys-manage/dept-sys/${id}`,
+    url: `/main/sys-manage/dept-sys/${id}`,
     method: 'GET'
   })
 }
 
 export function deptSysSelByIds(ids: number[]): t_funcMap_selMore_ret<deptSysDto> {
   return request({
-    url: `/sys-manage/dept-sys/ids`,
+    url: `/main/sys-manage/dept-sys/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function deptSysSelByIds(ids: number[]): t_funcMap_selMore_ret<deptSysDto
 
 export function deptSysIns(params: deptSysInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-sys',
+    url: '/main/sys-manage/dept-sys',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function deptSysIns(params: deptSysInsDto): t_funcMap_iud_ret {
 
 export function deptSysUpd(params: deptSysUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-sys',
+    url: '/main/sys-manage/dept-sys',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function deptSysUpd(params: deptSysUpdDto): t_funcMap_iud_ret {
 
 export function deptSysInss(params: deptSysInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-sys/s',
+    url: '/main/sys-manage/dept-sys/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function deptSysInss(params: deptSysInsDto[]): t_funcMap_iud_ret {
 
 export function deptSysUpds(params: deptSysUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-sys/s',
+    url: '/main/sys-manage/dept-sys/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function deptSysUpds(params: deptSysUpdDto[]): t_funcMap_iud_ret {
 
 export function deptSysDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dept-sys',
+    url: '/main/sys-manage/dept-sys',
     method: 'DELETE',
     data: ids
   })

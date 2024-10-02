@@ -16,7 +16,7 @@ import {
 
 export function codeGenTableSel(params: codeGenTableSelDto): t_funcMap_selList_ret<codeGenTableDto> {
   return request({
-    url: '/sys-util/code-gen-table',
+    url: '/main/sys-util/code-gen-table',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function codeGenTableSel(params: codeGenTableSelDto): t_funcMap_selList_r
 
 export function codeGenTableSelAll(params: codeGenTableSelAllDto): t_funcMap_selMore_ret<codeGenTableDto> {
   return request({
-    url: '/sys-util/code-gen-table/all',
+    url: '/main/sys-util/code-gen-table/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function codeGenTableSelAll(params: codeGenTableSelAllDto): t_funcMap_sel
 
 export function codeGenTableSelById(id: number): t_funcMap_selOne_ret<codeGenTableDto> {
   return request({
-    url: `/sys-util/code-gen-table/${id}`,
+    url: `/main/sys-util/code-gen-table/${id}`,
     method: 'GET'
   })
 }
 
 export function codeGenTableSelByIds(ids: number[]): t_funcMap_selMore_ret<codeGenTableDto> {
   return request({
-    url: `/sys-util/code-gen-table/ids`,
+    url: `/main/sys-util/code-gen-table/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function codeGenTableSelByIds(ids: number[]): t_funcMap_selMore_ret<codeG
 
 export function codeGenTableIns(params: codeGenTableInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-table',
+    url: '/main/sys-util/code-gen-table',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function codeGenTableIns(params: codeGenTableInsDto): t_funcMap_iud_ret {
 
 export function codeGenTableUpd(params: codeGenTableUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-table',
+    url: '/main/sys-util/code-gen-table',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function codeGenTableUpd(params: codeGenTableUpdDto): t_funcMap_iud_ret {
 
 export function codeGenTableInss(params: codeGenTableInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-table/s',
+    url: '/main/sys-util/code-gen-table/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function codeGenTableInss(params: codeGenTableInsDto[]): t_funcMap_iud_re
 
 export function codeGenTableUpds(params: codeGenTableUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-table/s',
+    url: '/main/sys-util/code-gen-table/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function codeGenTableUpds(params: codeGenTableUpdDto[]): t_funcMap_iud_re
 
 export function codeGenTableDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-util/code-gen-table',
+    url: '/main/sys-util/code-gen-table',
     method: 'DELETE',
     data: ids
   })

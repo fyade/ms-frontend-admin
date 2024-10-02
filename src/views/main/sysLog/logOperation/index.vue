@@ -86,7 +86,7 @@ const state = reactive<State<logOperationDto, logOperationUpdDto>>({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref(null)
 const dialogFormsRef = ref(null)
@@ -211,7 +211,7 @@ const {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
-              <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -315,7 +315,7 @@ const {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
               </div>
             </template>
           </el-table-column>

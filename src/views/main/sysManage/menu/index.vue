@@ -96,7 +96,7 @@ const state = reactive<State<menuDto, menuDto>>({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref(null)
 const dialogFormsRef = ref(null)
@@ -235,7 +235,7 @@ const stateInter = reactive<State<menuDto, menuDto>>({
   }
 })
 const state2Inter = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRefInter = ref(null)
 const dialogFormsRefInter = ref(null)
@@ -417,7 +417,7 @@ const selAllSyss = () => {
   })
 }
 const selectSysChange = (value: number | null) => {
-  const selectSys = value || 0;
+  const selectSys = value || final.DEFAULT_PARENT_ID;
   state.dialogForm['sysId'] = selectSys;
   stateInter.dialogForm['sysId'] = selectSys;
   stateI2.dialogForm['sysId'] = selectSys;
@@ -525,7 +525,7 @@ const stateI2 = reactive<State<menuDto, menuUpdDto>>({
   }
 })
 const state2I2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRefI2 = ref(null)
 const dialogFormsRefI2 = ref(null)

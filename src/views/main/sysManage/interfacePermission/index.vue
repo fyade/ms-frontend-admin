@@ -82,7 +82,7 @@ const userGroupState = reactive<State<userGroupDto>>({
   }
 })
 const userGroupState2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const userGroupDialogFormRef = ref(null)
 const userGroupDialogFormsRef = ref(null)
@@ -193,7 +193,7 @@ const interfaceGroupState = reactive<State<interfaceGroupDto>>({
   }
 })
 const interfaceGroupState2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const interfaceGroupDialogFormRef = ref(null)
 const interfaceGroupDialogFormsRef = ref(null)
@@ -320,7 +320,7 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
   }
 })
 const userGroupPermissionState2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const userGroupPermissionDialogFormRef = ref(null)
 const userGroupPermissionDialogFormsRef = ref(null)

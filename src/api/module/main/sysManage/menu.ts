@@ -16,7 +16,7 @@ import {
 
 export function menuSel(params: menuSelDto): t_funcMap_selList_ret<menuDto> {
   return request({
-    url: '/sys-manage/menu',
+    url: '/main/sys-manage/menu',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function menuSel(params: menuSelDto): t_funcMap_selList_ret<menuDto> {
 
 export function menuSelAll(params: menuSelAllDto): t_funcMap_selMore_ret<menuDto> {
   return request({
-    url: '/sys-manage/menu/all',
+    url: '/main/sys-manage/menu/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function menuSelAll(params: menuSelAllDto): t_funcMap_selMore_ret<menuDto
 
 export function menuSelById(id: number): t_funcMap_selOne_ret<menuDto> {
   return request({
-    url: `/sys-manage/menu/${id}`,
+    url: `/main/sys-manage/menu/${id}`,
     method: 'GET'
   })
 }
 
 export function menuSelByIds(ids: number[]): t_funcMap_selMore_ret<menuDto> {
   return request({
-    url: `/sys-manage/menu/ids`,
+    url: `/main/sys-manage/menu/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function menuSelByIds(ids: number[]): t_funcMap_selMore_ret<menuDto> {
 
 export function menuIns(params: menuInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/menu',
+    url: '/main/sys-manage/menu',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function menuIns(params: menuInsDto): t_funcMap_iud_ret {
 
 export function menuUpd(params: menuUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/menu',
+    url: '/main/sys-manage/menu',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function menuUpd(params: menuUpdDto): t_funcMap_iud_ret {
 
 export function menuInss(params: menuInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/menu/s',
+    url: '/main/sys-manage/menu/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function menuInss(params: menuInsDto[]): t_funcMap_iud_ret {
 
 export function menuUpds(params: menuUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/menu/s',
+    url: '/main/sys-manage/menu/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function menuUpds(params: menuUpdDto[]): t_funcMap_iud_ret {
 
 export function menuDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/menu',
+    url: '/main/sys-manage/menu',
     method: 'DELETE',
     data: ids
   })

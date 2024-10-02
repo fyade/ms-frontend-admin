@@ -17,7 +17,7 @@ import { encrypt } from "@/utils/EncryptUtils.ts";
 
 export function userSel(params: userSelDto): t_funcMap_selList_ret<userDto> {
   return request({
-    url: '/sys-manage/user',
+    url: '/main/sys-manage/user',
     method: 'GET',
     params: params
   })
@@ -25,7 +25,7 @@ export function userSel(params: userSelDto): t_funcMap_selList_ret<userDto> {
 
 export function userSelAll(params: userSelAllDto): t_funcMap_selMore_ret<userDto> {
   return request({
-    url: '/sys-manage/user/all',
+    url: '/main/sys-manage/user/all',
     method: 'GET',
     params: params
   })
@@ -33,14 +33,14 @@ export function userSelAll(params: userSelAllDto): t_funcMap_selMore_ret<userDto
 
 export function userSelById(id: string): t_funcMap_selOne_ret<userDto> {
   return request({
-    url: `/sys-manage/user/${id}`,
+    url: `/main/sys-manage/user/${id}`,
     method: 'GET'
   })
 }
 
 export function userSelByIds(ids: string[]): t_funcMap_selMore_ret<userDto> {
   return request({
-    url: `/sys-manage/user/ids`,
+    url: `/main/sys-manage/user/ids`,
     method: 'GET',
     params: ids
   })
@@ -48,7 +48,7 @@ export function userSelByIds(ids: string[]): t_funcMap_selMore_ret<userDto> {
 
 export function userIns(params: userInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user',
+    url: '/main/sys-manage/user',
     method: 'POST',
     data: params
   })
@@ -56,7 +56,7 @@ export function userIns(params: userInsDto): t_funcMap_iud_ret {
 
 export function userUpd(params: userUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user',
+    url: '/main/sys-manage/user',
     method: 'PUT',
     data: params
   })
@@ -64,7 +64,7 @@ export function userUpd(params: userUpdDto): t_funcMap_iud_ret {
 
 export function userInss(params: userInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user/s',
+    url: '/main/sys-manage/user/s',
     method: 'POST',
     data: params
   })
@@ -72,7 +72,7 @@ export function userInss(params: userInsDto[]): t_funcMap_iud_ret {
 
 export function userUpds(params: userUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user/s',
+    url: '/main/sys-manage/user/s',
     method: 'PUT',
     data: params
   })
@@ -80,7 +80,7 @@ export function userUpds(params: userUpdDto[]): t_funcMap_iud_ret {
 
 export function userDel(ids: string[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user',
+    url: '/main/sys-manage/user',
     method: 'DELETE',
     data: ids
   })
@@ -108,14 +108,14 @@ export function loginApi(data: loginDto) {
 
 export function getSelfInfo() {
   return request({
-    url: '/sys-manage/user/self-info',
+    url: '/main/sys-manage/user/self-info',
     method: 'GET',
   })
 }
 
 export function newUser(params: registDto) {
   return request({
-    url: '/sys-manage/user',
+    url: '/main/sys-manage/user',
     method: 'POST',
     data: {
       ...params,
@@ -127,7 +127,7 @@ export function newUser(params: registDto) {
 
 export function updUser(params: userUpdDto) {
   return request({
-    url: '/sys-manage/user/upd-user',
+    url: '/main/sys-manage/user/upd-user',
     method: 'POST',
     data: params
   })
@@ -135,7 +135,7 @@ export function updUser(params: userUpdDto) {
 
 export function updPsd(params: userUpdPsdDto) {
   return request({
-    url: '/sys-manage/user/upd-psd',
+    url: '/main/sys-manage/user/upd-psd',
     method: 'POST',
     data: {
       oldp: encrypt(params.oldp),
@@ -150,7 +150,7 @@ export function updPsd(params: userUpdPsdDto) {
 
 export function resetUserPsd(params: adminResetUserPsdDto) {
   return request({
-    url: '/sys-manage/user/admin-reset-user-psd',
+    url: '/main/sys-manage/user/admin-reset-user-psd',
     method: 'POST',
     data: {
       ...params,

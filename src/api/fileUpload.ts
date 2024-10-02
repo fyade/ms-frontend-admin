@@ -15,7 +15,7 @@ export class params_fileUploadOneChunk_merge {
 
 export function selList(params: any) {
   return request({
-    url: '/sys-common/file-upload',
+    url: '/main/sys-common/file-upload',
     method: 'GET',
     params
   })
@@ -28,7 +28,7 @@ export function selList(params: any) {
  */
 export function fileUploadOneFull(file: FormData, fileName: string = '') {
   return request({
-    url: `/sys-common/file-upload/one-full${fileName ? `/${fileName}` : ''}`,
+    url: `/main/sys-common/file-upload/one-full${fileName ? `/${fileName}` : ''}`,
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data;charset=utf-8'
@@ -43,7 +43,7 @@ export function fileUploadOneFull(file: FormData, fileName: string = '') {
  */
 export function fileUploadAvatar(file: FormData) {
   return request({
-    url: `/sys-common/file-upload/one-full-avatar`,
+    url: `/main/sys-common/file-upload/one-full-avatar`,
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data;charset=utf-8'
@@ -58,7 +58,7 @@ export function fileUploadAvatar(file: FormData) {
  */
 export function fileUploadOneChunk_check(data: params_fileUploadOneChunk_check) {
   return request({
-    url: '/sys-common/file-upload/one-chunk/check',
+    url: '/main/sys-common/file-upload/one-chunk/check',
     method: 'POST',
     data
   })
@@ -78,7 +78,7 @@ export function fileUploadOneChunk_upload({fileMd5, fileNewName, chunkIndex, fil
   file: FormData
 }) {
   return request({
-    url: `/sys-common/file-upload/one-chunk/upload/${fileMd5}/${fileNewName}/${chunkIndex}`,
+    url: `/main/sys-common/file-upload/one-chunk/upload/${fileMd5}/${fileNewName}/${chunkIndex}`,
     method: 'POST',
     data: file
   })
@@ -90,7 +90,7 @@ export function fileUploadOneChunk_upload({fileMd5, fileNewName, chunkIndex, fil
  */
 export function fileUploadOneChunk_merge(data: params_fileUploadOneChunk_merge) {
   return request({
-    url: '/sys-common/file-upload/one-chunk/merge',
+    url: '/main/sys-common/file-upload/one-chunk/merge',
     method: 'POST',
     data
   })
@@ -98,7 +98,7 @@ export function fileUploadOneChunk_merge(data: params_fileUploadOneChunk_merge) 
 
 export function downloadFullFile(url: string, name: string, downloadProgress: Function): void {
   axios({
-    url: `${fileBaseUrl}${url}`,
+    url: `/main${fileBaseUrl}${url}`,
     method: 'GET',
     responseType: 'blob',
     onDownloadProgress: evt => {

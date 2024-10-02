@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
+import { computed, inject, nextTick, reactive, Ref, ref } from "vue"
 import { final, PAGINATION, publicDict } from "@/utils/base.ts"
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules, TreeInstance } from 'element-plus'
+import type { FormRules } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
+import { typeOM } from "@/type/utils/base.ts"
 import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/api/main/sysManage/menu.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { menuFunc } from "@/api/module/main/sysManage/menu.ts";
 import type Node from "element-plus/es/components/tree/src/model/node";
 import { deptDto } from "@/type/api/main/sysManage/dept.ts";
+import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
 
 const props = defineProps({
   selectDept: {
@@ -103,7 +105,7 @@ const state = reactive<State<menuDto<string>>>({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref(null)
 const dialogFormsRef = ref(null)
@@ -117,9 +119,11 @@ const config: t_config = reactive({
   pageQuery: false, // 分页，默认true
   bulkOperation: true, // 弹出表单是否支持批量操作，默认false
   selectParam: {
-    type: {in: {value: [T_MENU, T_COMP]}}
+    type: {in: {value: [T_MENU, T_COMP]}},
+    sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
+    selAllSyss()
     if (selectPermission) {
       selectPermissionLeft.value = selectPermission.value.filter(n => state.list.findIndex(m => m.id === n) > -1)
       selectPermissionRight.value = selectPermission.value.filter(n => selectPermissionLeft.value.indexOf(n) === -1)
@@ -186,9 +190,34 @@ const handleCheckChange = (
 const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
   menuFunc.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
-    type: {in: {value: [T_IS, T_Inter]}}
+    type: {in: {value: [T_IS, T_Inter]}},
+    sysId: selectSys.value || final.DEFAULT_PARENT_ID,
   } as any).then((res: menuDto[]) => {
     resolve(res)
+  })
+}
+
+const treeShow = ref(true)
+// 系统
+const selectSys = ref<number | null>(null)
+const allSyss = ref<sysDto[]>([])
+const allSysLoading = ref(false)
+const selAllSyss = () => {
+  allSysLoading.value = true
+  allSyss.value = []
+  sysFunc.selectAll({}).then(res => {
+    allSyss.value = res
+  }).finally(() => {
+    allSysLoading.value = false
+  })
+}
+const selectSysChange = (value: number | null) => {
+  const v = value || final.DEFAULT_PARENT_ID;
+  (config.selectParam as any)['sysId'] = v;
+  gRefresh();
+  treeShow.value = false
+  nextTick(() => {
+    treeShow.value = true
   })
 }
 </script>
@@ -220,7 +249,24 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
   </div>
 
-  <br/>
+  <el-form label-position="top">
+    <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口：">
+      <el-select
+          v-model="selectSys"
+          placeholder="系统"
+          clearable
+          @change="selectSysChange"
+      >
+        <el-option
+            v-for="item in allSyss"
+            :key="item.id"
+            :value="item.id"
+            :label="`${item.name} - ${item.perms}`"
+        />
+      </el-select>
+    </el-form-item>
+  </el-form>
+
   <el-form>
     <el-row>
       <el-col :span="12">
@@ -240,6 +286,7 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
       <el-col :span="12">
         <el-form-item label="接口列表">
           <el-tree
+              v-if="treeShow"
               style="width: 100%;"
               node-key="id"
               lazy

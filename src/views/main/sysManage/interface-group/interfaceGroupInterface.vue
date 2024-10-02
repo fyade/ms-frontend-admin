@@ -78,7 +78,7 @@ const interfaceInterfaceGroupState = reactive<State<interfaceInterfaceGroupDto>>
   }
 })
 const interfaceInterfaceGroupState2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const interfaceInterfaceGroupDialogFormRef = ref(null)
 const interfaceInterfaceGroupDialogFormsRef = ref(null)
@@ -211,7 +211,7 @@ const interfaceState = reactive<State<interfaceDto, interfaceUpdDto>>({
   }
 })
 const interfaceState2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const interfaceDialogFormRef = ref(null)
 const interfaceDialogFormsRef = ref(null)
@@ -512,7 +512,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
           <el-row>
             <el-col :span="24">
               <el-form-item :label="interfaceState.dict['remark']" prop="remark">
-                <el-input v-model="interfaceState.dialogForm['remark']" :placeholder="interfaceState.dict['remark']"/>
+                <el-input type="textarea" v-model="interfaceState.dialogForm['remark']" :placeholder="interfaceState.dict['remark']"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -655,7 +655,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
               <template #default="{$index}">
                 <div
                     :class="interfaceState.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="interfaceState.dialogForms[$index]['remark']"
+                  <el-input type="textarea" v-model="interfaceState.dialogForms[$index]['remark']"
                             :placeholder="interfaceState.dict['remark']"/>
                 </div>
               </template>

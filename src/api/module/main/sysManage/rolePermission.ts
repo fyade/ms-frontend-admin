@@ -16,7 +16,7 @@ import {
 
 export function rolePermissionSel(params: rolePermissionSelDto): t_funcMap_selList_ret<rolePermissionDto> {
   return request({
-    url: '/sys-manage/role-permission',
+    url: '/main/sys-manage/role-permission',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function rolePermissionSel(params: rolePermissionSelDto): t_funcMap_selLi
 
 export function rolePermissionSelAll(params: rolePermissionSelAllDto): t_funcMap_selMore_ret<rolePermissionDto> {
   return request({
-    url: '/sys-manage/role-permission/all',
+    url: '/main/sys-manage/role-permission/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function rolePermissionSelAll(params: rolePermissionSelAllDto): t_funcMap
 
 export function rolePermissionSelById(id: number): t_funcMap_selOne_ret<rolePermissionDto> {
   return request({
-    url: `/sys-manage/role-permission/${id}`,
+    url: `/main/sys-manage/role-permission/${id}`,
     method: 'GET'
   })
 }
 
 export function rolePermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<rolePermissionDto> {
   return request({
-    url: `/sys-manage/role-permission/ids`,
+    url: `/main/sys-manage/role-permission/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function rolePermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<rol
 
 export function rolePermissionIns(params: rolePermissionInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/role-permission',
+    url: '/main/sys-manage/role-permission',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function rolePermissionIns(params: rolePermissionInsDto): t_funcMap_iud_r
 
 export function rolePermissionUpd(params: rolePermissionUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/role-permission',
+    url: '/main/sys-manage/role-permission',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function rolePermissionUpd(params: rolePermissionUpdDto): t_funcMap_iud_r
 
 export function rolePermissionInss(params: rolePermissionInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/role-permission/s',
+    url: '/main/sys-manage/role-permission/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function rolePermissionInss(params: rolePermissionInsDto[]): t_funcMap_iu
 
 export function rolePermissionUpds(params: rolePermissionUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/role-permission/s',
+    url: '/main/sys-manage/role-permission/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function rolePermissionUpds(params: rolePermissionUpdDto[]): t_funcMap_iu
 
 export function rolePermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/role-permission',
+    url: '/main/sys-manage/role-permission',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function rolePermissionDel(ids: number[]): t_funcMap_iud_ret {
 
 export function rolePermissionUpdRp(params: rolePermissionUpdRpDto) {
   return request({
-    url: '/sys-manage/role-permission/rp',
+    url: '/main/sys-manage/role-permission/rp',
     method: 'POST',
     data: params
   })

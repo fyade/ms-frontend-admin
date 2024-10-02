@@ -90,7 +90,7 @@ const state = reactive({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref<FormInstance | null>(null)
 const filterFormRef = ref(null)

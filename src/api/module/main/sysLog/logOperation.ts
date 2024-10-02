@@ -16,7 +16,7 @@ import {
 
 export function logOperationSel(params: logOperationSelDto): t_funcMap_selList_ret<logOperationDto> {
   return request({
-    url: '/sys-log/log-operation',
+    url: '/main/sys-log/log-operation',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function logOperationSel(params: logOperationSelDto): t_funcMap_selList_r
 
 export function logOperationSelAll(params: logOperationSelAllDto): t_funcMap_selMore_ret<logOperationDto> {
   return request({
-    url: '/sys-log/log-operation/all',
+    url: '/main/sys-log/log-operation/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function logOperationSelAll(params: logOperationSelAllDto): t_funcMap_sel
 
 export function logOperationSelById(id: number): t_funcMap_selOne_ret<logOperationDto> {
   return request({
-    url: `/sys-log/log-operation/${id}`,
+    url: `/main/sys-log/log-operation/${id}`,
     method: 'GET'
   })
 }
 
 export function logOperationSelByIds(ids: number[]): t_funcMap_selMore_ret<logOperationDto> {
   return request({
-    url: `/sys-log/log-operation/ids`,
+    url: `/main/sys-log/log-operation/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function logOperationSelByIds(ids: number[]): t_funcMap_selMore_ret<logOp
 
 export function logOperationIns(params: logOperationInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-operation',
+    url: '/main/sys-log/log-operation',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function logOperationIns(params: logOperationInsDto): t_funcMap_iud_ret {
 
 export function logOperationUpd(params: logOperationUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-operation',
+    url: '/main/sys-log/log-operation',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function logOperationUpd(params: logOperationUpdDto): t_funcMap_iud_ret {
 
 export function logOperationInss(params: logOperationInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-operation/s',
+    url: '/main/sys-log/log-operation/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function logOperationInss(params: logOperationInsDto[]): t_funcMap_iud_re
 
 export function logOperationUpds(params: logOperationUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-operation/s',
+    url: '/main/sys-log/log-operation/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function logOperationUpds(params: logOperationUpdDto[]): t_funcMap_iud_re
 
 export function logOperationDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-log/log-operation',
+    url: '/main/sys-log/log-operation',
     method: 'DELETE',
     data: ids
   })

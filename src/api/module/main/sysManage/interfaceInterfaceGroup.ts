@@ -16,7 +16,7 @@ import {
 
 export function interfaceInterfaceGroupSel(params: interfaceInterfaceGroupSelDto): t_funcMap_selList_ret<interfaceInterfaceGroupDto> {
   return request({
-    url: '/sys-manage/interface-interface-group',
+    url: '/main/sys-manage/interface-interface-group',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function interfaceInterfaceGroupSel(params: interfaceInterfaceGroupSelDto
 
 export function interfaceInterfaceGroupSelAll(params: interfaceInterfaceGroupSelAllDto): t_funcMap_selMore_ret<interfaceInterfaceGroupDto> {
   return request({
-    url: '/sys-manage/interface-interface-group/all',
+    url: '/main/sys-manage/interface-interface-group/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function interfaceInterfaceGroupSelAll(params: interfaceInterfaceGroupSel
 
 export function interfaceInterfaceGroupSelById(id: number): t_funcMap_selOne_ret<interfaceInterfaceGroupDto> {
   return request({
-    url: `/sys-manage/interface-interface-group/${id}`,
+    url: `/main/sys-manage/interface-interface-group/${id}`,
     method: 'GET'
   })
 }
 
 export function interfaceInterfaceGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<interfaceInterfaceGroupDto> {
   return request({
-    url: `/sys-manage/interface-interface-group/ids`,
+    url: `/main/sys-manage/interface-interface-group/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function interfaceInterfaceGroupSelByIds(ids: number[]): t_funcMap_selMor
 
 export function interfaceInterfaceGroupIns(params: interfaceInterfaceGroupInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/interface-interface-group',
+    url: '/main/sys-manage/interface-interface-group',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function interfaceInterfaceGroupIns(params: interfaceInterfaceGroupInsDto
 
 export function interfaceInterfaceGroupUpd(params: interfaceInterfaceGroupUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/interface-interface-group',
+    url: '/main/sys-manage/interface-interface-group',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function interfaceInterfaceGroupUpd(params: interfaceInterfaceGroupUpdDto
 
 export function interfaceInterfaceGroupInss(params: interfaceInterfaceGroupInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/interface-interface-group/s',
+    url: '/main/sys-manage/interface-interface-group/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function interfaceInterfaceGroupInss(params: interfaceInterfaceGroupInsDt
 
 export function interfaceInterfaceGroupUpds(params: interfaceInterfaceGroupUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/interface-interface-group/s',
+    url: '/main/sys-manage/interface-interface-group/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function interfaceInterfaceGroupUpds(params: interfaceInterfaceGroupUpdDt
 
 export function interfaceInterfaceGroupDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/interface-interface-group',
+    url: '/main/sys-manage/interface-interface-group',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function interfaceInterfaceGroupDel(ids: number[]): t_funcMap_iud_ret {
 
 export function interfaceInterfaceGroupUpdIIG(params: interfaceInterfaceGroupUpdIIGDto) {
   return request({
-    url: '/sys-manage/interface-interface-group/iig',
+    url: '/main/sys-manage/interface-interface-group/iig',
     method: 'POST',
     data: params
   })
@@ -95,7 +95,7 @@ export function interfaceInterfaceGroupUpdIIG(params: interfaceInterfaceGroupUpd
 
 export function interfaceInterfaceGroupUpdIGI(params: interfaceInterfaceGroupUpdIGIDto) {
   return request({
-    url: '/sys-manage/interface-interface-group/igi',
+    url: '/main/sys-manage/interface-interface-group/igi',
     method: 'POST',
     data: params
   })

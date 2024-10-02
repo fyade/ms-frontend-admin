@@ -21,7 +21,7 @@ import DeptPermission from "@/views/main/sysManage/dept/deptPermission.vue";
 import { deptPermissionSelAll, deptPermissionUpdDP } from "@/api/module/main/sysManage/deptPermission.ts";
 import DeptSystem from "@/views/main/sysManage/dept/deptSystem.vue";
 
-const state = reactive<State<deptDto>>({
+const state = reactive<State<deptDto, deptUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -37,6 +37,7 @@ const state = reactive<State<deptDto>>({
     id: -1,
     label: '',
     ifAdmin: final.N,
+    ifDisabled: final.N,
     parentId: final.DEFAULT_PARENT_ID,
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
@@ -51,6 +52,7 @@ const state = reactive<State<deptDto>>({
   dFormRules: {
     label: [{required: true, trigger: 'change'}],
     ifAdmin: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
     parentId: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
@@ -81,7 +83,7 @@ const state = reactive<State<deptDto>>({
   }
 })
 const state2 = reactive({
-  orderNum: 0
+  orderNum: final.DEFAULT_ORDER_NUM
 })
 const dialogFormRef = ref(null)
 const dialogFormsRef = ref(null)
@@ -289,6 +291,14 @@ const setSystem = (dept: deptDto) => {
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm['ifDisabled']">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="state.dict['parentId']" prop="parentId">
               <!--<el-input-number v-model="state.dialogForm['parentId']" controls-position="right"/>-->
               <el-cascader
@@ -300,6 +310,8 @@ const setSystem = (dept: deptDto) => {
               />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="state.dict['orderNum']" prop="orderNum">
               <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
@@ -309,7 +321,7 @@ const setSystem = (dept: deptDto) => {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
-              <el-input v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -353,6 +365,16 @@ const setSystem = (dept: deptDto) => {
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="70">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ state.dict['ifDisabled'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y" :false-value="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="parentId" :label="state.dict['parentId']" width="240">
             <template #header>
               <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ state.dict['parentId'] }}</span>
@@ -386,7 +408,7 @@ const setSystem = (dept: deptDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
               </div>
             </template>
           </el-table-column>
@@ -464,6 +486,7 @@ const setSystem = (dept: deptDto) => {
     <!--在此下方添加表格列-->
     <el-table-column prop="label" :label="state.dict['label']" width="240"/>
     <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="150"/>
+    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
     <!--<el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>

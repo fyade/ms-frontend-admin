@@ -16,7 +16,7 @@ import {
 
 export function userRoleSel(params: userRoleSelDto): t_funcMap_selList_ret<userRoleDto> {
   return request({
-    url: '/sys-manage/user-role',
+    url: '/main/sys-manage/user-role',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function userRoleSel(params: userRoleSelDto): t_funcMap_selList_ret<userR
 
 export function userRoleSelAll(params: userRoleSelAllDto): t_funcMap_selMore_ret<userRoleDto> {
   return request({
-    url: '/sys-manage/user-role/all',
+    url: '/main/sys-manage/user-role/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function userRoleSelAll(params: userRoleSelAllDto): t_funcMap_selMore_ret
 
 export function userRoleSelById(id: number): t_funcMap_selOne_ret<userRoleDto> {
   return request({
-    url: `/sys-manage/user-role/${id}`,
+    url: `/main/sys-manage/user-role/${id}`,
     method: 'GET'
   })
 }
 
 export function userRoleSelByIds(ids: number[]): t_funcMap_selMore_ret<userRoleDto> {
   return request({
-    url: `/sys-manage/user-role/ids`,
+    url: `/main/sys-manage/user-role/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function userRoleSelByIds(ids: number[]): t_funcMap_selMore_ret<userRoleD
 
 export function userRoleIns(params: userRoleInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-role',
+    url: '/main/sys-manage/user-role',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function userRoleIns(params: userRoleInsDto): t_funcMap_iud_ret {
 
 export function userRoleUpd(params: userRoleUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-role',
+    url: '/main/sys-manage/user-role',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function userRoleUpd(params: userRoleUpdDto): t_funcMap_iud_ret {
 
 export function userRoleInss(params: userRoleInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-role/s',
+    url: '/main/sys-manage/user-role/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function userRoleInss(params: userRoleInsDto[]): t_funcMap_iud_ret {
 
 export function userRoleUpds(params: userRoleUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-role/s',
+    url: '/main/sys-manage/user-role/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function userRoleUpds(params: userRoleUpdDto[]): t_funcMap_iud_ret {
 
 export function userRoleDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/user-role',
+    url: '/main/sys-manage/user-role',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function userRoleDel(ids: number[]): t_funcMap_iud_ret {
 
 export function userRoleUpdUR(params: userRoleUpdURDto) {
   return request({
-    url: '/sys-manage/user-role/ur',
+    url: '/main/sys-manage/user-role/ur',
     method: 'POST',
     data: params
   })
@@ -95,7 +95,7 @@ export function userRoleUpdUR(params: userRoleUpdURDto) {
 
 export function userRoleUpdRU(params: userRoleUpdRUDto) {
   return request({
-    url: '/sys-manage/user-role/ru',
+    url: '/main/sys-manage/user-role/ru',
     method: 'POST',
     data: params
   })

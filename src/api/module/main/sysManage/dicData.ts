@@ -16,7 +16,7 @@ import {
 
 export function dicDataSel(params: dicDataSelDto): t_funcMap_selList_ret<dicDataDto> {
   return request({
-    url: '/sys-manage/dic-data',
+    url: '/main/sys-manage/dic-data',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function dicDataSel(params: dicDataSelDto): t_funcMap_selList_ret<dicData
 
 export function dicDataSelAll(params: dicDataSelAllDto): t_funcMap_selMore_ret<dicDataDto> {
   return request({
-    url: '/sys-manage/dic-data/all',
+    url: '/main/sys-manage/dic-data/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function dicDataSelAll(params: dicDataSelAllDto): t_funcMap_selMore_ret<d
 
 export function dicDataSelById(id: number): t_funcMap_selOne_ret<dicDataDto> {
   return request({
-    url: `/sys-manage/dic-data/${id}`,
+    url: `/main/sys-manage/dic-data/${id}`,
     method: 'GET'
   })
 }
 
 export function dicDataSelByIds(ids: number[]): t_funcMap_selMore_ret<dicDataDto> {
   return request({
-    url: `/sys-manage/dic-data/ids`,
+    url: `/main/sys-manage/dic-data/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function dicDataSelByIds(ids: number[]): t_funcMap_selMore_ret<dicDataDto
 
 export function dicDataIns(params: dicDataInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-data',
+    url: '/main/sys-manage/dic-data',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function dicDataIns(params: dicDataInsDto): t_funcMap_iud_ret {
 
 export function dicDataUpd(params: dicDataUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-data',
+    url: '/main/sys-manage/dic-data',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function dicDataUpd(params: dicDataUpdDto): t_funcMap_iud_ret {
 
 export function dicDataInss(params: dicDataInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-data/s',
+    url: '/main/sys-manage/dic-data/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function dicDataInss(params: dicDataInsDto[]): t_funcMap_iud_ret {
 
 export function dicDataUpds(params: dicDataUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-data/s',
+    url: '/main/sys-manage/dic-data/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function dicDataUpds(params: dicDataUpdDto[]): t_funcMap_iud_ret {
 
 export function dicDataDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/sys-manage/dic-data',
+    url: '/main/sys-manage/dic-data',
     method: 'DELETE',
     data: ids
   })

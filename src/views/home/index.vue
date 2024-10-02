@@ -2,15 +2,16 @@
 import { useSysStore } from "@/store/module/sys.ts";
 import { getPermissions, getSystems } from "@/api/sys.ts";
 import { sysDto } from "@/type/api/main/sysManage/sys.ts";
-import { ref } from "vue";
+import { onBeforeUnmount, ref } from "vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { menuDto, T_COMP, T_MENU } from "@/type/api/main/sysManage/menu.ts";
 import { final } from "@/utils/base.ts";
 import { RouteRecordNormalized } from "vue-router";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import router from "@/router";
-import { ElNotification, NotificationHandle } from "element-plus";
+import { ElLoading, ElNotification, NotificationHandle } from "element-plus";
 import { useRouterStore } from "@/store/module/router.ts";
+import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 
 const sysStore = useSysStore();
 
@@ -27,13 +28,12 @@ const modules = {
   ...import.meta.glob(`../../views/**/**/**/**.vue`),
   ...import.meta.glob(`../../views/**/**/**.vue`),
 }
+let loading: LoadingInstance | null
 const goToSystem = async (dto: sysDto) => {
-  const notification: NotificationHandle = ElNotification({
-    title: '提示',
-    message: '系统资源加载中。。。',
-    type: 'success',
-    showClose: false,
-    duration: 0,
+  loading = ElLoading.service({
+    lock: true,
+    text: '系统资源加载中，请稍后。。。',
+    background: 'rgba(0, 0, 0, .7)',
   });
   const res = await getPermissions(dto.id)
   try {
@@ -72,7 +72,6 @@ const goToSystem = async (dto: sysDto) => {
         router.addRoute(`/${dto.path}`, permissionsObj[i])
       }
     }
-    notification.close()
     sysStore.setCurrentSystem(dto)
     const routerStore = useRouterStore();
     routerStore.deleteAllMenu()
@@ -84,9 +83,16 @@ const goToSystem = async (dto: sysDto) => {
       duration: 0,
       showClose: true
     })
-    notification.close()
+    if (loading) {
+      loading.close()
+    }
   }
 }
+onBeforeUnmount(() => {
+  if (loading) {
+    loading.close()
+  }
+})
 </script>
 
 <template>
