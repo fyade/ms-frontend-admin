@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysLog:logOperation'
+  name: 'main:sysLog:logOperation'
 }
 </script>
 

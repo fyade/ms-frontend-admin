@@ -5,7 +5,7 @@ import {
   interfaceSelAllDto,
   interfaceInsDto,
   interfaceUpdDto
-} from "@/type/api/main/sysManage/interface.ts";
+} from "@/type/api/algorithm/interface.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,
@@ -16,7 +16,7 @@ import {
 
 export function interfaceSel(params: interfaceSelDto): t_funcMap_selList_ret<interfaceDto> {
   return request({
-    url: '/main/sys-manage/interface',
+    url: '/algorithm/interface',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function interfaceSel(params: interfaceSelDto): t_funcMap_selList_ret<int
 
 export function interfaceSelAll(params: interfaceSelAllDto): t_funcMap_selMore_ret<interfaceDto> {
   return request({
-    url: '/main/sys-manage/interface/all',
+    url: '/algorithm/interface/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function interfaceSelAll(params: interfaceSelAllDto): t_funcMap_selMore_r
 
 export function interfaceSelById(id: number): t_funcMap_selOne_ret<interfaceDto> {
   return request({
-    url: `/main/sys-manage/interface/${id}`,
+    url: `/algorithm/interface/${id}`,
     method: 'GET'
   })
 }
 
 export function interfaceSelByIds(ids: number[]): t_funcMap_selMore_ret<interfaceDto> {
   return request({
-    url: `/main/sys-manage/interface/ids`,
+    url: `/algorithm/interface/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function interfaceSelByIds(ids: number[]): t_funcMap_selMore_ret<interfac
 
 export function interfaceIns(params: interfaceInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/interface',
+    url: '/algorithm/interface',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function interfaceIns(params: interfaceInsDto): t_funcMap_iud_ret {
 
 export function interfaceUpd(params: interfaceUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/interface',
+    url: '/algorithm/interface',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function interfaceUpd(params: interfaceUpdDto): t_funcMap_iud_ret {
 
 export function interfaceInss(params: interfaceInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/interface/s',
+    url: '/algorithm/interface/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function interfaceInss(params: interfaceInsDto[]): t_funcMap_iud_ret {
 
 export function interfaceUpds(params: interfaceUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/interface/s',
+    url: '/algorithm/interface/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function interfaceUpds(params: interfaceUpdDto[]): t_funcMap_iud_ret {
 
 export function interfaceDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/interface',
+    url: '/algorithm/interface',
     method: 'DELETE',
     data: ids
   })

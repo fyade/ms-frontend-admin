@@ -5,7 +5,7 @@ import {
   userUserGroupSelAllDto,
   userUserGroupInsDto,
   userUserGroupUpdDto, userUserGroupUpdUUGDtp, userUserGroupUpdUGUDtp
-} from "@/type/api/main/sysManage/userUserGroup.ts";
+} from "@/type/api/algorithm/userUserGroup.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,
@@ -16,7 +16,7 @@ import {
 
 export function userUserGroupSel(params: userUserGroupSelDto): t_funcMap_selList_ret<userUserGroupDto> {
   return request({
-    url: '/main/sys-manage/user-user-group',
+    url: '/algorithm/user-user-group',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function userUserGroupSel(params: userUserGroupSelDto): t_funcMap_selList
 
 export function userUserGroupSelAll(params: userUserGroupSelAllDto): t_funcMap_selMore_ret<userUserGroupDto> {
   return request({
-    url: '/main/sys-manage/user-user-group/all',
+    url: '/algorithm/user-user-group/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function userUserGroupSelAll(params: userUserGroupSelAllDto): t_funcMap_s
 
 export function userUserGroupSelById(id: number): t_funcMap_selOne_ret<userUserGroupDto> {
   return request({
-    url: `/main/sys-manage/user-user-group/${id}`,
+    url: `/algorithm/user-user-group/${id}`,
     method: 'GET'
   })
 }
 
 export function userUserGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<userUserGroupDto> {
   return request({
-    url: `/main/sys-manage/user-user-group/ids`,
+    url: `/algorithm/user-user-group/ids`,
     method: 'GET',
     params: ids
   })
@@ -47,7 +47,7 @@ export function userUserGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<user
 
 export function userUserGroupIns(params: userUserGroupInsDto): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-user-group',
+    url: '/algorithm/user-user-group',
     method: 'POST',
     data: params
   })
@@ -55,7 +55,7 @@ export function userUserGroupIns(params: userUserGroupInsDto): t_funcMap_iud_ret
 
 export function userUserGroupUpd(params: userUserGroupUpdDto): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-user-group',
+    url: '/algorithm/user-user-group',
     method: 'PUT',
     data: params
   })
@@ -63,7 +63,7 @@ export function userUserGroupUpd(params: userUserGroupUpdDto): t_funcMap_iud_ret
 
 export function userUserGroupInss(params: userUserGroupInsDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-user-group/s',
+    url: '/algorithm/user-user-group/s',
     method: 'POST',
     data: params
   })
@@ -71,7 +71,7 @@ export function userUserGroupInss(params: userUserGroupInsDto[]): t_funcMap_iud_
 
 export function userUserGroupUpds(params: userUserGroupUpdDto[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-user-group/s',
+    url: '/algorithm/user-user-group/s',
     method: 'PUT',
     data: params
   })
@@ -79,7 +79,7 @@ export function userUserGroupUpds(params: userUserGroupUpdDto[]): t_funcMap_iud_
 
 export function userUserGroupDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-user-group',
+    url: '/algorithm/user-user-group',
     method: 'DELETE',
     data: ids
   })
@@ -87,7 +87,7 @@ export function userUserGroupDel(ids: number[]): t_funcMap_iud_ret {
 
 export function userUserGroupUpdUUG(param: userUserGroupUpdUUGDtp) {
   return request({
-    url: `/main/sys-manage/user-user-group/uug`,
+    url: `/algorithm/user-user-group/uug`,
     method: 'POST',
     data: param
   })
@@ -95,7 +95,7 @@ export function userUserGroupUpdUUG(param: userUserGroupUpdUUGDtp) {
 
 export function userUserGroupUpdUGU(param: userUserGroupUpdUGUDtp) {
   return request({
-    url: `/main/sys-manage/user-user-group/ugu`,
+    url: `/algorithm/user-user-group/ugu`,
     method: 'POST',
     data: param
   })

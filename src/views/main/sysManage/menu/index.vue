@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:menu'
+  name: 'main:sysManage:menu'
 }
 </script>
 
@@ -893,7 +893,8 @@ const gInsI22 = () => {
       <!--在此下方添加表格列-->
       <el-table-column prop="label" :label="stateI2.dict['label']" width="240"/>
       <el-table-column prop="orderNum" :label="stateI2.dict['orderNum']" width="120"/>
-      <el-table-column prop="perms" :label="stateI2.dict['perms']" width="280"/>
+      <el-table-column prop="ifPublic" :label="stateI2.dict['ifPublic']" width="120"/>
+      <el-table-column prop="perms" :label="stateI2.dict['perms']" width="360"/>
       <el-table-column prop="remark" :label="stateI2.dict['remark']" width="200"/>
       <!--在此上方添加表格列-->
       <!--上方几个酌情使用-->

@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'demo:fileUpload'
+  name: 'main:demo:fileUpload'
 }
 </script>
 

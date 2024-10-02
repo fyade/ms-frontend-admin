@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysUtil:api'
+  name: 'main:sysUtil:api'
 }
 </script>
 

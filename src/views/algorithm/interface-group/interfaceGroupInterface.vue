@@ -7,14 +7,14 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules } from 'element-plus'
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { interfaceDto, interfaceUpdDto } from "@/type/api/main/sysManage/interface.ts";
-import { interfaceFunc, } from "@/api/module/main/sysManage/interface.ts"
-import { interfaceInterfaceGroupDto } from "@/type/api/main/sysManage/interfaceInterfaceGroup.ts";
+import { interfaceDto, interfaceUpdDto } from "@/type/api/algorithm/interface.ts";
+import { interfaceFunc, } from "@/api/module/algorithm/interface.ts"
+import { interfaceInterfaceGroupDto } from "@/type/api/algorithm/interfaceInterfaceGroup.ts";
 import {
   interfaceInterfaceGroupFunc,
   interfaceInterfaceGroupUpdIGI,
-} from "@/api/module/main/sysManage/interfaceInterfaceGroup.ts"
-import { interfaceGroupDto } from "@/type/api/main/sysManage/interfaceGroup.ts";
+} from "@/api/module/algorithm/interfaceInterfaceGroup.ts"
+import { interfaceGroupDto } from "@/type/api/algorithm/interfaceGroup.ts";
 
 const props = defineProps({
   selectInterfaceGroupInfo: {

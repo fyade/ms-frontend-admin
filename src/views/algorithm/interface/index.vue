@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:interface'
+  name: 'algorithm:interface'
 }
 </script>
 
@@ -13,13 +13,13 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { interfaceDto, interfaceUpdDto } from "@/type/api/main/sysManage/interface.ts";
-import { interfaceFunc } from "@/api/module/main/sysManage/interface.ts"
-import InterfaceInterfaceGroup from "@/views/main/sysManage/interface/interfaceInterfaceGroup.vue";
+import { interfaceDto, interfaceUpdDto } from "@/type/api/algorithm/interface.ts";
+import { interfaceFunc } from "@/api/module/algorithm/interface.ts"
+import InterfaceInterfaceGroup from "@/views/algorithm/interface/interfaceInterfaceGroup.vue";
 import {
   interfaceInterfaceGroupSelAll,
   interfaceInterfaceGroupUpdIIG
-} from "@/api/module/main/sysManage/interfaceInterfaceGroup.ts";
+} from "@/api/module/algorithm/interfaceInterfaceGroup.ts";
 
 const state = reactive<State<interfaceDto, interfaceUpdDto>>({
   dialogType: {

@@ -5,7 +5,7 @@ import {
   userGroupPermissionSelAllDto,
   userGroupPermissionInsDto,
   userGroupPermissionUpdDto
-} from "@/type/api/main/sysManage/userGroupPermission.ts";
+} from "@/type/api/algorithm/userGroupPermission.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,
@@ -16,7 +16,7 @@ import {
 
 export function userGroupPermissionSel(params: userGroupPermissionSelDto): t_funcMap_selList_ret<userGroupPermissionDto> {
   return request({
-    url: '/main/sys-manage/user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'GET',
     params: params
   })
@@ -24,7 +24,7 @@ export function userGroupPermissionSel(params: userGroupPermissionSelDto): t_fun
 
 export function userGroupPermissionSelAll(params: userGroupPermissionSelAllDto): t_funcMap_selMore_ret<userGroupPermissionDto> {
   return request({
-    url: '/main/sys-manage/user-group-permission/all',
+    url: '/algorithm/user-group-permission/all',
     method: 'GET',
     params: params
   })
@@ -32,14 +32,14 @@ export function userGroupPermissionSelAll(params: userGroupPermissionSelAllDto):
 
 export function userGroupPermissionSelById(id: number): t_funcMap_selOne_ret<userGroupPermissionDto> {
   return request({
-    url: `/main/sys-manage/user-group-permission/${id}`,
+    url: `/algorithm/user-group-permission/${id}`,
     method: 'GET'
   })
 }
 
 export function userGroupPermissionSelByIds(ids: number[]): t_funcMap_selMore_ret<userGroupPermissionDto> {
   return request({
-    url: `/main/sys-manage/user-group-permission/ids`,
+    url: `/algorithm/user-group-permission/ids`,
     method: 'GET',
     params: ids
   })
@@ -48,7 +48,7 @@ export function userGroupPermissionSelByIds(ids: number[]): t_funcMap_selMore_re
 export function userGroupPermissionIns(params: userGroupPermissionInsDto): t_funcMap_iud_ret {
   delete params.permissionTime
   return request({
-    url: '/main/sys-manage/user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'POST',
     data: params
   })
@@ -57,7 +57,7 @@ export function userGroupPermissionIns(params: userGroupPermissionInsDto): t_fun
 export function userGroupPermissionUpd(params: userGroupPermissionUpdDto): t_funcMap_iud_ret {
   delete params.permissionTime
   return request({
-    url: '/main/sys-manage/user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'PUT',
     data: params
   })
@@ -68,7 +68,7 @@ export function userGroupPermissionInss(params: userGroupPermissionInsDto[]): t_
     delete param.permissionTime
   })
   return request({
-    url: '/main/sys-manage/user-group-permission/s',
+    url: '/algorithm/user-group-permission/s',
     method: 'POST',
     data: params
   })
@@ -79,7 +79,7 @@ export function userGroupPermissionUpds(params: userGroupPermissionUpdDto[]): t_
     delete param.permissionTime
   })
   return request({
-    url: '/main/sys-manage/user-group-permission/s',
+    url: '/algorithm/user-group-permission/s',
     method: 'PUT',
     data: params
   })
@@ -87,7 +87,7 @@ export function userGroupPermissionUpds(params: userGroupPermissionUpdDto[]): t_
 
 export function userGroupPermissionDel(ids: number[]): t_funcMap_iud_ret {
   return request({
-    url: '/main/sys-manage/user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'DELETE',
     data: ids
   })

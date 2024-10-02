@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysUtil:codeGeneration'
+  name: 'main:sysUtil:codeGeneration'
 }
 </script>
 

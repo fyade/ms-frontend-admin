@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:dict'
+  name: 'main:sysManage:dict'
 }
 </script>
 

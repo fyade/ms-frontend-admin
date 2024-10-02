@@ -17,20 +17,24 @@ const sysStore = useSysStore();
 
 export const useRouterStore = defineStore('routerStore', () => {
   // const allMenus1: RouteRecordNormalized[] = routes.filter(item => item.path === '/');
-  const allMenus1: RouteRecordNormalized[] = router.getRoutes().filter(item => {
-    return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
-  }).sort((m1, m2) => m1.meta.orderNum - m2.meta.orderNum)
-  const allMenus2 = diguiObjToArr2<RouteRecordNormalized>(allMenus1).map(ar => {
-    const meta = ar[ar.length - 1].meta;
-    meta.fullPath = ar.map(item => item.path).join('/')
-    return {
-      path: ar.map((item, index) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
-      name: ar[ar.length - 1].name || '',
-      meta: meta,
-      ar: ar
-    }
+  const allMenus1 = computed<RouteRecordNormalized[]>(() => {
+    return router.getRoutes().filter(item => {
+      return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
+    }).sort((m1, m2) => m1.meta.orderNum - m2.meta.orderNum)
+  })
+  const allMenus2 = computed(() => {
+    return diguiObjToArr2<RouteRecordNormalized>(allMenus1.value).map(ar => {
+      const meta = ar[ar.length - 1].meta;
+      meta.fullPath = ar.map(item => item.path).join('/')
+      return {
+        path: ar.map((item, index) => (item.path.startsWith('/') || (index === 0 || ar[index - 1].path.endsWith('/'))) ? item.path : `/${item.path}`).join(''),
+        name: ar[ar.length - 1].name || '',
+        meta: meta,
+        ar: ar
+      }
+    })
   });
-  const menuList: Ref<allMenus2I[]> = ref(allMenus2.filter(item => routerPinList.indexOf(item.path) > -1))
+  const menuList: Ref<allMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
   const addMenu = (menu: allMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
       menuList.value.push(menu)

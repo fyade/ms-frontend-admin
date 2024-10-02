@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'main:sysMonitor:onlineUser'
+  name: 'algorithm:home'
 }
 </script>
 
@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-  在线用户
+  algorithm/home
 </template>
 
 <style scoped lang="scss">

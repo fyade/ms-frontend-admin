@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:dept'
+  name: 'main:sysManage:dept'
 }
 </script>
 
@@ -13,7 +13,7 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
+import { deptDto, deptUpdDto } from "@/type/api/main/sysManage/dept.ts";
 import { deptFunc } from "@/api/module/main/sysManage/dept.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import DeptUser from "@/views/main/sysManage/dept/deptUser.vue";

@@ -257,7 +257,7 @@ const selectSysChange = (value: number | null) => {
   </div>
 
   <el-form label-position="top">
-    <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口：">
+    <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口（注意：切换系统后，原先选择或取消选择的菜单、组件及接口也会被记录并一同提交）：">
       <el-select
           v-model="selectSys"
           placeholder="系统"

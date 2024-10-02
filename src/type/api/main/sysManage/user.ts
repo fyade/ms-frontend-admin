@@ -2,7 +2,7 @@ import { pageDto } from "@/type/tablePage.ts";
 import { baseClass } from "@/utils/base.ts";
 import { roleDto } from "@/type/api/main/sysManage/role.ts";
 import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
+import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
 
 export class userDto extends baseClass {
   id!: string;

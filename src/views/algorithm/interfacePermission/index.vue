@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:interfacePermission'
+  name: 'algorithm:interfacePermission'
 }
 </script>
 
@@ -13,15 +13,15 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
-import { userGroupFunc } from "@/api/module/main/sysManage/userGroup.ts"
-import { interfaceGroupDto } from "@/type/api/main/sysManage/interfaceGroup.ts";
-import { interfaceGroupFunc } from "@/api/module/main/sysManage/interfaceGroup.ts"
-import Divider from "@/views/main/sysManage/interfacePermission/divider.vue";
-import { userGroupPermissionDto } from "@/type/api/main/sysManage/userGroupPermission.ts";
-import { userGroupPermissionFunc } from "@/api/module/main/sysManage/userGroupPermission.ts"
+import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { userGroupFunc } from "@/api/module/algorithm/userGroup.ts"
+import { interfaceGroupDto } from "@/type/api/algorithm/interfaceGroup.ts";
+import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts"
+import Divider from "@/views/algorithm/interfacePermission/divider.vue";
+import { userGroupPermissionDto } from "@/type/api/algorithm/userGroupPermission.ts";
+import { userGroupPermissionFunc } from "@/api/module/algorithm/userGroupPermission.ts"
 import { copyObject, deepClone } from "@/utils/ObjectUtils.ts";
-import LogAlgorithmCall from "@/views/main/sysManage/interfacePermission/logAlgorithmCall.vue";
+import LogAlgorithmCall from "@/views/algorithm/interfacePermission/logAlgorithmCall.vue";
 
 const userGroupState = reactive<State<userGroupDto>>({
   dialogType: {

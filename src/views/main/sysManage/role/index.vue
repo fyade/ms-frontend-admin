@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:role'
+  name: 'main:sysManage:role'
 }
 </script>
 

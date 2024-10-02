@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:user'
+  name: 'main:sysManage:user'
 }
 </script>
 
@@ -21,9 +21,9 @@ import { fileBaseUrl } from "@/api/request.ts";
 import UserDept from "@/views/main/sysManage/user/userDept.vue";
 import { userDeptSelAll, userDeptUpdUD } from "@/api/module/main/sysManage/userDept.ts";
 import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
+import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
 import UserUserGroup from "@/views/main/sysManage/user/userUserGroup.vue";
-import { userUserGroupSelAll, userUserGroupUpdUUG } from "@/api/module/main/sysManage/userUserGroup.ts";
+import { userUserGroupSelAll, userUserGroupUpdUUG } from "@/api/module/algorithm/userUserGroup.ts";
 import { roleDto } from "@/type/api/main/sysManage/role.ts";
 
 const state = reactive({
@@ -308,23 +308,23 @@ provide('changeSelectUserGroup', selectUserGroup)
     </template>
   </el-dialog>
 
-  <!--用户用户组-->
-  <el-dialog
-      v-model="drawer3"
-      :width="CONFIG.dialog_width_wider"
-      draggable
-      append-to-body
-      destroy-on-close
-      title="分配用户组"
-  >
-    <UserUserGroup
-        :user="selectUser"
-    />
-    <template #footer>
-      <el-button plain @click="drawerCancelUserUserGroup">取消</el-button>
-      <el-button type="primary" plain @click="drawerConfirmUserUserGroup">提交</el-button>
-    </template>
-  </el-dialog>
+  <!--&lt;!&ndash;用户用户组&ndash;&gt;-->
+  <!--<el-dialog-->
+  <!--    v-model="drawer3"-->
+  <!--    :width="CONFIG.dialog_width_wider"-->
+  <!--    draggable-->
+  <!--    append-to-body-->
+  <!--    destroy-on-close-->
+  <!--    title="分配用户组"-->
+  <!--&gt;-->
+  <!--  <UserUserGroup-->
+  <!--      :user="selectUser"-->
+  <!--  />-->
+  <!--  <template #footer>-->
+  <!--    <el-button plain @click="drawerCancelUserUserGroup">取消</el-button>-->
+  <!--    <el-button type="primary" plain @click="drawerConfirmUserUserGroup">提交</el-button>-->
+  <!--  </template>-->
+  <!--</el-dialog>-->
 
   <!--重置密码-->
   <el-dialog
@@ -491,7 +491,7 @@ provide('changeSelectUserGroup', selectUserGroup)
         <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
         <el-button link type="primary" size="small" @click="manageRole(row)">分配角色</el-button>
         <el-button link type="primary" size="small" @click="manageDept(row)">分配部门</el-button>
-        <el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>
+        <!--<el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>-->
       </template>
     </el-table-column>
     <!--<template #append>-->

@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:sys'
+  name: 'main:sysManage:sys'
 }
 </script>
 

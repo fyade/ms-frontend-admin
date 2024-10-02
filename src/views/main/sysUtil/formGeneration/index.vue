@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysUtil:formGeneration'
+  name: 'main:sysUtil:formGeneration'
 }
 </script>
 

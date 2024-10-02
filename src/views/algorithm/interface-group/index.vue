@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: 'sysManage:interfaceGroup'
+  name: 'algorithm:interfaceGroup'
 }
 </script>
 
@@ -13,10 +13,10 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { interfaceGroupDto } from "@/type/api/main/sysManage/interfaceGroup.ts";
-import { interfaceGroupFunc } from "@/api/module/main/sysManage/interfaceGroup.ts"
+import { interfaceGroupDto } from "@/type/api/algorithm/interfaceGroup.ts";
+import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import InterfaceGroupInterface from "@/views/main/sysManage/interface-group/interfaceGroupInterface.vue";
+import InterfaceGroupInterface from "@/views/algorithm/interface-group/interfaceGroupInterface.vue";
 
 const state = reactive<State<interfaceGroupDto>>({
   dialogType: {

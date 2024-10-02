@@ -5,8 +5,8 @@ import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
 import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules, TreeInstance } from 'element-plus'
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
-import { userGroupFunc, } from "@/api/module/main/sysManage/userGroup.ts"
+import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { userGroupFunc, } from "@/api/module/algorithm/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { userDto2 } from "@/type/api/main/sysManage/user.ts";
 

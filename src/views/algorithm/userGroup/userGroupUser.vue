@@ -3,14 +3,14 @@ import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
 import { computed, reactive, ref } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
-import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/module/main/sysManage/userUserGroup.ts";
+import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/module/algorithm/userUserGroup.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
-import { userUserGroupDto } from "@/type/api/main/sysManage/userUserGroup.ts";
+import { userUserGroupDto } from "@/type/api/algorithm/userUserGroup.ts";
 import { pageDto } from "@/type/tablePage.ts";
 import { userDto } from "@/type/api/main/sysManage/user.ts";
-import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
+import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
 
 const props = defineProps({
   selectUserGroup: {
