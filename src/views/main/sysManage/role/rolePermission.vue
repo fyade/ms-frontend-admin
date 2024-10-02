@@ -10,10 +10,11 @@ import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/api/main/sysManag
 import { menuFunc, } from "@/api/module/main/sysManage/menu.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import type Node from 'element-plus/es/components/tree/src/model/node'
+import { roleDto } from "@/type/api/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {
-    type: Object,
+    type: roleDto,
     required: true
   }
 })

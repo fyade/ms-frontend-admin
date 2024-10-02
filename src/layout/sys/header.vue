@@ -6,11 +6,13 @@ import { useRouterStore } from "@/store/module/router.ts";
 import { toPath } from "@/utils/baseUtils.ts";
 import { useUserStore } from '@/store/module/user';
 import { fileBaseUrl } from "@/api/request.ts";
+import { useSysStore } from "@/store/module/sys.ts";
 
 const route = useRoute()
 const router = useRouter()
 const routerStore = useRouterStore();
 const userStore = useUserStore()
+const sysStore = useSysStore();
 
 const list = ref<RouteRecordNormalized[]>([])
 
@@ -29,9 +31,16 @@ watch(() => route.path, () => {
     <div class="left">
       <span>logo</span>
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item class="el-breadcrumb-item" to="/">首页</el-breadcrumb-item>
-        <el-breadcrumb-item class="el-breadcrumb-item" v-for="(item, index) in list" :key="index"
-                            :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`">
+        <el-breadcrumb-item class="el-breadcrumb-item" to="/">控制台主页</el-breadcrumb-item>
+        <el-breadcrumb-item class="el-breadcrumb-item" :to="`/${sysStore.getCurrentSystem.path}`">
+          {{ sysStore.getCurrentSystem.name }}首页
+        </el-breadcrumb-item>
+        <el-breadcrumb-item
+            class="el-breadcrumb-item"
+            v-for="(item, index) in list"
+            :key="index"
+            :to="`/${toPath(...list.slice(0, index + 1).map(itm => itm.path.indexOf('/') === 0 ? itm.path.replace('/', '') : itm.path))}`"
+        >
           {{ item.meta ? item.meta.label : item.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>

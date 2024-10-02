@@ -14,10 +14,11 @@ import {
   interfaceInterfaceGroupFunc,
   interfaceInterfaceGroupUpdIGI,
 } from "@/api/module/main/sysManage/interfaceInterfaceGroup.ts"
+import { interfaceGroupDto } from "@/type/api/main/sysManage/interfaceGroup.ts";
 
 const props = defineProps({
   selectInterfaceGroupInfo: {
-    type: Object,
+    type: interfaceGroupDto,
     required: true
   }
 });

@@ -8,10 +8,11 @@ import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
 import { userGroupFunc, } from "@/api/module/main/sysManage/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { userDto2 } from "@/type/api/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {
-    type: Object,
+    type: userDto2,
     required: true
   }
 });

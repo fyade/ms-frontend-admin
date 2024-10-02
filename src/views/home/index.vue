@@ -10,6 +10,7 @@ import { RouteRecordNormalized } from "vue-router";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import router from "@/router";
 import { ElNotification, NotificationHandle } from "element-plus";
+import { useRouterStore } from "@/store/module/router.ts";
 
 const sysStore = useSysStore();
 
@@ -61,7 +62,7 @@ const goToSystem = async (dto: sysDto) => {
         path: `/${dto.path}`,
         name: `/${dto.path}`,
         meta: {
-          label: '首页'
+          label: `${dto.name}首页`
         },
         redirect: `/${dto.path}/${permissionsObj[0].path}`,
         component: () => import('@/layout/sys/index.vue'),
@@ -72,7 +73,9 @@ const goToSystem = async (dto: sysDto) => {
       }
     }
     notification.close()
-    sysStore.setCurrentSystem(dto.perms)
+    sysStore.setCurrentSystem(dto)
+    const routerStore = useRouterStore();
+    routerStore.deleteAllMenu()
     router.push(`/${dto.path}`)
   } catch (e) {
     console.error(e);
@@ -91,7 +94,12 @@ const goToSystem = async (dto: sysDto) => {
   <!--  <p>前端版本：{{ sysStore.version.qd }}</p>-->
   <!--  <p>后端版本：{{ sysStore.version.hd }}</p>-->
   <!--</div>-->
-  <el-card v-for="item in allSystems" :key="item.id" @click="goToSystem(item)">{{ item.name }}</el-card>
+  <el-row :gutter="20">
+    <el-col v-for="item in allSystems" :key="item.id" :span="6">
+      <el-card @click="goToSystem(item)">{{ item.name }}</el-card>
+    </el-col>
+  </el-row>
+
 </template>
 
 <style scoped>

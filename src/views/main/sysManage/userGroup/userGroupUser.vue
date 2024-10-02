@@ -10,10 +10,11 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { userUserGroupDto } from "@/type/api/main/sysManage/userUserGroup.ts";
 import { pageDto } from "@/type/tablePage.ts";
 import { userDto } from "@/type/api/main/sysManage/user.ts";
+import { userGroupDto } from "@/type/api/main/sysManage/userGroup.ts";
 
 const props = defineProps({
   selectUserGroup: {
-    type: Object,
+    type: userGroupDto,
     required: true
   }
 })

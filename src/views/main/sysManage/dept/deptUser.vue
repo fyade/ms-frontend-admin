@@ -10,10 +10,11 @@ import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
 import { userDeptDto } from "@/type/api/main/sysManage/userDept.ts";
 import { pageDto } from "@/type/tablePage.ts";
 import { userDto } from "@/type/api/main/sysManage/user.ts";
+import { deptDto } from "@/type/api/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {
-    type: Object,
+    type: deptDto,
     required: true
   }
 })

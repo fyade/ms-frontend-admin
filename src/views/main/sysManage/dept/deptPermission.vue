@@ -10,10 +10,11 @@ import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/api/main/sysManag
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { menuFunc } from "@/api/module/main/sysManage/menu.ts";
 import type Node from "element-plus/es/components/tree/src/model/node";
+import { deptDto } from "@/type/api/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {
-    type: Object,
+    type: deptDto,
     required: true
   }
 })

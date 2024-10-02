@@ -2,21 +2,27 @@
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
 import { allMenus2I, useRouterStore } from "@/store/module/router.ts";
-import { Ref, ref, watch } from "vue";
-import { homeRouter, routerPinList } from "@/router";
+import { computed, Ref, ref, watch } from "vue";
+import { routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
+import { useSysStore } from "@/store/module/sys.ts";
 
 const route = useRoute()
 const routerStore = useRouterStore();
+const sysStore = useSysStore();
 const aside: Ref<InstanceType<typeof Aside> | null> = ref<InstanceType<typeof Aside> | null>(null)
+
+const homeRouter = computed(() => {
+  return `/${sysStore.getCurrentSystem.path}`
+})
 
 const gotoMenu = (path: string) => {
   aside.value && aside.value.gotoMenu(path)
 }
 const deleteMenu = (index: number) => {
   if (route.path === routerStore.getMenuList()[index].path) {
-    aside.value && aside.value.gotoMenu(homeRouter)
+    aside.value && aside.value.gotoMenu(homeRouter.value)
   }
   routerStore.deleteMenu(index)
 }
@@ -36,7 +42,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭左侧标签页',
       operate: () => {
         if (routerStore.getMenuList().slice(0, index).findIndex(item => item.path === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(homeRouter)
+          aside.value && aside.value.gotoMenu(homeRouter.value)
         }
         routerStore.deleteLeftMenu(index)
       }
@@ -45,7 +51,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭右侧标签页',
       operate: () => {
         if (routerStore.getMenuList().slice(index + 1, routerStore.getMenuList().length).findIndex(item => item.path === route.path) > -1) {
-          aside.value && aside.value.gotoMenu(homeRouter)
+          aside.value && aside.value.gotoMenu(homeRouter.value)
         }
         routerStore.deleteRightMenu(index)
       }
@@ -54,7 +60,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭其他标签页',
       operate: () => {
         if (route.path !== info.path) {
-          aside.value && aside.value.gotoMenu(homeRouter)
+          aside.value && aside.value.gotoMenu(homeRouter.value)
         }
         routerStore.deleteOtherMenu(index, routerPinList.indexOf(info.path) > -1)
       }
@@ -63,7 +69,7 @@ const contextMenu = (info: allMenus2I, index: number) => [
       label: '关闭全部标签页',
       operate: () => {
         if (routerPinList.indexOf(route.path) === -1) {
-          aside.value && aside.value.gotoMenu(homeRouter)
+          aside.value && aside.value.gotoMenu(homeRouter.value)
         }
         routerStore.deleteAllMenu()
       }

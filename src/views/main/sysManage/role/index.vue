@@ -15,10 +15,15 @@ import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/ico
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/main/sysManage/role.ts";
 import { roleFunc } from "@/api/module/main/sysManage/role.ts"
-import { rolePermissionSelAll, rolePermissionUpd, rolePermissionUpdRp } from "@/api/module/main/sysManage/rolePermission.ts";
+import {
+  rolePermissionSelAll,
+  rolePermissionUpd,
+  rolePermissionUpdRp
+} from "@/api/module/main/sysManage/rolePermission.ts";
 import RoleUser from "@/views/main/sysManage/role/roleUser.vue";
 import RolePermission from "@/views/main/sysManage/role/rolePermission.vue";
 import { rolePermissionDto } from "@/type/api/main/sysManage/rolePermission.ts";
+import RoleSystem from "@/views/main/sysManage/role/roleSystem.vue";
 
 const state = reactive<State<roleDto>>({
   dialogType: {
@@ -166,6 +171,13 @@ const drawerConfirmRolePermission = () => {
   })
 }
 provide('changeSelectPermission', selectPermission)
+
+// 分配系统
+const drawer3 = ref(false)
+const setSystem = (row: roleDto) => {
+  selectRoleInfo = row
+  drawer3.value = true
+}
 </script>
 
 <template>
@@ -183,6 +195,23 @@ provide('changeSelectPermission', selectPermission)
     />
     <template #footer>
       <el-button plain @click="drawer2=false">取消</el-button>
+    </template>
+  </el-dialog>
+
+  <!--分配系统-->
+  <el-dialog
+      v-model="drawer3"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      title="分配系统"
+      destroy-on-close
+  >
+    <RoleSystem
+        :select-role="selectRoleInfo"
+    />
+    <template #footer>
+      <el-button plain @click="drawer3=false">取消</el-button>
     </template>
   </el-dialog>
 
@@ -356,6 +385,7 @@ provide('changeSelectPermission', selectPermission)
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
+        <el-button link type="primary" size="small" @click="setSystem(row)">分配系统</el-button>
         <el-button link type="primary" size="small" @click="setPermission(row)">分配权限</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>

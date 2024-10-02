@@ -19,6 +19,7 @@ import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import DeptUser from "@/views/main/sysManage/dept/deptUser.vue";
 import DeptPermission from "@/views/main/sysManage/dept/deptPermission.vue";
 import { deptPermissionSelAll, deptPermissionUpdDP } from "@/api/module/main/sysManage/deptPermission.ts";
+import DeptSystem from "@/views/main/sysManage/dept/deptSystem.vue";
 
 const state = reactive<State<deptDto>>({
   dialogType: {
@@ -177,6 +178,13 @@ const drawerCancelDeptPermission = () => {
   drawer2.value = false
 }
 provide('changeSelectPermission', selectPermission)
+
+// 分配系统
+const drawer3 = ref(false)
+const setSystem = (dept: deptDto) => {
+  selectDept = dept
+  drawer3.value = true
+}
 </script>
 
 <template>
@@ -194,6 +202,23 @@ provide('changeSelectPermission', selectPermission)
     />
     <template #footer>
       <el-button plain @click="drawer=false">取消</el-button>
+    </template>
+  </el-dialog>
+
+  <!--分配系统-->
+  <el-dialog
+      v-model="drawer3"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      title="分配系统"
+      destroy-on-close
+  >
+    <DeptSystem
+        :select-dept="selectDept"
+    />
+    <template #footer>
+      <el-button plain @click="drawer3=false">取消</el-button>
     </template>
   </el-dialog>
 
@@ -454,6 +479,7 @@ provide('changeSelectPermission', selectPermission)
         <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
         <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
+        <el-button link type="primary" size="small" @click="setSystem(row)">分配系统</el-button>
         <el-button link type="primary" size="small" @click="managePermission(row)">分配权限</el-button>
         <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>

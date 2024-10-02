@@ -9,10 +9,11 @@ import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/main/sysManage/role.ts";
 import { roleFunc, } from "@/api/module/main/sysManage/role.ts"
+import { userDto2 } from "@/type/api/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {
-    type: Object,
+    type: userDto2,
     required: true
   }
 });

@@ -9,7 +9,7 @@ const backHome = () => {
 <template>
   <p>404</p>
   <p></p>
-  <el-button @click="backHome">返回首页</el-button>
+  <el-button @click="backHome">返回主页</el-button>
 </template>
 
 <style scoped>

@@ -10,10 +10,11 @@ import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
 import { userRoleDto } from "@/type/api/main/sysManage/userRole.ts";
 import { pageDto } from "@/type/tablePage.ts";
 import { userDto } from "@/type/api/main/sysManage/user.ts";
+import { roleDto } from "@/type/api/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {
-    type: Object,
+    type: roleDto,
     required: true
   }
 })
