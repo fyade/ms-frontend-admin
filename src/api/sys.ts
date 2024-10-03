@@ -8,6 +8,13 @@ export function getSysVersion() {
   })
 }
 
+export function getSysInfo() {
+  return request({
+    url: '/sys/base/info',
+    method: 'GET'
+  })
+}
+
 export function getPermissions(sysId: number) {
   return request({
     url: `/sys/base/permission/${sysId}`,

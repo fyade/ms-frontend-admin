@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSysStore } from "@/store/module/sys.ts";
-import { getPermissions, getSystems } from "@/api/sys.ts";
+import { getPermissions, getSysInfo, getSystems } from "@/api/sys.ts";
 import { sysDto } from "@/type/api/main/sysManage/sys.ts";
 import { onBeforeUnmount, ref } from "vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
@@ -12,9 +12,24 @@ import router from "@/router";
 import { ElLoading, ElNotification, NotificationHandle } from "element-plus";
 import { useRouterStore } from "@/store/module/router.ts";
 import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
+import Header from "@/layout/sys/header.vue";
 
 const sysStore = useSysStore();
 
+let intervalTimers: number[] = []
+let loading: LoadingInstance | null
+
+// 服务器监控
+const serverMonitor = () => {
+  // const interval = setInterval(() => {
+  //   getSysInfo().then(res => {
+  //   })
+  // }, 1000);
+  // intervalTimers.push(interval)
+}
+serverMonitor()
+
+// 我的资源
 const allSystems = ref<sysDto[]>([])
 const getData = () => {
   allSystems.value = []
@@ -24,11 +39,11 @@ const getData = () => {
 }
 getData()
 
+// 进入资源
 const modules = {
   ...import.meta.glob(`../../views/**/**/**/**.vue`),
   ...import.meta.glob(`../../views/**/**/**.vue`),
 }
-let loading: LoadingInstance | null
 const goToSystem = async (dto: sysDto) => {
   loading = ElLoading.service({
     lock: true,
@@ -88,26 +103,57 @@ const goToSystem = async (dto: sysDto) => {
     }
   }
 }
+
 onBeforeUnmount(() => {
   if (loading) {
     loading.close()
   }
+  intervalTimers.forEach(timer => clearInterval(timer))
 })
 </script>
 
 <template>
-  <!--<div>-->
-  <!--  <p>前端版本：{{ sysStore.version.qd }}</p>-->
-  <!--  <p>后端版本：{{ sysStore.version.hd }}</p>-->
-  <!--</div>-->
-  <el-row :gutter="20">
-    <el-col v-for="item in allSystems" :key="item.id" :span="6">
-      <el-card @click="goToSystem(item)">{{ item.name }}</el-card>
-    </el-col>
-  </el-row>
-
+  <div class="el">
+    <Header style="height: 60px;background-color: #fff;" :if-show-breadcrumb="false"/>
+    <div class="box">
+      <!--我的资源-->
+      <div class="wdzy">
+        <el-divider content-position="left">我的资源</el-divider>
+        <div class="boxs">
+          <el-card shadow="hover" v-for="item in allSystems" :key="item.id" @click="goToSystem(item)">
+            {{ item.name }}
+          </el-card>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.el {
+  min-height: 100vh;
+  background-color: #fafaff;
 
+  > .box {
+    margin: 0 auto;
+    padding: 20px 0;
+    max-width: 1200px;
+  }
+
+  .wdzy {
+    padding: 20px;
+    background-color: #fff;
+
+    > .boxs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+
+      > * {
+        cursor: pointer;
+      }
+    }
+  }
+}
 </style>

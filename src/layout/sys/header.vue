@@ -8,29 +8,38 @@ import { useUserStore } from '@/store/module/user';
 import { fileBaseUrl } from "@/api/request.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 
+const props = defineProps({
+  ifShowBreadcrumb: {
+    type: Boolean,
+    default: true
+  }
+});
+
 const route = useRoute()
 const router = useRouter()
-const routerStore = useRouterStore();
 const userStore = useUserStore()
 const sysStore = useSysStore();
 
 const list = ref<RouteRecordNormalized[]>([])
 
-watch(() => route.path, () => {
-  const menus = routerStore.allMenus2.find(item => item.path === route.path)
-  if (menus) {
-    list.value = menus.ar
-  }
-}, {
-  immediate: true
-})
+if (props.ifShowBreadcrumb) {
+  const routerStore = useRouterStore();
+  watch(() => route.path, () => {
+    const menus = routerStore.allMenus2.find(item => item.path === route.path)
+    if (menus) {
+      list.value = menus.ar
+    }
+  }, {
+    immediate: true
+  })
+}
 </script>
 
 <template>
   <div class="header">
     <div class="left">
       <span>logo</span>
-      <el-breadcrumb :separator-icon="ArrowRight">
+      <el-breadcrumb v-if="props.ifShowBreadcrumb" :separator-icon="ArrowRight">
         <el-breadcrumb-item class="el-breadcrumb-item" to="/">控制台主页</el-breadcrumb-item>
         <el-breadcrumb-item class="el-breadcrumb-item" :to="`/${sysStore.getCurrentSystem.path}`">
           {{ sysStore.getCurrentSystem.name }}首页
