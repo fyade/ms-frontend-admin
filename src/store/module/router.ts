@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import { computed, Ref, ref, watch } from "vue";
+import { computed, Ref, ref } from "vue";
 import router, { routerPinList } from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
-import { RouteRecordName, RouteRecordNormalized, useRoute } from "vue-router";
+import { RouteRecordName, RouteRecordNormalized } from "vue-router";
 import { useSysStore } from "@/store/module/sys.ts";
 import { final } from "@/utils/base.ts";
 
@@ -20,7 +20,9 @@ export const useRouterStore = defineStore('routerStore', () => {
   const allMenus1 = computed<RouteRecordNormalized[]>(() => {
     return router.getRoutes().filter(item => {
       return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
-    }).sort((m1, m2) => m1.meta.orderNum - m2.meta.orderNum)
+    }).sort((m1, m2) => {
+      return (typeof m1.meta.orderNum === 'number' && typeof m2.meta.orderNum === 'number') ? (m1.meta.orderNum - m2.meta.orderNum) : 0
+    })
   })
   const allMenus2 = computed(() => {
     return diguiObjToArr2<RouteRecordNormalized>(allMenus1.value).map(ar => {

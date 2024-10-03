@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { inject, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { State, t_config } from "@/type/tablePage.ts";
 import { sysDto, sysUpdDto } from "@/type/api/main/sysManage/sys.ts";
 import { final, PAGINATION, publicDict } from "@/utils/base.ts";
@@ -133,8 +133,8 @@ const {
 })
 
 class sysDto2 extends sysDto {
-  ifTrue: boolean
-  loading: boolean
+  ifTrue!: boolean
+  loading!: boolean
 }
 
 const allDeptSyss = ref<deptSysDto[]>([])
@@ -152,16 +152,16 @@ const getDeptSyss = () => {
     stateList2.value.forEach(item => item.loading = false)
   })
 }
-const beforeChange = (dto: sysDto2) => {
+const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      deptSysFunc.insertOne({deptId: props.selectDept?.id, sysId: dto.id}).then(res => {
+      deptSysFunc.insertOne({deptId: props.selectDept?.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)
         } else {
-          inject()
+          reject()
         }
       }).finally(() => {
         dto.loading = false
@@ -176,7 +176,7 @@ const beforeChange = (dto: sysDto2) => {
             gRefresh()
             resolve(true)
           } else {
-            inject()
+            reject()
           }
         }).finally(() => {
           dto.loading = false

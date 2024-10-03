@@ -199,7 +199,7 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
 
 const treeShow = ref(true)
 // 系统
-const selectSys = ref<number | null>(null)
+const selectSys = ref<number | undefined>(void 0)
 const allSyss = ref<sysDto[]>([])
 const allSysLoading = ref(false)
 const selAllSyss = () => {

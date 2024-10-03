@@ -134,8 +134,8 @@ const {
 })
 
 class sysDto2 extends sysDto {
-  ifTrue: boolean
-  loading: boolean
+  ifTrue!: boolean
+  loading!: boolean
 }
 
 const allRoleSyss = ref<roleSysDto[]>([])
@@ -153,11 +153,11 @@ const getRoleSyss = () => {
     stateList2.value.forEach(item => item.loading = false)
   })
 }
-const beforeChange = (dto: sysDto2) => {
+const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      roleSysFunc.insertOne({roleId: props.selectRole?.id, sysId: dto.id}).then(res => {
+      roleSysFunc.insertOne({roleId: props.selectRole?.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)

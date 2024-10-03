@@ -9,7 +9,7 @@ export class userRoleDto extends baseClass {
 }
 
 export class userRoleSelDto extends pageDto {
-  roleId?: string
+  roleId?: number
 }
 
 export class userRoleSelAllDto {
