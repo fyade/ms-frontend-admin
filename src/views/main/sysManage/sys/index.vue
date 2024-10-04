@@ -34,6 +34,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     perms: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     path: '',
+    ifDisabled: final.N,
     remark: '',
   },
   dialogForms: [],
@@ -48,6 +49,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     perms: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
     path: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {
@@ -191,6 +193,16 @@ const tDel2 = (value: any) => {
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm['ifDisabled']">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="24">
             <el-form-item :label="state.dict['remark']" prop="remark">
               <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
@@ -268,6 +280,16 @@ const tDel2 = (value: any) => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-path`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['path']" :placeholder="state.dict['path']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="70">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ state.dict['ifDisabled'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -355,6 +377,7 @@ const tDel2 = (value: any) => {
     <el-table-column prop="perms" :label="state.dict['perms']" width="120"/>
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="path" :label="state.dict['path']" width="120"/>
+    <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="120"/>
     <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->

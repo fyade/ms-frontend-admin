@@ -38,6 +38,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     perms: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     path: '',
+    ifDisabled: final.N,
     remark: '',
   },
   dialogForms: [],
@@ -52,6 +53,7 @@ const state = reactive<State<sysDto, sysUpdDto>>({
     perms: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
     path: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
   // 格式: {

@@ -13,7 +13,7 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
+import { roleDto, roleUpdDto } from "@/type/api/main/sysManage/role.ts";
 import { roleFunc } from "@/api/module/main/sysManage/role.ts"
 import {
   rolePermissionSelAll,
@@ -25,7 +25,7 @@ import RolePermission from "@/views/main/sysManage/role/rolePermission.vue";
 import { rolePermissionDto } from "@/type/api/main/sysManage/rolePermission.ts";
 import RoleSystem from "@/views/main/sysManage/role/roleSystem.vue";
 
-const state = reactive<State<roleDto>>({
+const state = reactive<State<roleDto, roleUpdDto>>({
   dialogType: {
     value: '',
     label: ''
@@ -236,12 +236,17 @@ const setSystem = (row: roleDto) => {
 
   <!--弹窗-->
   <el-dialog
-      :width="CONFIG.dialog_width"
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
       :title="state.dialogType.label"
       draggable
       append-to-body
   >
+    <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+    </el-tabs>
+    <template v-if="activeTabName===final.one">
     <el-form
         ref="dialogFormRef"
         v-loading="dialogLoadingRef"
@@ -300,6 +305,84 @@ const setSystem = (row: roleDto) => {
       </el-row>
       <!--在此上方添加表单项-->
     </el-form>
+    </template>
+    <template v-if="activeTabName===final.more">
+      <el-form
+          ref="dialogFormsRef"
+          v-loading="dialogLoadingRef"
+      >
+        <el-table
+            :data="state.dialogForms"
+            v-if="state.dialogForms"
+        >
+          <el-table-column type="index" width="50">
+            <template #header>
+              #
+            </template>
+          </el-table-column>
+          <!--在此下方添加表格列-->
+          <el-table-column prop="label" :label="state.dict['label']" width="300">
+            <template #header>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifAdmin" :label="state.dict['ifAdmin']" width="70">
+            <template #header>
+              <span :class="ifRequired('ifAdmin')?'tp-table-header-required':''">{{ state.dict['ifAdmin'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifAdmin`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['ifAdmin']" :true-value="final.Y" :false-value="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifDisabled" :label="state.dict['ifDisabled']" width="70">
+            <template #header>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ state.dict['ifDisabled'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y" :false-value="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <!--在此上方添加表格列-->
+          <el-table-column fixed="right" label="操作" min-width="120">
+            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
+              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+            </template>
+          </el-table-column>
+          <template v-if="state.dialogType.value===final.ins" #append>
+            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
+          </template>
+        </el-table>
+      </el-form>
+    </template>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dCan">取消</el-button>
@@ -348,14 +431,10 @@ const setSystem = (row: roleDto) => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="state.multipleSelection.length!==1" @click="gUpd">修改
-    </el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
-    </el-button>
-    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">
-      导出
-    </el-button>
-    <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
+    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
 
@@ -409,5 +488,4 @@ const setSystem = (row: roleDto) => {
 </template>
 
 <style scoped>
-
 </style>
