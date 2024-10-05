@@ -19,7 +19,7 @@ export interface State<T = object, T2 = T> {
     [P in keyof T]?: string
   }
   filterForm: {
-    [P in keyof T]?: string
+    [P in keyof T]?: T[P]
   }
   list: T[]
   multipleSelection: T[]
