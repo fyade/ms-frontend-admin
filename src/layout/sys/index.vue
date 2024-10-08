@@ -161,6 +161,7 @@ const sysConfigStore = useSysConfigStore();
     padding: 8px;
     padding-right: 0;
     overflow: auto;
+    background-color: #fafaff;
   }
 
   .main2 {

@@ -8,7 +8,7 @@ import { ElTable, FormRules, TableInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
 import { roleDto } from "@/type/api/main/sysManage/role.ts";
-import { roleFunc, } from "@/api/module/main/sysManage/role.ts"
+import { roleApi, } from "@/api/module/main/sysManage/role.ts"
 import { userDto2 } from "@/type/api/main/sysManage/user.ts";
 
 const props = defineProps({
@@ -134,7 +134,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func: roleFunc
+  func: roleApi
 })
 
 const selectRole: Ref<number[]> | undefined = inject('changeSelectRole')
