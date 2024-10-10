@@ -5,7 +5,7 @@ import {
   deptSysSelAllDto,
   deptSysInsDto,
   deptSysUpdDto
-} from "@/type/api/main/sysManage/deptSys.ts";
+} from "@/type/module/main/sysManage/deptSys.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

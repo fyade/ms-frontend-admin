@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useSysStore } from "@/store/module/sys.ts";
 import { getPermissions, getSysInfo, getSystems } from "@/api/sys.ts";
-import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
 import { onBeforeUnmount, ref } from "vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
-import { menuDto, T_COMP, T_MENU } from "@/type/api/main/sysManage/menu.ts";
+import { menuDto, T_COMP, T_MENU } from "@/type/module/main/sysManage/menu.ts";
 import { final } from "@/utils/base.ts";
 import { RouteRecordNormalized } from "vue-router";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";

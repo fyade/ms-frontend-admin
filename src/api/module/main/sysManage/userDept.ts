@@ -5,7 +5,7 @@ import {
   userDeptSelAllDto,
   userDeptInsDto,
   userDeptUpdDto, userDeptUpdUDDto, userDeptUpdDUDto
-} from "@/type/api/main/sysManage/userDept.ts";
+} from "@/type/module/main/sysManage/userDept.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

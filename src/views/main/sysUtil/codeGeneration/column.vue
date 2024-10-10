@@ -7,13 +7,13 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { codeGenColumnDto } from "@/type/api/main/sysUtil/codeGenColumn.ts";
+import { codeGenColumnDto } from "@/type/module/main/sysUtil/codeGenColumn.ts";
 import { codeGenColumnFunc, } from "@/api/module/main/sysUtil/codeGenColumn.ts"
 import {
   chooseTableTableColInterface,
   chooseTableTableColInterfaceDict,
   chooseTableTableInterface
-} from "@/type/api/main/sysUtil/codeGeneration.ts";
+} from "@/type/module/main/sysUtil/codeGeneration.ts";
 import { getDbInfo } from "@/api/module/main/sysUtil/codeGeneration.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { toCamelCase } from "@/utils/baseUtils.ts";

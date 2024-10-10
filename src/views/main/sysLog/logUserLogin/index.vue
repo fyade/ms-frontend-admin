@@ -13,7 +13,7 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { logUserLoginDto } from "@/type/api/main/sysLog/logUserLogin.ts";
+import { logUserLoginDto } from "@/type/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginFunc } from "@/api/module/main/sysLog/logUserLogin.ts"
 
 const state = reactive<State<logUserLoginDto>>({

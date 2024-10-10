@@ -5,7 +5,7 @@ import {
   interfaceInterfaceGroupSelAllDto,
   interfaceInterfaceGroupInsDto,
   interfaceInterfaceGroupUpdDto, interfaceInterfaceGroupUpdIIGDto, interfaceInterfaceGroupUpdIGIDto
-} from "@/type/api/algorithm/interfaceInterfaceGroup.ts";
+} from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

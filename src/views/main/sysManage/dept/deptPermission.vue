@@ -6,12 +6,12 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { typeOM } from "@/type/utils/base.ts"
-import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/api/main/sysManage/menu.ts";
+import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/module/main/sysManage/menu.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { menuFunc } from "@/api/module/main/sysManage/menu.ts";
 import type Node from "element-plus/es/components/tree/src/model/node";
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { deptDto } from "@/type/module/main/sysManage/dept.ts";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
 
 const props = defineProps({
@@ -211,7 +211,7 @@ const selAllSyss = () => {
     allSysLoading.value = false
   })
 }
-const selectSysChange = (value: number | null) => {
+const selectSysChange = (value: number | undefined) => {
   const v = value || final.DEFAULT_PARENT_ID;
   (config.selectParam as any)['sysId'] = v;
   gRefresh();

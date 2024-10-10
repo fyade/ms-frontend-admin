@@ -5,7 +5,7 @@ import {
   dicDataSelAllDto,
   dicDataInsDto,
   dicDataUpdDto
-} from "@/type/api/main/sysManage/dicData.ts";
+} from "@/type/module/main/sysManage/dicData.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

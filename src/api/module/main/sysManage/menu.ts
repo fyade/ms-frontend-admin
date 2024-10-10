@@ -5,7 +5,7 @@ import {
   menuSelAllDto,
   menuInsDto,
   menuUpdDto
-} from "@/type/api/main/sysManage/menu.ts";
+} from "@/type/module/main/sysManage/menu.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

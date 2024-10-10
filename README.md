@@ -8,6 +8,9 @@
 
 这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js。
 
+版本建议：
+- Node 20.12.0
+
 前端开源地址：
 - https://github.com/fyade/ms-frontend-admin
 - https://gitee.com/fyade/ms-frontend-admin

@@ -7,10 +7,10 @@ import { userUserGroupDel, userUserGroupSel, userUserGroupUpdUGU } from "@/api/m
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
-import { userUserGroupDto } from "@/type/api/algorithm/userUserGroup.ts";
+import { userUserGroupDto } from "@/type/module/algorithm/userUserGroup.ts";
 import { pageDto } from "@/type/tablePage.ts";
-import { userDto } from "@/type/api/main/sysManage/user.ts";
-import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { userDto } from "@/type/module/main/sysManage/user.ts";
+import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
 
 const props = defineProps({
   selectUserGroup: {

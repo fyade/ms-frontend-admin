@@ -13,12 +13,12 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { userGroupFunc } from "@/api/module/algorithm/userGroup.ts"
-import { interfaceGroupDto } from "@/type/api/algorithm/interfaceGroup.ts";
+import { interfaceGroupDto } from "@/type/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts"
 import Divider from "@/views/algorithm/interfacePermission/divider.vue";
-import { userGroupPermissionDto } from "@/type/api/algorithm/userGroupPermission.ts";
+import { userGroupPermissionDto } from "@/type/module/algorithm/userGroupPermission.ts";
 import { userGroupPermissionFunc } from "@/api/module/algorithm/userGroupPermission.ts"
 import { copyObject, deepClone } from "@/utils/ObjectUtils.ts";
 import LogAlgorithmCall from "@/views/algorithm/interfacePermission/logAlgorithmCall.vue";

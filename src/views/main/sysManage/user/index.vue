@@ -14,17 +14,17 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { newUser, resetUserPsd, userFunc } from "@/api/module/main/sysManage/user.ts";
 import UserRole from "./userRole.vue";
-import { userDto, userDto2, userDto_ } from "@/type/api/main/sysManage/user.ts";
+import { userDto, userDto2, userDto_ } from "@/type/module/main/sysManage/user.ts";
 import { userRoleSelAll, userRoleUpdUR } from "@/api/module/main/sysManage/userRole.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import UserDept from "@/views/main/sysManage/user/userDept.vue";
 import { userDeptSelAll, userDeptUpdUD } from "@/api/module/main/sysManage/userDept.ts";
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { deptDto } from "@/type/module/main/sysManage/dept.ts";
+import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import UserUserGroup from "@/views/main/sysManage/user/userUserGroup.vue";
 import { userUserGroupSelAll, userUserGroupUpdUUG } from "@/api/module/algorithm/userUserGroup.ts";
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
+import { roleDto } from "@/type/module/main/sysManage/role.ts";
 
 const state = reactive({
   dialogType: {

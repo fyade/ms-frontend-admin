@@ -5,7 +5,7 @@ import {
   deptPermissionSelAllDto,
   deptPermissionInsDto,
   deptPermissionUpdDto, deptPermissionUpdDPDto
-} from "@/type/api/main/sysManage/deptPermission.ts";
+} from "@/type/module/main/sysManage/deptPermission.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

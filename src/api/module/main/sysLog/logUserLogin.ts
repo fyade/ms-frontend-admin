@@ -5,7 +5,7 @@ import {
   logUserLoginSelAllDto,
   logUserLoginInsDto,
   logUserLoginUpdDto
-} from "@/type/api/main/sysLog/logUserLogin.ts";
+} from "@/type/module/main/sysLog/logUserLogin.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

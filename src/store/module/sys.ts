@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { getSysVersion } from "@/api/sys.ts";
 import { currentVersion } from "../../../config/config.ts";
-import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
 import { copyObject } from "@/utils/ObjectUtils.ts";
 
 export const useSysStore = defineStore('sysStore', () => {

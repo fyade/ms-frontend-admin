@@ -5,7 +5,7 @@ import {
   userRoleSelAllDto,
   userRoleInsDto,
   userRoleUpdDto, userRoleUpdURDto, userRoleUpdRUDto
-} from "@/type/api/main/sysManage/userRole.ts";
+} from "@/type/module/main/sysManage/userRole.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

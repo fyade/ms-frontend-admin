@@ -7,10 +7,10 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { dicDataDto } from "@/type/api/main/sysManage/dicData.ts";
+import { dicDataDto } from "@/type/module/main/sysManage/dicData.ts";
 import { dicDataFunc } from "@/api/module/main/sysManage/dicData.ts"
 import { dicTypeSelAll } from "@/api/module/main/sysManage/dicType.ts";
-import { dicTypeDto } from "@/type/api/main/sysManage/dicType.ts";
+import { dicTypeDto } from "@/type/module/main/sysManage/dicType.ts";
 
 const props = defineProps({
   dicTypeId: {

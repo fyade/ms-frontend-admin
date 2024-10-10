@@ -5,7 +5,7 @@ import {
   logAlgorithmCallSelAllDto,
   logAlgorithmCallInsDto,
   logAlgorithmCallUpdDto
-} from "@/type/api/algorithm/logAlgorithmCall.ts";
+} from "@/type/module/algorithm/logAlgorithmCall.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

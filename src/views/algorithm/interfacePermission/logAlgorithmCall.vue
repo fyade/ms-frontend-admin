@@ -7,7 +7,7 @@ import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts";
-import { logAlgorithmCallDto, logAlgorithmCallUpdDto } from "@/type/api/algorithm/logAlgorithmCall.ts";
+import { logAlgorithmCallDto, logAlgorithmCallUpdDto } from "@/type/module/algorithm/logAlgorithmCall.ts";
 import { logAlgorithmCallFunc } from "@/api/module/algorithm/logAlgorithmCall.ts";
 
 const props = defineProps({

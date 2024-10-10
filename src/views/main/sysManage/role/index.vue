@@ -13,7 +13,7 @@ import { State, State2, t_config, TablePageConfig } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { roleDto, RoleDto, RoleUpdDto } from "@/type/api/main/sysManage/role.ts";
+import { roleDto, RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
 import { roleApi } from "@/api/module/main/sysManage/role.ts"
 import {
   rolePermissionSelAll,
@@ -23,7 +23,7 @@ import {
 import RoleUser from "@/views/main/sysManage/role/roleUser.vue";
 import RolePermission from "@/views/main/sysManage/role/rolePermission.vue";
 import RoleSystem from "@/views/main/sysManage/role/roleSystem.vue";
-import { roleDict } from "@/dict/main/sysManage/role.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
 const state = reactive<State2<RoleDto, RoleUpdDto>>({
   dialogForm: {
@@ -203,64 +203,64 @@ const setSystem = (row: roleDto) => {
       <el-tab-pane :disabled="dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
     <template v-if="activeTabName===final.one">
-    <el-form
-        ref="dialogFormRef"
-        v-loading="dialogLoadingRef"
-        :model="state.dialogForm"
-        :label-width="CONFIG.dialog_form_label_width"
-        :rules="dFormRules"
-    >
-      <el-row v-if="dialogType.value!==final.ins">
-        <el-col :span="24">
-          <el-form-item :label="roleDict.id" prop="id">
-            <span>{{ state.dialogForm['id'] }}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--
-      第一个input添加如下属性
-      v-focus
-      -->
-      <!--在此下方添加表单项-->
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="roleDict.label" prop="label">
-            <el-input v-model="state.dialogForm['label']" :placeholder="roleDict.label"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="roleDict.orderNum" prop="orderNum">
-            <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
-            <el-radio-group v-model="state.dialogForm['ifAdmin']">
-              <el-radio :value="final.Y">是</el-radio>
-              <el-radio :value="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
-            <el-radio-group v-model="state.dialogForm['ifDisabled']">
-              <el-radio :value="final.Y">是</el-radio>
-              <el-radio :value="final.N">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item :label="roleDict.remark" prop="remark">
-            <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="roleDict.remark"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--在此上方添加表单项-->
-    </el-form>
+      <el-form
+          ref="dialogFormRef"
+          v-loading="dialogLoadingRef"
+          :model="state.dialogForm"
+          :label-width="CONFIG.dialog_form_label_width"
+          :rules="dFormRules"
+      >
+        <el-row v-if="dialogType.value!==final.ins">
+          <el-col :span="24">
+            <el-form-item :label="roleDict.id" prop="id">
+              <span>{{ state.dialogForm['id'] }}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--
+        第一个input添加如下属性
+        v-focus
+        -->
+        <!--在此下方添加表单项-->
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="roleDict.label" prop="label">
+              <el-input v-model="state.dialogForm['label']" :placeholder="roleDict.label"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="roleDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
+              <el-radio-group v-model="state.dialogForm['ifAdmin']">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm['ifDisabled']">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="roleDict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="roleDict.remark"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!--在此上方添加表单项-->
+      </el-form>
     </template>
     <template v-if="activeTabName===final.more">
       <el-form
@@ -348,10 +348,9 @@ const setSystem = (row: roleDto) => {
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form">
+  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
     <el-form
         class="demo-form-inline"
-        v-if="Object.keys(state.filterForm).length>0"
         ref="filterFormRef"
         :model="state.filterForm"
         :inline="true"
@@ -364,7 +363,7 @@ const setSystem = (row: roleDto) => {
       </el-form-item>
       <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
         <!--<el-input v-model="state.filterForm['ifAdmin']" :placeholder="roleDict.ifAdmin"/>-->
-        <el-select v-model="state.filterForm['ifAdmin']" :placeholder="roleDict.ifAdmin" clearable filterable>
+        <el-select v-model="state.filterForm.ifAdmin" :placeholder="roleDict.ifAdmin" clearable filterable>
           <el-option label="是" :value="final.Y"/>
           <el-option label="否" :value="final.N"/>
         </el-select>

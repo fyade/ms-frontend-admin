@@ -9,6 +9,9 @@ export class codeGenTableDto extends baseClass {
   tableRemark!: string;
   businessName!: string;
   moduleName!: string;
+  businessNameCn!: string;
+  moduleNameCn!: string;
+  sysId!: number | undefined;
   orderNum!: number;
   remark!: string;
 }
@@ -26,6 +29,9 @@ export class codeGenTableInsDto {
   tableRemark!: string;
   businessName!: string;
   moduleName!: string;
+  businessNameCn!: string;
+  moduleNameCn!: string;
+  sysId!: number | undefined;
   orderNum!: number;
   remark!: string;
 }

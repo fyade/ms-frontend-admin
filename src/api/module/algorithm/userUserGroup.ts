@@ -5,7 +5,7 @@ import {
   userUserGroupSelAllDto,
   userUserGroupInsDto,
   userUserGroupUpdDto, userUserGroupUpdUUGDtp, userUserGroupUpdUGUDtp
-} from "@/type/api/algorithm/userUserGroup.ts";
+} from "@/type/module/algorithm/userUserGroup.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

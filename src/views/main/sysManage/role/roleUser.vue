@@ -7,10 +7,10 @@ import { computed, reactive, ref } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { userRoleDel, userRoleSel, userRoleUpdRU } from "@/api/module/main/sysManage/userRole.ts";
 import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
-import { userRoleDto } from "@/type/api/main/sysManage/userRole.ts";
+import { userRoleDto } from "@/type/module/main/sysManage/userRole.ts";
 import { pageDto } from "@/type/tablePage.ts";
-import { userDto } from "@/type/api/main/sysManage/user.ts";
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
+import { userDto } from "@/type/module/main/sysManage/user.ts";
+import { roleDto } from "@/type/module/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {

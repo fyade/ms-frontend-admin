@@ -13,7 +13,7 @@ import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts";
-import { logOperationDto, logOperationUpdDto } from "@/type/api/main/sysLog/logOperation.ts";
+import { logOperationDto, logOperationUpdDto } from "@/type/module/main/sysLog/logOperation.ts";
 import { logOperationFunc } from "@/api/module/main/sysLog/logOperation.ts";
 
 const state = reactive<State<logOperationDto, logOperationUpdDto>>({

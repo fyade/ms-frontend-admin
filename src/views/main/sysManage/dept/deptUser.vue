@@ -7,10 +7,10 @@ import { computed, reactive, ref } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { userDeptDel, userDeptSel, userDeptUpdDU } from "@/api/module/main/sysManage/userDept.ts";
 import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
-import { userDeptDto } from "@/type/api/main/sysManage/userDept.ts";
+import { userDeptDto } from "@/type/module/main/sysManage/userDept.ts";
 import { pageDto } from "@/type/tablePage.ts";
-import { userDto } from "@/type/api/main/sysManage/user.ts";
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
+import { userDto } from "@/type/module/main/sysManage/user.ts";
+import { deptDto } from "@/type/module/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {

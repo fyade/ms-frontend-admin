@@ -3,7 +3,7 @@ import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle } from "element-plus";
 import { useRoute } from "vue-router";
-import { loginDto, userDto } from "@/type/api/main/sysManage/user.ts";
+import { loginDto, userDto } from "@/type/module/main/sysManage/user.ts";
 import { loginApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";

@@ -13,7 +13,7 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { userGroupFunc } from "@/api/module/algorithm/userGroup.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import UserGroupUser from "@/views/algorithm/userGroup/userGroupUser.vue";

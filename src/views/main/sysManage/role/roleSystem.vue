@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
+import { roleDto } from "@/type/module/main/sysManage/role.ts";
 import { computed, reactive, ref } from "vue";
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
@@ -8,10 +8,10 @@ import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { typeOM } from "@/type/utils/base.ts";
-import { sysDto, sysUpdDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto, sysUpdDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
 import { roleSysFunc } from "@/api/module/main/sysManage/roleSys.ts";
-import { roleSysDto } from "@/type/api/main/sysManage/roleSys.ts";
+import { roleSysDto } from "@/type/module/main/sysManage/roleSys.ts";
 
 const props = defineProps({
   selectRole: {

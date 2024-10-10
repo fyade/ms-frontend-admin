@@ -6,10 +6,10 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules, TreeInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { deptDto, deptUpdDto } from "@/type/api/main/sysManage/dept.ts";
+import { deptDto, deptUpdDto } from "@/type/module/main/sysManage/dept.ts";
 import { deptFunc, } from "@/api/module/main/sysManage/dept.ts"
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { userDto2 } from "@/type/api/main/sysManage/user.ts";
+import { userDto2 } from "@/type/module/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {

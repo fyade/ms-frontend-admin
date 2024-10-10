@@ -5,7 +5,7 @@ import {
   codeGenTableSelAllDto,
   codeGenTableInsDto,
   codeGenTableUpdDto
-} from "@/type/api/main/sysUtil/codeGenTable.ts";
+} from "@/type/module/main/sysUtil/codeGenTable.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

@@ -7,11 +7,11 @@ import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules, TreeInstance } from 'element-plus';
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts";
-import { interfaceGroupDto, interfaceGroupUpdDto } from "@/type/api/algorithm/interfaceGroup.ts";
+import { interfaceGroupDto, interfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts";
-import { interfaceDto } from "@/type/api/algorithm/interface.ts";
+import { interfaceDto } from "@/type/module/algorithm/interface.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { interfaceInterfaceGroupDto } from "@/type/api/algorithm/interfaceInterfaceGroup.ts";
+import { interfaceInterfaceGroupDto } from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
 
 const props = defineProps({
   interface: {

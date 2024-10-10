@@ -7,9 +7,9 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { ElTable, FormRules, TableInstance } from 'element-plus'
 import { Refresh } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
+import { roleDto } from "@/type/module/main/sysManage/role.ts";
 import { roleApi, } from "@/api/module/main/sysManage/role.ts"
-import { userDto2 } from "@/type/api/main/sysManage/user.ts";
+import { userDto2 } from "@/type/module/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {

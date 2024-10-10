@@ -1,5 +1,5 @@
 import request from "@/api/request.ts";
-import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
 
 export function getSysVersion() {
   return request({

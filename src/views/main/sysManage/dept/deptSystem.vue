@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
+import { deptDto } from "@/type/module/main/sysManage/dept.ts";
 import { reactive, ref } from "vue";
 import { State, t_config } from "@/type/tablePage.ts";
-import { sysDto, sysUpdDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto, sysUpdDto } from "@/type/module/main/sysManage/sys.ts";
 import { final, PAGINATION, publicDict } from "@/utils/base.ts";
 import type { FormRules } from "element-plus";
 import { typeOM } from "@/type/utils/base.ts";
 import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
 import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
-import { deptSysDto } from "@/type/api/main/sysManage/deptSys.ts";
+import { deptSysDto } from "@/type/module/main/sysManage/deptSys.ts";
 import { deptSysFunc } from "@/api/module/main/sysManage/deptSys.ts";
 import { Refresh } from "@element-plus/icons-vue";
 

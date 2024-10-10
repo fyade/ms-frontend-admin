@@ -5,7 +5,7 @@ import {
   rolePermissionSelAllDto,
   rolePermissionInsDto,
   rolePermissionUpdDto, rolePermissionUpdRpDto
-} from "@/type/api/main/sysManage/rolePermission.ts";
+} from "@/type/module/main/sysManage/rolePermission.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

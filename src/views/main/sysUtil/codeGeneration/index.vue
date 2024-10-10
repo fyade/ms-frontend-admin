@@ -13,11 +13,13 @@ import { State, t_config } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { codeGenTableDto } from "@/type/api/main/sysUtil/codeGenTable.ts";
+import { codeGenTableDto } from "@/type/module/main/sysUtil/codeGenTable.ts";
 import { codeGenTableFunc } from "@/api/module/main/sysUtil/codeGenTable.ts"
-import { chooseTableTableInterface } from "@/type/api/main/sysUtil/codeGeneration.ts";
+import { chooseTableTableInterface } from "@/type/module/main/sysUtil/codeGeneration.ts";
 import { genCode, genCodeZip, getDbInfo } from "@/api/module/main/sysUtil/codeGeneration.ts";
 import Column from "@/views/main/sysUtil/codeGeneration/column.vue";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
+import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
 
 const state = reactive<State<codeGenTableDto>>({
   dialogType: {
@@ -39,6 +41,9 @@ const state = reactive<State<codeGenTableDto>>({
     tableRemark: '',
     businessName: '',
     moduleName: '',
+    businessNameCn: '',
+    moduleNameCn: '',
+    sysId: void 0,
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
@@ -53,8 +58,9 @@ const state = reactive<State<codeGenTableDto>>({
     tableName: [{required: true, trigger: 'change'}],
     tableDescr: [{required: true, trigger: 'change'}],
     entityName: [{required: true, trigger: 'change'}],
-    businessName: [{required: true, trigger: 'change'}],
     moduleName: [{required: true, trigger: 'change'}],
+    moduleNameCn: [{required: true, trigger: 'change'}],
+    sysId: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
   } as FormRules,
   // 字典
@@ -71,6 +77,9 @@ const state = reactive<State<codeGenTableDto>>({
     tableRemark: '表备注',
     businessName: '业务名',
     moduleName: '模块名',
+    businessNameCn: '业务名中文',
+    moduleNameCn: '模块名中文',
+    sysId: '所属系统',
   },
   // 筛选表单
   // 格式: {
@@ -114,6 +123,9 @@ const config: t_config = reactive({
   },
   activeTabMoreDelCallback: index => {
     activeTabMoreDel(index)
+  },
+  selectListCallback: () => {
+    getAllSyss()
   }
 })
 
@@ -151,6 +163,14 @@ const {
   activeTabName,
   func: codeGenTableFunc
 })
+
+const allSyss = ref<sysDto[]>([])
+const getAllSyss = () => {
+  allSyss.value = []
+  sysFunc.selectAll({}).then(res => {
+    allSyss.value = res
+  })
+}
 
 const tablesList = ref<chooseTableTableInterface[]>([])
 tablesList.value = []
@@ -193,28 +213,21 @@ const setColumnInfo = (rowid: number) => {
 
 const dialog3Visible = ref(false)
 
-interface CodeViewState {
-  fileNames: { [key: string]: string }
-  filePaths: { [key: string]: string }
-  codes: { [key: string]: string }
+interface CodeView {
+  fileName: string
+  filePath: string
+  canCopy: boolean
+  code: string
 }
 
-const codeViewState = reactive<CodeViewState>({
-  fileNames: {},
-  filePaths: {},
-  codes: {}
-})
+const codeViewState = ref<CodeView[]>([])
 const activeNameOfCodeView = ref('')
 const codeView = (rowId: number) => {
-  codeViewState.fileNames = {}
-  codeViewState.filePaths = {}
-  codeViewState.codes = {}
+  codeViewState.value = []
   genCode(rowId).then(res => {
     for (let key0 in codeViewState) {
-      if (res.cgRes && res.cgRes.hasOwnProperty(key0)) {
-        for (let key1 in res.cgRes[key0]) {
-          codeViewState[key0 as keyof CodeViewState][key1] = res.cgRes[key0][key1]
-        }
+      if (res.cgRes) {
+        codeViewState.value = res.cgRes
       }
     }
     dialog3Visible.value = true
@@ -224,13 +237,13 @@ const codeViewZip = (rowId: number) => {
   genCodeZip(rowId).then(res => {
   })
 }
-const copyCode = async (key: string) => {
-  const code = codeViewState.codes[key]
+const copyCode = async (index: number) => {
+  const code = codeViewState.value[index].code
   await navigator.clipboard.writeText(code)
   ElMessage.success('复制成功。')
 }
-const copyFileName = async (key: string) => {
-  const code = codeViewState.fileNames[key]
+const copyFileName = async (index: number) => {
+  const code = codeViewState.value[index].fileName
   await navigator.clipboard.writeText(code)
   ElMessage.success('复制成功。')
 }
@@ -276,17 +289,17 @@ const gUpd2 = () => {
       append-to-body
   >
     <el-tabs>
-      <el-tab-pane v-for="key in Object.keys(codeViewState.fileNames)" :label="codeViewState.fileNames[key]">
-        <div>文件路径：{{ codeViewState.filePaths[key] }}/{{ codeViewState.fileNames[key] }}</div>
+      <el-tab-pane v-for="(item, index) in codeViewState" :key="index" :label="item.fileName">
+        <div>文件路径：{{ item.filePath }}/{{ item.fileName }}</div>
         <div>
           <el-divider content-position="left">
             <el-space wrap>
               代码内容⬇
-              <el-button text bg @click="copyFileName(key)">复制文件名</el-button>
-              <el-button text bg @click="copyCode(key)">复制代码</el-button>
+              <el-button v-if="item.canCopy" text bg @click="copyFileName(index)">复制文件名</el-button>
+              <el-button v-if="item.canCopy" text bg @click="copyCode(index)">复制代码</el-button>
             </el-space>
           </el-divider>
-          <pre>{{ codeViewState.codes[key] }}</pre>
+          <pre>{{ item.code }}</pre>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -341,6 +354,15 @@ const gUpd2 = () => {
         v-focus
         -->
         <!--在此下方添加表单项-->
+        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="state.dict['sysId']" prop="sysId">
+              <el-select v-model="state.dialogForm['sysId']" :placeholder="state.dict['sysId']" clearable>
+                <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="表选择方式">
@@ -416,6 +438,18 @@ const gUpd2 = () => {
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['businessNameCn']" prop="businessNameCn">
+              <el-input v-model="state.dialogForm['businessNameCn']" :placeholder="state.dict['businessNameCn']"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="state.dict['moduleNameCn']" prop="moduleNameCn">
+              <el-input v-model="state.dialogForm['moduleNameCn']" :placeholder="state.dict['moduleNameCn']"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="24">
             <el-form-item :label="state.dict['tableRemark']" prop="tableRemark">
               <el-input type="textarea" v-model="state.dialogForm['tableRemark']" :placeholder="state.dict['tableRemark']"/>
@@ -468,6 +502,21 @@ const gUpd2 = () => {
           <!--  </template>-->
           <!--</el-table-column>-->
           <!--在此下方添加表格列-->
+          <el-table-column prop="sysId" :label="state.dict['sysId']" width="300">
+            <template #header>
+              <span :class="ifRequired('sysId')?'tp-table-header-required':''">{{ state.dict['sysId'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-sysId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-input v-model="state.dialogForms[$index]['']" :placeholder="state.dict['']"/>-->
+                <el-form-item :label="state.dict['sysId']" prop="sysId">
+                  <el-select v-model="state.dialogForms[$index]['sysId']" :placeholder="state.dict['sysId']" clearable>
+                    <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="表选择方式" width="300">
             <template #default="{$index}">
               <div>
@@ -552,10 +601,8 @@ const gUpd2 = () => {
               </Tooltip>
             </template>
             <template #default="{$index}">
-              <div
-                  :class="state.dialogForms_error?.[`${$index}-businessName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['businessName']"
-                          :placeholder="state.dict['businessName']"/>
+              <div :class="state.dialogForms_error?.[`${$index}-businessName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['businessName']" :placeholder="state.dict['businessName']"/>
               </div>
             </template>
           </el-table-column>
@@ -568,9 +615,36 @@ const gUpd2 = () => {
               </Tooltip>
             </template>
             <template #default="{$index}">
-              <div
-                  :class="state.dialogForms_error?.[`${$index}-moduleName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+              <div :class="state.dialogForms_error?.[`${$index}-moduleName`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index]['moduleName']" :placeholder="state.dict['moduleName']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="businessNameCn" :label="state.dict['businessNameCn']" width="300">
+            <template #header>
+              <Tooltip content="这里需使用小驼峰命名法。">
+                <span :class="ifRequired('businessNameCn')?'tp-table-header-required':''">
+                  {{ state.dict['businessNameCn'] }}
+                </span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-businessNameCn`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['businessNameCn']" :placeholder="state.dict['businessNameCn']"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="moduleNameCn" :label="state.dict['moduleNameCn']" width="300">
+            <template #header>
+              <Tooltip content="这里需使用小驼峰命名法。">
+                <span :class="ifRequired('moduleNameCn')?'tp-table-header-required':''">
+                  {{ state.dict['moduleNameCn'] }}
+                </span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-moduleNameCn`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['moduleNameCn']" :placeholder="state.dict['moduleNameCn']"/>
               </div>
             </template>
           </el-table-column>
@@ -686,6 +760,8 @@ const gUpd2 = () => {
     <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
     <el-table-column prop="businessName" :label="state.dict['businessName']" width="180"/>
     <el-table-column prop="moduleName" :label="state.dict['moduleName']" width="180"/>
+    <el-table-column prop="businessNameCn" :label="state.dict['businessNameCn']" width="180"/>
+    <el-table-column prop="moduleNameCn" :label="state.dict['moduleNameCn']" width="180"/>
     <el-table-column prop="tableRemark" :label="state.dict['tableRemark']" width="150"/>
     <!--在此上方添加表格列-->
     <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->

@@ -13,12 +13,12 @@ import { State, t_config } from "@/type/tablePage.ts"
 import { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload, Sort } from "@element-plus/icons-vue";
 import { typeOM } from "@/type/utils/base.ts"
-import { menuDto, menuUpdDto, tType, T_MENU, T_COMP, T_IS, T_Inter } from "@/type/api/main/sysManage/menu.ts";
+import { menuDto, menuUpdDto, tType, T_MENU, T_COMP, T_IS, T_Inter } from "@/type/module/main/sysManage/menu.ts";
 import { menuFunc } from "@/api/module/main/sysManage/menu.ts"
 import { useRouterStore } from "@/store/module/router.ts";
 import { copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { sysDto } from "@/type/api/main/sysManage/sys.ts";
+import { sysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
 
 const state = reactive<State<menuDto, menuDto>>({
@@ -416,7 +416,7 @@ const selAllSyss = () => {
     allSysLoading.value = false
   })
 }
-const selectSysChange = (value: number | null) => {
+const selectSysChange = (value: number | undefined) => {
   const selectSys = value || final.DEFAULT_PARENT_ID;
   state.dialogForm['sysId'] = selectSys;
   stateInter.dialogForm['sysId'] = selectSys;

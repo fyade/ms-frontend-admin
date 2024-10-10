@@ -5,7 +5,7 @@ import {
   userGroupPermissionSelAllDto,
   userGroupPermissionInsDto,
   userGroupPermissionUpdDto
-} from "@/type/api/algorithm/userGroupPermission.ts";
+} from "@/type/module/algorithm/userGroupPermission.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

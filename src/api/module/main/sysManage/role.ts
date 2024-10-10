@@ -1,6 +1,6 @@
 import request from "@/api/request.ts";
-import { RoleDto, RoleUpdDto } from "@/type/api/main/sysManage/role.ts";
 import { ApiConfig } from "@/type/tablePage.ts";
+import { RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
 
 export const roleApi: ApiConfig<RoleDto, RoleUpdDto> = {
   /**

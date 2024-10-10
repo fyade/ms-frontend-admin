@@ -5,7 +5,7 @@ import {
   dicTypeSelAllDto,
   dicTypeInsDto,
   dicTypeUpdDto
-} from "@/type/api/main/sysManage/dicType.ts";
+} from "@/type/module/main/sysManage/dicType.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

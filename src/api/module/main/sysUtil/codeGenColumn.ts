@@ -5,7 +5,7 @@ import {
   codeGenColumnSelAllDto,
   codeGenColumnInsDto,
   codeGenColumnUpdDto
-} from "@/type/api/main/sysUtil/codeGenColumn.ts";
+} from "@/type/module/main/sysUtil/codeGenColumn.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

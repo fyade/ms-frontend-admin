@@ -5,7 +5,7 @@ import {
   roleSysSelAllDto,
   roleSysInsDto,
   roleSysUpdDto
-} from "@/type/api/main/sysManage/roleSys.ts";
+} from "@/type/module/main/sysManage/roleSys.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

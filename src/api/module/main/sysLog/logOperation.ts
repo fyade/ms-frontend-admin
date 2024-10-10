@@ -5,7 +5,7 @@ import {
   logOperationSelAllDto,
   logOperationInsDto,
   logOperationUpdDto
-} from "@/type/api/main/sysLog/logOperation.ts";
+} from "@/type/module/main/sysLog/logOperation.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

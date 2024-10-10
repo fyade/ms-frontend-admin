@@ -5,7 +5,7 @@ import {
   userSelAllDto,
   userInsDto,
   userUpdDto, registDto, loginDto, userUpdPsdDto, adminResetUserPsdDto
-} from "@/type/api/main/sysManage/user.ts";
+} from "@/type/module/main/sysManage/user.ts";
 import {
   t_funcMap,
   t_funcMap_selList_ret,

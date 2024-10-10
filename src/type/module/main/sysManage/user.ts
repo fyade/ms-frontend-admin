@@ -1,8 +1,8 @@
 import { pageDto } from "@/type/tablePage.ts";
 import { baseClass } from "@/utils/base.ts";
-import { roleDto } from "@/type/api/main/sysManage/role.ts";
-import { deptDto } from "@/type/api/main/sysManage/dept.ts";
-import { userGroupDto } from "@/type/api/algorithm/userGroup.ts";
+import { roleDto } from "@/type/module/main/sysManage/role.ts";
+import { deptDto } from "@/type/module/main/sysManage/dept.ts";
+import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
 
 export class userDto extends baseClass {
   id!: string;
