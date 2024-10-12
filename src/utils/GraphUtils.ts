@@ -1,8 +1,3 @@
-export class xy {
-  x!: number
-  y!: number
-}
-
 /**
  * 已知矩形中心点坐标、长、宽、顺时针旋转角度，求新的左上角点的坐标
  * @param centerX

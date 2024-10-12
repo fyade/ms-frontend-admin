@@ -1,40 +1,27 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config } from "@/type/tablePage.ts"
-import { ElMessageBox, FormRules } from 'element-plus'
-import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { interfaceDto, interfaceUpdDto } from "@/type/module/algorithm/interface.ts";
-import { interfaceFunc, } from "@/api/module/algorithm/interface.ts"
-import { interfaceInterfaceGroupDto } from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
-import {
-  interfaceInterfaceGroupFunc,
-  interfaceInterfaceGroupUpdIGI,
-} from "@/api/module/algorithm/interfaceInterfaceGroup.ts"
-import { interfaceGroupDto } from "@/type/module/algorithm/interfaceGroup.ts";
+import { CONFIG, final } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { InterfaceDto, InterfaceUpdDto } from "@/type/module/algorithm/interface.ts";
+import { interfaceApi } from "@/api/module/algorithm/interface.ts";
+import { interfaceDict } from "@/dict/module/algorithm/interface.ts";
+import { interfaceInterfaceGroupApi, interfaceInterfaceGroupUpdIGI } from "@/api/module/algorithm/interfaceInterfaceGroup.ts"
+import { InterfaceGroupDto } from "@/type/module/algorithm/interfaceGroup.ts";
+import { interfaceInterfaceGroupDict } from "@/dict/module/algorithm/interfaceInterfaceGroup.ts";
+import { InterfaceInterfaceGroupDto, InterfaceInterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
 
 const props = defineProps({
   selectInterfaceGroupInfo: {
-    type: interfaceGroupDto,
+    type: InterfaceGroupDto,
     required: true
   }
 });
 
-const interfaceInterfaceGroupState = reactive<State<interfaceInterfaceGroupDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const interfaceInterfaceGroupState = reactive<State2<InterfaceInterfaceGroupDto, InterfaceInterfaceGroupUpdDto>>({
   dialogForm: {
     id: -1,
     interfaceId: -1,
@@ -43,68 +30,39 @@ const interfaceInterfaceGroupState = reactive<State<interfaceInterfaceGroupDto>>
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    interfaceId: [{required: true, trigger: 'change'}],
-    interfaceGroupId: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    interfaceId: '接口',
-    interfaceGroupId: '接口组',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const interfaceInterfaceGroupState2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const interfaceInterfaceGroupDialogFormRef = ref(null)
-const interfaceInterfaceGroupDialogFormsRef = ref(null)
-const interfaceInterfaceGroupFilterFormRef = ref(null)
-const interfaceInterfaceGroupDialogVisible = ref(false)
-const interfaceInterfaceGroupDialogLoadingRef = ref(false)
-const interfaceInterfaceGroupTableLoadingRef = ref(false)
-const interfaceInterfaceGroupSwitchLoadingRef = ref(false)
-const interfaceInterfaceGroupActiveTabName = ref<typeOM>(final.one)
-const interfaceInterfaceGroupConfig: t_config = reactive({
+const interfaceInterfaceGroupDFormRules: FormRules = {
+  interfaceId: [{required: true, trigger: 'change'}],
+  interfaceGroupId: [{required: true, trigger: 'change'}],
+}
+const interfaceInterfaceGroupConfig = new TablePageConfig({
+  bulkOperation: true,
   selectParam: {
     interfaceGroupId: props.selectInterfaceGroupInfo.id
-  }, // 查询参数（补充
-  /**
-   * selectList回调，可不传
-   */
+  },
   selectListCallback: () => {
-    const interfaceIds = interfaceInterfaceGroupState.list.map(item => item.interfaceId);
-    interfaceFunc.selectByIds(interfaceIds).then(res => {
+    const interfaceIds = interfaceInterfaceGroupTableData.value.map(item => item.interfaceId);
+    interfaceApi.selectByIds(interfaceIds).then(res => {
       interfacesOfSelectInterfaceGroup.value = res
     })
   },
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
 
 const {
+  dialogFormRef: interfaceInterfaceGroupDialogFormRef,
+  dialogFormsRef: interfaceInterfaceGroupDialogFormsRef,
+  filterFormRef: interfaceInterfaceGroupFilterFormRef,
+  dialogVisible: interfaceInterfaceGroupDialogVisible,
+  dialogLoadingRef: interfaceInterfaceGroupDialogLoadingRef,
+  tableLoadingRef: interfaceInterfaceGroupTableLoadingRef,
+  switchLoadingRef: interfaceInterfaceGroupSwitchLoadingRef,
+  activeTabName: interfaceInterfaceGroupActiveTabName,
+  tableData: interfaceInterfaceGroupTableData,
+  pageParam: interfaceInterfaceGroupPageParam,
+  total: interfaceInterfaceGroupTotal,
+  multipleSelection: interfaceInterfaceGroupMultipleSelection,
+  dialogType: interfaceInterfaceGroupDialogType,
   refresh: interfaceInterfaceGroupRefresh,
   dCan: interfaceInterfaceGroupDCan,
   dCon: interfaceInterfaceGroupDCon,
@@ -123,34 +81,16 @@ const {
   pageChange: interfaceInterfaceGroupPageChange,
   dfIns: interfaceInterfaceGroupDfIns,
   dfDel: interfaceInterfaceGroupDfDel,
-  ifRequired: interfaceInterfaceGroupIfRequired
-} = funcTablePage({
-  config: interfaceInterfaceGroupConfig,
+  ifRequired: interfaceInterfaceGroupIfRequired,
+} = funcTablePage<InterfaceInterfaceGroupDto, InterfaceInterfaceGroupUpdDto>({
   state: interfaceInterfaceGroupState,
-  state2: interfaceInterfaceGroupState2,
-  dialogFormRef: interfaceInterfaceGroupDialogFormRef,
-  dialogFormsRef: interfaceInterfaceGroupDialogFormsRef,
-  filterFormRef: interfaceInterfaceGroupFilterFormRef,
-  dialogVisible: interfaceInterfaceGroupDialogVisible,
-  dialogLoadingRef: interfaceInterfaceGroupDialogLoadingRef,
-  tableLoadingRef: interfaceInterfaceGroupTableLoadingRef,
-  switchLoadingRef: interfaceInterfaceGroupSwitchLoadingRef,
-  activeTabName: interfaceInterfaceGroupActiveTabName,
-  func: interfaceInterfaceGroupFunc
+  dFormRules: interfaceInterfaceGroupDFormRules,
+  config: interfaceInterfaceGroupConfig,
+  api: interfaceInterfaceGroupApi,
+  dict: interfaceInterfaceGroupDict,
 })
 
-const interfaceState = reactive<State<interfaceDto, interfaceUpdDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const interfaceState = reactive<State2<InterfaceDto, InterfaceUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -164,69 +104,40 @@ const interfaceState = reactive<State<interfaceDto, interfaceUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-    ifPublic: [{required: true, trigger: 'change'}],
-    perms: [{required: true, trigger: 'change'}],
-    url: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '接口名',
-    icon: '图标',
-    ifPublic: '是否公共接口',
-    perms: '权限标识',
-    url: '请求url',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {
     label: '',
     ifDisabled: '',
     ifPublic: '',
     perms: '',
   },
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const interfaceState2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const interfaceDialogFormRef = ref(null)
-const interfaceDialogFormsRef = ref(null)
-const interfaceFilterFormRef = ref(null)
-const interfaceDialogVisible = ref(false)
-const interfaceDialogLoadingRef = ref(false)
-const interfaceTableLoadingRef = ref(false)
-const interfaceSwitchLoadingRef = ref(false)
-const interfaceActiveTabName = ref<typeOM>(final.one)
-const interfaceConfig: t_config = reactive({
-  getDataOnMounted: false, // 页面加载时获取数据，默认true
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const interfaceDFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+  ifPublic: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
+  url: [{required: true, trigger: 'change'}],
+}
+const interfaceConfig = new TablePageConfig({
+  bulkOperation: true,
+  getDataOnMounted: false,
 })
 
 const {
+  dialogFormRef: interfaceDialogFormRef,
+  dialogFormsRef: interfaceDialogFormsRef,
+  filterFormRef: interfaceFilterFormRef,
+  dialogVisible: interfaceDialogVisible,
+  dialogLoadingRef: interfaceDialogLoadingRef,
+  tableLoadingRef: interfaceTableLoadingRef,
+  switchLoadingRef: interfaceSwitchLoadingRef,
+  activeTabName: interfaceActiveTabName,
+  tableData: interfaceTableData,
+  pageParam: interfacePageParam,
+  total: interfaceTotal,
+  multipleSelection: interfaceMultipleSelection,
+  dialogType: interfaceDialogType,
   refresh: interfaceRefresh,
   dCan: interfaceDCan,
   dCon: interfaceDCon,
@@ -245,34 +156,27 @@ const {
   pageChange: interfacePageChange,
   dfIns: interfaceDfIns,
   dfDel: interfaceDfDel,
-  ifRequired: interfaceIfRequired
-} = funcTablePage({
-  config: interfaceConfig,
+  ifRequired: interfaceIfRequired,
+} = funcTablePage<InterfaceDto, InterfaceUpdDto>({
   state: interfaceState,
-  state2: interfaceState2,
-  dialogFormRef: interfaceDialogFormRef,
-  dialogFormsRef: interfaceDialogFormsRef,
-  filterFormRef: interfaceFilterFormRef,
-  dialogVisible: interfaceDialogVisible,
-  dialogLoadingRef: interfaceDialogLoadingRef,
-  tableLoadingRef: interfaceTableLoadingRef,
-  switchLoadingRef: interfaceSwitchLoadingRef,
-  activeTabName: interfaceActiveTabName,
-  func: interfaceFunc
+  dFormRules: interfaceDFormRules,
+  config: interfaceConfig,
+  api: interfaceApi,
+  dict: interfaceDict,
 })
 
 const selectInterfaceModel = ref(false)
-const interfacesOfSelectInterfaceGroup = ref<interfaceDto[]>([])
+const interfacesOfSelectInterfaceGroup = ref<InterfaceDto[]>([])
 const beforeAddInterface = () => {
   selectInterfaceModel.value = true
   interfaceRefresh()
 }
 const gdelInterfaceInterfaceGroup = () => {
-  const delIds = interfaceInterfaceGroupState.list.filter(item => interfaceInterfaceGroupState.multipleSelection.map(item => item.id).indexOf(item.interfaceId) > -1).map(item => item.id);
+  const delIds = interfaceInterfaceGroupTableData.value.filter(item => interfaceInterfaceGroupMultipleSelection.value.map(item => item.id).indexOf(item.interfaceId) > -1).map(item => item.id);
   delInterfaceInterfaceGroup(delIds)
 }
 const tdelInterfaceInterfaceGroup = (interfaceId: number) => {
-  const delIds = interfaceInterfaceGroupState.list.filter(item => item.interfaceId === interfaceId).map(item => item.id);
+  const delIds = interfaceInterfaceGroupTableData.value.filter(item => item.interfaceId === interfaceId).map(item => item.id);
   delInterfaceInterfaceGroup(delIds)
 }
 const delInterfaceInterfaceGroup = (delIds: number[]) => {
@@ -286,7 +190,7 @@ const delInterfaceInterfaceGroup = (delIds: number[]) => {
         draggable: true
       }
   ).then(() => {
-    interfaceInterfaceGroupFunc.deleteList(...delIds).then(res => {
+    interfaceInterfaceGroupApi.deleteList(...delIds).then(res => {
       if (res) {
         interfaceInterfaceGroupRefresh()
       }
@@ -297,7 +201,7 @@ const cancelAddInterfaceInterfaceGroup = () => {
   selectInterfaceModel.value = false
 }
 const confirmAddInterfaceInterfaceGroup = () => {
-  const selectInterfaceIds = interfaceState.multipleSelection.map(item => item.id);
+  const selectInterfaceIds = interfaceMultipleSelection.value.map(item => item.id);
   const data = {
     interfaceGroupId: props.selectInterfaceGroupInfo.id,
     interfaceId: selectInterfaceIds
@@ -337,87 +241,86 @@ const confirmAddInterfaceInterfaceGroup = () => {
   </el-divider>
 
   <!--顶部筛选表单-->
-  <el-form
-      class="demo-form-inline"
-      v-if="Object.keys(interfaceInterfaceGroupState.filterForm).length>0"
-      ref="interfaceInterfaceGroupFilterFormRef"
-      :model="interfaceInterfaceGroupState.filterForm"
-      :inline="true"
-      @keyup.enter="interfaceInterfaceGroupFEnter"
-      @submit.prevent
-  >
-    <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
-    <!--在此上方添加表单项-->
-    <el-form-item>
-      <el-button type="primary" @click="interfaceInterfaceGroupFCon">筛选</el-button>
-      <el-button @click="interfaceInterfaceGroupFCan">重置</el-button>
-    </el-form-item>
-  </el-form>
+  <div class="zs-filter-form" v-if="Object.keys(interfaceInterfaceGroupState.filterForm).length>0">
+    <el-form
+        class="demo-form-inline"
+        ref="interfaceInterfaceGroupFilterFormRef"
+        :model="interfaceInterfaceGroupState.filterForm"
+        :inline="true"
+        @keyup.enter="interfaceInterfaceGroupFEnter"
+        @submit.prevent
+    >
+      <!--在此下方添加表单项-->
+      <!--<el-form-item :label="interfaceInterfaceGroupDict." prop="">-->
+      <!--  <el-input v-model="interfaceInterfaceGroupDict.filterForm." :placeholder="interfaceInterfaceGroupDict."/>-->
+      <!--</el-form-item>-->
+      <!--在此上方添加表单项-->
+      <el-form-item>
+        <el-button type="primary" @click="interfaceInterfaceGroupFCon">筛选</el-button>
+        <el-button @click="interfaceInterfaceGroupFCan">重置</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 
   <!--操作按钮-->
-  <div>
+  <div class="zs-button-row">
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="interfaceInterfaceGroupGRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="beforeAddInterface">添加接口</el-button>
     <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <el-button type="danger" plain :icon="Delete" :disabled="interfaceInterfaceGroupState.multipleSelection.length===0"
-               @click="gdelInterfaceInterfaceGroup">移除接口
-    </el-button>
-    <!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>-->
+    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?interfaceInterfaceGroupMultipleSelection.length===0:interfaceInterfaceGroupMultipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+    <el-button type="danger" plain :icon="Delete" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gdelInterfaceInterfaceGroup">移除接口</el-button>
+    <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gExport()">导出</el-button>-->
+    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     <!--</el-button-group>-->
   </div>
 
-  <!--数据表格-->
-  <el-table
-      v-loading="interfaceInterfaceGroupTableLoadingRef"
-      :data="interfacesOfSelectInterfaceGroup"
-      @selection-change="interfaceInterfaceGroupHandleSelectionChange"
-  >
-    <el-table-column fixed type="selection" width="55"/>
-    <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
-    <!--上面id列的宽度改一下-->
-    <!--在此下方添加表格列-->
-    <el-table-column prop="label" :label="interfaceState.dict['label']" width="240"/>
-    <el-table-column prop="orderNum" :label="interfaceState.dict['orderNum']" width="120"/>
-    <el-table-column prop="ifDisabled" :label="interfaceState.dict['ifDisabled']" width="120"/>
-    <el-table-column prop="ifPublic" :label="interfaceState.dict['ifPublic']" width="120"/>
-    <el-table-column prop="perms" :label="interfaceState.dict['perms']" width="240"/>
-    <el-table-column prop="url" :label="interfaceState.dict['url']" width="240"/>
-    <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="120"/>
-    <!--在此上方添加表格列-->
-    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
-    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
-    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
-    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
-    <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
-    <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
-      <template #default="{row}">
-        <el-button link type="danger" size="small" @click="tdelInterfaceInterfaceGroup(row.id)">删除</el-button>
+  <div class="zs-table-data">
+    <!--数据表格-->
+    <el-table
+        v-loading="interfaceInterfaceGroupTableLoadingRef"
+        :data="interfacesOfSelectInterfaceGroup"
+        @selection-change="interfaceInterfaceGroupHandleSelectionChange"
+    >
+      <el-table-column fixed type="selection" width="55"/>
+      <!--<el-table-column fixed prop="id" :label="interfaceDict.id" width="180"/>-->
+      <!--上面id列的宽度改一下-->
+      <!--在此下方添加表格列-->
+      <el-table-column prop="label" :label="interfaceDict.label" width="240"/>
+      <el-table-column prop="orderNum" :label="interfaceDict.orderNum" width="120"/>
+      <el-table-column prop="ifDisabled" :label="interfaceDict.ifDisabled" width="120"/>
+      <el-table-column prop="ifPublic" :label="interfaceDict.ifPublic" width="120"/>
+      <el-table-column prop="perms" :label="interfaceDict.perms" width="240"/>
+      <el-table-column prop="url" :label="interfaceDict.url" width="240"/>
+      <el-table-column prop="remark" :label="interfaceDict.remark" width="120"/>
+      <!--在此上方添加表格列-->
+      <!--<el-table-column prop="createBy" :label="interfaceDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="interfaceDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="interfaceDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="interfaceDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="interfaceDict.deleted" width="60"/>-->
+      <!--上方几个酌情使用-->
+      <el-table-column fixed="right" label="操作" min-width="120">
+        <template #default="{row}">
+          <el-button link type="danger" size="small" @click="tdelInterfaceInterfaceGroup(row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+      <template #append>
+        <div class="el-table-append-box">
+          <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${interfaceInterfaceGroupMultipleSelection.length} 条数据。` }}</span>
+        </div>
       </template>
-    </el-table-column>
-    <template #append>
-      <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{
-            `跨分页保存，当前已选 ${interfaceInterfaceGroupState.multipleSelection.length} 条数据。`
-          }}</span>
-      </div>
-    </template>
-  </el-table>
+    </el-table>
 
-  <!--分页-->
-  <Pagination
-      v-if="interfaceInterfaceGroupState.total!==-1"
-      :total="Number(interfaceInterfaceGroupState.total)"
-      :page-num="interfaceInterfaceGroupState.pageParam.pageNum"
-      :page-size="interfaceInterfaceGroupState.pageParam.pageSize"
-      @page-change="interfaceInterfaceGroupPageChange"
-  />
+    <!--分页-->
+    <Pagination
+        v-if="interfaceInterfaceGroupConfig.pageQuery"
+        :total="interfaceInterfaceGroupTotal"
+        :page-num="interfaceInterfaceGroupPageParam.pageNum"
+        :page-size="interfaceInterfaceGroupPageParam.pageSize"
+        @page-change="interfaceInterfaceGroupPageChange"
+    />
+  </div>
 
   <!--所有接口的弹窗-->
   <el-dialog
@@ -430,15 +333,13 @@ const confirmAddInterfaceInterfaceGroup = () => {
     <el-dialog
         :width="interfaceActiveTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
         v-model="interfaceDialogVisible"
-        :title="interfaceState.dialogType.label"
+        :title="interfaceDialogType.label"
         draggable
         append-to-body
     >
       <el-tabs v-if="interfaceConfig.bulkOperation" v-model="interfaceActiveTabName">
-        <el-tab-pane :disabled="interfaceState.dialogType.value===final.upd" label="操作单个"
-                     :name="final.one"></el-tab-pane>
-        <el-tab-pane :disabled="interfaceState.dialogType.value===final.upd" label="操作多个"
-                     :name="final.more"></el-tab-pane>
+        <el-tab-pane :disabled="interfaceDialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+        <el-tab-pane :disabled="interfaceDialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
       </el-tabs>
       <template v-if="interfaceActiveTabName===final.one">
         <el-form
@@ -446,14 +347,14 @@ const confirmAddInterfaceInterfaceGroup = () => {
             v-loading="interfaceDialogLoadingRef"
             :model="interfaceState.dialogForm"
             :label-width="CONFIG.dialog_form_label_width"
-            :rules="interfaceState.dFormRules"
+            :rules="interfaceDFormRules"
         >
           <!--<el-row>-->
           <!--  <el-col :span="12"></el-col>-->
           <!--  <el-col :span="12"></el-col>-->
           <!--</el-row>-->
-          <el-form-item v-if="interfaceState.dialogType.value!==final.ins" :label="interfaceState.dict['id']" prop="id">
-            <span>{{ interfaceState.dialogForm['id'] }}</span>
+          <el-form-item v-if="interfaceDialogType.value!==final.ins" :label="interfaceDict.id" prop="id">
+            <span>{{ interfaceState.dialogForm.id }}</span>
           </el-form-item>
           <!--
           第一个input添加如下属性
@@ -462,25 +363,25 @@ const confirmAddInterfaceInterfaceGroup = () => {
           <!--在此下方添加表单项-->
           <el-row>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['label']" prop="label">
-                <el-input v-model="interfaceState.dialogForm['label']" :placeholder="interfaceState.dict['label']"/>
+              <el-form-item :label="interfaceDict.label" prop="label">
+                <el-input v-model="interfaceState.dialogForm.label" :placeholder="interfaceDict.label"/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['icon']" prop="icon">
-                <el-input v-model="interfaceState.dialogForm['icon']" :placeholder="interfaceState.dict['icon']"/>
+              <el-form-item :label="interfaceDict.icon" prop="icon">
+                <el-input v-model="interfaceState.dialogForm.icon" :placeholder="interfaceDict.icon"/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['orderNum']" prop="orderNum">
-                <el-input-number v-model="interfaceState.dialogForm['orderNum']" controls-position="right"/>
+              <el-form-item :label="interfaceDict.orderNum" prop="orderNum">
+                <el-input-number v-model="interfaceState.dialogForm.orderNum" controls-position="right"/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['ifDisabled']" prop="ifDisabled">
-                <el-radio-group v-model="interfaceState.dialogForm['ifDisabled']">
+              <el-form-item :label="interfaceDict.ifDisabled" prop="ifDisabled">
+                <el-radio-group v-model="interfaceState.dialogForm.ifDisabled">
                   <el-radio :value="final.Y">是</el-radio>
                   <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
@@ -489,50 +390,34 @@ const confirmAddInterfaceInterfaceGroup = () => {
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['ifPublic']" prop="ifPublic">
-                <el-radio-group v-model="interfaceState.dialogForm['ifPublic']">
+              <el-form-item :label="interfaceDict.ifPublic" prop="ifPublic">
+                <el-radio-group v-model="interfaceState.dialogForm.ifPublic">
                   <el-radio :value="final.Y">是</el-radio>
                   <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label="interfaceState.dict['perms']" prop="perms">
-                <el-input v-model="interfaceState.dialogForm['perms']" :placeholder="interfaceState.dict['perms']"/>
+              <el-form-item :label="interfaceDict.perms" prop="perms">
+                <el-input v-model="interfaceState.dialogForm.perms" :placeholder="interfaceDict.perms"/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="interfaceState.dict['url']" prop="url">
-                <el-input v-model="interfaceState.dialogForm['url']" :placeholder="interfaceState.dict['url']"/>
+              <el-form-item :label="interfaceDict.url" prop="url">
+                <el-input v-model="interfaceState.dialogForm.url" :placeholder="interfaceDict.url"/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label="interfaceState.dict['remark']" prop="remark">
-                <el-input type="textarea" v-model="interfaceState.dialogForm['remark']" :placeholder="interfaceState.dict['remark']"/>
+              <el-form-item :label="interfaceDict.remark" prop="remark">
+                <el-input type="textarea" v-model="interfaceState.dialogForm.remark" :placeholder="interfaceDict.remark"/>
               </el-form-item>
             </el-col>
           </el-row>
           <!--在此上方添加表单项-->
-          <!--<el-form-item :label="interfaceState.dict['orderNum']" prop='orderNum'>-->
-          <!--  <el-input-number v-model="interfaceState.dialogForm['orderNum']" controls-position="right"/>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item :label="interfaceState.dict['ifDefault']" prop='ifDefault'>-->
-          <!--  <el-switch v-model="interfaceState.dialogForm['ifDefault']" :active-value='final.Y' :inactive-value='final.N'/>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item :label="interfaceState.dict['ifDisabled']" prop='ifDisabled'>-->
-          <!--  <el-radio-group v-model="interfaceState.dialogForm['ifDisabled']">-->
-          <!--    <el-radio :value="final.Y">是</el-radio>-->
-          <!--    <el-radio :value="final.N">否</el-radio>-->
-          <!--  </el-radio-group>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item :label="interfaceState.dict['ifDisabled']" prop="ifDisabled">-->
-          <!--  <el-switch v-model="interfaceState.dialogForm['ifDisabled']" :active-value="final.N" :inactive-value="final.Y"/>-->
-          <!--</el-form-item>-->
-          <!--上方几个酌情使用-->
         </el-form>
       </template>
       <template v-if="interfaceActiveTabName===final.more">
@@ -550,123 +435,93 @@ const confirmAddInterfaceInterfaceGroup = () => {
               </template>
             </el-table-column>
             <!--在此下方添加表格列-->
-            <el-table-column prop="label" :label="interfaceState.dict['label']" width="300">
+            <el-table-column prop="label" :label="interfaceDict.label" width="300">
               <template #header>
-                <span :class="interfaceIfRequired('label')?'tp-table-header-required':''">{{
-                    interfaceState.dict['label']
-                  }}</span>
+                <span :class="interfaceIfRequired('label')?'tp-table-header-required':''">{{ interfaceDict.label }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="interfaceState.dialogForms[$index]['label']"
-                            :placeholder="interfaceState.dict['label']"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="interfaceState.dialogForms[$index].label" :placeholder="interfaceDict.label"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="icon" :label="interfaceState.dict['icon']" width="300">
+            <el-table-column prop="icon" :label="interfaceDict.icon" width="300">
               <template #header>
-                <span :class="interfaceIfRequired('icon')?'tp-table-header-required':''">{{
-                    interfaceState.dict['icon']
-                  }}</span>
+                <span :class="interfaceIfRequired('icon')?'tp-table-header-required':''">{{ interfaceDict.icon }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-icon`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="interfaceState.dialogForms[$index]['icon']"
-                            :placeholder="interfaceState.dict['icon']"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-icon`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="interfaceState.dialogForms[$index].icon" :placeholder="interfaceDict.icon"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="orderNum" :label="interfaceState.dict['orderNum']" width="300">
+            <el-table-column prop="orderNum" :label="interfaceDict.orderNum" width="300">
               <template #header>
-                <span :class="interfaceIfRequired('orderNum')?'tp-table-header-required':''">{{
-                    interfaceState.dict['orderNum']
-                  }}</span>
+                <span :class="interfaceIfRequired('orderNum')?'tp-table-header-required':''">{{ interfaceDict.orderNum }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input-number v-model="interfaceState.dialogForms[$index]['orderNum']" controls-position="right"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input-number v-model="interfaceState.dialogForms[$index].orderNum" controls-position="right"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="ifDisabled" :label="interfaceState.dict['ifDisabled']" width="70">
+            <el-table-column prop="ifDisabled" :label="interfaceDict.ifDisabled" width="70">
               <template #header>
-                <span :class="interfaceIfRequired('ifDisabled')?'tp-table-header-required':''">{{
-                    interfaceState.dict['ifDisabled']
-                  }}</span>
+                <span :class="interfaceIfRequired('ifDisabled')?'tp-table-header-required':''">{{ interfaceDict.ifDisabled }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifDisabled']" :true-value="final.Y"
-                               :false-value="final.N"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-checkbox v-model="interfaceState.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="ifPublic" :label="interfaceState.dict['ifPublic']" width="70">
+            <el-table-column prop="ifPublic" :label="interfaceDict.ifPublic" width="70">
               <template #header>
-                <span :class="interfaceIfRequired('ifPublic')?'tp-table-header-required':''">{{
-                    interfaceState.dict['ifPublic']
-                  }}</span>
+                <span :class="interfaceIfRequired('ifPublic')?'tp-table-header-required':''">{{ interfaceDict.ifPublic }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-checkbox v-model="interfaceState.dialogForms[$index]['ifPublic']" :true-value="final.Y"
-                               :false-value="final.N"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-checkbox v-model="interfaceState.dialogForms[$index].ifPublic" :true-value="final.Y" :false-value="final.N"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="perms" :label="interfaceState.dict['perms']" width="300">
+            <el-table-column prop="perms" :label="interfaceDict.perms" width="300">
               <template #header>
-                <span :class="interfaceIfRequired('perms')?'tp-table-header-required':''">{{
-                    interfaceState.dict['perms']
-                  }}</span>
+                <span :class="interfaceIfRequired('perms')?'tp-table-header-required':''">{{ interfaceDict.perms }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="interfaceState.dialogForms[$index]['perms']"
-                            :placeholder="interfaceState.dict['perms']"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="interfaceState.dialogForms[$index].perms" :placeholder="interfaceDict.perms"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="url" :label="interfaceState.dict['url']" width="300">
+            <el-table-column prop="url" :label="interfaceDict.url" width="300">
               <template #header>
-                <span
-                    :class="interfaceIfRequired('url')?'tp-table-header-required':''">{{ interfaceState.dict['url'] }}</span>
+                <span :class="interfaceIfRequired('url')?'tp-table-header-required':''">{{ interfaceDict.url }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-url`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="interfaceState.dialogForms[$index]['url']"
-                            :placeholder="interfaceState.dict['url']"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-url`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="interfaceState.dialogForms[$index].url" :placeholder="interfaceDict.url"/>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="300">
+            <el-table-column prop="remark" :label="interfaceDict.remark" width="300">
               <template #header>
-                <span :class="interfaceIfRequired('remark')?'tp-table-header-required':''">{{
-                    interfaceState.dict['remark']
-                  }}</span>
+                <span :class="interfaceIfRequired('remark')?'tp-table-header-required':''">{{ interfaceDict.remark }}</span>
               </template>
               <template #default="{$index}">
-                <div
-                    :class="interfaceState.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input type="textarea" v-model="interfaceState.dialogForms[$index]['remark']"
-                            :placeholder="interfaceState.dict['remark']"/>
+                <div :class="interfaceState.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input type="textarea" v-model="interfaceState.dialogForms[$index].remark" :placeholder="interfaceDict.remark"/>
                 </div>
               </template>
             </el-table-column>
             <!--在此上方添加表格列-->
             <el-table-column fixed="right" label="操作" min-width="120">
-              <template v-if="interfaceState.dialogType.value===final.ins" #default="{$index}">
+              <template v-if="interfaceDialogType.value===final.ins" #default="{$index}">
                 <el-button link type="danger" size="small" @click="interfaceDfDel($index)">删除</el-button>
               </template>
             </el-table-column>
-            <template v-if="interfaceState.dialogType.value===final.ins" #append>
+            <template v-if="interfaceDialogType.value===final.ins" #append>
               <el-button text type="primary" plain :icon="Plus" @click="interfaceDfIns">新增</el-button>
             </template>
           </el-table>
@@ -681,105 +536,101 @@ const confirmAddInterfaceInterfaceGroup = () => {
     </el-dialog>
 
     <!--顶部筛选表单-->
-    <el-form
-        class="demo-form-inline"
-        v-if="Object.keys(interfaceState.filterForm).length>0"
-        ref="interfaceFilterFormRef"
-        :model="interfaceState.filterForm"
-        :inline="true"
-        @keyup.enter="interfaceFEnter"
-        @submit.prevent
-    >
-      <!--在此下方添加表单项-->
-      <el-form-item :label="interfaceState.dict['label']" prop="label">
-        <el-input v-model="interfaceState.filterForm['label']" :placeholder="interfaceState.dict['label']"/>
-      </el-form-item>
-      <el-form-item :label="interfaceState.dict['ifDisabled']" prop="ifDisabled">
-        <!--<el-input v-model="interfaceState.filterForm['ifDisabled']" :placeholder="interfaceState.dict['ifDisabled']"/>-->
-        <el-select v-model="interfaceState.filterForm['ifDisabled']" :placeholder="interfaceState.dict['ifDisabled']"
-                   clearable
-                   filterable>
-          <el-option label="是" :value="final.Y"/>
-          <el-option label="否" :value="final.N"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="interfaceState.dict['ifPublic']" prop="ifPublic">
-        <!--<el-input v-model="interfaceState.filterForm['ifPublic']" :placeholder="interfaceState.dict['ifPublic']"/>-->
-        <el-select v-model="interfaceState.filterForm['ifPublic']" :placeholder="interfaceState.dict['ifPublic']"
-                   clearable filterable>
-          <el-option label="是" :value="final.Y"/>
-          <el-option label="否" :value="final.N"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="interfaceState.dict['perms']" prop="perms">
-        <el-input v-model="interfaceState.filterForm['perms']" :placeholder="interfaceState.dict['perms']"/>
-      </el-form-item>
-      <!--在此上方添加表单项-->
-      <el-form-item>
-        <el-button type="primary" @click="interfaceFCon">筛选</el-button>
-        <el-button @click="interfaceFCan">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="zs-filter-form" v-if="Object.keys(interfaceState.filterForm).length>0">
+      <el-form
+          class="demo-form-inline"
+          ref="interfaceFilterFormRef"
+          :model="interfaceState.filterForm"
+          :inline="true"
+          @keyup.enter="interfaceFEnter"
+          @submit.prevent
+      >
+        <!--在此下方添加表单项-->
+        <el-form-item :label="interfaceDict.label" prop="label">
+          <el-input v-model="interfaceState.filterForm.label" :placeholder="interfaceDict.label"/>
+        </el-form-item>
+        <el-form-item :label="interfaceDict.ifDisabled" prop="ifDisabled">
+          <el-select v-model="interfaceState.filterForm.ifDisabled" :placeholder="interfaceDict.ifDisabled" clearable filterable>
+            <el-option label="是" :value="final.Y"/>
+            <el-option label="否" :value="final.N"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="interfaceDict.ifPublic" prop="ifPublic">
+          <el-select v-model="interfaceState.filterForm.ifPublic" :placeholder="interfaceDict.ifPublic" clearable filterable>
+            <el-option label="是" :value="final.Y"/>
+            <el-option label="否" :value="final.N"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="interfaceDict.perms" prop="perms">
+          <el-input v-model="interfaceState.filterForm.perms" :placeholder="interfaceDict.perms"/>
+        </el-form-item>
+        <!--在此上方添加表单项-->
+        <el-form-item>
+          <el-button type="primary" @click="interfaceFCon">筛选</el-button>
+          <el-button @click="interfaceFCan">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
     <!--操作按钮-->
-    <div>
+    <div class="zs-button-row">
       <!--<el-button-group>-->
       <el-button type="primary" plain :icon="Refresh" @click="interfaceGRefresh">刷新</el-button>
       <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGIns">新增</el-button>-->
-      <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceConfig.bulkOperation?interfaceState.multipleSelection.length===0:interfaceState.multipleSelection.length!==1" @click="interfaceGUpd">修改</el-button>-->
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceState.multipleSelection.length===0" @click="interfaceGDel()">删除</el-button>-->
-      <!--<el-button type="warning" plain :icon='Download' :disabled='interfaceState.multipleSelection.length===0' @click="interfaceGExport()">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon='Upload' @click="interfaceGImport">上传</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceConfig.bulkOperation?interfaceMultipleSelection.length===0:interfaceMultipleSelection.length!==1" @click="interfaceGUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGDel()">删除</el-button>-->
+      <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGImport">上传</el-button>-->
       <!--</el-button-group>-->
     </div>
 
-    <!--数据表格-->
-    <el-table
-        v-loading="interfaceTableLoadingRef"
-        :data="interfaceState.list"
-        @selection-change="interfaceHandleSelectionChange"
-    >
-      <el-table-column fixed type="selection" width="55"/>
-      <!--<el-table-column fixed prop="id" :label="interfaceState.dict['id']" width="180"/>-->
-      <!--上面id列的宽度改一下-->
-      <!--在此下方添加表格列-->
-      <el-table-column prop="label" :label="interfaceState.dict['label']" width="240"/>
-      <el-table-column prop="orderNum" :label="interfaceState.dict['orderNum']" width="120"/>
-      <el-table-column prop="ifDisabled" :label="interfaceState.dict['ifDisabled']" width="120"/>
-      <el-table-column prop="ifPublic" :label="interfaceState.dict['ifPublic']" width="120"/>
-      <el-table-column prop="perms" :label="interfaceState.dict['perms']" width="240"/>
-      <el-table-column prop="url" :label="interfaceState.dict['url']" width="240"/>
-      <el-table-column prop="remark" :label="interfaceState.dict['remark']" width="120"/>
-      <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createBy" :label="interfaceState.dict['createBy']" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="interfaceState.dict['updateBy']" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="interfaceState.dict['createTime']" width="220"/>-->
-      <!--<el-table-column prop="updateTime" :label="interfaceState.dict['updateTime']" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="interfaceState.dict['deleted']" width="60"/>-->
-      <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="120">
-        <template #default="{row}">
-          <!--<el-button link type="primary" size="small" @click="interfaceTUpd(row.id)">修改</el-button>-->
-          <!--<el-button link type="danger" size="small" @click="interfaceTDel(row.id)">删除</el-button>-->
+    <div class="zs-table-data">
+      <!--数据表格-->
+      <el-table
+          v-loading="interfaceTableLoadingRef"
+          :data="interfaceTableData"
+          @selection-change="interfaceHandleSelectionChange"
+      >
+        <el-table-column fixed type="selection" width="55"/>
+        <!--<el-table-column fixed prop="id" :label="interfaceDict.id" width="180"/>-->
+        <!--上面id列的宽度改一下-->
+        <!--在此下方添加表格列-->
+        <el-table-column prop="label" :label="interfaceDict.label" width="240"/>
+        <el-table-column prop="orderNum" :label="interfaceDict.orderNum" width="120"/>
+        <el-table-column prop="ifDisabled" :label="interfaceDict.ifDisabled" width="120"/>
+        <el-table-column prop="ifPublic" :label="interfaceDict.ifPublic" width="120"/>
+        <el-table-column prop="perms" :label="interfaceDict.perms" width="240"/>
+        <el-table-column prop="url" :label="interfaceDict.url" width="240"/>
+        <el-table-column prop="remark" :label="interfaceDict.remark" width="120"/>
+        <!--在此上方添加表格列-->
+        <!--<el-table-column prop="createBy" :label="interfaceDict.createBy" width="120"/>-->
+        <!--<el-table-column prop="updateBy" :label="interfaceDict.updateBy" width="120"/>-->
+        <!--<el-table-column prop="createTime" :label="interfaceDict.createTime" width="220"/>-->
+        <!--<el-table-column prop="updateTime" :label="interfaceDict.updateTime" width="220"/>-->
+        <!--<el-table-column prop="deleted" :label="interfaceDict.deleted" width="60"/>-->
+        <!--上方几个酌情使用-->
+        <el-table-column fixed="right" label="操作" min-width="120">
+          <template #default="{row}">
+            <!--<el-button link type="primary" size="small" @click="interfaceTUpd(row.id)">修改</el-button>-->
+            <!--<el-button link type="danger" size="small" @click="interfaceTDel(row.id)">删除</el-button>-->
+          </template>
+        </el-table-column>
+        <template #append>
+          <div class="el-table-append-box">
+            <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${interfaceMultipleSelection.length} 条数据。` }}</span>
+          </div>
         </template>
-      </el-table-column>
-      <template #append>
-        <div class="el-table-append-box">
-        <span>此表格的多选<span class="underline">不支持</span>{{
-            `跨分页保存，当前已选 ${interfaceState.multipleSelection.length} 条数据。`
-          }}</span>
-        </div>
-      </template>
-    </el-table>
+      </el-table>
 
-    <!--分页-->
-    <Pagination
-        v-if="interfaceState.total!==-1"
-        :total="Number(interfaceState.total)"
-        :page-num="interfaceState.pageParam.pageNum"
-        :page-size="interfaceState.pageParam.pageSize"
-        @page-change="interfacePageChange"
-    />
+      <!--分页-->
+      <Pagination
+          v-if="interfaceConfig.pageQuery"
+          :total="interfaceTotal"
+          :page-num="interfacePageParam.pageNum"
+          :page-size="interfacePageParam.pageSize"
+          @page-change="interfacePageChange"
+      />
+    </div>
 
     <template #footer>
       <el-button plain @click="cancelAddInterfaceInterfaceGroup">取消</el-button>

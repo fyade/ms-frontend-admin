@@ -1,152 +1,86 @@
 import request from "@/api/request.ts";
-import {
-  interfaceGroupDto,
-  interfaceGroupSelDto,
-  interfaceGroupSelAllDto,
-  interfaceGroupInsDto,
-  interfaceGroupUpdDto
-} from "@/type/module/algorithm/interfaceGroup.ts";
-import {
-  t_funcMap,
-  t_funcMap_selList_ret,
-  t_funcMap_selMore_ret,
-  t_funcMap_selOne_ret,
-  t_funcMap_iud_ret
-} from "@/type/tablePage.ts";
+import { ApiConfig } from "@/type/tablePage.ts";
+import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
 
-export function interfaceGroupSel(params: interfaceGroupSelDto): t_funcMap_selList_ret<interfaceGroupDto> {
-  return request({
-    url: '/algorithm/interface-group',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function interfaceGroupSelAll(params: interfaceGroupSelAllDto): t_funcMap_selMore_ret<interfaceGroupDto> {
-  return request({
-    url: '/algorithm/interface-group/all',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function interfaceGroupSelById(id: number): t_funcMap_selOne_ret<interfaceGroupDto> {
-  return request({
-    url: `/algorithm/interface-group/${id}`,
-    method: 'GET'
-  })
-}
-
-export function interfaceGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<interfaceGroupDto> {
-  return request({
-    url: `/algorithm/interface-group/ids`,
-    method: 'GET',
-    params: ids
-  })
-}
-
-export function interfaceGroupIns(params: interfaceGroupInsDto): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/interface-group',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function interfaceGroupUpd(params: interfaceGroupUpdDto): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/interface-group',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function interfaceGroupInss(params: interfaceGroupInsDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/interface-group/s',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function interfaceGroupUpds(params: interfaceGroupUpdDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/interface-group/s',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function interfaceGroupDel(ids: number[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/interface-group',
-    method: 'DELETE',
-    data: ids
-  })
-}
-
-export const interfaceGroupFunc: t_funcMap<interfaceGroupDto, interfaceGroupSelDto, interfaceGroupSelAllDto, interfaceGroupInsDto, interfaceGroupUpdDto> = {
+export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDto> = {
   /**
    * 分页查询
    * @param params
    */
-  selectList: (params: interfaceGroupSelDto) => {
-    return interfaceGroupSel(params)
-  },
+  selectList: (params) => request({
+    url: '/algorithm//interface-group',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询所有
    * @param params
    */
-  selectAll: (params: interfaceGroupSelAllDto) => {
-    return interfaceGroupSelAll(params)
-  },
+  selectAll: (params) => request({
+    url: '/algorithm//interface-group/all',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询单个
    * @param id
    */
-  selectById: (id: number) => {
-    return interfaceGroupSelById(id)
-  },
+  selectById: (id) => request({
+    url: `/algorithm//interface-group/${id}`,
+    method: 'GET'
+  }),
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: number[]) => {
-    return interfaceGroupSelByIds(ids)
-  },
+  selectByIds: (ids) => request({
+    url: `/algorithm//interface-group/ids`,
+    method: 'GET',
+    params: ids
+  }),
   /**
    * 新增
    * @param obj
    */
-  insertOne: (obj: interfaceGroupInsDto) => {
-    return interfaceGroupIns(obj)
-  },
+  insertOne: (obj) => request({
+    url: '/algorithm//interface-group',
+    method: 'POST',
+    data: obj
+  }),
   /**
    * 修改
    * @param obj
    */
-  updateOne: (obj: interfaceGroupUpdDto) => {
-    return interfaceGroupUpd(obj)
-  },
+  updateOne: (obj) => request({
+    url: '/algorithm//interface-group',
+    method: 'PUT',
+    data: obj
+  }),
   /**
    * 新增多个
    * @param objs
    */
-  insertMore: (objs: interfaceGroupInsDto[]) => {
-    return interfaceGroupInss(objs)
-  },
+  insertMore: (objs) => request({
+    url: '/algorithm//interface-group/s',
+    method: 'POST',
+    data: objs
+  }),
   /**
    * 修改多个
    * @param objs
    */
-  updateMore: (objs: interfaceGroupUpdDto[]) => {
-    return interfaceGroupUpds(objs)
-  },
+  updateMore: (objs) => request({
+    url: '/algorithm//interface-group/s',
+    method: 'PUT',
+    data: objs
+  }),
   /**
    * 删除
    * @param ids
    */
-  deleteList: (...ids: number[]) => {
-    return interfaceGroupDel(ids)
-  }
+  deleteList: (...ids) => request({
+    url: '/algorithm//interface-group',
+    method: 'DELETE',
+    data: ids
+  })
 }

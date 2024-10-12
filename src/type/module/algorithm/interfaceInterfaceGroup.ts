@@ -1,35 +1,34 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class interfaceInterfaceGroupDto extends baseClass {
+export class InterfaceInterfaceGroupDto extends BaseClass {
   id!: number;
   interfaceId!: number;
   interfaceGroupId!: number;
   remark!: string;
 }
 
-export class interfaceInterfaceGroupSelDto extends pageDto {
+export class InterfaceInterfaceGroupSelDto extends PageDto {
 }
 
-export class interfaceInterfaceGroupSelAllDto {
+export class InterfaceInterfaceGroupSelAllDto {
 }
 
-export class interfaceInterfaceGroupInsDto {
+export class InterfaceInterfaceGroupInsDto {
   interfaceId!: number;
   interfaceGroupId!: number;
   remark!: string;
 }
 
-export class interfaceInterfaceGroupUpdDto extends interfaceInterfaceGroupInsDto {
+export class InterfaceInterfaceGroupUpdDto extends InterfaceInterfaceGroupInsDto {
   id!: number;
 }
 
-export class interfaceInterfaceGroupUpdIIGDto {
+export class InterfaceInterfaceGroupUpdIIGDto {
   interfaceId!: number;
   interfaceGroupId!: number[];
 }
 
-export class interfaceInterfaceGroupUpdIGIDto {
+export class InterfaceInterfaceGroupUpdIGIDto {
   interfaceId!: number[];
   interfaceGroupId!: number;
 }

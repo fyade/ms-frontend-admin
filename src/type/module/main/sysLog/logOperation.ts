@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class logOperationDto extends baseClass {
+export class LogOperationDto extends BaseClass {
   id!: number;
   perms!: string;
   userId!: string;
@@ -12,13 +11,13 @@ export class logOperationDto extends baseClass {
   remark!: string;
 }
 
-export class logOperationSelDto extends pageDto {
+export class LogOperationSelDto extends PageDto {
 }
 
-export class logOperationSelAllDto {
+export class LogOperationSelAllDto {
 }
 
-export class logOperationInsDto {
+export class LogOperationInsDto {
   perms!: string;
   userId!: string;
   reqParam!: string;
@@ -28,6 +27,6 @@ export class logOperationInsDto {
   remark!: string;
 }
 
-export class logOperationUpdDto extends logOperationInsDto {
+export class LogOperationUpdDto extends LogOperationInsDto {
   id!: number;
 }

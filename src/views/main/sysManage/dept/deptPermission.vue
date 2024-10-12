@@ -1,38 +1,28 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref } from "vue"
-import { final, PAGINATION, publicDict } from "@/utils/base.ts"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
-import { Refresh } from "@element-plus/icons-vue";
-import { typeOM } from "@/type/utils/base.ts"
-import { menuDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/module/main/sysManage/menu.ts";
+import { computed, inject, nextTick, reactive, ref, Ref } from "vue";
+import { CONFIG, final } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { MenuDto, MenuUpdDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/module/main/sysManage/menu.ts";
+import { menuApi, menuApi2 } from "@/api/module/main/sysManage/menu.ts";
+import { menuDict } from "@/dict/module/main/sysManage/menu.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { menuFunc } from "@/api/module/main/sysManage/menu.ts";
+import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
+import { sysApi } from "@/api/module/main/sysManage/sys.ts";
 import type Node from "element-plus/es/components/tree/src/model/node";
-import { deptDto } from "@/type/module/main/sysManage/dept.ts";
-import { sysDto } from "@/type/module/main/sysManage/sys.ts";
-import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
+import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 
 const props = defineProps({
   selectDept: {
-    type: deptDto,
+    type: DeptDto,
     required: true
   }
 })
 
-const state = reactive<State<menuDto<string>>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<MenuDto<string>, MenuUpdDto<string>>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -52,72 +42,25 @@ const state = reactive<State<menuDto<string>>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    type: [{required: true, trigger: 'change'}],
-    path: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    component: [{required: true, trigger: 'change'}],
-    icon: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-    ifLink: [{required: true, trigger: 'change'}],
-    ifVisible: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-    ifPublic: [{required: true, trigger: 'change'}],
-    perms: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '菜单名',
-    type: '菜单类型',
-    path: '菜单路径',
-    parentId: '父级菜单',
-    component: '组件路径',
-    icon: '图标',
-    ifLink: '是否外链',
-    ifVisible: '是否显示',
-    ifPublic: '是否公共接口',
-    perms: '权限标识',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  pageQuery: false, // 分页，默认true
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  type: [{required: true, trigger: 'change'}],
+  path: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  component: [{required: true, trigger: 'change'}],
+  icon: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+  ifLink: [{required: true, trigger: 'change'}],
+  ifVisible: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+  ifPublic: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  bulkOperation: true,
+  pageQuery: false,
   selectParam: {
     type: {in: {value: [T_MENU, T_COMP]}},
     sysId: final.DEFAULT_PARENT_ID,
@@ -125,13 +68,26 @@ const config: t_config = reactive({
   selectListCallback: () => {
     selAllSyss()
     if (selectPermission) {
-      selectPermissionLeft.value = selectPermission.value.filter(n => state.list.findIndex(m => m.id === n) > -1)
+      selectPermissionLeft.value = selectPermission.value.filter(n => tableData.value.findIndex(m => m.id === n) > -1)
       selectPermissionRight.value = selectPermission.value.filter(n => selectPermissionLeft.value.indexOf(n) === -1)
     }
   }
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -150,29 +106,22 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage({
-  config,
+  ifRequired,
+} = funcTablePage<MenuDto<string>, MenuUpdDto<string>>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: menuFunc
+  dFormRules,
+  config,
+  api: menuApi2,
+  dict: menuDict,
 })
 
 // 左侧菜单/组件列表
-const tableData2 = computed(() => arr2ToDiguiObj(state.list))
+const tableData2 = computed(() => arr2ToDiguiObj(tableData.value))
 const selectPermission: Ref<number[]> | undefined = inject('changeSelectPermission')
 const selectPermissionLeft = ref<number[]>([])
 const selectPermissionRight = ref<number[]>([])
 const handleCheckChange = (
-    data: menuDto,
+    data: MenuDto,
     checked: boolean,
     indeterminate: boolean
 ) => {
@@ -187,12 +136,12 @@ const handleCheckChange = (
 }
 
 // 右侧接口列表
-const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
-  menuFunc.selectAll({
+const loadNode = (node: Node, resolve: (data: MenuDto[]) => void) => {
+  menuApi.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
     type: {in: {value: [T_IS, T_Inter]}},
     sysId: selectSys.value || final.DEFAULT_PARENT_ID,
-  } as any).then((res: menuDto[]) => {
+  } as any).then((res: MenuDto[]) => {
     resolve(res)
   })
 }
@@ -200,12 +149,12 @@ const loadNode = (node: Node, resolve: (data: menuDto[]) => void) => {
 const treeShow = ref(true)
 // 系统
 const selectSys = ref<number | undefined>(void 0)
-const allSyss = ref<sysDto[]>([])
+const allSyss = ref<SysDto[]>([])
 const allSysLoading = ref(false)
 const selAllSyss = () => {
   allSysLoading.value = true
   allSyss.value = []
-  sysFunc.selectAll({}).then(res => {
+  sysApi.selectAll({}).then(res => {
     allSyss.value = res
   }).finally(() => {
     allSysLoading.value = false
@@ -213,7 +162,7 @@ const selAllSyss = () => {
 }
 const selectSysChange = (value: number | undefined) => {
   const v = value || final.DEFAULT_PARENT_ID;
-  (config.selectParam as any)['sysId'] = v;
+  (config.selectParam as any).sysId = v;
   gRefresh();
   treeShow.value = false
   nextTick(() => {

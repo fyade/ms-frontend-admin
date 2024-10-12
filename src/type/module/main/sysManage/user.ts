@@ -1,10 +1,9 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
-import { roleDto } from "@/type/module/main/sysManage/role.ts";
-import { deptDto } from "@/type/module/main/sysManage/dept.ts";
-import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
+import { RoleDto } from "@/type/module/main/sysManage/role.ts";
+import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
+import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
 
-export class userDto extends baseClass {
+export class UserDto extends BaseClass {
   id!: string;
   username!: string;
   nickname!: string;
@@ -15,19 +14,13 @@ export class userDto extends baseClass {
   tel!: string;
 }
 
-export class userDto2 {
-  id!: string;
-  username!: string;
-  nickname!: string;
+export class UserSelDto extends PageDto {
 }
 
-export class userSelDto extends pageDto {
+export class UserSelAllDto {
 }
 
-export class userSelAllDto {
-}
-
-export class userInsDto {
+export class UserInsDto {
   username?: string;
   nickname?: string;
   password?: string;
@@ -37,32 +30,37 @@ export class userInsDto {
   tel?: string;
 }
 
-export class userUpdDto extends userInsDto {
+export class UserUpdDto extends UserInsDto {
   id!: string;
 }
 
+export class UserDto2 {
+  id!: string;
+  username!: string;
+  nickname!: string;
+}
 
-export class loginDto {
+export class LoginDto {
   username!: string
   password!: string
 }
 
-export class registDto extends loginDto {
+export class RegistDto extends LoginDto {
 }
 
-export class userUpdPsdDto {
+export class UserUpdPsdDto {
   oldp!: string
   newp1!: string
   newp2!: string
 }
 
-export class adminResetUserPsdDto {
+export class AdminResetUserPsdDto {
   id!: string
   password!: string
 }
 
-export class userDto_ extends userDto {
-  roles!: roleDto[]
-  depts!: deptDto[]
-  ugs!: userGroupDto[]
+export class UserDto_ extends UserDto {
+  roles!: RoleDto[]
+  depts!: DeptDto[]
+  ugs!: UserGroupDto[]
 }

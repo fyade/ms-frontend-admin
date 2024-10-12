@@ -1,100 +1,99 @@
 import request from "@/api/request.ts";
+import { ApiConfig } from "@/type/tablePage.ts";
 import {
-  userDto,
-  userSelDto,
-  userSelAllDto,
-  userInsDto,
-  userUpdDto, registDto, loginDto, userUpdPsdDto, adminResetUserPsdDto
+  UserDto,
+  UserUpdDto,
+  LoginDto,
+  UserUpdPsdDto,
+  AdminResetUserPsdDto,
+  RegistDto
 } from "@/type/module/main/sysManage/user.ts";
-import {
-  t_funcMap,
-  t_funcMap_selList_ret,
-  t_funcMap_selMore_ret,
-  t_funcMap_selOne_ret,
-  t_funcMap_iud_ret
-} from "@/type/tablePage.ts";
 import { encrypt } from "@/utils/EncryptUtils.ts";
 
-export function userSel(params: userSelDto): t_funcMap_selList_ret<userDto> {
-  return request({
+export const userApi: ApiConfig<UserDto, UserUpdDto> = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params) => request({
     url: '/main/sys-manage/user',
     method: 'GET',
     params: params
-  })
-}
-
-export function userSelAll(params: userSelAllDto): t_funcMap_selMore_ret<userDto> {
-  return request({
+  }),
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params) => request({
     url: '/main/sys-manage/user/all',
     method: 'GET',
     params: params
-  })
-}
-
-export function userSelById(id: string): t_funcMap_selOne_ret<userDto> {
-  return request({
+  }),
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id) => request({
     url: `/main/sys-manage/user/${id}`,
     method: 'GET'
-  })
-}
-
-export function userSelByIds(ids: string[]): t_funcMap_selMore_ret<userDto> {
-  return request({
+  }),
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids) => request({
     url: `/main/sys-manage/user/ids`,
     method: 'GET',
     params: ids
-  })
-}
-
-export function userIns(params: userInsDto): t_funcMap_iud_ret {
-  return request({
+  }),
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj) => request({
     url: '/main/sys-manage/user',
     method: 'POST',
-    data: params
-  })
-}
-
-export function userUpd(params: userUpdDto): t_funcMap_iud_ret {
-  return request({
+    data: obj
+  }),
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj) => request({
     url: '/main/sys-manage/user',
     method: 'PUT',
-    data: params
-  })
-}
-
-export function userInss(params: userInsDto[]): t_funcMap_iud_ret {
-  return request({
+    data: obj
+  }),
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs) => request({
     url: '/main/sys-manage/user/s',
     method: 'POST',
-    data: params
-  })
-}
-
-export function userUpds(params: userUpdDto[]): t_funcMap_iud_ret {
-  return request({
+    data: objs
+  }),
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs) => request({
     url: '/main/sys-manage/user/s',
     method: 'PUT',
-    data: params
-  })
-}
-
-export function userDel(ids: string[]): t_funcMap_iud_ret {
-  return request({
+    data: objs
+  }),
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids) => request({
     url: '/main/sys-manage/user',
     method: 'DELETE',
     data: ids
   })
 }
 
-// export function registApi(data: registDto) {
-//   return request({
-//     url: '/sys/user/regist',
-//     method: 'POST',
-//     data: data
-//   })
-// }
-
-export function loginApi(data: loginDto) {
+export function loginApi(data: LoginDto) {
   return request({
     url: '/sys/user/adminlogin',
     method: 'POST',
@@ -113,7 +112,7 @@ export function getSelfInfo() {
   })
 }
 
-export function newUser(params: registDto) {
+export function newUser(params: RegistDto) {
   return request({
     url: '/main/sys-manage/user',
     method: 'POST',
@@ -125,7 +124,7 @@ export function newUser(params: registDto) {
   })
 }
 
-export function updUser(params: userUpdDto) {
+export function updUser(params: UserUpdDto) {
   return request({
     url: '/main/sys-manage/user/upd-user',
     method: 'POST',
@@ -133,7 +132,7 @@ export function updUser(params: userUpdDto) {
   })
 }
 
-export function updPsd(params: userUpdPsdDto) {
+export function updPsd(params: UserUpdPsdDto) {
   return request({
     url: '/main/sys-manage/user/upd-psd',
     method: 'POST',
@@ -148,7 +147,7 @@ export function updPsd(params: userUpdPsdDto) {
   })
 }
 
-export function resetUserPsd(params: adminResetUserPsdDto) {
+export function resetUserPsd(params: AdminResetUserPsdDto) {
   return request({
     url: '/main/sys-manage/user/admin-reset-user-psd',
     method: 'POST',
@@ -158,70 +157,4 @@ export function resetUserPsd(params: adminResetUserPsdDto) {
       psdType: 'b'
     }
   })
-}
-
-export const userFunc: t_funcMap<userDto, userSelDto, userSelAllDto, userInsDto, userUpdDto> = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: userSelDto) => {
-    return userSel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: userSelAllDto) => {
-    return userSelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: string) => {
-    return userSelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: string[]) => {
-    return userSelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: userInsDto) => {
-    return userIns(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: userUpdDto) => {
-    return userUpd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: userInsDto[]) => {
-    return userInss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: userUpdDto[]) => {
-    return userUpds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: string[]) => {
-    return userDel(ids)
-  }
 }

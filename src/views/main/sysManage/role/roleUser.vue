@@ -5,16 +5,17 @@ import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
 import { computed, reactive, ref } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
-import { userRoleDel, userRoleSel, userRoleUpdRU } from "@/api/module/main/sysManage/userRole.ts";
-import { userSelByIds, userSel } from "@/api/module/main/sysManage/user.ts";
-import { userRoleDto } from "@/type/module/main/sysManage/userRole.ts";
-import { pageDto } from "@/type/tablePage.ts";
-import { userDto } from "@/type/module/main/sysManage/user.ts";
-import { roleDto } from "@/type/module/main/sysManage/role.ts";
+import { userRoleApi, userRoleUpdRU } from "@/api/module/main/sysManage/userRole.ts";
+import { userApi } from "@/api/module/main/sysManage/user.ts";
+import { UserRoleDto } from "@/type/module/main/sysManage/userRole.ts";
+import { PageDto } from "@/type/tablePage.ts";
+import { UserDto } from "@/type/module/main/sysManage/user.ts";
+import { RoleDto } from "@/type/module/main/sysManage/role.ts";
+import { userDict } from "@/dict/module/main/sysManage/user.ts";
 
 const props = defineProps({
   selectRole: {
-    type: roleDto,
+    type: RoleDto,
     required: true
   }
 })
@@ -36,37 +37,24 @@ const state = reactive({
     pageSize: PAGINATION.pageSize
   }
 })
-const userDict = {
-  ...publicDict,
-  username: '用户名',
-  nickname: '昵称',
-  password: '密码',
-  avatar: '头像',
-  sex: '性别',
-  email: '邮箱',
-  tel: '电话',
-  roles: '角色',
-  depts: '部门',
-  ugs: '用户组'
-}
 // 所有用户
-const allUsers = ref<userDto[]>([])
+const allUsers = ref<UserDto[]>([])
 // 筛选表单
 const filterFormRef = ref<FormInstance | null>(null)
 const table1LoadingRef = ref(false)
 // 此角色的用户
-const usersOfThisRole = ref<userDto[]>([])
+const usersOfThisRole = ref<UserDto[]>([])
 // 此角色的用户角色对
-const userRolesOfThisRole = ref<userRoleDto[]>([])
+const userRolesOfThisRole = ref<UserRoleDto[]>([])
 // 分页查询当前部分用户
 const getInfo = () => {
   usersOfThisRole.value = []
   userRolesOfThisRole.value = []
   table1LoadingRef.value = true
-  userRoleSel({roleId: props.selectRole.id, ...state.pageParam1}).then(res => {
+  userRoleApi.selectList({roleId: props.selectRole.id, ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userRolesOfThisRole.value = res.list
-    userSelByIds(userRolesOfThisRole.value.map(item => item.userId)).then(res => {
+    userApi.selectByIds(userRolesOfThisRole.value.map(item => item.userId)).then(res => {
       usersOfThisRole.value = res
       table1LoadingRef.value = false
     })
@@ -74,15 +62,15 @@ const getInfo = () => {
 }
 getInfo()
 // 分页查询
-const pageChange1 = (newVal: pageDto) => {
+const pageChange1 = (newVal: PageDto) => {
   state.pageParam1.pageNum = newVal.pageNum
   state.pageParam1.pageSize = newVal.pageSize
   getInfo()
 }
 // 选中行
-const selectRows1 = ref<userDto[]>([])
+const selectRows1 = ref<UserDto[]>([])
 // 修改选中行
-const handleSelectionChange1 = (val: userDto[]) => {
+const handleSelectionChange1 = (val: UserDto[]) => {
   selectRows1.value = val
 }
 
@@ -105,7 +93,7 @@ const delUser = () => {
         draggable: true
       }
   ).then(() => {
-    userRoleDel(ids).then(res => {
+    userRoleApi.deleteList(...ids).then(res => {
       if (res) {
         getInfo()
       }
@@ -125,7 +113,7 @@ const userDialogGetData = () => {
   }
   table2LoadingRef.value = true
   allUsers.value = []
-  userSel({...state.pageParam2, ...state.dialogForm}).then(res => {
+  userApi.selectList({...state.pageParam2, ...state.dialogForm}).then(res => {
     state.total2 = res.total
     allUsers.value = res.list
     table2LoadingRef.value = false
@@ -137,15 +125,15 @@ const userDialogClear = () => {
   allUsers.value = []
 }
 // 分页查询
-const pageChange2 = (newVal: pageDto) => {
+const pageChange2 = (newVal: PageDto) => {
   state.pageParam2.pageNum = newVal.pageNum
   state.pageParam2.pageSize = newVal.pageSize
   userDialogGetData()
 }
 // 选中行
-const selectRows2 = ref<userDto[]>([])
+const selectRows2 = ref<UserDto[]>([])
 // 修改选中行
-const handleSelectionChange2 = (val: userDto[]) => {
+const handleSelectionChange2 = (val: UserDto[]) => {
   selectRows2.value = val
 }
 // 取消新增用户角色
@@ -179,7 +167,7 @@ const deleteUserRole = (userId: string) => {
   ).then(() => {
     const find = userRolesOfThisRole.value.find(item => item.userId === userId)
     if (find) {
-      userRoleDel([find.id]).then(res => {
+      userRoleApi.deleteList(find.id).then(res => {
         if (res) {
           getInfo()
         }
@@ -235,14 +223,14 @@ const deleteUserRole = (userId: string) => {
         @keyup.enter="userDialogGetData"
         @submit.prevent
     >
-      <el-form-item :label="userDict['id']" prop="id">
-        <el-input v-model="state.dialogForm['id']" :placeholder="userDict['id']"/>
+      <el-form-item :label="userDict.id" prop="id">
+        <el-input v-model="state.dialogForm.id" :placeholder="userDict.id"/>
       </el-form-item>
-      <el-form-item :label="userDict['username']" prop="username">
-        <el-input v-model="state.dialogForm['username']" :placeholder="userDict['username']"/>
+      <el-form-item :label="userDict.username" prop="username">
+        <el-input v-model="state.dialogForm.username" :placeholder="userDict.username"/>
       </el-form-item>
-      <el-form-item :label="userDict['nickname']" prop="nickname">
-        <el-input v-model="state.dialogForm['nickname']" :placeholder="userDict['nickname']"/>
+      <el-form-item :label="userDict.nickname" prop="nickname">
+        <el-input v-model="state.dialogForm.nickname" :placeholder="userDict.nickname"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="userDialogGetData">筛选</el-button>
@@ -260,12 +248,12 @@ const deleteUserRole = (userId: string) => {
         </template>
       </template>
       <el-table-column fixed type="selection" width="55"/>
-      <el-table-column fixed prop="id" :label="userDict['id']" width="80"/>
+      <el-table-column fixed prop="id" :label="userDict.id" width="80"/>
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="username" :label="userDict['username']" width="120"/>
-      <el-table-column prop="nickname" :label="userDict['nickname']" width="120"/>
-      <el-table-column prop="avatar" :label="userDict['avatar']" width="120">
+      <el-table-column prop="username" :label="userDict.username" width="120"/>
+      <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
+      <el-table-column prop="avatar" :label="userDict.avatar" width="120">
         <template #default="{row}">
           <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
             <template #error>
@@ -274,14 +262,12 @@ const deleteUserRole = (userId: string) => {
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" :label="userDict['sex']" width="120"/>
-      <el-table-column prop="email" :label="userDict['email']" width="120"/>
-      <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
+      <el-table-column prop="sex" :label="userDict.sex" width="120"/>
+      <el-table-column prop="email" :label="userDict.email" width="120"/>
+      <el-table-column prop="tel" :label="userDict.tel" width="120"/>
       <template #append>
         <div class="el-table-append-box">
-          <span>此表格的多选<span class="underline">不支持</span>{{
-              `跨分页保存，当前已选 ${selectRows2.length} 条数据。`
-            }}</span>
+          <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${selectRows2.length} 条数据。` }}</span>
         </div>
       </template>
     </el-table>
@@ -311,12 +297,12 @@ const deleteUserRole = (userId: string) => {
       @selection-change="handleSelectionChange1"
   >
     <el-table-column fixed type="selection" width="55"/>
-    <el-table-column fixed prop="id" :label="userDict['id']" width="80"/>
+    <el-table-column fixed prop="id" :label="userDict.id" width="80"/>
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->
-    <el-table-column prop="username" :label="userDict['username']" width="120"/>
-    <el-table-column prop="nickname" :label="userDict['nickname']" width="120"/>
-    <el-table-column prop="avatar" :label="userDict['avatar']" width="120">
+    <el-table-column prop="username" :label="userDict.username" width="120"/>
+    <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
+    <el-table-column prop="avatar" :label="userDict.avatar" width="120">
       <template #default="{row}">
         <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
           <template #error>
@@ -325,9 +311,9 @@ const deleteUserRole = (userId: string) => {
         </el-image>
       </template>
     </el-table-column>
-    <el-table-column prop="sex" :label="userDict['sex']" width="120"/>
-    <el-table-column prop="email" :label="userDict['email']" width="120"/>
-    <el-table-column prop="tel" :label="userDict['tel']" width="120"/>
+    <el-table-column prop="sex" :label="userDict.sex" width="120"/>
+    <el-table-column prop="email" :label="userDict.email" width="120"/>
+    <el-table-column prop="tel" :label="userDict.tel" width="120"/>
     <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{row}">
         <el-button link type="danger" size="small" @click="deleteUserRole(row.id)">删除</el-button>

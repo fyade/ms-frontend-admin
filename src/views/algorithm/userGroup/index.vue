@@ -7,29 +7,18 @@ export default {
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue"
 import { cascaderProps2, CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
-import { userGroupFunc } from "@/api/module/algorithm/userGroup.ts"
+import { UserGroupDto, UserGroupUpdDto } from "@/type/module/algorithm/userGroup.ts";
+import { userGroupApi } from "@/api/module/algorithm/userGroup.ts";
+import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import UserGroupUser from "@/views/algorithm/userGroup/userGroupUser.vue";
 
-const state = reactive<State<userGroupDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<UserGroupDto, UserGroupUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -39,58 +28,32 @@ const state = reactive<State<userGroupDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '用户组名',
-    parentId: '父级用户组',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  pageQuery: false, // 分页，默认true
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  bulkOperation: true,
+  pageQuery: false,
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -109,25 +72,18 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage<userGroupDto>({
-  config,
+  ifRequired,
+} = funcTablePage<UserGroupDto, UserGroupUpdDto>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: userGroupFunc
+  dFormRules,
+  config,
+  api: userGroupApi,
+  dict: userGroupDict,
 })
 
 const expandRowKeys = ref<string[]>([])
 const tableData2 = computed(() => {
-  return arr2ToDiguiObj(state.list)
+  return arr2ToDiguiObj(tableData.value)
 })
 const gIns2 = () => {
   state.dialogForm.parentId = final.DEFAULT_PARENT_ID
@@ -137,9 +93,9 @@ const tIns = (id: number) => {
   state.dialogForm.parentId = id
   gIns()
 }
-let selectUserGroupInfo: userGroupDto = new userGroupDto()
+let selectUserGroupInfo: UserGroupDto = new UserGroupDto()
 const drawer2 = ref(false)
-const manageUser = (row: userGroupDto) => {
+const manageUser = (row: UserGroupDto) => {
   selectUserGroupInfo = row
   drawer2.value = true
 }
@@ -167,13 +123,13 @@ const manageUser = (row: userGroupDto) => {
   <el-dialog
       :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
-      :title="state.dialogType.label"
+      :title="dialogType.label"
       draggable
       append-to-body
   >
     <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
-      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
-      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+      <el-tab-pane :disabled="dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
     <template v-if="activeTabName===final.one">
       <el-form
@@ -181,14 +137,14 @@ const manageUser = (row: userGroupDto) => {
           v-loading="dialogLoadingRef"
           :model="state.dialogForm"
           :label-width="CONFIG.dialog_form_label_width"
-          :rules="state.dFormRules"
+          :rules="dFormRules"
       >
         <!--<el-row>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
-          <span>{{ state.dialogForm['id'] }}</span>
+        <el-form-item v-if="dialogType.value!==final.ins" :label="userGroupDict.id" prop="id">
+          <span>{{ state.dialogForm.id }}</span>
         </el-form-item>
         <!--
         第一个input添加如下属性
@@ -197,15 +153,14 @@ const manageUser = (row: userGroupDto) => {
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="state.dict['label']" prop="label">
-              <el-input v-model="state.dialogForm['label']" :placeholder="state.dict['label']"/>
+            <el-form-item :label="userGroupDict.label" prop="label">
+              <el-input v-model="state.dialogForm.label" :placeholder="userGroupDict.label"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="state.dict['parentId']" prop="parentId">
-              <!--<el-input-number v-model="state.dialogForm['parentId']" controls-position="right"/>-->
+            <el-form-item :label="userGroupDict.parentId" prop="parentId">
               <el-cascader
-                  v-model="state.dialogForm['parentId']"
+                  v-model="state.dialogForm.parentId"
                   :options="tableData2"
                   :props="cascaderProps2"
                   clearable
@@ -216,15 +171,15 @@ const manageUser = (row: userGroupDto) => {
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="state.dict['orderNum']" prop="orderNum">
-              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
+            <el-form-item :label="userGroupDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item :label="state.dict['remark']" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="state.dict['remark']"/>
+            <el-form-item :label="userGroupDict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="userGroupDict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -246,25 +201,24 @@ const manageUser = (row: userGroupDto) => {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <el-table-column prop="label" :label="state.dict['label']" width="300">
+          <el-table-column prop="label" :label="userGroupDict.label" width="300">
             <template #header>
-              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ state.dict['label'] }}</span>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ userGroupDict.label }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="state.dict['label']"/>
+                <el-input v-model="state.dialogForms[$index].label" :placeholder="userGroupDict.label"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="parentId" :label="state.dict['parentId']" width="300">
+          <el-table-column prop="parentId" :label="userGroupDict.parentId" width="300">
             <template #header>
-              <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ state.dict['parentId'] }}</span>
+              <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ userGroupDict.parentId }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <!--<el-input-number v-model="state.dialogForms[$index]['parentId']" controls-position="right"/>-->
                 <el-cascader
-                    v-model="state.dialogForms[$index]['parentId']"
+                    v-model="state.dialogForms[$index].parentId"
                     :options="tableData2"
                     :props="cascaderProps2"
                     clearable
@@ -273,33 +227,33 @@ const manageUser = (row: userGroupDto) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="300">
+          <el-table-column prop="orderNum" :label="userGroupDict.orderNum" width="300">
             <template #header>
-              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ state.dict['orderNum'] }}</span>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ userGroupDict.orderNum }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
+                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" :label="state.dict['remark']" width="300">
+          <el-table-column prop="remark" :label="userGroupDict.remark" width="300">
             <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ state.dict['remark'] }}</span>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ userGroupDict.remark }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="state.dict['remark']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="userGroupDict.remark"/>
               </div>
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
-            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
+            <template v-if="dialogType.value===final.ins" #default="{$index}">
               <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
-          <template v-if="state.dialogType.value===final.ins" #append>
+          <template v-if="dialogType.value===final.ins" #append>
             <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
           </template>
         </el-table>
@@ -314,93 +268,89 @@ const manageUser = (row: userGroupDto) => {
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <el-form
-      class="demo-form-inline"
-      v-if="Object.keys(state.filterForm).length>0"
-      ref="filterFormRef"
-      :model="state.filterForm"
-      :inline="true"
-      @keyup.enter="fEnter"
-      @submit.prevent
-  >
-    <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
-    <!--在此上方添加表单项-->
-    <el-form-item>
-      <el-button type="primary" @click="fCon">筛选</el-button>
-      <el-button @click="fCan">重置</el-button>
-    </el-form-item>
-  </el-form>
+  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+    <el-form
+        class="demo-form-inline"
+        ref="filterFormRef"
+        :model="state.filterForm"
+        :inline="true"
+        @keyup.enter="fEnter"
+        @submit.prevent
+    >
+      <!--在此下方添加表单项-->
+      <!--<el-form-item :label="userGroupDict." prop="">-->
+      <!--  <el-input v-model="state.filterForm." :placeholder="userGroupDict."/>-->
+      <!--</el-form-item>-->
+      <!--在此上方添加表单项-->
+      <el-form-item>
+        <el-button type="primary" @click="fCon">筛选</el-button>
+        <el-button @click="fCan">重置</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 
   <!--操作按钮-->
-  <div>
+  <div class="zs-button-row">
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
-    <el-button type="success" plain :icon="Edit"
-               :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1"
-               @click="gUpd">修改
-    </el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除
-    </el-button>
-    <el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">
-      导出
-    </el-button>
-    <el-button type="warning" plain :icon='Upload' @click="gImport">上传</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
+    <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     <!--</el-button-group>-->
   </div>
 
-  <!--数据表格-->
-  <el-table
-      v-loading="tableLoadingRef"
-      :data="tableData2"
-      :expand-row-keys="expandRowKeys"
-      row-key="id"
-      :default-expand-all="true"
-      @selection-change="handleSelectionChange"
-  >
-    <el-table-column fixed type="selection" width="55"/>
-    <!--<el-table-column fixed prop="id" :label="state.dict['id']" width="180"/>-->
-    <!--上面id列的宽度改一下-->
-    <!--在此下方添加表格列-->
-    <el-table-column prop="label" :label="state.dict['label']" width="240"/>
-    <!--<el-table-column prop="parentId" :label="state.dict['parentId']" width="120"/>-->
-    <el-table-column prop="orderNum" :label="state.dict['orderNum']" width="120"/>
-    <el-table-column prop="remark" :label="state.dict['remark']" width="120"/>
-    <!--在此上方添加表格列-->
-    <!--<el-table-column prop="createBy" :label="state.dict['createBy']" width="120"/>-->
-    <!--<el-table-column prop="updateBy" :label="state.dict['updateBy']" width="120"/>-->
-    <!--<el-table-column prop="createTime" :label="state.dict['createTime']" width="220"/>-->
-    <!--<el-table-column prop="updateTime" :label="state.dict['updateTime']" width="220"/>-->
-    <!--<el-table-column prop="deleted" :label="state.dict['deleted']" width="60"/>-->
-    <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
-      <template #default="{row}">
-        <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
-        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
-        <!--<el-button link type="primary" size="small">分配权限</el-button>-->
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+  <div class="zs-table-data">
+    <!--数据表格-->
+    <el-table
+        v-loading="tableLoadingRef"
+        :data="tableData2"
+        :expand-row-keys="expandRowKeys"
+        row-key="id"
+        :default-expand-all="true"
+        @selection-change="handleSelectionChange"
+    >
+      <el-table-column fixed type="selection" width="55"/>
+      <!--<el-table-column fixed prop="id" :label="userGroupDict.id" width="180"/>-->
+      <!--上面id列的宽度改一下-->
+      <!--在此下方添加表格列-->
+      <el-table-column prop="label" :label="userGroupDict.label" width="240"/>
+      <!--<el-table-column prop="parentId" :label="userGroupDict.parentId" width="120"/>-->
+      <el-table-column prop="orderNum" :label="userGroupDict.orderNum" width="120"/>
+      <el-table-column prop="remark" :label="userGroupDict.remark" width="120"/>
+      <!--在此上方添加表格列-->
+      <!--<el-table-column prop="createBy" :label="userGroupDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="userGroupDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="userGroupDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="userGroupDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="userGroupDict.deleted" width="60"/>-->
+      <!--上方几个酌情使用-->
+      <el-table-column fixed="right" label="操作" min-width="120">
+        <template #default="{row}">
+          <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
+          <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
+          <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
+          <!--<el-button link type="primary" size="small">分配权限</el-button>-->
+          <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+      <template #append>
+        <div class="el-table-append-box">
+          <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+        </div>
       </template>
-    </el-table-column>
-    <template #append>
-      <div class="el-table-append-box">
-      <span>此表格的多选<span
-          class="underline">不支持</span>{{ `跨分页保存，当前已选 ${state.multipleSelection.length} 条数据。` }}</span>
-      </div>
-    </template>
-  </el-table>
+    </el-table>
 
-  <!--分页-->
-  <Pagination
-      v-if="state.total!==-1"
-      :total="Number(state.total)"
-      :page-num="state.pageParam.pageNum"
-      :page-size="state.pageParam.pageSize"
-      @page-change="pageChange"
-  />
+    <!--分页-->
+    <Pagination
+        v-if="config.pageQuery"
+        :total="total"
+        :page-num="pageParam.pageNum"
+        :page-size="pageParam.pageSize"
+        @page-change="pageChange"
+    />
+  </div>
 </template>
 
 <style scoped>

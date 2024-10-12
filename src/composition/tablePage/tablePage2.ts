@@ -1,26 +1,26 @@
 import { nextTick, onMounted, reactive, Ref, ref, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox, FormInstance, FormItemRule, type FormRules } from "element-plus"
 import { final, Operate, PAGINATION } from "@/utils/base.ts"
-import { ApiConfig, State, State2, TablePageConfig } from "@/type/tablePage.ts";
+import { ApiConfig, State2, TablePageConfig } from "@/type/tablePage.ts";
 import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
 import { selectFiles } from "@/utils/FileUtils.ts";
-import { typeOM } from "@/type/utils/base.ts";
+import { TypeOM } from "@/type/utils/base.ts";
 
-export const funcTablePage = <T extends { id: number | string }, T2 extends T>({
-                                                                                 state,
-                                                                                 dFormRules = {},
-                                                                                 config = new TablePageConfig(),
-                                                                                 api,
-                                                                                 dict
-                                                                               }: {
-                                                                                 state: State2<T, T2>
-                                                                                 dFormRules: FormRules,
-                                                                                 config: TablePageConfig
-                                                                                 api: ApiConfig<T, T2>
-                                                                                 dict: { [P in keyof T]: string }
-                                                                               }
+export const funcTablePage = <T extends { id: number | string }, T2 = T>({
+                                                                           state,
+                                                                           dFormRules = {},
+                                                                           config = new TablePageConfig(),
+                                                                           api,
+                                                                           dict
+                                                                         }: {
+                                                                           state: State2<T, T2>
+                                                                           dFormRules: FormRules,
+                                                                           config: TablePageConfig
+                                                                           api: ApiConfig<T, T2>
+                                                                           dict: { [P in keyof T]: string }
+                                                                         }
 ) => {
   const dialogFormRef = ref<FormInstance | null>(null)
   const dialogFormsRef = ref<FormInstance | null>(null)
@@ -29,7 +29,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 extends T>({
   const dialogLoadingRef = ref<boolean>(false)
   const tableLoadingRef = ref<boolean>(false)
   const switchLoadingRef = ref<boolean>(false)
-  const activeTabName = ref<typeOM>(final.one)
+  const activeTabName = ref<TypeOM>(final.one)
   const tableData: Ref<T[]> = ref([])
   const pageParam = reactive({
     pageNum: PAGINATION.pageNum,
@@ -189,9 +189,10 @@ export const funcTablePage = <T extends { id: number | string }, T2 extends T>({
   }
   // 弹窗确定
   const dCon = () => {
-    Object.keys(state.dialogForm).forEach(item => {
-      if (typeof state.dialogForm[item as keyof typeof state.dialogForm] === 'string') {
-        (state.dialogForm[item as keyof typeof state.dialogForm] as string) = (state.dialogForm[item as keyof typeof state.dialogForm] as string).trim()
+    Object.keys(state.dialogForm as object).forEach(ite => {
+      const item = ite as keyof typeof state.dialogForm
+      if (typeof state.dialogForm[item] === 'string') {
+        (state.dialogForm[item] as string) = (state.dialogForm[item] as string).trim()
       }
     })
     if (activeTabName && activeTabName.value === final.more && dialogFormsRef) {
@@ -387,7 +388,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 extends T>({
           api.selectByIds(multipleSelection.value.map(item => item.id)).then(res => {
             res.forEach((obj, i) => {
               state.dialogForms![i] = structuredClone(initialStateDialogForm)
-              copyObject(state.dialogForms![i], obj)
+              copyObject(state.dialogForms![i], obj as unknown as T2)
             })
           }).catch((e) => {
             dialogVisible.value = false
@@ -416,7 +417,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 extends T>({
           activeTabName.value = final.one
         }
         api.selectById(id).then(res => {
-          copyObject(state.dialogForm, res)
+          copyObject(state.dialogForm, res as unknown as T2)
         }).catch(() => {
           dialogVisible.value = false
         }).finally(() => {

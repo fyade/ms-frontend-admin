@@ -6,10 +6,10 @@ import { removeElementsByIndices } from "@/utils/ObjectUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { fileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
-interface progressI {
+interface ProgressI {
   started: number[],
   ended: number[],
   total: number
@@ -25,7 +25,7 @@ const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive<fileUploadInterfaceMoreChunkConcur>({
+const state = reactive<FileUploadInterfaceMoreChunkConcur>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -155,7 +155,7 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
       fileUploadRequests.push(uploading(indexs[i], chunks[i]))
     }
     await concurRequest2(fileUploadRequests, {
-      downloadProgress: (progress: progressI) => {
+      downloadProgress: (progress: ProgressI) => {
         state.progress_started = progress.started.length
         state.progress_ended = progress.ended.length
       }
@@ -219,7 +219,7 @@ function concurRequest2(promises: (() => Promise<null>)[],
                           downloadProgress?: Function
                         } = {}
 ): Promise<(string | boolean | null)[]> {
-  const progress: progressI = {
+  const progress: ProgressI = {
     started: [] as number[],
     ended: [] as number[],
     total: promises.length

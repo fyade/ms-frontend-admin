@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class interfaceDto extends baseClass {
+export class InterfaceDto extends BaseClass {
   id!: number;
   label!: string;
   icon!: string;
@@ -13,13 +12,13 @@ export class interfaceDto extends baseClass {
   remark!: string;
 }
 
-export class interfaceSelDto extends pageDto {
+export class InterfaceSelDto extends PageDto {
 }
 
-export class interfaceSelAllDto {
+export class InterfaceSelAllDto {
 }
 
-export class interfaceInsDto {
+export class InterfaceInsDto {
   label!: string;
   icon!: string;
   orderNum!: number;
@@ -30,6 +29,6 @@ export class interfaceInsDto {
   remark!: string;
 }
 
-export class interfaceUpdDto extends interfaceInsDto {
+export class InterfaceUpdDto extends InterfaceInsDto {
   id!: number;
 }

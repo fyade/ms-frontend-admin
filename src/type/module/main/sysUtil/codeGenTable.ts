@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class codeGenTableDto extends baseClass {
+export class CodeGenTableDto extends BaseClass {
   id!: number;
   tableName!: string;
   tableDescr!: string;
@@ -16,13 +15,13 @@ export class codeGenTableDto extends baseClass {
   remark!: string;
 }
 
-export class codeGenTableSelDto extends pageDto {
+export class CodeGenTableSelDto extends PageDto {
 }
 
-export class codeGenTableSelAllDto {
+export class CodeGenTableSelAllDto {
 }
 
-export class codeGenTableInsDto {
+export class CodeGenTableInsDto {
   tableName!: string;
   tableDescr!: string;
   entityName!: string;
@@ -36,6 +35,6 @@ export class codeGenTableInsDto {
   remark!: string;
 }
 
-export class codeGenTableUpdDto extends codeGenTableInsDto {
+export class CodeGenTableUpdDto extends CodeGenTableInsDto {
   id!: number;
 }

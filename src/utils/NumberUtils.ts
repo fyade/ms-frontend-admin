@@ -1,4 +1,4 @@
-class typeUnitConversion {
+class TypeUnitConversion {
   scale?: number
   units?: string[]
   decimalDigits?: number
@@ -21,7 +21,7 @@ export function unitConversion(num: number, {
   decimalDigits = 2,
   addZero = true,
   showNuit = true
-}: typeUnitConversion = {}) {
+}: TypeUnitConversion = {}) {
   let ret = num, index = 0
   while (ret >= scale && index < units.length) {
     index++
@@ -31,7 +31,7 @@ export function unitConversion(num: number, {
   return `${s}${showNuit ? units[index] : ''}`
 }
 
-export function unitConversion_storage(num: number, config?: typeUnitConversion) {
+export function unitConversion_storage(num: number, config?: TypeUnitConversion) {
   return unitConversion(num, {
     ...config,
     scale: 1024,

@@ -3,7 +3,7 @@ import router from "@/router/index.ts";
 import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle } from "element-plus";
 import { useRoute } from "vue-router";
-import { loginDto, userDto } from "@/type/module/main/sysManage/user.ts";
+import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
 import { loginApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
@@ -12,7 +12,7 @@ import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
-  const userinfo: userDto = reactive({
+  const userinfo: UserDto = reactive({
     id: '',
     username: '',
     nickname: '',
@@ -24,7 +24,7 @@ export const useUserStore = defineStore('userStore', () => {
   })
   const ifLogin = ref(false)
   const route = useRoute()
-  const login = async (user: loginDto) => {
+  const login = async (user: LoginDto) => {
     return new Promise((resolve, reject) => {
       loginApi(user).then(async res => {
         if (res) {

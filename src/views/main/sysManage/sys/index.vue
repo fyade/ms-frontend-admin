@@ -165,22 +165,6 @@ const tDel2 = (value: any) => {
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="sysDict.orderNum" prop='orderNum'>-->
-        <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="sysDict.ifDefault" prop='ifDefault'>-->
-        <!--  <el-switch v-model="state.dialogForm.ifDefault" :active-value='final.Y' :inactive-value='final.N'/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="sysDict.ifDisabled" prop='ifDisabled'>-->
-        <!--  <el-radio-group v-model="state.dialogForm.ifDisabled">-->
-        <!--    <el-radio :value="final.Y">是</el-radio>-->
-        <!--    <el-radio :value="final.N">否</el-radio>-->
-        <!--  </el-radio-group>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="sysDict.ifDisabled" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm.ifDisabled" :active-value="final.N" :inactive-value="final.Y"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">

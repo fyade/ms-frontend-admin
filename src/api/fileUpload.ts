@@ -1,14 +1,14 @@
 import request, { fileBaseUrl } from "./request";
 import axios from "axios";
 
-export class params_fileUploadOneChunk_check {
+export class ParamsFileUploadOneChunkCheck {
   fileName!: string
   fileMd5!: string
   fileSize!: number
   chunkNum!: number
 }
 
-export class params_fileUploadOneChunk_merge {
+export class ParamsFileUploadOneChunkMerge {
   fileNewName!: string
   fileMd5!: string
 }
@@ -56,7 +56,7 @@ export function fileUploadAvatar(file: FormData) {
  * 文件分片上传前置检查
  * @param data
  */
-export function fileUploadOneChunk_check(data: params_fileUploadOneChunk_check) {
+export function fileUploadOneChunk_check(data: ParamsFileUploadOneChunkCheck) {
   return request({
     url: '/main/sys-common/file-upload/one-chunk/check',
     method: 'POST',
@@ -88,7 +88,7 @@ export function fileUploadOneChunk_upload({fileMd5, fileNewName, chunkIndex, fil
  * 分片合并
  * @param data
  */
-export function fileUploadOneChunk_merge(data: params_fileUploadOneChunk_merge) {
+export function fileUploadOneChunk_merge(data: ParamsFileUploadOneChunkMerge) {
   return request({
     url: '/main/sys-common/file-upload/one-chunk/merge',
     method: 'POST',

@@ -1,37 +1,25 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue";
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
+import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
-import { State, t_config } from "@/type/tablePage.ts";
-import type { FormRules, TreeInstance } from 'element-plus';
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules, TreeInstance } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts";
-import { interfaceGroupDto, interfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
-import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts";
-import { interfaceDto } from "@/type/module/algorithm/interface.ts";
+import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
+import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
+import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
+import { InterfaceDto } from "@/type/module/algorithm/interface.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { interfaceInterfaceGroupDto } from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
 
 const props = defineProps({
   interface: {
-    type: interfaceDto,
+    type: InterfaceDto,
     required: true
   }
 });
 
-const state = reactive<State<interfaceGroupDto, interfaceGroupUpdDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -42,59 +30,32 @@ const state = reactive<State<interfaceGroupDto, interfaceGroupUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    baseURL: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '接口组名',
-    parentId: '父级接口组',
-    baseURL: 'baseURL',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  baseURL: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  bulkOperation: true,
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -113,24 +74,17 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage({
-  config,
+  ifRequired,
+} = funcTablePage<InterfaceGroupDto, InterfaceGroupUpdDto>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: interfaceGroupFunc
+  dFormRules,
+  config,
+  api: interfaceGroupApi,
+  dict: interfaceGroupDict,
 })
 
-const selectInterfaceGroupTree = ref<TreeInstance|null>(null)
-const tableData2 = computed(() => arr2ToDiguiObj(state.list))
+const selectInterfaceGroupTree = ref<TreeInstance | null>(null)
+const tableData2 = computed(() => arr2ToDiguiObj(tableData.value))
 const selectInterfaceGroup: Ref<number[]> | undefined = inject('changeSelectInterfaceGroup')
 const selectInterfaceGroup2 = ref<number[]>(selectInterfaceGroup ? selectInterfaceGroup.value : [])
 nextTick(() => {
@@ -140,14 +94,14 @@ nextTick(() => {
 })
 watch(selectInterfaceGroup2, () => {
   if (selectInterfaceGroup) {
-    selectInterfaceGroup.value = state.list.filter(item => selectInterfaceGroup2.value.indexOf(item.id) > -1).map(item=>item.id)
+    selectInterfaceGroup.value = tableData.value.filter(item => selectInterfaceGroup2.value.indexOf(item.id) > -1).map(item => item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: interfaceGroupDto,
+    data: InterfaceGroupDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

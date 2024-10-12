@@ -1,5 +1,4 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
 export const T_MENU = 'mm'
 export const T_COMP = 'mc'
@@ -9,9 +8,9 @@ export type T_MENU = 'mm'
 export type T_COMP = 'mc'
 export type T_IS = 'ma'
 export type T_Inter = 'mb'
-export type tType = T_MENU | T_COMP | T_IS | T_Inter
+export type TType = T_MENU | T_COMP | T_IS | T_Inter
 
-export class menuDto<T = tType> extends baseClass {
+export class MenuDto<T = TType> extends BaseClass {
   id!: number;
   label!: string;
   type!: T;
@@ -29,15 +28,13 @@ export class menuDto<T = tType> extends baseClass {
   remark!: string;
 }
 
-export class menuSelDto extends pageDto {
+export class MenuSelDto extends PageDto {
 }
 
-export class menuSelAllDto<T = tType> {
-  type?: T;
-  parentId?: number;
+export class MenuSelAllDto {
 }
 
-export class menuInsDto<T = tType> {
+export class MenuInsDto<T = TType> {
   label!: string;
   type!: T;
   path!: string;
@@ -54,6 +51,6 @@ export class menuInsDto<T = tType> {
   remark!: string;
 }
 
-export class menuUpdDto extends menuInsDto {
+export class MenuUpdDto<T = TType> extends MenuInsDto<T> {
   id!: number;
 }

@@ -12,14 +12,14 @@ const props = defineProps({
   }
 })
 
-interface iconI {
+interface IconI {
   url: string
   name: string
   label: string
   value: string
 }
 
-const icons = ref<iconI[]>([])
+const icons = ref<IconI[]>([])
 const files = import.meta.glob('/src/assets/icon/*.svg');
 icons.value = Object.keys(files).map((path) => {
   const module = files[path];

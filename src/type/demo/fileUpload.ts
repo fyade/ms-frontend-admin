@@ -1,4 +1,4 @@
-interface fileUploadBaseInterface {
+interface FileUploadBaseInterface {
   currentStage: 'o' | 'a' | 'b' | 'c' | 'd' | 'e',
   dictStage: {
     o: string,
@@ -10,12 +10,12 @@ interface fileUploadBaseInterface {
   },
 }
 
-export interface fileUploadInterfaceOneChunkConcur extends fileUploadInterfaceOneChunk {
+export interface FileUploadInterfaceOneChunkConcur extends FileUploadInterfaceOneChunk {
   progress_started: number,
   progress_ended: number,
 }
 
-export interface fileUploadInterfaceOneChunk extends fileUploadBaseInterface{
+export interface FileUploadInterfaceOneChunk extends FileUploadBaseInterface{
   chunkNum: number,
   chunkTotal: number,
   fileMd5: string,
@@ -24,14 +24,14 @@ export interface fileUploadInterfaceOneChunk extends fileUploadBaseInterface{
   progress_total: number,
 }
 
-export interface fileUploadInterfaceMoreFullConcur extends fileUploadBaseInterface {
+export interface FileUploadInterfaceMoreFullConcur extends FileUploadBaseInterface {
   total: number,
   started: number,
   ended: number,
   beyondMaxSizeNum: number
 }
 
-export interface fileUploadInterfaceMoreChunk extends fileUploadBaseInterface {
+export interface FileUploadInterfaceMoreChunk extends FileUploadBaseInterface {
   chunkNum: number,
   chunkTotal: number,
   fileNum: number,
@@ -42,7 +42,7 @@ export interface fileUploadInterfaceMoreChunk extends fileUploadBaseInterface {
   progress_total: number,
 }
 
-export interface fileUploadInterfaceMoreChunkConcur extends fileUploadInterfaceMoreChunk {
+export interface FileUploadInterfaceMoreChunkConcur extends FileUploadInterfaceMoreChunk {
   progress_started: number,
   progress_ended: number,
 }

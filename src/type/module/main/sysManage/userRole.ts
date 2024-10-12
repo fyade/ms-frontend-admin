@@ -1,39 +1,34 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class userRoleDto extends baseClass {
+export class UserRoleDto extends BaseClass {
   id!: number;
   userId!: string;
   roleId!: number;
   remark!: string;
 }
 
-export class userRoleSelDto extends pageDto {
-  roleId?: number
+export class UserRoleSelDto extends PageDto {
 }
 
-export class userRoleSelAllDto {
-  userId?: string
-  roleId?: number
+export class UserRoleSelAllDto {
 }
 
-export class userRoleInsDto {
+export class UserRoleInsDto {
   userId!: string;
   roleId!: number;
   remark!: string;
 }
 
-export class userRoleUpdDto extends userRoleInsDto {
+export class UserRoleUpdDto extends UserRoleInsDto {
   id!: number;
 }
 
-
-export class userRoleUpdURDto {
+export class UserRoleUpdURDto {
   userId!: string;
   roleId!: number[];
 }
 
-export class userRoleUpdRUDto {
+export class UserRoleUpdRUDto {
   userId!: string[];
   roleId!: number;
 }

@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class logAlgorithmCallDto extends baseClass {
+export class LogAlgorithmCallDto extends BaseClass {
   id!: number;
   userGroupPermissionId!: number;
   userId!: string;
@@ -10,13 +9,13 @@ export class logAlgorithmCallDto extends baseClass {
   remark!: string;
 }
 
-export class logAlgorithmCallSelDto extends pageDto {
+export class LogAlgorithmCallSelDto extends PageDto {
 }
 
-export class logAlgorithmCallSelAllDto {
+export class LogAlgorithmCallSelAllDto {
 }
 
-export class logAlgorithmCallInsDto {
+export class LogAlgorithmCallInsDto {
   userGroupPermissionId!: number;
   userId!: string;
   callIp!: string;
@@ -24,6 +23,6 @@ export class logAlgorithmCallInsDto {
   remark!: string;
 }
 
-export class logAlgorithmCallUpdDto extends logAlgorithmCallInsDto {
+export class LogAlgorithmCallUpdDto extends LogAlgorithmCallInsDto {
   id!: number;
 }

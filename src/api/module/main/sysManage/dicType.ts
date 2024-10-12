@@ -1,152 +1,86 @@
 import request from "@/api/request.ts";
-import {
-  dicTypeDto,
-  dicTypeSelDto,
-  dicTypeSelAllDto,
-  dicTypeInsDto,
-  dicTypeUpdDto
-} from "@/type/module/main/sysManage/dicType.ts";
-import {
-  t_funcMap,
-  t_funcMap_selList_ret,
-  t_funcMap_selMore_ret,
-  t_funcMap_selOne_ret,
-  t_funcMap_iud_ret
-} from "@/type/tablePage.ts";
+import { ApiConfig } from "@/type/tablePage.ts";
+import { DicTypeDto, DicTypeUpdDto } from "@/type/module/main/sysManage/dicType.ts";
 
-export function dicTypeSel(params: dicTypeSelDto): t_funcMap_selList_ret<dicTypeDto> {
-  return request({
-    url: '/main/sys-manage/dic-type',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function dicTypeSelAll(params: dicTypeSelAllDto): t_funcMap_selMore_ret<dicTypeDto> {
-  return request({
-    url: '/main/sys-manage/dic-type/all',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function dicTypeSelById(id: number): t_funcMap_selOne_ret<dicTypeDto> {
-  return request({
-    url: `/main/sys-manage/dic-type/${id}`,
-    method: 'GET'
-  })
-}
-
-export function dicTypeSelByIds(ids: number[]): t_funcMap_selMore_ret<dicTypeDto> {
-  return request({
-    url: `/main/sys-manage/dic-type/ids`,
-    method: 'GET',
-    params: ids
-  })
-}
-
-export function dicTypeIns(params: dicTypeInsDto): t_funcMap_iud_ret {
-  return request({
-    url: '/main/sys-manage/dic-type',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function dicTypeUpd(params: dicTypeUpdDto): t_funcMap_iud_ret {
-  return request({
-    url: '/main/sys-manage/dic-type',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function dicTypeInss(params: dicTypeInsDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/main/sys-manage/dic-type/s',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function dicTypeUpds(params: dicTypeUpdDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/main/sys-manage/dic-type/s',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function dicTypeDel(ids: number[]): t_funcMap_iud_ret {
-  return request({
-    url: '/main/sys-manage/dic-type',
-    method: 'DELETE',
-    data: ids
-  })
-}
-
-export const dicTypeFunc: t_funcMap<dicTypeDto, dicTypeSelDto, dicTypeSelAllDto, dicTypeInsDto, dicTypeUpdDto> = {
+export const dicTypeApi: ApiConfig<DicTypeDto, DicTypeUpdDto> = {
   /**
    * 分页查询
    * @param params
    */
-  selectList: (params: dicTypeSelDto) => {
-    return dicTypeSel(params)
-  },
+  selectList: (params) => request({
+    url: '/main/sys-manage/dic-type',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询所有
    * @param params
    */
-  selectAll: (params: dicTypeSelAllDto) => {
-    return dicTypeSelAll(params)
-  },
+  selectAll: (params) => request({
+    url: '/main/sys-manage/dic-type/all',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询单个
    * @param id
    */
-  selectById: (id: number) => {
-    return dicTypeSelById(id)
-  },
+  selectById: (id) => request({
+    url: `/main/sys-manage/dic-type/${id}`,
+    method: 'GET'
+  }),
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: number[]) => {
-    return dicTypeSelByIds(ids)
-  },
+  selectByIds: (ids) => request({
+    url: `/main/sys-manage/dic-type/ids`,
+    method: 'GET',
+    params: ids
+  }),
   /**
    * 新增
    * @param obj
    */
-  insertOne: (obj: dicTypeInsDto) => {
-    return dicTypeIns(obj)
-  },
+  insertOne: (obj) => request({
+    url: '/main/sys-manage/dic-type',
+    method: 'POST',
+    data: obj
+  }),
   /**
    * 修改
    * @param obj
    */
-  updateOne: (obj: dicTypeUpdDto) => {
-    return dicTypeUpd(obj)
-  },
+  updateOne: (obj) => request({
+    url: '/main/sys-manage/dic-type',
+    method: 'PUT',
+    data: obj
+  }),
   /**
    * 新增多个
    * @param objs
    */
-  insertMore: (objs: dicTypeInsDto[]) => {
-    return dicTypeInss(objs)
-  },
+  insertMore: (objs) => request({
+    url: '/main/sys-manage/dic-type/s',
+    method: 'POST',
+    data: objs
+  }),
   /**
    * 修改多个
    * @param objs
    */
-  updateMore: (objs: dicTypeUpdDto[]) => {
-    return dicTypeUpds(objs)
-  },
+  updateMore: (objs) => request({
+    url: '/main/sys-manage/dic-type/s',
+    method: 'PUT',
+    data: objs
+  }),
   /**
    * 删除
    * @param ids
    */
-  deleteList: (...ids: number[]) => {
-    return dicTypeDel(ids)
-  }
+  deleteList: (...ids) => request({
+    url: '/main/sys-manage/dic-type',
+    method: 'DELETE',
+    data: ids
+  })
 }

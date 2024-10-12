@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class codeGenColumnDto extends baseClass {
+export class CodeGenColumnDto extends BaseClass {
   id!: number;
   tableId!: number;
   colName!: string;
@@ -20,13 +19,14 @@ export class codeGenColumnDto extends baseClass {
   remark!: string;
 }
 
-export class codeGenColumnSelDto extends pageDto {
+export class CodeGenColumnSelDto extends PageDto {
 }
 
-export class codeGenColumnSelAllDto {
+export class CodeGenColumnSelAllDto {
 }
 
-export class codeGenColumnInsDto {
+export class CodeGenColumnInsDto {
+  tableId!: number;
   colName!: string;
   colDescr!: string;
   mysqlType!: string;
@@ -43,6 +43,6 @@ export class codeGenColumnInsDto {
   remark!: string;
 }
 
-export class codeGenColumnUpdDto extends codeGenColumnInsDto {
+export class CodeGenColumnUpdDto extends CodeGenColumnInsDto {
   id!: number;
 }

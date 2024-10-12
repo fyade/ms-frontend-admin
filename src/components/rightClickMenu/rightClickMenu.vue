@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { nextTick, reactive } from "vue";
 import eventBus from "@/utils/eventBus.ts";
-import { menusT } from "@/type/components/rightClickMenu.ts";
+import { MenusT } from "@/type/components/rightClickMenu.ts";
 
-class stateReaC {
+class StateReaC {
   show: boolean = false
   left: number = 0
   top: number = 0
 }
 
-const stateRea = reactive(new stateReaC())
+const stateRea = reactive(new StateReaC())
 const props = defineProps({
   menus: {
-    type: Array as () => menusT[][],
+    type: Array as () => MenusT[][],
     default: () => []
   }
 });

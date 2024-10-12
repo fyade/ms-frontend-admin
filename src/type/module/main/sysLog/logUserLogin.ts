@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class logUserLoginDto extends baseClass {
+export class LogUserLoginDto extends BaseClass {
   id!: number;
   userId!: string;
   loginIp!: string;
@@ -12,13 +11,13 @@ export class logUserLoginDto extends baseClass {
   remark!: string;
 }
 
-export class logUserLoginSelDto extends pageDto {
+export class LogUserLoginSelDto extends PageDto {
 }
 
-export class logUserLoginSelAllDto {
+export class LogUserLoginSelAllDto {
 }
 
-export class logUserLoginInsDto {
+export class LogUserLoginInsDto {
   userId!: string;
   loginIp!: string;
   loginPosition!: string;
@@ -28,6 +27,6 @@ export class logUserLoginInsDto {
   remark!: string;
 }
 
-export class logUserLoginUpdDto extends logUserLoginInsDto {
+export class LogUserLoginUpdDto extends LogUserLoginInsDto {
   id!: number;
 }

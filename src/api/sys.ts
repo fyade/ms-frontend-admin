@@ -1,5 +1,5 @@
 import request from "@/api/request.ts";
-import { sysDto } from "@/type/module/main/sysManage/sys.ts";
+import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 
 export function getSysVersion() {
   return request({
@@ -22,7 +22,7 @@ export function getPermissions(sysId: number) {
   })
 }
 
-export function getSystems(): Promise<sysDto[]> {
+export function getSystems(): Promise<SysDto[]> {
   return request({
     url: '/sys/base/system',
     method: 'GET'

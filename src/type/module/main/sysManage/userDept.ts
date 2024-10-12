@@ -1,39 +1,34 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class userDeptDto extends baseClass {
+export class UserDeptDto extends BaseClass {
   id!: number;
   userId!: string;
   deptId!: number;
   remark!: string;
 }
 
-export class userDeptSelDto extends pageDto {
-  deptId!: number;
+export class UserDeptSelDto extends PageDto {
 }
 
-export class userDeptSelAllDto {
+export class UserDeptSelAllDto {
 }
 
-export class userDeptInsDto {
+export class UserDeptInsDto {
   userId!: string;
   deptId!: number;
   remark!: string;
 }
 
-export class userDeptUpdDto {
+export class UserDeptUpdDto extends UserDeptInsDto {
   id!: number;
-  userId!: string;
-  deptId!: number;
-  remark!: string;
 }
 
-export class userDeptUpdUDDto {
+export class UserDeptUpdUDDto {
   userId!: string
   deptId!: number[]
 }
 
-export class userDeptUpdDUDto {
+export class UserDeptUpdDUDto {
   userId!: string[]
   deptId!: number
 }

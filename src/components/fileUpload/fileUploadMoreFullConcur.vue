@@ -5,10 +5,10 @@ import { CHUNK_SIZE } from "../../../config/config";
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { fileUploadInterfaceMoreFullConcur } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceMoreFullConcur } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
-interface progressI {
+interface ProgressI {
   started: number[],
   ended: number[],
   total: number
@@ -24,7 +24,7 @@ const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive<fileUploadInterfaceMoreFullConcur>({
+const state = reactive<FileUploadInterfaceMoreFullConcur>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -66,7 +66,7 @@ const upload5 = async () => {
   state.total -= state.beyondMaxSizeNum
   state.currentStage = 'c'
   await concurRequest2(fileUploadRequests, {
-    downloadProgress: (progress: progressI) => {
+    downloadProgress: (progress: ProgressI) => {
       state.started = progress.started.length
       state.ended = progress.ended.length
     }

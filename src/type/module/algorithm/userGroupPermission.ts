@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class userGroupPermissionDto extends baseClass {
+export class UserGroupPermissionDto extends BaseClass {
   id!: number;
   userGroupId!: number;
   permissionId!: number;
@@ -18,27 +17,28 @@ export class userGroupPermissionDto extends baseClass {
   count?: number;
 }
 
-export class userGroupPermissionSelDto extends pageDto {
+export class UserGroupPermissionSelDto extends PageDto {
 }
 
-export class userGroupPermissionSelAllDto {
+export class UserGroupPermissionSelAllDto {
 }
 
-export class userGroupPermissionInsDto {
+export class UserGroupPermissionInsDto {
   userGroupId!: number;
   permissionId!: number;
   ifLongTerm!: string;
   ifLimitRequestTimes!: string;
   ifRejectRequestUseUp!: string;
-  permissionStartTime!: string;
-  permissionEndTime!: string;
-  permissionTime?: string;
+  permissionStartTime!: Date;
+  permissionEndTime!: Date;
+  permissionTime?: any;
   limitRequestTimes!: number;
   ifUseUp!: string;
   orderNum!: number;
   remark!: string;
+  count?: number;
 }
 
-export class userGroupPermissionUpdDto extends userGroupPermissionInsDto {
+export class UserGroupPermissionUpdDto extends UserGroupPermissionInsDto {
   id!: number;
 }

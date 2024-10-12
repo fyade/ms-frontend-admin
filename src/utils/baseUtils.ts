@@ -51,7 +51,7 @@ export function toSnakeCases(strs: string[]): string[] {
   return strs.map(str => toSnakeCase(str));
 }
 
-type arr2ToDiguiObjI<T, K extends string, V> = T & {
+type Arr2ToDiguiObjI<T, K extends string, V> = T & {
   [P in K]: V
 }
 
@@ -71,7 +71,7 @@ export function arr2ToDiguiObj<T = any>(list: T[], {
                                           defaultParent?: number,
                                           ifDeepClone?: boolean
                                         } = {}
-): arr2ToDiguiObjI<T, typeof key, number>[] {
+): Arr2ToDiguiObjI<T, typeof key, number>[] {
   const list2 = (ifDeepClone ? deepClone(list) : list) as any[]
   if (list2.length === 0) {
     return []

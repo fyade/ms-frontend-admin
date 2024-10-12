@@ -12,35 +12,12 @@ export const CONFIG = {
   theme_color_menu_bg_active_lighten: '#d5e4ff',
   theme_color_menu_bg_not_active: '#fff',
   theme_color_menu_color: '#fff',
+  theme_color_main_bg: '#fafaff'
 }
 
 export const PAGINATION = {
   pageNum: 1,
   pageSize: 10
-}
-
-export class baseClass {
-  createBy?: string;
-  updateBy?: string;
-  createTime?: Date;
-  updateTime?: Date;
-  deleted?: string;
-}
-
-export class baseClass2 {
-  create_by?: string;
-  update_by?: string;
-  create_time?: Date;
-  update_time?: Date;
-  deleted?: string;
-}
-
-export interface baseInterface {
-  createBy?: string;
-  updateBy?: string;
-  createTime?: Date;
-  updateTime?: Date;
-  deleted?: string;
 }
 
 export const publicDict = {
@@ -54,19 +31,6 @@ export const publicDict = {
   createTime: 'createTime',
   updateTime: 'updateTime',
   deleted: '逻辑删除'
-}
-
-export interface publicDictInterface {
-  id: string,
-  remark: string,
-  orderNum: string,
-  ifDefault: string,
-  ifDisabled: string,
-  createBy: string,
-  updateBy: string,
-  createTime: string,
-  updateTime: string,
-  deleted: string
 }
 
 export const EXPORT_IGNORE_KEYS = [
@@ -100,9 +64,22 @@ export const final: {
   upd: 'UPD'
 }
 
-export interface finalIU {
+export interface FinalIU {
   'INS': 'INS'
   'UPD': 'UPD'
+}
+
+export interface PublicDictInterface {
+  id: string,
+  remark: string,
+  orderNum: string,
+  ifDefault: string,
+  ifDisabled: string,
+  createBy: string,
+  updateBy: string,
+  createTime: string,
+  updateTime: string,
+  deleted: string
 }
 
 export const Operate = {

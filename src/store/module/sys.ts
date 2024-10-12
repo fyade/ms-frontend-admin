@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { getSysVersion } from "@/api/sys.ts";
 import { currentVersion } from "../../../config/config.ts";
-import { sysDto } from "@/type/module/main/sysManage/sys.ts";
+import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { copyObject } from "@/utils/ObjectUtils.ts";
 
 export const useSysStore = defineStore('sysStore', () => {
@@ -14,8 +14,8 @@ export const useSysStore = defineStore('sysStore', () => {
     version.hd = res
   })
 
-  const currentSystem = reactive<sysDto>(new sysDto())
-  const setCurrentSystem = (dto: sysDto) => {
+  const currentSystem = reactive<SysDto>(new SysDto())
+  const setCurrentSystem = (dto: SysDto) => {
     copyObject(currentSystem,dto)
   }
   const getCurrentSystem = computed(() => {

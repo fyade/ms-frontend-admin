@@ -6,10 +6,10 @@ import { removeElementsByIndices } from "@/utils/ObjectUtils";
 import { CHUNK_SIZE } from "../../../config/config";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { fileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
-interface progressI {
+interface ProgressI {
   started: number[],
   ended: number[],
   total: number
@@ -25,7 +25,7 @@ const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive<fileUploadInterfaceOneChunkConcur>({
+const state = reactive<FileUploadInterfaceOneChunkConcur>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -149,7 +149,7 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
       fileUploadRequests.push(uploading(indexs[i], chunks[i]))
     }
     await concurRequest2(fileUploadRequests, {
-      downloadProgress: (progress: progressI) => {
+      downloadProgress: (progress: ProgressI) => {
         state.progress_started = progress.started.length
         state.progress_ended = progress.ended.length
       }

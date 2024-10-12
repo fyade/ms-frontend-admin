@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class rolePermissionDto extends baseClass {
+export class RolePermissionDto extends BaseClass {
   id!: number;
   roleId!: number;
   type!: string;
@@ -9,24 +8,24 @@ export class rolePermissionDto extends baseClass {
   remark!: string;
 }
 
-export class rolePermissionSelDto extends pageDto {
+export class RolePermissionSelDto extends PageDto {
 }
 
-export class rolePermissionSelAllDto {
+export class RolePermissionSelAllDto {
 }
 
-export class rolePermissionInsDto {
+export class RolePermissionInsDto {
   roleId!: number;
   type!: string;
   permissionId!: number;
   remark!: string;
 }
 
-export class rolePermissionUpdDto extends rolePermissionInsDto {
+export class RolePermissionUpdDto extends RolePermissionInsDto {
   id!: number;
 }
 
-export class rolePermissionUpdRpDto {
+export class RolePermissionUpdRpDto {
   roleId!: number;
   permissionId!: number[];
 }

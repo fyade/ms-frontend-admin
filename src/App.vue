@@ -8,7 +8,8 @@ import { CONFIG } from "@/utils/base.ts";
       :style="{
         '--theme-color-menu-bg-active': `${CONFIG.theme_color_menu_bg_active}`,
         '--theme-color-menu-bg-active-lighten': `${CONFIG.theme_color_menu_bg_active_lighten}`,
-        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`
+        '--theme-color-menu-color': `${CONFIG.theme_color_menu_color}`,
+        '--theme-color-main-bg': `${CONFIG.theme_color_main_bg}`,
       }"
   >
     <router-view/>

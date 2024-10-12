@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
-import { allMenus2I, useRouterStore } from "@/store/module/router.ts";
+import { AllMenus2I, useRouterStore } from "@/store/module/router.ts";
 import { computed, Ref, ref, watch } from "vue";
 import { routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
@@ -27,7 +27,7 @@ const deleteMenu = (index: number) => {
   routerStore.deleteMenu(index)
 }
 
-const contextMenu = (info: allMenus2I, index: number) => [
+const contextMenu = (info: AllMenus2I, index: number) => [
   [
     {
       label: '关闭此标签页',
@@ -161,7 +161,7 @@ const sysConfigStore = useSysConfigStore();
     padding: 8px;
     padding-right: 0;
     overflow: auto;
-    background-color: #fafaff;
+    background-color: var(--theme-color-main-bg);;
   }
 
   .main2 {

@@ -8,33 +8,24 @@ export default {
 import { reactive, ref, toRaw, watch } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config } from "@/type/tablePage.ts"
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts"
+import { State2, TablePageConfig } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { userGroupDto } from "@/type/module/algorithm/userGroup.ts";
-import { userGroupFunc } from "@/api/module/algorithm/userGroup.ts"
-import { interfaceGroupDto } from "@/type/module/algorithm/interfaceGroup.ts";
-import { interfaceGroupFunc } from "@/api/module/algorithm/interfaceGroup.ts"
+import { UserGroupDto, UserGroupUpdDto } from "@/type/module/algorithm/userGroup.ts";
+import { userGroupApi } from "@/api/module/algorithm/userGroup.ts"
+import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
 import Divider from "@/views/algorithm/interfacePermission/divider.vue";
-import { userGroupPermissionDto } from "@/type/module/algorithm/userGroupPermission.ts";
-import { userGroupPermissionFunc } from "@/api/module/algorithm/userGroupPermission.ts"
+import { UserGroupPermissionDto, UserGroupPermissionUpdDto } from "@/type/module/algorithm/userGroupPermission.ts";
+import { userGroupPermissionApi } from "@/api/module/algorithm/userGroupPermission.ts"
 import { copyObject, deepClone } from "@/utils/ObjectUtils.ts";
 import LogAlgorithmCall from "@/views/algorithm/interfacePermission/logAlgorithmCall.vue";
+import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
+import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
+import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
+import { userGroupPermissionDict } from "@/dict/module/algorithm/userGroupPermission.ts";
 
-const userGroupState = reactive<State<userGroupDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const userGroupState = reactive<State2<UserGroupDto, UserGroupUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -44,59 +35,33 @@ const userGroupState = reactive<State<userGroupDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '用户组名',
-    parentId: '父级用户组',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {
     label: ''
   },
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const userGroupState2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const userGroupDialogFormRef = ref(null)
-const userGroupDialogFormsRef = ref(null)
-const userGroupFilterFormRef = ref(null)
-const userGroupDialogVisible = ref(false)
-const userGroupDialogLoadingRef = ref(false)
-const userGroupTableLoadingRef = ref(false)
-const userGroupSwitchLoadingRef = ref(false)
-const userGroupActiveTabName = ref<typeOM>(final.one)
-const userGroupConfig: t_config = reactive({
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const userGroupDFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const userGroupConfig = new TablePageConfig({
+  bulkOperation: true,
 })
 
 const {
+  dialogFormRef: userGroupDialogFormRef,
+  dialogFormsRef: userGroupDialogFormsRef,
+  filterFormRef: userGroupFilterFormRef,
+  dialogVisible: userGroupDialogVisible,
+  dialogLoadingRef: userGroupDialogLoadingRef,
+  tableLoadingRef: userGroupTableLoadingRef,
+  switchLoadingRef: userGroupSwitchLoadingRef,
+  activeTabName: userGroupActiveTabName,
+  tableData: userGroupTableData,
+  pageParam: userGroupPageParam,
+  total: userGroupTotal,
+  multipleSelection: userGroupMultipleSelection,
+  dialogType: userGroupDialogType,
   refresh: userGroupRefresh,
   dCan: userGroupDCan,
   dCon: userGroupDCon,
@@ -115,34 +80,16 @@ const {
   pageChange: userGroupPageChange,
   dfIns: userGroupDfIns,
   dfDel: userGroupDfDel,
-  ifRequired: userGroupIfRequired
-} = funcTablePage({
-  config: userGroupConfig,
+  ifRequired: userGroupIfRequired,
+} = funcTablePage<UserGroupDto, UserGroupUpdDto>({
   state: userGroupState,
-  state2: userGroupState2,
-  dialogFormRef: userGroupDialogFormRef,
-  dialogFormsRef: userGroupDialogFormsRef,
-  filterFormRef: userGroupFilterFormRef,
-  dialogVisible: userGroupDialogVisible,
-  dialogLoadingRef: userGroupDialogLoadingRef,
-  tableLoadingRef: userGroupTableLoadingRef,
-  switchLoadingRef: userGroupSwitchLoadingRef,
-  activeTabName: userGroupActiveTabName,
-  func: userGroupFunc
+  dFormRules: userGroupDFormRules,
+  config: userGroupConfig,
+  api: userGroupApi,
+  dict: userGroupDict,
 })
 
-const interfaceGroupState = reactive<State<interfaceGroupDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const interfaceGroupState = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -153,61 +100,34 @@ const interfaceGroupState = reactive<State<interfaceGroupDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    baseURL: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '接口组名',
-    parentId: '父级接口组',
-    baseURL: 'baseURL',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {
     label: ''
   },
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const interfaceGroupState2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const interfaceGroupDialogFormRef = ref(null)
-const interfaceGroupDialogFormsRef = ref(null)
-const interfaceGroupFilterFormRef = ref(null)
-const interfaceGroupDialogVisible = ref(false)
-const interfaceGroupDialogLoadingRef = ref(false)
-const interfaceGroupTableLoadingRef = ref(false)
-const interfaceGroupSwitchLoadingRef = ref(false)
-const interfaceGroupActiveTabName = ref<typeOM>(final.one)
-const interfaceGroupConfig: t_config = reactive({
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const interfaceGroupDFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  baseURL: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const interfaceGroupConfig = new TablePageConfig({
+  bulkOperation: true,
 })
 
 const {
+  dialogFormRef: interfaceGroupDialogFormRef,
+  dialogFormsRef: interfaceGroupDialogFormsRef,
+  filterFormRef: interfaceGroupFilterFormRef,
+  dialogVisible: interfaceGroupDialogVisible,
+  dialogLoadingRef: interfaceGroupDialogLoadingRef,
+  tableLoadingRef: interfaceGroupTableLoadingRef,
+  switchLoadingRef: interfaceGroupSwitchLoadingRef,
+  activeTabName: interfaceGroupActiveTabName,
+  tableData: interfaceGroupTableData,
+  pageParam: interfaceGroupPageParam,
+  total: interfaceGroupTotal,
+  multipleSelection: interfaceGroupMultipleSelection,
+  dialogType: interfaceGroupDialogType,
   refresh: interfaceGroupRefresh,
   dCan: interfaceGroupDCan,
   dCon: interfaceGroupDCon,
@@ -226,34 +146,16 @@ const {
   pageChange: interfaceGroupPageChange,
   dfIns: interfaceGroupDfIns,
   dfDel: interfaceGroupDfDel,
-  ifRequired: interfaceGroupIfRequired
-} = funcTablePage({
-  config: interfaceGroupConfig,
+  ifRequired: interfaceGroupIfRequired,
+} = funcTablePage<InterfaceGroupDto, InterfaceGroupUpdDto>({
   state: interfaceGroupState,
-  state2: interfaceGroupState2,
-  dialogFormRef: interfaceGroupDialogFormRef,
-  dialogFormsRef: interfaceGroupDialogFormsRef,
-  filterFormRef: interfaceGroupFilterFormRef,
-  dialogVisible: interfaceGroupDialogVisible,
-  dialogLoadingRef: interfaceGroupDialogLoadingRef,
-  tableLoadingRef: interfaceGroupTableLoadingRef,
-  switchLoadingRef: interfaceGroupSwitchLoadingRef,
-  activeTabName: interfaceGroupActiveTabName,
-  func: interfaceGroupFunc
+  dFormRules: interfaceGroupDFormRules,
+  config: interfaceGroupConfig,
+  api: interfaceGroupApi,
+  dict: interfaceGroupDict,
 })
 
-const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const userGroupPermissionState = reactive<State2<UserGroupPermissionDto, UserGroupPermissionUpdDto>>({
   dialogForm: {
     id: -1,
     userGroupId: -1,
@@ -271,71 +173,22 @@ const userGroupPermissionState = reactive<State<userGroupPermissionDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    userGroupId: [{required: true, trigger: 'change'}],
-    permissionId: [{required: true, trigger: 'change'}],
-    ifLongTerm: [{required: true, trigger: 'change'}],
-    ifLimitRequestTimes: [{required: true, trigger: 'change'}],
-    ifRejectRequestUseUp: [{required: true, trigger: 'change'}],
-    permissionStartTime: [{required: true, trigger: 'change'}],
-    permissionEndTime: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    userGroupId: '用户组',
-    permissionId: '接口组',
-    ifLongTerm: '是否长期权限',
-    ifLimitRequestTimes: '是否限制次数',
-    ifRejectRequestUseUp: '次数用尽后是否拒绝请求',
-    permissionStartTime: '权限开始时间',
-    permissionEndTime: '权限结束时间',
-    permissionTime: '权限期限',
-    limitRequestTimes: '请求限制次数',
-    ifUseUp: '是否已用尽',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const userGroupPermissionState2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const userGroupPermissionDialogFormRef = ref(null)
-const userGroupPermissionDialogFormsRef = ref(null)
-const userGroupPermissionFilterFormRef = ref(null)
-const userGroupPermissionDialogVisible = ref(false)
-const userGroupPermissionDialogLoadingRef = ref(false)
-const userGroupPermissionTableLoadingRef = ref(false)
-const userGroupPermissionSwitchLoadingRef = ref(false)
-const userGroupPermissionActiveTabName = ref<typeOM>(final.one)
-const userGroupPermissionConfig: t_config = reactive({
-  getDataOnMounted: false, // 页面加载时获取数据，默认true
-  pageQuery: false, // 分页，默认true
-  /**
-   * selectList回调，可不传
-   */
+const userGroupPermissionDFormRules: FormRules = {
+  userGroupId: [{required: true, trigger: 'change'}],
+  permissionId: [{required: true, trigger: 'change'}],
+  ifLongTerm: [{required: true, trigger: 'change'}],
+  ifLimitRequestTimes: [{required: true, trigger: 'change'}],
+  ifRejectRequestUseUp: [{required: true, trigger: 'change'}],
+  permissionStartTime: [{required: true, trigger: 'change'}],
+  permissionEndTime: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const userGroupPermissionConfig = new TablePageConfig({
+  bulkOperation: true,
+  getDataOnMounted: false,
+  pageQuery: false,
   selectListCallback: () => {
     if (selectType.value === USER_GROUP) {
       userGroupHandleCurrentChange2()
@@ -344,10 +197,22 @@ const userGroupPermissionConfig: t_config = reactive({
       interfaceGroupHandleCurrentChange2()
     }
   },
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
 })
 
 const {
+  dialogFormRef: userGroupPermissionDialogFormRef,
+  dialogFormsRef: userGroupPermissionDialogFormsRef,
+  filterFormRef: userGroupPermissionFilterFormRef,
+  dialogVisible: userGroupPermissionDialogVisible,
+  dialogLoadingRef: userGroupPermissionDialogLoadingRef,
+  tableLoadingRef: userGroupPermissionTableLoadingRef,
+  switchLoadingRef: userGroupPermissionSwitchLoadingRef,
+  activeTabName: userGroupPermissionActiveTabName,
+  tableData: userGroupPermissionTableData,
+  pageParam: userGroupPermissionPageParam,
+  total: userGroupPermissionTotal,
+  multipleSelection: userGroupPermissionMultipleSelection,
+  dialogType: userGroupPermissionDialogType,
   refresh: userGroupPermissionRefresh,
   dCan: userGroupPermissionDCan,
   dCon: userGroupPermissionDCon,
@@ -366,31 +231,24 @@ const {
   pageChange: userGroupPermissionPageChange,
   dfIns: userGroupPermissionDfIns,
   dfDel: userGroupPermissionDfDel,
-  ifRequired: userGroupPermissionIfRequired
-} = funcTablePage({
-  config: userGroupPermissionConfig,
+  ifRequired: userGroupPermissionIfRequired,
+} = funcTablePage<UserGroupPermissionDto, UserGroupPermissionUpdDto>({
   state: userGroupPermissionState,
-  state2: userGroupPermissionState2,
-  dialogFormRef: userGroupPermissionDialogFormRef,
-  dialogFormsRef: userGroupPermissionDialogFormsRef,
-  filterFormRef: userGroupPermissionFilterFormRef,
-  dialogVisible: userGroupPermissionDialogVisible,
-  dialogLoadingRef: userGroupPermissionDialogLoadingRef,
-  tableLoadingRef: userGroupPermissionTableLoadingRef,
-  switchLoadingRef: userGroupPermissionSwitchLoadingRef,
-  activeTabName: userGroupPermissionActiveTabName,
-  func: userGroupPermissionFunc
+  dFormRules: userGroupPermissionDFormRules,
+  config: userGroupPermissionConfig,
+  api: userGroupPermissionApi,
+  dict: userGroupPermissionDict,
 })
 
 const USER_GROUP = 'userGroup'
 const INTERFACE_GROUP = 'interfaceGroup'
 const selectType = ref<typeof USER_GROUP | typeof INTERFACE_GROUP | null>(null)
 
-const userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup = ref<userGroupPermissionDto[]>([])
+const userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup = ref<UserGroupPermissionDto[]>([])
 
 const leftCardLoading = ref(false)
 const userGroupTableRef = ref<TableInstance | null>(null)
-const selectUserGroupInfo = reactive<userGroupDto>({
+const selectUserGroupInfo = reactive<UserGroupDto>({
   id: -1,
   label: '',
   parentId: -1,
@@ -398,19 +256,19 @@ const selectUserGroupInfo = reactive<userGroupDto>({
   remark: '',
 })
 
-class interfaceGroupDto2 extends interfaceGroupDto {
+class InterfaceGroupDto2 extends InterfaceGroupDto {
   userGroupPermissionId!: number
 }
 
-const interfaceGroupsOfThisUserGroup = ref<interfaceGroupDto2[]>([])
-const userGroupHandleCurrentChangeSelectRow = reactive<userGroupDto>({
+const interfaceGroupsOfThisUserGroup = ref<InterfaceGroupDto2[]>([])
+const userGroupHandleCurrentChangeSelectRow = reactive<UserGroupDto>({
   id: -1,
   label: '',
   parentId: -1,
   orderNum: -1,
   remark: '',
 })
-const userGroupHandleCurrentChange = (row: userGroupDto) => {
+const userGroupHandleCurrentChange = (row: UserGroupDto) => {
   if (row) {
     interfaceGroupTableRef.value?.setCurrentRow(null)
     copyObject(userGroupHandleCurrentChangeSelectRow, row)
@@ -419,7 +277,7 @@ const userGroupHandleCurrentChange = (row: userGroupDto) => {
   }
   selectType.value = USER_GROUP
   leftCardLoading.value = true
-  userGroupFunc.selectById(row.id).then(res => {
+  userGroupApi.selectById(row.id).then(res => {
     copyObject(selectUserGroupInfo, res)
     leftCardLoading.value = false
   })
@@ -428,12 +286,12 @@ const userGroupHandleCurrentChange = (row: userGroupDto) => {
 const userGroupHandleCurrentChange2 = () => {
   rightCardLoading.value = true
   const row = userGroupHandleCurrentChangeSelectRow
-  userGroupPermissionFunc.selectAll({userGroupId: row.id}).then(res => {
+  userGroupPermissionApi.selectAll({userGroupId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const interfaceGroupIds = res.map(item => item.permissionId);
-    interfaceGroupFunc.selectByIds(interfaceGroupIds).then(res => {
+    interfaceGroupApi.selectByIds(interfaceGroupIds).then(res => {
       interfaceGroupsOfThisUserGroup.value = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.map(item => {
-        const find = deepClone<interfaceGroupDto2>(res.find(r => r.id === item.permissionId)!);
+        const find = deepClone<InterfaceGroupDto2>(res.find(r => r.id === item.permissionId)!);
         find.userGroupPermissionId = item.id
         return find
       })
@@ -453,7 +311,7 @@ const detailInterfaceGroupOfThisUserGroup = (userGroupPermissionId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.id === userGroupPermissionId);
   if (find) {
     userGroupPermissionDialogLoadingRef.value = true
-    userGroupPermissionFunc.selectById(find.id).then(res => {
+    userGroupPermissionApi.selectById(find.id).then(res => {
       copyObject(userGroupPermissionState.dialogForm, res)
       userGroupPermissionState.dialogForm.permissionTime = [
         userGroupPermissionState.dialogForm.permissionStartTime,
@@ -462,7 +320,7 @@ const detailInterfaceGroupOfThisUserGroup = (userGroupPermissionId: number) => {
       userGroupPermissionDialogLoadingRef.value = false
     })
     ifAddUserGroupPermission.value = false
-    userGroupPermissionState.dialogType.label = '查看权限详情'
+    userGroupPermissionDialogType.label = '查看权限详情'
     userGroupPermissionDialogVisible.value = true
   }
 }
@@ -477,13 +335,13 @@ const selectInterfaceGroupInfo = reactive({
   remark: '',
 })
 
-class userGroupDto2 extends userGroupDto {
+class UserGroupDto2 extends UserGroupDto {
   userGroupPermissionId!: number
 }
 
-const userGroupsOfThisInterfaceGroup = ref<userGroupDto[]>([])
-const interfaceGroupHandleCurrentChangeSelectRow = reactive<interfaceGroupDto>(new interfaceGroupDto())
-const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
+const userGroupsOfThisInterfaceGroup = ref<UserGroupDto[]>([])
+const interfaceGroupHandleCurrentChangeSelectRow = reactive<InterfaceGroupDto>(new InterfaceGroupDto())
+const interfaceGroupHandleCurrentChange = (row: InterfaceGroupDto) => {
   if (row) {
     userGroupTableRef.value?.setCurrentRow(null)
     copyObject(interfaceGroupHandleCurrentChangeSelectRow, row)
@@ -492,7 +350,7 @@ const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
   }
   selectType.value = INTERFACE_GROUP
   rightCardLoading.value = true
-  interfaceGroupFunc.selectById(row.id).then(res => {
+  interfaceGroupApi.selectById(row.id).then(res => {
     copyObject(selectInterfaceGroupInfo, res)
     rightCardLoading.value = false
   })
@@ -501,12 +359,12 @@ const interfaceGroupHandleCurrentChange = (row: interfaceGroupDto) => {
 const interfaceGroupHandleCurrentChange2 = () => {
   leftCardLoading.value = true
   const row = interfaceGroupHandleCurrentChangeSelectRow
-  userGroupPermissionFunc.selectAll({permissionId: row.id}).then(res => {
+  userGroupPermissionApi.selectAll({permissionId: row.id}).then(res => {
     userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value = res
     const userGroupIds = res.map(item => item.userGroupId);
-    userGroupFunc.selectByIds(userGroupIds).then(res => {
+    userGroupApi.selectByIds(userGroupIds).then(res => {
       userGroupsOfThisInterfaceGroup.value = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.map(item => {
-        const find = deepClone<userGroupDto2>(res.find(r => r.id === item.userGroupId)!)
+        const find = deepClone<UserGroupDto2>(res.find(r => r.id === item.userGroupId)!)
         find.userGroupPermissionId = item.id
         return find
       })
@@ -526,7 +384,7 @@ const detailUserGroupOfThisInterfaceGroup = (userGroupPermissionId: number) => {
   const find = userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup.value.find(item => item.id === userGroupPermissionId);
   if (find) {
     userGroupPermissionDialogLoadingRef.value = true
-    userGroupPermissionFunc.selectById(find.id).then(res => {
+    userGroupPermissionApi.selectById(find.id).then(res => {
       copyObject(userGroupPermissionState.dialogForm, res)
       userGroupPermissionState.dialogForm.permissionTime = [
         userGroupPermissionState.dialogForm.permissionStartTime,
@@ -535,7 +393,7 @@ const detailUserGroupOfThisInterfaceGroup = (userGroupPermissionId: number) => {
       userGroupPermissionDialogLoadingRef.value = false
     })
     ifAddUserGroupPermission.value = false
-    userGroupPermissionState.dialogType.label = '查看权限详情'
+    userGroupPermissionDialogType.label = '查看权限详情'
     userGroupPermissionDialogVisible.value = true
   }
 }
@@ -552,7 +410,7 @@ const delUserGroupPermissions = (delIds: number[]) => {
           draggable: true
         }
     ).then(() => {
-      userGroupPermissionFunc.deleteList(...delIds)
+      userGroupPermissionApi.deleteList(...delIds)
           .then(res => {
             resolve(res)
           })
@@ -569,8 +427,8 @@ const ifAddUserGroupPermission = ref(false)
 const beforeAddUserGroupPermission = () => {
   userGroupPermissionState.dialogForm.permissionTime = ''
   ifAddUserGroupPermission.value = true
-  const userGroup = userGroupState.multipleSelection[0]
-  const interfaceGroup = interfaceGroupState.multipleSelection[0]
+  const userGroup = userGroupMultipleSelection.value[0]
+  const interfaceGroup = interfaceGroupMultipleSelection.value[0]
   userGroupPermissionState.dialogForm.userGroupId = userGroup.id
   userGroupPermissionState.dialogForm.permissionId = interfaceGroup.id
   userGroupPermissionGIns()
@@ -579,31 +437,31 @@ const beforeAddUserGroupPermission = () => {
 watch(() => userGroupPermissionState.dialogForm, () => {
   // 是否长期权限
   if (userGroupPermissionState.dialogForm.ifLongTerm === final.N) {
-    userGroupPermissionState.dFormRules.permissionTime = [{required: true, trigger: 'change'}]
+    userGroupPermissionDFormRules.permissionTime = [{required: true, trigger: 'change'}]
   } else {
-    delete userGroupPermissionState.dFormRules.permissionTime
+    delete userGroupPermissionDFormRules.permissionTime
   }
 
   // 是否限制次数
   if (userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y) {
-    userGroupPermissionState.dFormRules.limitRequestTimes = [{
+    userGroupPermissionDFormRules.limitRequestTimes = [{
       required: true,
       trigger: 'change',
       min: 1,
       type: 'number'
     }]
   } else {
-    delete userGroupPermissionState.dFormRules.limitRequestTimes
+    delete userGroupPermissionDFormRules.limitRequestTimes
   }
 }, {
   deep: true,
   immediate: true
 })
 if (Object.keys(userGroupPermissionState.dialogForm).indexOf('permissionTime') > -1) {
-  watch(() => userGroupPermissionState.dialogForm['permissionTime'], () => {
-    if (userGroupPermissionState.dialogForm['permissionTime']) {
-      userGroupPermissionState.dialogForm.permissionStartTime = new Date(userGroupPermissionState.dialogForm['permissionTime'][0])
-      userGroupPermissionState.dialogForm.permissionEndTime = new Date(userGroupPermissionState.dialogForm['permissionTime'][1])
+  watch(() => userGroupPermissionState.dialogForm.permissionTime, () => {
+    if (userGroupPermissionState.dialogForm.permissionTime) {
+      userGroupPermissionState.dialogForm.permissionStartTime = new Date(userGroupPermissionState.dialogForm.permissionTime[0])
+      userGroupPermissionState.dialogForm.permissionEndTime = new Date(userGroupPermissionState.dialogForm.permissionTime[1])
     } else {
       userGroupPermissionState.dialogForm.permissionStartTime = new Date()
       userGroupPermissionState.dialogForm.permissionEndTime = new Date()
@@ -670,7 +528,7 @@ const shortcuts = [
 const useLogVisible = ref(false)
 const selectUGPId = ref<number>(-1)
 const showUseLog = () => {
-  selectUGPId.value = userGroupPermissionState.dialogForm['id']
+  selectUGPId.value = userGroupPermissionState.dialogForm.id
   useLogVisible.value = true
 }
 const userGroupPermissionDCon2 = () => {
@@ -698,7 +556,7 @@ const userGroupPermissionDCon2 = () => {
   <el-dialog
       :width="CONFIG.dialog_width"
       v-model="userGroupPermissionDialogVisible"
-      :title="userGroupPermissionState.dialogType.label"
+      :title="userGroupPermissionDialogType.label"
       draggable
       append-to-body
   >
@@ -707,7 +565,7 @@ const userGroupPermissionDCon2 = () => {
         v-loading="userGroupPermissionDialogLoadingRef"
         :model="userGroupPermissionState.dialogForm"
         :label-width="CONFIG.dialog_form_label_width"
-        :rules="userGroupPermissionState.dFormRules"
+        :rules="userGroupPermissionDFormRules"
         label-position="top"
         :disabled="!ifAddUserGroupPermission"
         validate-on-rule-change
@@ -716,104 +574,69 @@ const userGroupPermissionDCon2 = () => {
       <!--  <el-col :span="12"></el-col>-->
       <!--  <el-col :span="12"></el-col>-->
       <!--</el-row>-->
-      <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['id']" prop="id">
-        <span>{{ userGroupPermissionState.dialogForm['id'] }}</span>
+      <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionDict.id" prop="id">
+        <span>{{ userGroupPermissionState.dialogForm.id }}</span>
       </el-form-item>
       <!--
       第一个input添加如下属性
       v-focus
       -->
       <!--在此下方添加表单项-->
-      <el-form-item :label="userGroupPermissionState.dict['userGroupId']" prop="userGroupId">
-        <!--<el-input-number v-model="userGroupPermissionState.dialogForm['userGroupId']" controls-position="right"/>-->
-        <el-select v-model="userGroupPermissionState.dialogForm['userGroupId']" clearable filterable disabled>
-          <el-option v-for="item in userGroupState.list" :key="item.id" :label="item.label" :value="item.id"/>
+      <el-form-item :label="userGroupPermissionDict.userGroupId" prop="userGroupId">
+        <el-select v-model="userGroupPermissionState.dialogForm.userGroupId" clearable filterable disabled>
+          <el-option v-for="item in userGroupTableData" :key="item.id" :label="item.label" :value="item.id"/>
         </el-select>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['permissionId']" prop="permissionId">
-        <!--<el-input-number v-model="userGroupPermissionState.dialogForm['permissionId']" controls-position="right"/>-->
-        <el-select v-model="userGroupPermissionState.dialogForm['permissionId']" clearable filterable disabled>
-          <el-option v-for="item in interfaceGroupState.list" :key="item.id" :label="item.label" :value="item.id"/>
+      <el-form-item :label="userGroupPermissionDict.permissionId" prop="permissionId">
+        <el-select v-model="userGroupPermissionState.dialogForm.permissionId" clearable filterable disabled>
+          <el-option v-for="item in interfaceGroupTableData" :key="item.id" :label="item.label" :value="item.id"/>
         </el-select>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['ifLongTerm']" prop="ifLongTerm">
-        <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLongTerm']"-->
-        <!--          :placeholder="userGroupPermissionState.dict['ifLongTerm']"/>-->
-        <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLongTerm']">
+      <el-form-item :label="userGroupPermissionDict.ifLongTerm" prop="ifLongTerm">
+        <el-radio-group v-model="userGroupPermissionState.dialogForm.ifLongTerm">
           <el-radio :value="final.Y">是</el-radio>
           <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['ifLimitRequestTimes']" prop="ifLimitRequestTimes">
-        <!--<el-input v-model="userGroupPermissionState.dialogForm['ifLimitRequestTimes']"-->
-        <!--          :placeholder="userGroupPermissionState.dict['ifLimitRequestTimes']"/>-->
-        <el-radio-group v-model="userGroupPermissionState.dialogForm['ifLimitRequestTimes']">
+      <el-form-item :label="userGroupPermissionDict.ifLimitRequestTimes" prop="ifLimitRequestTimes">
+        <el-radio-group v-model="userGroupPermissionState.dialogForm.ifLimitRequestTimes">
           <el-radio :value="final.Y">是</el-radio>
           <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" prop="ifRejectRequestUseUp">
-        <!--<el-input v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']"-->
-        <!--          :placeholder="userGroupPermissionState.dict['ifRejectRequestUseUp']"/>-->
-        <el-radio-group v-model="userGroupPermissionState.dialogForm['ifRejectRequestUseUp']">
+      <el-form-item :label="userGroupPermissionDict.ifRejectRequestUseUp" prop="ifRejectRequestUseUp">
+        <el-radio-group v-model="userGroupPermissionState.dialogForm.ifRejectRequestUseUp">
           <el-radio :value="final.Y">是</el-radio>
           <el-radio :value="final.N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!--<el-form-item :label="userGroupPermissionState.dict['permissionStartTime']" prop="permissionStartTime">-->
-      <!--  <el-input v-model="userGroupPermissionState.dialogForm['permissionStartTime']"-->
-      <!--            :placeholder="userGroupPermissionState.dict['permissionStartTime']"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="userGroupPermissionState.dict['permissionEndTime']" prop="permissionEndTime">-->
-      <!--  <el-input v-model="userGroupPermissionState.dialogForm['permissionEndTime']"-->
-      <!--            :placeholder="userGroupPermissionState.dict['permissionEndTime']"/>-->
-      <!--</el-form-item>-->
-      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLongTerm === final.N"
-                    :label="userGroupPermissionState.dict['permissionTime']" prop="permissionTime">
+      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLongTerm === final.N" :label="userGroupPermissionDict.permissionTime" prop="permissionTime">
         <el-date-picker
-            v-model="userGroupPermissionState.dialogForm['permissionTime']"
+            v-model="userGroupPermissionState.dialogForm.permissionTime"
             type="datetimerange"
             :shortcuts="shortcuts"
-            :start-placeholder="userGroupPermissionState.dict['permissionStartTime']"
-            :end-placeholder="userGroupPermissionState.dict['permissionEndTime']"
+            :start-placeholder="userGroupPermissionDict.permissionStartTime"
+            :end-placeholder="userGroupPermissionDict.permissionEndTime"
             format="YYYY-MM-DD HH:mm:ss"
             date-format="YYYY/MM/DD ddd"
             time-format="A hh:mm:ss"
         />
       </el-form-item>
-      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y"
-                    :label="userGroupPermissionState.dict['limitRequestTimes']" prop="limitRequestTimes">
-        <el-input-number v-model="userGroupPermissionState.dialogForm['limitRequestTimes']" controls-position="right"/>
+      <el-form-item v-if="userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y" :label="userGroupPermissionDict.limitRequestTimes" prop="limitRequestTimes">
+        <el-input-number v-model="userGroupPermissionState.dialogForm.limitRequestTimes" controls-position="right"/>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['orderNum']" prop="orderNum">
-        <el-input-number v-model="userGroupPermissionState.dialogForm['orderNum']" controls-position="right"/>
+      <el-form-item :label="userGroupPermissionDict.orderNum" prop="orderNum">
+        <el-input-number v-model="userGroupPermissionState.dialogForm.orderNum" controls-position="right"/>
       </el-form-item>
-      <el-form-item :label="userGroupPermissionState.dict['remark']" prop="remark">
-        <el-input type="textarea" v-model="userGroupPermissionState.dialogForm['remark']"
-                  :placeholder="userGroupPermissionState.dict['remark']"/>
+      <el-form-item :label="userGroupPermissionDict.remark" prop="remark">
+        <el-input type="textarea" v-model="userGroupPermissionState.dialogForm.remark" :placeholder="userGroupPermissionDict.remark"/>
       </el-form-item>
-      <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionState.dict['ifUseUp']" prop="ifUseUp">
-        <el-tag v-if="userGroupPermissionState.dialogForm['ifUseUp'] === final.Y" type="danger">是</el-tag>
-        <el-tag v-else type="success">已使用{{ userGroupPermissionState.dialogForm['count'] }}次
+      <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionDict.ifUseUp" prop="ifUseUp">
+        <el-tag v-if="userGroupPermissionState.dialogForm.ifUseUp === final.Y" type="danger">是</el-tag>
+        <el-tag v-else type="success">已使用{{ userGroupPermissionState.dialogForm.count }}次
         </el-tag>
       </el-form-item>
       <!--在此上方添加表单项-->
-      <!--<el-form-item :label="userGroupPermissionState.dict['orderNum']" prop='orderNum'>-->
-      <!--  <el-input-number v-model="userGroupPermissionState.dialogForm['orderNum']" controls-position="right"/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="userGroupPermissionState.dict['ifDefault']" prop='ifDefault'>-->
-      <!--  <el-switch v-model="userGroupPermissionState.dialogForm['ifDefault']" :active-value='final.Y' :inactive-value='final.N'/>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="userGroupPermissionState.dict['ifDisabled']" prop='ifDisabled'>-->
-      <!--  <el-radio-group v-model="userGroupPermissionState.dialogForm['ifDisabled']">-->
-      <!--    <el-radio :value="final.Y">是</el-radio>-->
-      <!--    <el-radio :value="final.N">否</el-radio>-->
-      <!--  </el-radio-group>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item :label="userGroupPermissionState.dict['ifDisabled']" prop="ifDisabled">-->
-      <!--  <el-switch v-model="userGroupPermissionState.dialogForm['ifDisabled']" :active-value="final.N" :inactive-value="final.Y"/>-->
-      <!--</el-form-item>-->
-      <!--上方几个酌情使用-->
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -837,39 +660,37 @@ const userGroupPermissionDCon2 = () => {
           <div v-if="selectType===INTERFACE_GROUP">
             <!--{{ userGroupsOfThisInterfaceGroup }}-->
             <el-table :data="userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup">
-              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">-->
+              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionDict.ifLongTerm" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"-->
-              <!--                 width="120">-->
+              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionDict.ifLimitRequestTimes" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <!--<el-table-column prop="ifRejectRequestUseUp"-->
-              <!--                 :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">-->
+              <!--<el-table-column prop="ifRejectRequestUseUp" :label="userGroupPermissionDict.ifRejectRequestUseUp" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <el-table-column prop="ifUseUp" :label="userGroupPermissionState.dict['ifUseUp']" width="120">
+              <el-table-column prop="ifUseUp" :label="userGroupPermissionDict.ifUseUp" width="120">
                 <template #default="{row}">
                   <el-tag type="danger" v-if="row.ifUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifUseUp === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <!--<el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>-->
-              <el-table-column :label="userGroupState.dict['label']" width="120">
+              <!--<el-table-column prop="orderNum" :label="userGroupPermissionDict.orderNum" width="120"/>-->
+              <el-table-column :label="userGroupDict.label" width="120">
                 <template #default="{row}">
                   {{ userGroupsOfThisInterfaceGroup.find(item => item.id === row.userGroupId)?.label }}
                 </template>
               </el-table-column>
-              <el-table-column prop="remark" :label="userGroupPermissionState.dict['remark']" width="120"/>
+              <el-table-column prop="remark" :label="userGroupPermissionDict.remark" width="120"/>
               <el-table-column fixed="right" label="操作" min-width="120">
                 <template #default="{row}">
                   <el-button link type="primary" size="small" @click="detailUserGroupOfThisInterfaceGroup(row.id)">
@@ -882,8 +703,8 @@ const userGroupPermissionDCon2 = () => {
               </el-table-column>
             </el-table>
             <!--<el-table :data="userGroupsOfThisInterfaceGroup">-->
-            <!--  <el-table-column prop="label" :label="userGroupState.dict['label']" width="240"/>-->
-            <!--  <el-table-column prop="remark" :label="userGroupState.dict['remark']" width="240"/>-->
+            <!--  <el-table-column prop="label" :label="userGroupDict.label" width="240"/>-->
+            <!--  <el-table-column prop="remark" :label="userGroupDict.remark" width="240"/>-->
             <!--  <el-table-column fixed="right" label="操作" min-width="120">-->
             <!--    <template #default="{row}">-->
             <!--      <el-button link type="primary" size="small"-->
@@ -914,39 +735,37 @@ const userGroupPermissionDCon2 = () => {
           <div v-if="selectType===USER_GROUP">
             <!--{{ interfaceGroupsOfThisUserGroup }}-->
             <el-table :data="userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup">
-              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionState.dict['ifLongTerm']" width="120">-->
+              <!--<el-table-column prop="ifLongTerm" :label="userGroupPermissionDict.ifLongTerm" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifLongTerm === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifLongTerm === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionState.dict['ifLimitRequestTimes']"-->
-              <!--                 width="120">-->
+              <!--<el-table-column prop="ifLimitRequestTimes" :label="userGroupPermissionDict.ifLimitRequestTimes" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifLimitRequestTimes === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifLimitRequestTimes === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <!--<el-table-column prop="ifRejectRequestUseUp"-->
-              <!--                 :label="userGroupPermissionState.dict['ifRejectRequestUseUp']" width="120">-->
+              <!--<el-table-column prop="ifRejectRequestUseUp" :label="userGroupPermissionDict.ifRejectRequestUseUp" width="120">-->
               <!--  <template #default="{row}">-->
               <!--    <el-tag type="primary" v-if="row.ifRejectRequestUseUp === final.Y">是</el-tag>-->
               <!--    <el-tag type="success" v-if="row.ifRejectRequestUseUp === final.N">否</el-tag>-->
               <!--  </template>-->
               <!--</el-table-column>-->
-              <el-table-column prop="ifUseUp" :label="userGroupPermissionState.dict['ifUseUp']" width="120">
+              <el-table-column prop="ifUseUp" :label="userGroupPermissionDict.ifUseUp" width="120">
                 <template #default="{row}">
                   <el-tag type="danger" v-if="row.ifUseUp === final.Y">是</el-tag>
                   <el-tag type="success" v-if="row.ifUseUp === final.N">否</el-tag>
                 </template>
               </el-table-column>
-              <!--<el-table-column prop="orderNum" :label="userGroupPermissionState.dict['orderNum']" width="120"/>-->
-              <el-table-column :label="interfaceGroupState.dict['label']" width="120">
+              <!--<el-table-column prop="orderNum" :label="userGroupPermissionDict.orderNum" width="120"/>-->
+              <el-table-column :label="interfaceGroupDict.label" width="120">
                 <template #default="{row}">
                   {{ interfaceGroupsOfThisUserGroup.find(item => item.id === row.permissionId)?.label }}
                 </template>
               </el-table-column>
-              <el-table-column prop="remark" :label="userGroupPermissionState.dict['remark']" width="120"/>
+              <el-table-column prop="remark" :label="userGroupPermissionDict.remark" width="120"/>
               <el-table-column fixed="right" label="操作" min-width="120">
                 <template #default="{row}">
                   <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.id)">
@@ -959,18 +778,12 @@ const userGroupPermissionDCon2 = () => {
               </el-table-column>
             </el-table>
             <!--<el-table :data="interfaceGroupsOfThisUserGroup">-->
-            <!--  <el-table-column prop="label" :label="interfaceGroupState.dict['label']" width="240"/>-->
-            <!--  <el-table-column prop="remark" :label="interfaceGroupState.dict['remark']" width="240"/>-->
+            <!--  <el-table-column prop="label" :label="interfaceGroupDict.label" width="240"/>-->
+            <!--  <el-table-column prop="remark" :label="interfaceGroupDict.remark" width="240"/>-->
             <!--  <el-table-column fixed="right" label="操作" min-width="120">-->
             <!--    <template #default="{row}">-->
-            <!--      <el-button link type="primary" size="small"-->
-            <!--                 @click="detailInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">-->
-            <!--        查看详情-->
-            <!--      </el-button>-->
-            <!--      <el-button link type="danger" size="small"-->
-            <!--                 @click="beforeDelInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">-->
-            <!--        删除-->
-            <!--      </el-button>-->
+            <!--      <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">查看详情</el-button>-->
+            <!--      <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">删除</el-button>-->
             <!--    </template>-->
             <!--  </el-table-column>-->
             <!--</el-table>-->
@@ -980,84 +793,86 @@ const userGroupPermissionDCon2 = () => {
       <div>
         <el-scrollbar>
           <!--顶部筛选表单-->
-          <el-form
-              class="demo-form-inline"
-              v-if="Object.keys(userGroupState.filterForm).length>0"
-              ref="userGroupFilterFormRef"
-              :model="userGroupState.filterForm"
-              :inline="true"
-              @keyup.enter="userGroupFEnter"
-              @submit.prevent
-          >
-            <!--在此下方添加表单项-->
-            <el-form-item :label="userGroupState.dict['label']" prop="label">
-              <el-input v-model="userGroupState.filterForm['label']" :placeholder="userGroupState.dict['label']"/>
-            </el-form-item>
-            <!--在此上方添加表单项-->
-            <el-form-item>
-              <el-button type="primary" @click="userGroupFCon">筛选</el-button>
-              <el-button @click="userGroupFCan">重置</el-button>
-            </el-form-item>
-          </el-form>
+          <div class="zs-filter-form" v-if="Object.keys(userGroupState.filterForm).length>0">
+            <el-form
+                class="demo-form-inline"
+                ref="userGroupFilterFormRef"
+                :model="userGroupState.filterForm"
+                :inline="true"
+                @keyup.enter="userGroupFEnter"
+                @submit.prevent
+            >
+              <!--在此下方添加表单项-->
+              <el-form-item :label="userGroupDict.label" prop="label">
+                <el-input v-model="userGroupState.filterForm.label" :placeholder="userGroupDict.label"/>
+              </el-form-item>
+              <!--在此上方添加表单项-->
+              <el-form-item>
+                <el-button type="primary" @click="userGroupFCon">筛选</el-button>
+                <el-button @click="userGroupFCan">重置</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
 
           <!--操作按钮-->
-          <div>
+          <div class="zs-button-row">
             <!--<el-button-group>-->
             <el-button type="primary" plain :icon="Refresh" @click="userGroupGRefresh">刷新</el-button>
             <!--<el-button type="primary" plain :icon="Plus" @click="userGroupGIns">新增</el-button>-->
-            <!--<el-button type="success" plain :icon="Edit" :disabled="userGroupConfig.bulkOperation?userGroupState.multipleSelection.length===0:userGroupState.multipleSelection.length!==1" @click="userGroupGUpd">修改</el-button>-->
-            <!--<el-button type="danger" plain :icon="Delete" :disabled="userGroupState.multipleSelection.length===0" @click="userGroupGDel()">删除</el-button>-->
-            <!--<el-button type="warning" plain :icon='Download' :disabled='userGroupState.multipleSelection.length===0' @click="userGroupGExport()">导出</el-button>-->
-            <!--<el-button type="warning" plain :icon='Upload' @click="userGroupGImport">上传</el-button>-->
+            <!--<el-button type="success" plain :icon="Edit" :disabled="userGroupConfig.bulkOperation?userGroupMultipleSelection.length===0:userGroupMultipleSelection.length!==1" @click="userGroupGUpd">修改</el-button>-->
+            <!--<el-button type="danger" plain :icon="Delete" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGDel()">删除</el-button>-->
+            <!--<el-button type="warning" plain :icon="Download" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGExport()">导出</el-button>-->
+            <!--<el-button type="warning" plain :icon="Upload" @click="userGroupGImport">上传</el-button>-->
             <!--</el-button-group>-->
           </div>
 
-          <!--数据表格-->
-          <el-table
-              ref="userGroupTableRef"
-              v-loading="userGroupTableLoadingRef"
-              :data="userGroupState.list"
-              @selection-change="userGroupHandleSelectionChange"
-              highlight-current-row
-              @current-change="userGroupHandleCurrentChange"
-          >
-            <el-table-column fixed type="selection" width="55"/>
-            <!--<el-table-column fixed prop="id" :label="userGroupState.dict['id']" width="180"/>-->
-            <!--上面id列的宽度改一下-->
-            <!--在此下方添加表格列-->
-            <el-table-column prop="label" :label="userGroupState.dict['label']" width="240"/>
-            <!--<el-table-column prop="parentId" :label="userGroupState.dict['parentId']" width="120"/>-->
-            <!--<el-table-column prop="orderNum" :label="userGroupState.dict['orderNum']" width="120"/>-->
-            <el-table-column prop="remark" :label="userGroupState.dict['remark']" width="240"/>
-            <!--在此上方添加表格列-->
-            <!--<el-table-column prop="createBy" :label="userGroupState.dict['createBy']" width="120"/>-->
-            <!--<el-table-column prop="updateBy" :label="userGroupState.dict['updateBy']" width="120"/>-->
-            <!--<el-table-column prop="createTime" :label="userGroupState.dict['createTime']" width="220"/>-->
-            <!--<el-table-column prop="updateTime" :label="userGroupState.dict['updateTime']" width="220"/>-->
-            <!--<el-table-column prop="deleted" :label="userGroupState.dict['deleted']" width="60"/>-->
-            <!--上方几个酌情使用-->
-            <!--<el-table-column fixed="right" label="操作" min-width="120">-->
-            <!--  <template #default="{row}">-->
-            <!--    <el-button link type="primary" size="small" @click="userGroupTUpd(row.id)">修改</el-button>-->
-            <!--    <el-button link type="danger" size="small" @click="userGroupTDel(row.id)">删除</el-button>-->
-            <!--  </template>-->
-            <!--</el-table-column>-->
-            <template #append>
-              <div class="el-table-append-box">
-          <span>此表格的多选<span class="underline">不支持</span>
-            {{ `跨分页保存，当前已选 ${userGroupState.multipleSelection.length} 条数据。` }}</span>
-              </div>
-            </template>
-          </el-table>
+          <div class="zs-table-data">
+            <!--数据表格-->
+            <el-table
+                ref="userGroupTableRef"
+                v-loading="userGroupTableLoadingRef"
+                :data="userGroupTableData"
+                @selection-change="userGroupHandleSelectionChange"
+                highlight-current-row
+                @current-change="userGroupHandleCurrentChange"
+            >
+              <el-table-column fixed type="selection" width="55"/>
+              <!--<el-table-column fixed prop="id" :label="userGroupDict.id" width="180"/>-->
+              <!--上面id列的宽度改一下-->
+              <!--在此下方添加表格列-->
+              <el-table-column prop="label" :label="userGroupDict.label" width="240"/>
+              <!--<el-table-column prop="parentId" :label="userGroupDict.parentId" width="120"/>-->
+              <!--<el-table-column prop="orderNum" :label="userGroupDict.orderNum" width="120"/>-->
+              <el-table-column prop="remark" :label="userGroupDict.remark" width="240"/>
+              <!--在此上方添加表格列-->
+              <!--<el-table-column prop="createBy" :label="userGroupDict.createBy" width="120"/>-->
+              <!--<el-table-column prop="updateBy" :label="userGroupDict.updateBy" width="120"/>-->
+              <!--<el-table-column prop="createTime" :label="userGroupDict.createTime" width="220"/>-->
+              <!--<el-table-column prop="updateTime" :label="userGroupDict.updateTime" width="220"/>-->
+              <!--<el-table-column prop="deleted" :label="userGroupDict.deleted" width="60"/>-->
+              <!--上方几个酌情使用-->
+              <!--<el-table-column fixed="right" label="操作" min-width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-button link type="primary" size="small" @click="userGroupTUpd(row.id)">修改</el-button>-->
+              <!--    <el-button link type="danger" size="small" @click="userGroupTDel(row.id)">删除</el-button>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <template #append>
+                <div class="el-table-append-box">
+                  <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${userGroupMultipleSelection.length} 条数据。` }}</span>
+                </div>
+              </template>
+            </el-table>
 
-          <!--分页-->
-          <Pagination
-              v-if="userGroupState.total!==-1"
-              :total="Number(userGroupState.total)"
-              :page-num="userGroupState.pageParam.pageNum"
-              :page-size="userGroupState.pageParam.pageSize"
-              @page-change="userGroupPageChange"
-          />
+            <!--分页-->
+            <Pagination
+                v-if="userGroupConfig.pageQuery"
+                :total="userGroupTotal"
+                :page-num="userGroupPageParam.pageNum"
+                :page-size="userGroupPageParam.pageSize"
+                @page-change="userGroupPageChange"
+            />
+          </div>
         </el-scrollbar>
       </div>
       <div>
@@ -1066,85 +881,87 @@ const userGroupPermissionDCon2 = () => {
       <div>
         <el-scrollbar>
           <!--顶部筛选表单-->
-          <el-form
-              class="demo-form-inline"
-              v-if="Object.keys(interfaceGroupState.filterForm).length>0"
-              ref="interfaceGroupFilterFormRef"
-              :model="interfaceGroupState.filterForm"
-              :inline="true"
-              @keyup.enter="interfaceGroupFEnter"
-              @submit.prevent
-          >
-            <!--在此下方添加表单项-->
-            <el-form-item :label="interfaceGroupState.dict['label']" prop="label">
-              <el-input v-model="interfaceGroupState.filterForm['label']"
-                        :placeholder="interfaceGroupState.dict['label']"/>
-            </el-form-item>
-            <!--在此上方添加表单项-->
-            <el-form-item>
-              <el-button type="primary" @click="interfaceGroupFCon">筛选</el-button>
-              <el-button @click="interfaceGroupFCan">重置</el-button>
-            </el-form-item>
-          </el-form>
+          <div class="zs-filter-form" v-if="Object.keys(interfaceGroupState.filterForm).length>0">
+            <el-form
+                class="demo-form-inline"
+                ref="interfaceGroupFilterFormRef"
+                :model="interfaceGroupState.filterForm"
+                :inline="true"
+                @keyup.enter="interfaceGroupFEnter"
+                @submit.prevent
+            >
+              <!--在此下方添加表单项-->
+              <el-form-item :label="interfaceGroupDict.label" prop="label">
+                <el-input v-model="interfaceGroupState.filterForm.label" :placeholder="interfaceGroupDict.label"/>
+              </el-form-item>
+              <!--在此上方添加表单项-->
+              <el-form-item>
+                <el-button type="primary" @click="interfaceGroupFCon">筛选</el-button>
+                <el-button @click="interfaceGroupFCan">重置</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
 
           <!--操作按钮-->
-          <div>
+          <div class="zs-button-row">
             <!--<el-button-group>-->
             <el-button type="primary" plain :icon="Refresh" @click="interfaceGroupGRefresh">刷新</el-button>
             <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGroupGIns">新增</el-button>-->
-            <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceGroupConfig.bulkOperation?interfaceGroupState.multipleSelection.length===0:interfaceGroupState.multipleSelection.length!==1" @click="interfaceGroupGUpd">修改</el-button>-->
-            <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceGroupState.multipleSelection.length===0" @click="interfaceGroupGDel()">删除</el-button>-->
-            <!--<el-button type="warning" plain :icon='Download' :disabled='interfaceGroupState.multipleSelection.length===0' @click="interfaceGroupGExport()">导出</el-button>-->
-            <!--<el-button type="warning" plain :icon='Upload' @click="interfaceGroupGImport">上传</el-button>-->
+            <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceGroupConfig.bulkOperation?interfaceGroupMultipleSelection.length===0:interfaceGroupMultipleSelection.length!==1" @click="interfaceGroupGUpd">修改</el-button>-->
+            <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceGroupMultipleSelection.length===0" @click="interfaceGroupGDel()">删除</el-button>-->
+            <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceGroupStateMultipleSelection.length===0" @click="interfaceGroupGExport()">导出</el-button>-->
+            <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGroupGImport">上传</el-button>-->
             <!--</el-button-group>-->
           </div>
 
-          <!--数据表格-->
-          <el-table
-              ref="interfaceGroupTableRef"
-              v-loading="interfaceGroupTableLoadingRef"
-              :data="interfaceGroupState.list"
-              @selection-change="interfaceGroupHandleSelectionChange"
-              highlight-current-row
-              @current-change="interfaceGroupHandleCurrentChange"
-          >
-            <el-table-column fixed type="selection" width="55"/>
-            <!--<el-table-column fixed prop="id" :label="interfaceGroupState.dict['id']" width="180"/>-->
-            <!--上面id列的宽度改一下-->
-            <!--在此下方添加表格列-->
-            <el-table-column prop="label" :label="interfaceGroupState.dict['label']" width="240"/>
-            <!--<el-table-column prop="parentId" :label="interfaceGroupState.dict['parentId']" width="120"/>-->
-            <!--<el-table-column prop="orderNum" :label="interfaceGroupState.dict['orderNum']" width="120"/>-->
-            <el-table-column prop="remark" :label="interfaceGroupState.dict['remark']" width="240"/>
-            <!--在此上方添加表格列-->
-            <!--<el-table-column prop="createBy" :label="interfaceGroupState.dict['createBy']" width="120"/>-->
-            <!--<el-table-column prop="updateBy" :label="interfaceGroupState.dict['updateBy']" width="120"/>-->
-            <!--<el-table-column prop="createTime" :label="interfaceGroupState.dict['createTime']" width="220"/>-->
-            <!--<el-table-column prop="updateTime" :label="interfaceGroupState.dict['updateTime']" width="220"/>-->
-            <!--<el-table-column prop="deleted" :label="interfaceGroupState.dict['deleted']" width="60"/>-->
-            <!--上方几个酌情使用-->
-            <!--<el-table-column fixed="right" label="操作" min-width="120">-->
-            <!--  <template #default="{row}">-->
-            <!--    <el-button link type="primary" size="small" @click="interfaceGroupTUpd(row.id)">修改</el-button>-->
-            <!--    <el-button link type="danger" size="small" @click="interfaceGroupTDel(row.id)">删除</el-button>-->
-            <!--  </template>-->
-            <!--</el-table-column>-->
-            <template #append>
-              <div class="el-table-append-box">
-          <span>此表格的多选<span class="underline">不支持</span>
-            {{ `跨分页保存，当前已选 ${interfaceGroupState.multipleSelection.length} 条数据。` }}</span>
-              </div>
-            </template>
-          </el-table>
+          <div class="zs-table-data">
+            <!--数据表格-->
+            <el-table
+                ref="interfaceGroupTableRef"
+                v-loading="interfaceGroupTableLoadingRef"
+                :data="interfaceGroupTableData"
+                @selection-change="interfaceGroupHandleSelectionChange"
+                highlight-current-row
+                @current-change="interfaceGroupHandleCurrentChange"
+            >
+              <el-table-column fixed type="selection" width="55"/>
+              <!--<el-table-column fixed prop="id" :label="interfaceGroupDict.id" width="180"/>-->
+              <!--上面id列的宽度改一下-->
+              <!--在此下方添加表格列-->
+              <el-table-column prop="label" :label="interfaceGroupDict.label" width="240"/>
+              <!--<el-table-column prop="parentId" :label="interfaceGroupDict.parentId" width="120"/>-->
+              <el-table-column prop="baseURL" :label="interfaceGroupDict.baseURL" width="240"/>
+              <!--<el-table-column prop="orderNum" :label="interfaceGroupDict.orderNum" width="120"/>-->
+              <el-table-column prop="remark" :label="interfaceGroupDict.remark" width="240"/>
+              <!--在此上方添加表格列-->
+              <!--<el-table-column prop="createBy" :label="interfaceGroupDict.createBy" width="120"/>-->
+              <!--<el-table-column prop="updateBy" :label="interfaceGroupDict.updateBy" width="120"/>-->
+              <!--<el-table-column prop="createTime" :label="interfaceGroupDict.createTime" width="220"/>-->
+              <!--<el-table-column prop="updateTime" :label="interfaceGroupDict.updateTime" width="220"/>-->
+              <!--<el-table-column prop="deleted" :label="interfaceGroupDict.deleted" width="60"/>-->
+              <!--上方几个酌情使用-->
+              <!--<el-table-column fixed="right" label="操作" min-width="120">-->
+              <!--  <template #default="{row}">-->
+              <!--    <el-button link type="primary" size="small" @click="interfaceGroupTUpd(row.id)">修改</el-button>-->
+              <!--    <el-button link type="danger" size="small" @click="interfaceGroupTDel(row.id)">删除</el-button>-->
+              <!--  </template>-->
+              <!--</el-table-column>-->
+              <template #append>
+                <div class="el-table-append-box">
+                  <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${interfaceGroupMultipleSelection.length} 条数据。` }}</span>
+                </div>
+              </template>
+            </el-table>
 
-          <!--分页-->
-          <Pagination
-              v-if="interfaceGroupState.total!==-1"
-              :total="Number(interfaceGroupState.total)"
-              :page-num="interfaceGroupState.pageParam.pageNum"
-              :page-size="interfaceGroupState.pageParam.pageSize"
-              @page-change="interfaceGroupPageChange"
-          />
+            <!--分页-->
+            <Pagination
+                v-if="interfaceGroupConfig.pageQuery"
+                :total="interfaceGroupTotal"
+                :page-num="interfaceGroupPageParam.pageNum"
+                :page-size="interfaceGroupPageParam.pageSize"
+                @page-change="interfaceGroupPageChange"
+            />
+          </div>
         </el-scrollbar>
       </div>
     </div>
@@ -1159,7 +976,7 @@ const userGroupPermissionDCon2 = () => {
             style="color: #fff;"
             :color="CONFIG.theme_color_menu_bg_active"
             @click="beforeAddUserGroupPermission"
-            :disabled="!(userGroupState.multipleSelection.length===1&&interfaceGroupState.multipleSelection.length===1)"
+            :disabled="!(userGroupMultipleSelection.length===1&&interfaceGroupMultipleSelection.length===1)"
         >
           新增权限
         </el-button>

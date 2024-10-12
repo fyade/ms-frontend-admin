@@ -18,8 +18,7 @@ import FileUploadMoreFullConcur from '@/components/fileUpload/fileUploadMoreFull
 import FileUploadOneChunkConcur from '@/components/fileUpload/fileUploadOneChunkConcur.vue';
 import FileUploadMoreChunkConcur from '@/components/fileUpload/fileUploadMoreChunkConcur.vue';
 import { FormInstance, Instance, SpaceInstance } from "element-plus";
-import { State } from "@/type/tablePage.ts";
-import { fileDto, fileDto2 } from "@/type/demo/file.ts";
+import { FileDto2 } from "@/type/demo/file.ts";
 import { AxiosProgressEvent } from "axios";
 
 const btnGroup = ref<SpaceInstance | null>(null)
@@ -74,10 +73,10 @@ const tableHeight = ref(0)
 const selectedRowKeys = ref([])
 const loading = ref(false)
 const downloadProgresses = reactive<Record<string, number>>({})
-const onlineView = (row: fileDto2) => {
+const onlineView = (row: FileDto2) => {
   window.open(`${fileBaseUrl}${row.file_new_name}`)
 }
-const download = async (row: fileDto2) => {
+const download = async (row: FileDto2) => {
   downloadProgresses[row.id] = 0
   downloadFullFile(row.file_new_name, row.file_name, (evt: AxiosProgressEvent) => {
     const downloadProgress = Number(((evt.progress || 0) * 100).toFixed(2))

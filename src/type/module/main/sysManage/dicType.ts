@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class dicTypeDto extends baseClass {
+export class DicTypeDto extends BaseClass {
   id!: number;
   name!: string;
   type!: string;
@@ -10,13 +9,13 @@ export class dicTypeDto extends baseClass {
   remark!: string;
 }
 
-export class dicTypeSelDto extends pageDto {
+export class DicTypeSelDto extends PageDto {
 }
 
-export class dicTypeSelAllDto {
+export class DicTypeSelAllDto {
 }
 
-export class dicTypeInsDto {
+export class DicTypeInsDto {
   name!: string;
   type!: string;
   ifDisabled!: string;
@@ -24,6 +23,6 @@ export class dicTypeInsDto {
   remark!: string;
 }
 
-export class dicTypeUpdDto extends dicTypeInsDto {
+export class DicTypeUpdDto extends DicTypeInsDto {
   id!: number;
 }

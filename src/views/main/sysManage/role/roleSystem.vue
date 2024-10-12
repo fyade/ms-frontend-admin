@@ -1,37 +1,26 @@
 <script setup lang="ts">
-import { roleDto } from "@/type/module/main/sysManage/role.ts";
-import { computed, reactive, ref } from "vue";
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
+import { reactive, ref } from "vue";
+import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
-import { State, t_config } from "@/type/tablePage.ts";
-import type { FormRules } from "element-plus";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { typeOM } from "@/type/utils/base.ts";
-import { sysDto, sysUpdDto } from "@/type/module/main/sysManage/sys.ts";
-import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
-import { roleSysFunc } from "@/api/module/main/sysManage/roleSys.ts";
-import { roleSysDto } from "@/type/module/main/sysManage/roleSys.ts";
+import { SysDto, SysUpdDto } from "@/type/module/main/sysManage/sys.ts";
+import { sysApi } from "@/api/module/main/sysManage/sys.ts";
+import { sysDict } from "@/dict/module/main/sysManage/sys.ts";
+import { RoleDto } from "@/type/module/main/sysManage/role.ts";
+import { roleSysApi } from "@/api/module/main/sysManage/roleSys.ts";
+import { RoleSysDto } from "@/type/module/main/sysManage/roleSys.ts";
 
 const props = defineProps({
   selectRole: {
-    type: roleDto,
+    type: RoleDto,
     required: true
   }
 })
 
-const state = reactive<State<sysDto, sysUpdDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<SysDto, SysUpdDto>>({
   dialogForm: {
     id: -1,
     name: '',
@@ -43,57 +32,17 @@ const state = reactive<State<sysDto, sysUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    name: [{required: true, trigger: 'change'}],
-    perms: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-    path: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    name: '系统名',
-    perms: '权限字符',
-    path: 'url路径',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  name: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+  path: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  bulkOperation: true,
   pageQuery: false,
   selectListCallback: () => {
     getRoleSyss()
@@ -101,6 +50,19 @@ const config: t_config = reactive({
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -119,32 +81,25 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage({
-  config,
+  ifRequired,
+} = funcTablePage<SysDto, SysUpdDto>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: sysFunc
+  dFormRules,
+  config,
+  api: sysApi,
+  dict: sysDict,
 })
 
-class sysDto2 extends sysDto {
+class SysDto2 extends SysDto {
   ifTrue!: boolean
   loading!: boolean
 }
 
-const allRoleSyss = ref<roleSysDto[]>([])
-const stateList2 = ref<sysDto2[]>([])
+const allRoleSyss = ref<RoleSysDto[]>([])
+const stateList2 = ref<SysDto2[]>([])
 const getRoleSyss = () => {
-  stateList2.value = state.list.map(item => ({...item, ifTrue: false, loading: true}))
-  roleSysFunc.selectAll({roleId: props.selectRole?.id}).then((res: roleSysDto[]) => {
+  stateList2.value = tableData.value.map(item => ({...item, ifTrue: false, loading: true}))
+  roleSysApi.selectAll({roleId: props.selectRole?.id}).then((res: RoleSysDto[]) => {
     allRoleSyss.value = res
     res.forEach(ite => {
       const find = stateList2.value.find(item => item.id === ite.sysId);
@@ -155,11 +110,11 @@ const getRoleSyss = () => {
     stateList2.value.forEach(item => item.loading = false)
   })
 }
-const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
+const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      roleSysFunc.insertOne({roleId: props.selectRole?.id, sysId: dto.id, remark: ''}).then(res => {
+      roleSysApi.insertOne({roleId: props.selectRole?.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)
@@ -174,7 +129,7 @@ const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
     return new Promise((resolve, reject) => {
       const find = allRoleSyss.value.find(item => item.roleId === props.selectRole?.id && item.sysId === dto.id);
       if (find) {
-        roleSysFunc.deleteList(find.id).then(res => {
+        roleSysApi.deleteList(find.id).then(res => {
           if (res) {
             gRefresh()
             resolve(true)
@@ -227,9 +182,9 @@ const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+    <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+    <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
     <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     <!--</el-button-group>-->
   </div>

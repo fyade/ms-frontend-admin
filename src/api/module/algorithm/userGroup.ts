@@ -1,152 +1,86 @@
 import request from "@/api/request.ts";
-import {
-  userGroupDto,
-  userGroupSelDto,
-  userGroupSelAllDto,
-  userGroupInsDto,
-  userGroupUpdDto
-} from "@/type/module/algorithm/userGroup.ts";
-import {
-  t_funcMap,
-  t_funcMap_selList_ret,
-  t_funcMap_selMore_ret,
-  t_funcMap_selOne_ret,
-  t_funcMap_iud_ret
-} from "@/type/tablePage.ts";
+import { ApiConfig } from "@/type/tablePage.ts";
+import { UserGroupDto, UserGroupUpdDto } from "@/type/module/algorithm/userGroup.ts";
 
-export function userGroupSel(params: userGroupSelDto): t_funcMap_selList_ret<userGroupDto> {
-  return request({
-    url: '/algorithm/user-group',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function userGroupSelAll(params: userGroupSelAllDto): t_funcMap_selMore_ret<userGroupDto> {
-  return request({
-    url: '/algorithm/user-group/all',
-    method: 'GET',
-    params: params
-  })
-}
-
-export function userGroupSelById(id: number): t_funcMap_selOne_ret<userGroupDto> {
-  return request({
-    url: `/algorithm/user-group/${id}`,
-    method: 'GET'
-  })
-}
-
-export function userGroupSelByIds(ids: number[]): t_funcMap_selMore_ret<userGroupDto> {
-  return request({
-    url: `/algorithm/user-group/ids`,
-    method: 'GET',
-    params: ids
-  })
-}
-
-export function userGroupIns(params: userGroupInsDto): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/user-group',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function userGroupUpd(params: userGroupUpdDto): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/user-group',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function userGroupInss(params: userGroupInsDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/user-group/s',
-    method: 'POST',
-    data: params
-  })
-}
-
-export function userGroupUpds(params: userGroupUpdDto[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/user-group/s',
-    method: 'PUT',
-    data: params
-  })
-}
-
-export function userGroupDel(ids: number[]): t_funcMap_iud_ret {
-  return request({
-    url: '/algorithm/user-group',
-    method: 'DELETE',
-    data: ids
-  })
-}
-
-export const userGroupFunc: t_funcMap<userGroupDto, userGroupSelDto, userGroupSelAllDto, userGroupInsDto, userGroupUpdDto> = {
+export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
   /**
    * 分页查询
    * @param params
    */
-  selectList: (params: userGroupSelDto) => {
-    return userGroupSel(params)
-  },
+  selectList: (params) => request({
+    url: '/algorithm//user-group',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询所有
    * @param params
    */
-  selectAll: (params: userGroupSelAllDto) => {
-    return userGroupSelAll(params)
-  },
+  selectAll: (params) => request({
+    url: '/algorithm//user-group/all',
+    method: 'GET',
+    params: params
+  }),
   /**
    * 查询单个
    * @param id
    */
-  selectById: (id: number) => {
-    return userGroupSelById(id)
-  },
+  selectById: (id) => request({
+    url: `/algorithm//user-group/${id}`,
+    method: 'GET'
+  }),
   /**
    * 查询多个
    * @param ids
    */
-  selectByIds: (ids: number[]) => {
-    return userGroupSelByIds(ids)
-  },
+  selectByIds: (ids) => request({
+    url: `/algorithm//user-group/ids`,
+    method: 'GET',
+    params: ids
+  }),
   /**
    * 新增
    * @param obj
    */
-  insertOne: (obj: userGroupInsDto) => {
-    return userGroupIns(obj)
-  },
+  insertOne: (obj) => request({
+    url: '/algorithm//user-group',
+    method: 'POST',
+    data: obj
+  }),
   /**
    * 修改
    * @param obj
    */
-  updateOne: (obj: userGroupUpdDto) => {
-    return userGroupUpd(obj)
-  },
+  updateOne: (obj) => request({
+    url: '/algorithm//user-group',
+    method: 'PUT',
+    data: obj
+  }),
   /**
    * 新增多个
    * @param objs
    */
-  insertMore: (objs: userGroupInsDto[]) => {
-    return userGroupInss(objs)
-  },
+  insertMore: (objs) => request({
+    url: '/algorithm//user-group/s',
+    method: 'POST',
+    data: objs
+  }),
   /**
    * 修改多个
    * @param objs
    */
-  updateMore: (objs: userGroupUpdDto[]) => {
-    return userGroupUpds(objs)
-  },
+  updateMore: (objs) => request({
+    url: '/algorithm//user-group/s',
+    method: 'PUT',
+    data: objs
+  }),
   /**
    * 删除
    * @param ids
    */
-  deleteList: (...ids: number[]) => {
-    return userGroupDel(ids)
-  }
+  deleteList: (...ids) => request({
+    url: '/algorithm//user-group',
+    method: 'DELETE',
+    data: ids
+  })
 }

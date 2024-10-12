@@ -6,7 +6,7 @@ import { RouteRecordName, RouteRecordNormalized } from "vue-router";
 import { useSysStore } from "@/store/module/sys.ts";
 import { final } from "@/utils/base.ts";
 
-export interface allMenus2I {
+export interface AllMenus2I {
   path: string
   name: RouteRecordName
   meta: RouteRecordNormalized['meta']
@@ -36,8 +36,8 @@ export const useRouterStore = defineStore('routerStore', () => {
       }
     })
   });
-  const menuList: Ref<allMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
-  const addMenu = (menu: allMenus2I) => {
+  const menuList: Ref<AllMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
+  const addMenu = (menu: AllMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
       menuList.value.push(menu)
     }

@@ -1,3 +1,6 @@
+
+// 1.0-full版本
+
 // import { nextTick, onMounted, toRaw, watch } from "vue"
 // import { ElMessage, ElMessageBox } from "element-plus"
 // import { EXPORT_IGNORE_KEYS, final, finalIU, Operate } from "@/utils/base.ts"

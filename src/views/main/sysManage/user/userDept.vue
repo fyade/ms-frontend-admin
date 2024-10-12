@@ -1,35 +1,25 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, Ref, ref, watch } from "vue"
-import { final, PAGINATION, publicDict } from "@/utils/base.ts"
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts"
-import { State, t_config } from "@/type/tablePage.ts"
-import type { FormRules, TreeInstance } from 'element-plus'
-import { Refresh } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { deptDto, deptUpdDto } from "@/type/module/main/sysManage/dept.ts";
-import { deptFunc, } from "@/api/module/main/sysManage/dept.ts"
+import { computed, inject, nextTick, reactive, ref, Ref, watch } from "vue";
+import { CONFIG, final } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules, TreeInstance } from "element-plus";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { DeptDto, DeptUpdDto } from "@/type/module/main/sysManage/dept.ts";
+import { deptApi } from "@/api/module/main/sysManage/dept.ts";
+import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import { userDto2 } from "@/type/module/main/sysManage/user.ts";
+import { UserDto2 } from "@/type/module/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {
-    type: userDto2,
+    type: UserDto2,
     required: true
   }
 });
 
-const state = reactive<State<deptDto, deptUpdDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<DeptDto, DeptUpdDto>>({
   dialogForm: {
     id: -1,
     label: '',
@@ -41,63 +31,36 @@ const state = reactive<State<deptDto, deptUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    label: [{required: true, trigger: 'change'}],
-    ifAdmin: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-    parentId: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    label: '部门名',
-    ifAdmin: '是否管理员权限',
-    parentId: '父级部门',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {
     label: ''
   },
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  pageQuery: false, // 分页，默认true
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  label: [{required: true, trigger: 'change'}],
+  ifAdmin: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  pageQuery: false,
+  bulkOperation: true,
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -112,27 +75,21 @@ const {
   gImport,
   tUpd,
   tDel,
+  handleSelectionChange,
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage({
-  config,
+  ifRequired,
+} = funcTablePage<DeptDto, DeptUpdDto>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: deptFunc
+  dFormRules,
+  config,
+  api: deptApi,
+  dict: deptDict,
 })
 
 const selectDeptTree = ref<TreeInstance | null>(null)
-const tableData2 = computed(() => arr2ToDiguiObj(state.list))
+const tableData2 = computed(() => arr2ToDiguiObj(tableData.value))
 const selectDept: Ref<number[]> | undefined = inject('changeSelectDept')
 const selectDept2 = ref<number[]>(selectDept ? selectDept.value : [])
 nextTick(() => {
@@ -142,14 +99,14 @@ nextTick(() => {
 })
 watch(selectDept2, () => {
   if (selectDept) {
-    selectDept.value = state.list.filter(item => selectDept2.value.indexOf(item.id) > -1).map(item => item.id)
+    selectDept.value = tableData.value.filter(item => selectDept2.value.indexOf(item.id) > -1).map(item => item.id)
   }
 }, {
   deep: true
 })
 
 const handleCheckChange = (
-    data: deptDto,
+    data: DeptDto,
     checked: boolean,
     indeterminate: boolean
 ) => {

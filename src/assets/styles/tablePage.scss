@@ -40,3 +40,33 @@
     background-color: white;
   }
 }
+
+.zs-filter-form {
+  margin-bottom: 12px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+
+  > * {
+    margin-bottom: -18px;
+  }
+}
+
+.zs-button-row {
+  margin-bottom: 12px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.zs-table-data {
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+
+  > * {
+    &:nth-child(2) {
+      margin-top: 18px;
+    }
+  }
+}

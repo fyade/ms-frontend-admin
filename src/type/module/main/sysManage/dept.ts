@@ -1,7 +1,6 @@
-import { pageDto } from "@/type/tablePage.ts";
-import { baseClass } from "@/utils/base.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
-export class deptDto extends baseClass {
+export class DeptDto extends BaseClass {
   id!: number;
   label!: string;
   ifAdmin!: string;
@@ -11,13 +10,13 @@ export class deptDto extends baseClass {
   remark!: string;
 }
 
-export class deptSelDto extends pageDto {
+export class DeptSelDto extends PageDto {
 }
 
-export class deptSelAllDto {
+export class DeptSelAllDto {
 }
 
-export class deptInsDto {
+export class DeptInsDto {
   label!: string;
   ifAdmin!: string;
   ifDisabled!: string;
@@ -26,6 +25,6 @@ export class deptInsDto {
   remark!: string;
 }
 
-export class deptUpdDto extends deptInsDto {
+export class DeptUpdDto extends DeptInsDto {
   id!: number;
 }

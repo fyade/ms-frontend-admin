@@ -5,25 +5,20 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { provide, reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage2.ts"
-import { State, State2, t_config, TablePageConfig } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import { provide, reactive, ref } from "vue";
+import { CONFIG, final } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE, typeOM } from "@/type/utils/base.ts"
-import { roleDto, RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
-import { roleApi } from "@/api/module/main/sysManage/role.ts"
-import {
-  rolePermissionSelAll,
-  rolePermissionUpd,
-  rolePermissionUpdRp
-} from "@/api/module/main/sysManage/rolePermission.ts";
+import { RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
+import { roleApi } from "@/api/module/main/sysManage/role.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
+import { rolePermissionApi, rolePermissionUpdRp } from "@/api/module/main/sysManage/rolePermission.ts";
 import RoleUser from "@/views/main/sysManage/role/roleUser.vue";
 import RolePermission from "@/views/main/sysManage/role/rolePermission.vue";
 import RoleSystem from "@/views/main/sysManage/role/roleSystem.vue";
-import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
 const state = reactive<State2<RoleDto, RoleUpdDto>>({
   dialogForm: {
@@ -84,29 +79,29 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
+  ifRequired,
 } = funcTablePage<RoleDto, RoleUpdDto>({
   state,
   dFormRules,
   config,
   api: roleApi,
-  dict: roleDict
+  dict: roleDict,
 })
 
 // 选择的角色信息
-let selectRoleInfo: roleDto = new roleDto()
+let selectRoleInfo: RoleDto = new RoleDto()
 const drawer2 = ref(false)
 const selectPermission = ref<number[]>([])
-const manageUser = (row: roleDto) => {
+const manageUser = (row: RoleDto) => {
   selectRoleInfo = row
   drawer2.value = true
 }
 
 // 角色权限
 const drawer = ref(false)
-const setPermission = (row: roleDto) => {
+const setPermission = (row: RoleDto) => {
   selectRoleInfo = row
-  rolePermissionSelAll({roleId: selectRoleInfo.id}).then(res => {
+  rolePermissionApi.selectAll({roleId: selectRoleInfo.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
     drawer.value = true
   })
@@ -130,7 +125,7 @@ provide('changeSelectPermission', selectPermission)
 
 // 分配系统
 const drawer3 = ref(false)
-const setSystem = (row: roleDto) => {
+const setSystem = (row: RoleDto) => {
   selectRoleInfo = row
   drawer3.value = true
 }
@@ -213,7 +208,7 @@ const setSystem = (row: roleDto) => {
         <el-row v-if="dialogType.value!==final.ins">
           <el-col :span="24">
             <el-form-item :label="roleDict.id" prop="id">
-              <span>{{ state.dialogForm['id'] }}</span>
+              <span>{{ state.dialogForm.id }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -225,19 +220,19 @@ const setSystem = (row: roleDto) => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="roleDict.label" prop="label">
-              <el-input v-model="state.dialogForm['label']" :placeholder="roleDict.label"/>
+              <el-input v-model="state.dialogForm.label" :placeholder="roleDict.label"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="roleDict.orderNum" prop="orderNum">
-              <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
-              <el-radio-group v-model="state.dialogForm['ifAdmin']">
+              <el-radio-group v-model="state.dialogForm.ifAdmin">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
@@ -245,7 +240,7 @@ const setSystem = (row: roleDto) => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
-              <el-radio-group v-model="state.dialogForm['ifDisabled']">
+              <el-radio-group v-model="state.dialogForm.ifDisabled">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
@@ -255,7 +250,7 @@ const setSystem = (row: roleDto) => {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="roleDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm['remark']" :placeholder="roleDict.remark"/>
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="roleDict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -283,7 +278,7 @@ const setSystem = (row: roleDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['label']" :placeholder="roleDict.label"/>
+                <el-input v-model="state.dialogForms[$index].label" :placeholder="roleDict.label"/>
               </div>
             </template>
           </el-table-column>
@@ -293,7 +288,7 @@ const setSystem = (row: roleDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['orderNum']" controls-position="right"/>
+                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
@@ -303,7 +298,7 @@ const setSystem = (row: roleDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifAdmin`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifAdmin']" :true-value="final.Y" :false-value="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index].ifAdmin" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -313,7 +308,7 @@ const setSystem = (row: roleDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['ifDisabled']" :true-value="final.Y" :false-value="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
@@ -323,7 +318,7 @@ const setSystem = (row: roleDto) => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['remark']" :placeholder="roleDict.remark"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="roleDict.remark"/>
               </div>
             </template>
           </el-table-column>
@@ -359,18 +354,16 @@ const setSystem = (row: roleDto) => {
     >
       <!--在此下方添加表单项-->
       <el-form-item :label="roleDict.label" prop="label">
-        <el-input v-model="state.filterForm['label']" :placeholder="roleDict.label"/>
+        <el-input v-model="state.filterForm.label" :placeholder="roleDict.label"/>
       </el-form-item>
       <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
-        <!--<el-input v-model="state.filterForm['ifAdmin']" :placeholder="roleDict.ifAdmin"/>-->
         <el-select v-model="state.filterForm.ifAdmin" :placeholder="roleDict.ifAdmin" clearable filterable>
           <el-option label="是" :value="final.Y"/>
           <el-option label="否" :value="final.N"/>
         </el-select>
       </el-form-item>
       <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
-        <!--<el-input v-model="state.filterForm['ifDisabled']" :placeholder="roleDict.ifDisabled"/>-->
-        <el-select v-model="state.filterForm['ifDisabled']" :placeholder="roleDict.ifDisabled" clearable filterable>
+        <el-select v-model="state.filterForm.ifDisabled" :placeholder="roleDict.ifDisabled" clearable filterable>
           <el-option label="是" :value="final.Y"/>
           <el-option label="否" :value="final.N"/>
         </el-select>

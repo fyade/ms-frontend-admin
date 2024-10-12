@@ -1,6 +1,6 @@
-import { baseClass, baseClass2 } from "@/utils/base.ts";
+import { BaseClass, BaseClass2 } from "@/type/tablePage.ts";
 
-export class fileDto extends baseClass {
+export class FileDto extends BaseClass {
   id!: string;
   fileName!: string;
   fileNewName!: string;
@@ -15,7 +15,7 @@ export class fileDto extends baseClass {
   remark!: string;
 }
 
-export class fileDto2 extends baseClass2 {
+export class FileDto2 extends BaseClass2 {
   id!: string;
   file_name!: string;
   file_new_name!: string;

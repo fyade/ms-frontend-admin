@@ -1,36 +1,26 @@
 <script setup lang="ts">
-import { deptDto } from "@/type/module/main/sysManage/dept.ts";
 import { reactive, ref } from "vue";
-import { State, t_config } from "@/type/tablePage.ts";
-import { sysDto, sysUpdDto } from "@/type/module/main/sysManage/sys.ts";
-import { final, PAGINATION, publicDict } from "@/utils/base.ts";
-import type { FormRules } from "element-plus";
-import { typeOM } from "@/type/utils/base.ts";
-import { funcTablePage } from "@/composition/tablePage/tablePage.ts";
-import { sysFunc } from "@/api/module/main/sysManage/sys.ts";
-import { deptSysDto } from "@/type/module/main/sysManage/deptSys.ts";
-import { deptSysFunc } from "@/api/module/main/sysManage/deptSys.ts";
-import { Refresh } from "@element-plus/icons-vue";
+import { CONFIG, final } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
+import { State2, TablePageConfig } from "@/type/tablePage.ts";
+import { FormRules } from "element-plus";
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { SysDto, SysUpdDto } from "@/type/module/main/sysManage/sys.ts";
+import { sysApi } from "@/api/module/main/sysManage/sys.ts";
+import { sysDict } from "@/dict/module/main/sysManage/sys.ts";
+import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
+import { DeptSysDto } from "@/type/module/main/sysManage/deptSys.ts";
+import { deptSysApi } from "@/api/module/main/sysManage/deptSys.ts";
 
 const props = defineProps({
   selectDept: {
-    type: deptDto,
+    type: DeptDto,
     required: true
   }
 })
 
-const state = reactive<State<sysDto, sysUpdDto>>({
-  dialogType: {
-    value: '',
-    label: ''
-  },
-  // 这个是弹出框表单
-  // 格式: {
-  //   id: '',
-  //   parentId: final.DEFAULT_PARENT_ID,
-  //   orderNum: final.DEFAULT_ORDER_NUM,
-  //   ...
-  // }
+const state = reactive<State2<SysDto, SysUpdDto>>({
   dialogForm: {
     id: -1,
     name: '',
@@ -42,57 +32,17 @@ const state = reactive<State<sysDto, sysUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  // 这个是弹出框表单校验
-  // 格式: {
-  //   name: [{ required: true, trigger: 'change' }],
-  //   ...
-  // }
-  dFormRules: {
-    name: [{required: true, trigger: 'change'}],
-    perms: [{required: true, trigger: 'change'}],
-    orderNum: [{required: true, trigger: 'change'}],
-    path: [{required: true, trigger: 'change'}],
-    ifDisabled: [{required: true, trigger: 'change'}],
-  } as FormRules,
-  // 字典
-  // 格式: {
-  //   ...publicDict,
-  //   name: '名字',
-  //   ...
-  // }
-  dict: {
-    ...publicDict,
-    name: '系统名',
-    perms: '权限字符',
-    path: 'url路径',
-  },
-  // 筛选表单
-  // 格式: {
-  //   name: '',
-  //   ...
-  // }
   filterForm: {},
-  list: [],
-  multipleSelection: [],
-  total: -1,
-  pageParam: {
-    pageNum: PAGINATION.pageNum,
-    pageSize: PAGINATION.pageSize
-  }
 })
-const state2 = reactive({
-  orderNum: final.DEFAULT_ORDER_NUM
-})
-const dialogFormRef = ref(null)
-const dialogFormsRef = ref(null)
-const filterFormRef = ref(null)
-const dialogVisible = ref(false)
-const dialogLoadingRef = ref(false)
-const tableLoadingRef = ref(false)
-const switchLoadingRef = ref(false)
-const activeTabName = ref<typeOM>(final.one)
-const config: t_config = reactive({
-  bulkOperation: true, // 弹出表单是否支持批量操作，默认false
+const dFormRules: FormRules = {
+  name: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
+  path: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+}
+const config = new TablePageConfig({
+  bulkOperation: true,
   pageQuery: false,
   selectListCallback: () => {
     getDeptSyss()
@@ -100,6 +50,19 @@ const config: t_config = reactive({
 })
 
 const {
+  dialogFormRef,
+  dialogFormsRef,
+  filterFormRef,
+  dialogVisible,
+  dialogLoadingRef,
+  tableLoadingRef,
+  switchLoadingRef,
+  activeTabName,
+  tableData,
+  pageParam,
+  total,
+  multipleSelection,
+  dialogType,
   refresh,
   dCan,
   dCon,
@@ -118,32 +81,25 @@ const {
   pageChange,
   dfIns,
   dfDel,
-  ifRequired
-} = funcTablePage({
-  config,
+  ifRequired,
+} = funcTablePage<SysDto, SysUpdDto>({
   state,
-  state2,
-  dialogFormRef,
-  dialogFormsRef,
-  filterFormRef,
-  dialogVisible,
-  dialogLoadingRef,
-  tableLoadingRef,
-  switchLoadingRef,
-  activeTabName,
-  func: sysFunc
+  dFormRules,
+  config,
+  api: sysApi,
+  dict: sysDict,
 })
 
-class sysDto2 extends sysDto {
+class SysDto2 extends SysDto {
   ifTrue!: boolean
   loading!: boolean
 }
 
-const allDeptSyss = ref<deptSysDto[]>([])
-const stateList2 = ref<sysDto2[]>([])
+const allDeptSyss = ref<DeptSysDto[]>([])
+const stateList2 = ref<SysDto2[]>([])
 const getDeptSyss = () => {
-  stateList2.value = state.list.map(item => ({...item, ifTrue: false, loading: true}))
-  deptSysFunc.selectAll({deptId: props.selectDept?.id}).then((res: deptSysDto[]) => {
+  stateList2.value = tableData.value.map(item => ({...item, ifTrue: false, loading: true}))
+  deptSysApi.selectAll({deptId: props.selectDept?.id}).then((res: DeptSysDto[]) => {
     allDeptSyss.value = res
     res.forEach(ite => {
       const find = stateList2.value.find(item => item.id === ite.sysId);
@@ -154,11 +110,11 @@ const getDeptSyss = () => {
     stateList2.value.forEach(item => item.loading = false)
   })
 }
-const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
+const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      deptSysFunc.insertOne({deptId: props.selectDept?.id, sysId: dto.id, remark: ''}).then(res => {
+      deptSysApi.insertOne({deptId: props.selectDept?.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)
@@ -173,7 +129,7 @@ const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
     return new Promise((resolve, reject) => {
       const find = allDeptSyss.value.find(item => item.deptId === props.selectDept?.id && item.sysId === dto.id);
       if (find) {
-        deptSysFunc.deleteList(find.id).then(res => {
+        deptSysApi.deleteList(find.id).then(res => {
           if (res) {
             gRefresh()
             resolve(true)
@@ -219,9 +175,9 @@ const beforeChange = (dto: sysDto2): boolean | Promise<boolean> => {
     <!--<el-button-group>-->
     <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
     <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <!--<el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+    <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+    <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
     <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     <!--</el-button-group>-->
   </div>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useSysStore } from "@/store/module/sys.ts";
 import { getPermissions, getSysInfo, getSystems } from "@/api/sys.ts";
-import { sysDto } from "@/type/module/main/sysManage/sys.ts";
+import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { onBeforeUnmount, ref } from "vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
-import { menuDto, T_COMP, T_MENU } from "@/type/module/main/sysManage/menu.ts";
+import { MenuDto, T_COMP, T_MENU } from "@/type/module/main/sysManage/menu.ts";
 import { final } from "@/utils/base.ts";
 import { RouteRecordNormalized } from "vue-router";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
@@ -30,7 +30,7 @@ const serverMonitor = () => {
 serverMonitor()
 
 // 我的资源
-const allSystems = ref<sysDto[]>([])
+const allSystems = ref<SysDto[]>([])
 const getData = () => {
   allSystems.value = []
   getSystems().then(res => {
@@ -39,12 +39,12 @@ const getData = () => {
 }
 getData()
 
-// 进入资源
+// 引入资源
 const modules = {
   ...import.meta.glob(`../../views/**/**/**/**.vue`),
   ...import.meta.glob(`../../views/**/**/**.vue`),
 }
-const goToSystem = async (dto: sysDto) => {
+const goToSystem = async (dto: SysDto) => {
   loading = ElLoading.service({
     lock: true,
     text: '系统资源加载中，请稍后。。。',
@@ -53,9 +53,9 @@ const goToSystem = async (dto: sysDto) => {
   const res = await getPermissions(dto.id)
   try {
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
-      const permissions = (await Promise.all((deepClone<menuDto[]>(res).filter(item => {
+      const permissions = (await Promise.all((deepClone<MenuDto[]>(res).filter(item => {
         return [T_MENU, T_COMP].indexOf(item.type) > -1 && item.ifVisible === final.Y
-      }) as unknown as (RouteRecordNormalized & menuDto & { component: any })[]).map(async item => {
+      }) as unknown as (RouteRecordNormalized & MenuDto & { component: any })[]).map(async item => {
         item.meta = {
           ...item,
           asideMenu: true,
@@ -132,7 +132,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .el {
   min-height: 100vh;
-  background-color: #fafaff;
+  background-color: var(--theme-color-main-bg);
 
   > .box {
     margin: 0 auto;
