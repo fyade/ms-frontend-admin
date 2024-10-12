@@ -8,7 +8,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm//interface',
+    url: '/algorithm/interface',
     method: 'GET',
     params: params
   }),
@@ -17,7 +17,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm//interface/all',
+    url: '/algorithm/interface/all',
     method: 'GET',
     params: params
   }),
@@ -26,7 +26,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm//interface/${id}`,
+    url: `/algorithm/interface/${id}`,
     method: 'GET'
   }),
   /**
@@ -34,7 +34,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm//interface/ids`,
+    url: `/algorithm/interface/ids`,
     method: 'GET',
     params: ids
   }),
@@ -43,7 +43,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm//interface',
+    url: '/algorithm/interface',
     method: 'POST',
     data: obj
   }),
@@ -52,7 +52,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm//interface',
+    url: '/algorithm/interface',
     method: 'PUT',
     data: obj
   }),
@@ -61,7 +61,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm//interface/s',
+    url: '/algorithm/interface/s',
     method: 'POST',
     data: objs
   }),
@@ -70,7 +70,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm//interface/s',
+    url: '/algorithm/interface/s',
     method: 'PUT',
     data: objs
   }),
@@ -79,7 +79,7 @@ export const interfaceApi: ApiConfig<InterfaceDto, InterfaceUpdDto> = {
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm//interface',
+    url: '/algorithm/interface',
     method: 'DELETE',
     data: ids
   })

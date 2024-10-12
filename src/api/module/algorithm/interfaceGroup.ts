@@ -8,7 +8,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm//interface-group',
+    url: '/algorithm/interface-group',
     method: 'GET',
     params: params
   }),
@@ -17,7 +17,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm//interface-group/all',
+    url: '/algorithm/interface-group/all',
     method: 'GET',
     params: params
   }),
@@ -26,7 +26,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm//interface-group/${id}`,
+    url: `/algorithm/interface-group/${id}`,
     method: 'GET'
   }),
   /**
@@ -34,7 +34,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm//interface-group/ids`,
+    url: `/algorithm/interface-group/ids`,
     method: 'GET',
     params: ids
   }),
@@ -43,7 +43,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm//interface-group',
+    url: '/algorithm/interface-group',
     method: 'POST',
     data: obj
   }),
@@ -52,7 +52,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm//interface-group',
+    url: '/algorithm/interface-group',
     method: 'PUT',
     data: obj
   }),
@@ -61,7 +61,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm//interface-group/s',
+    url: '/algorithm/interface-group/s',
     method: 'POST',
     data: objs
   }),
@@ -70,7 +70,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm//interface-group/s',
+    url: '/algorithm/interface-group/s',
     method: 'PUT',
     data: objs
   }),
@@ -79,7 +79,7 @@ export const interfaceGroupApi: ApiConfig<InterfaceGroupDto, InterfaceGroupUpdDt
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm//interface-group',
+    url: '/algorithm/interface-group',
     method: 'DELETE',
     data: ids
   })

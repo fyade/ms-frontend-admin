@@ -16,10 +16,7 @@ import { InterfaceDto, InterfaceUpdDto } from "@/type/module/algorithm/interface
 import { interfaceApi } from "@/api/module/algorithm/interface.ts";
 import { interfaceDict } from "@/dict/module/algorithm/interface.ts";
 import InterfaceInterfaceGroup from "@/views/algorithm/interface/interfaceInterfaceGroup.vue";
-import {
-  interfaceInterfaceGroupApi,
-  interfaceInterfaceGroupUpdIIG
-} from "@/api/module/algorithm/interfaceInterfaceGroup.ts";
+import { interfaceInterfaceGroupApi, interfaceInterfaceGroupUpdIIG } from "@/api/module/algorithm/interfaceInterfaceGroup.ts";
 
 const state = reactive<State2<InterfaceDto, InterfaceUpdDto>>({
   dialogForm: {

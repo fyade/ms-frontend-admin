@@ -8,7 +8,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm//user-group',
+    url: '/algorithm/user-group',
     method: 'GET',
     params: params
   }),
@@ -17,7 +17,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm//user-group/all',
+    url: '/algorithm/user-group/all',
     method: 'GET',
     params: params
   }),
@@ -26,7 +26,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm//user-group/${id}`,
+    url: `/algorithm/user-group/${id}`,
     method: 'GET'
   }),
   /**
@@ -34,7 +34,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm//user-group/ids`,
+    url: `/algorithm/user-group/ids`,
     method: 'GET',
     params: ids
   }),
@@ -43,7 +43,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm//user-group',
+    url: '/algorithm/user-group',
     method: 'POST',
     data: obj
   }),
@@ -52,7 +52,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm//user-group',
+    url: '/algorithm/user-group',
     method: 'PUT',
     data: obj
   }),
@@ -61,7 +61,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm//user-group/s',
+    url: '/algorithm/user-group/s',
     method: 'POST',
     data: objs
   }),
@@ -70,7 +70,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm//user-group/s',
+    url: '/algorithm/user-group/s',
     method: 'PUT',
     data: objs
   }),
@@ -79,7 +79,7 @@ export const userGroupApi: ApiConfig<UserGroupDto, UserGroupUpdDto> = {
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm//user-group',
+    url: '/algorithm/user-group',
     method: 'DELETE',
     data: ids
   })

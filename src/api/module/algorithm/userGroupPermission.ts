@@ -8,7 +8,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm//user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'GET',
     params: params
   }),
@@ -17,7 +17,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm//user-group-permission/all',
+    url: '/algorithm/user-group-permission/all',
     method: 'GET',
     params: params
   }),
@@ -26,7 +26,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm//user-group-permission/${id}`,
+    url: `/algorithm/user-group-permission/${id}`,
     method: 'GET'
   }),
   /**
@@ -34,7 +34,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm//user-group-permission/ids`,
+    url: `/algorithm/user-group-permission/ids`,
     method: 'GET',
     params: ids
   }),
@@ -45,7 +45,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
   insertOne: (obj) => {
     delete obj.permissionTime
     return request({
-      url: '/algorithm//user-group-permission',
+      url: '/algorithm/user-group-permission',
       method: 'POST',
       data: obj
     })
@@ -57,7 +57,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
   updateOne: (obj) => {
     delete obj.permissionTime
     return request({
-      url: '/algorithm//user-group-permission',
+      url: '/algorithm/user-group-permission',
       method: 'PUT',
       data: obj
     })
@@ -71,7 +71,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
       delete obj.permissionTime
     })
     return request({
-      url: '/algorithm//user-group-permission/s',
+      url: '/algorithm/user-group-permission/s',
       method: 'POST',
       data: objs
     })
@@ -85,7 +85,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
       delete obj.permissionTime
     })
     return request({
-      url: '/algorithm//user-group-permission/s',
+      url: '/algorithm/user-group-permission/s',
       method: 'PUT',
       data: objs
     })
@@ -95,7 +95,7 @@ export const userGroupPermissionApi: ApiConfig<UserGroupPermissionDto, UserGroup
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm//user-group-permission',
+    url: '/algorithm/user-group-permission',
     method: 'DELETE',
     data: ids
   })

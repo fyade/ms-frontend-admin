@@ -8,7 +8,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm//log-algorithm-call',
+    url: '/algorithm/log-algorithm-call',
     method: 'GET',
     params: params
   }),
@@ -17,7 +17,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm//log-algorithm-call/all',
+    url: '/algorithm/log-algorithm-call/all',
     method: 'GET',
     params: params
   }),
@@ -26,7 +26,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm//log-algorithm-call/${id}`,
+    url: `/algorithm/log-algorithm-call/${id}`,
     method: 'GET'
   }),
   /**
@@ -34,7 +34,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm//log-algorithm-call/ids`,
+    url: `/algorithm/log-algorithm-call/ids`,
     method: 'GET',
     params: ids
   }),
@@ -43,7 +43,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm//log-algorithm-call',
+    url: '/algorithm/log-algorithm-call',
     method: 'POST',
     data: obj
   }),
@@ -52,7 +52,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm//log-algorithm-call',
+    url: '/algorithm/log-algorithm-call',
     method: 'PUT',
     data: obj
   }),
@@ -61,7 +61,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm//log-algorithm-call/s',
+    url: '/algorithm/log-algorithm-call/s',
     method: 'POST',
     data: objs
   }),
@@ -70,7 +70,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm//log-algorithm-call/s',
+    url: '/algorithm/log-algorithm-call/s',
     method: 'PUT',
     data: objs
   }),
@@ -79,7 +79,7 @@ export const logAlgorithmCallApi: ApiConfig<LogAlgorithmCallDto, LogAlgorithmCal
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm//log-algorithm-call',
+    url: '/algorithm/log-algorithm-call',
     method: 'DELETE',
     data: ids
   })
