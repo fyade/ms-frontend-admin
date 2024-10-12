@@ -55,6 +55,10 @@ export class TablePageConfig {
    */
   selectParam
   /**
+   * 补充的新增及修改参数
+   */
+  insUpdParam
+  /**
    * 页面加载时获取数据，默认true
    */
   getDataOnMounted
@@ -98,6 +102,7 @@ export class TablePageConfig {
 
   constructor({
                 selectParam = {},
+                insUpdParam = {},
                 getDataOnMounted = true,
                 pageQuery = true,
                 watchDialogVisible = true,
@@ -110,6 +115,7 @@ export class TablePageConfig {
                 activeTabMoreDelCallback = null,
               }: {
                 selectParam?: object
+                insUpdParam?: object
                 getDataOnMounted?: boolean
                 pageQuery?: boolean
                 watchDialogVisible?: boolean
@@ -123,6 +129,7 @@ export class TablePageConfig {
               } = {}
   ) {
     this.selectParam = selectParam;
+    this.insUpdParam = insUpdParam;
     this.getDataOnMounted = getDataOnMounted;
     this.pageQuery = pageQuery;
     this.watchDialogVisible = watchDialogVisible;

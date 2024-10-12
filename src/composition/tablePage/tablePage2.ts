@@ -89,7 +89,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                    } = {}
   ) => {
     if (ifImport || activeTabName && activeTabName.value === final.more) {
-      api.insertMore(ifImport ? dataFromExcel : state.dialogForms!).then(res => {
+      api.insertMore((ifImport ? dataFromExcel : state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -97,7 +97,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         }
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
-      api.insertOne(state.dialogForm).then(res => {
+      api.insertOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -112,7 +112,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   const updData = () => {
     tableLoadingRef.value = true
     if (activeTabName.value === final.more) {
-      api.updateMore(state.dialogForms!).then(res => {
+      api.updateMore((state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
@@ -124,7 +124,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         tableLoadingRef.value = false
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
-      api.updateOne(state.dialogForm).then(res => {
+      api.updateOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false

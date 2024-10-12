@@ -335,6 +335,7 @@ const selectInterGroup = reactive(new MenuDto())
 const manageInterDialogShow = ref(false)
 const manageInter = (row: MenuDto) => {
   copyObject(selectInterGroup, row);
+  (configI2.insUpdParam as any).sysId = selectSys.value;
   (configI2.selectParam as any).parentId = row.id;
   manageInterDialogShow.value = true
   gRefreshI2()
@@ -1335,23 +1336,25 @@ const gInsI22 = () => {
     </template>
   </el-dialog>
 
-  <el-form label-position="top">
-    <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口：">
-      <el-select
-          v-model="selectSys"
-          placeholder="系统"
-          clearable
-          @change="selectSysChange"
-      >
-        <el-option
-            v-for="item in allSyss"
-            :key="item.id"
-            :value="item.id"
-            :label="`${item.name} - ${item.perms}`"
-        />
-      </el-select>
-    </el-form-item>
-  </el-form>
+  <div class="zs-filter-form">
+    <el-form label-position="top">
+      <el-form-item label="请先选择系统，随后下方会显示所选系统的菜单、组件及接口：">
+        <el-select
+            v-model="selectSys"
+            placeholder="系统"
+            clearable
+            @change="selectSysChange"
+        >
+          <el-option
+              v-for="item in allSyss"
+              :key="item.id"
+              :value="item.id"
+              :label="`${item.name} - ${item.perms}`"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+  </div>
 
   <!--<el-divider/>-->
 
