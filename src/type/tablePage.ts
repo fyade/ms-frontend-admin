@@ -107,6 +107,10 @@ export class TablePageConfig {
    */
   deleteCallback
   /**
+   * 弹出表单为修改时，表单加载完成后的回调
+   */
+  dialogFormLoadingFinishCallback
+  /**
    * 弹出表单是否支持批量操作，默认false
    */
   bulkOperation
@@ -142,6 +146,7 @@ export class TablePageConfig {
                 updateCallback = null,
                 beforeDeleteCallback = null,
                 deleteCallback = null,
+                dialogFormLoadingFinishCallback = null,
                 bulkOperation = false,
                 changeActiveTabNameCallback = null,
                 activeTabMoreInsCallback = null,
@@ -162,6 +167,7 @@ export class TablePageConfig {
                 updateCallback?: null | ((dialogType: TypeIU) => void)
                 beforeDeleteCallback?: null | Function
                 deleteCallback?: null | Function
+                dialogFormLoadingFinishCallback?: null | ((activeTabName: TypeOM) => void)
                 bulkOperation?: boolean
                 changeActiveTabNameCallback?: null | ((newVal: TypeOM) => void)
                 activeTabMoreInsCallback?: null | Function
@@ -183,6 +189,7 @@ export class TablePageConfig {
     this.updateCallback = updateCallback;
     this.beforeDeleteCallback = beforeDeleteCallback;
     this.deleteCallback = deleteCallback;
+    this.dialogFormLoadingFinishCallback = dialogFormLoadingFinishCallback;
     this.bulkOperation = bulkOperation;
     this.changeActiveTabNameCallback = changeActiveTabNameCallback;
     this.activeTabMoreInsCallback = activeTabMoreInsCallback;

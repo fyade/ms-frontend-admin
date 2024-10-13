@@ -407,6 +407,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
             dialogVisible.value = false
           }).finally(() => {
             dialogLoadingRef.value = false
+            config.dialogFormLoadingFinishCallback && config.dialogFormLoadingFinishCallback(activeTabName.value)
           })
         } else {
           const datas: T2[] = []
@@ -424,6 +425,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
             copyObject(state.dialogForms![i], datas[i])
           })
           dialogLoadingRef.value = false
+          config.dialogFormLoadingFinishCallback && config.dialogFormLoadingFinishCallback(activeTabName.value)
         }
       } else {
         if (activeTabName) {
@@ -435,6 +437,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           dialogVisible.value = false
         }).finally(() => {
           dialogLoadingRef.value = false
+          config.dialogFormLoadingFinishCallback && config.dialogFormLoadingFinishCallback(activeTabName.value)
         })
       }
     })
