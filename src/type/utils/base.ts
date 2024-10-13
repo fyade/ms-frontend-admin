@@ -6,3 +6,4 @@ export type MORE = 'MORE'
 export type TypeOM = ONE | MORE
 export type INS = 'INS'
 export type UPD = 'UPD'
+export type TypeIU = INS | UPD

@@ -1,4 +1,4 @@
-import { TypeOM } from "@/type/utils/base.ts";
+import { TypeIU, TypeOM } from "@/type/utils/base.ts";
 
 interface DialogForms_error {
   [key: string]: boolean | string
@@ -71,14 +71,41 @@ export class TablePageConfig {
    */
   watchDialogVisible
   /**
-   * dialogVisible变化时的回调，可不传
-   * @param visible 变化后的值
+   * dialogVisible变化时的回调
    */
   dialogVisibleCallback
   /**
-   * selectList回调，可不传
+   * selectList前的回调
+   */
+  beforeSelectListCallback
+  /**
+   * selectList回调
    */
   selectListCallback
+  /**
+   * 新增前的回调
+   */
+  beforeInsertCallback
+  /**
+   * 新增的回调
+   */
+  insertCallback
+  /**
+   * 修改前的回调
+   */
+  beforeUpdateCallback
+  /**
+   * 修改的回调
+   */
+  updateCallback
+  /**
+   * 删除前的回调
+   */
+  beforeDeleteCallback
+  /**
+   * 删除的回调
+   */
+  deleteCallback
   /**
    * 弹出表单是否支持批量操作，默认false
    */
@@ -107,7 +134,14 @@ export class TablePageConfig {
                 pageQuery = true,
                 watchDialogVisible = true,
                 dialogVisibleCallback = null,
+                beforeSelectListCallback = null,
                 selectListCallback = null,
+                beforeInsertCallback = null,
+                insertCallback = null,
+                beforeUpdateCallback = null,
+                updateCallback = null,
+                beforeDeleteCallback = null,
+                deleteCallback = null,
                 bulkOperation = false,
                 changeActiveTabNameCallback = null,
                 activeTabMoreInsCallback = null,
@@ -120,12 +154,19 @@ export class TablePageConfig {
                 pageQuery?: boolean
                 watchDialogVisible?: boolean
                 dialogVisibleCallback?: null | Function
+                beforeSelectListCallback?: null | Function
                 selectListCallback?: null | Function
+                beforeInsertCallback?: null | ((dialogType: TypeIU) => void)
+                insertCallback?: null | ((dialogType: TypeIU) => void)
+                beforeUpdateCallback?: null | ((dialogType: TypeIU) => void)
+                updateCallback?: null | ((dialogType: TypeIU) => void)
+                beforeDeleteCallback?: null | Function
+                deleteCallback?: null | Function
                 bulkOperation?: boolean
-                changeActiveTabNameCallback?: null | ((newVal: TypeOM) => any)
+                changeActiveTabNameCallback?: null | ((newVal: TypeOM) => void)
                 activeTabMoreInsCallback?: null | Function
                 activeTabMoreInsFinishCallback?: null | Function
-                activeTabMoreDelCallback?: null | ((index: number) => any)
+                activeTabMoreDelCallback?: null | ((index: number) => void)
               } = {}
   ) {
     this.selectParam = selectParam;
@@ -134,7 +175,14 @@ export class TablePageConfig {
     this.pageQuery = pageQuery;
     this.watchDialogVisible = watchDialogVisible;
     this.dialogVisibleCallback = dialogVisibleCallback;
+    this.beforeSelectListCallback = beforeSelectListCallback;
     this.selectListCallback = selectListCallback;
+    this.beforeInsertCallback = beforeInsertCallback;
+    this.insertCallback = insertCallback;
+    this.beforeUpdateCallback = beforeUpdateCallback;
+    this.updateCallback = updateCallback;
+    this.beforeDeleteCallback = beforeDeleteCallback;
+    this.deleteCallback = deleteCallback;
     this.bulkOperation = bulkOperation;
     this.changeActiveTabNameCallback = changeActiveTabNameCallback;
     this.activeTabMoreInsCallback = activeTabMoreInsCallback;

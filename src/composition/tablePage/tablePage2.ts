@@ -58,6 +58,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     tableData.value = []
     const ifByPage = !ifHasConfig('pageQuery', false)
     if (ifByPage) {
+      config.beforeSelectListCallback && config.beforeSelectListCallback()
       api.selectList({...pageParam, ...state.filterForm, ...(config.selectParam || {})}).then(res => {
         tableData.value = res.list
         total.value = res.total
@@ -67,7 +68,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       })
     }
     if (!ifByPage) {
-      api.selectAll(({...state.filterForm, ...((Object.keys(config).includes('selectParam') && typeof config.selectParam === 'object') ? config.selectParam : {})} as any)).then(res => {
+      config.beforeSelectListCallback && config.beforeSelectListCallback()
+      api.selectAll({...state.filterForm, ...(config.selectParam || {})}).then(res => {
         tableData.value = res
         config.selectListCallback && config.selectListCallback()
       }).finally(() => {
@@ -89,18 +91,22 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                    } = {}
   ) => {
     if (ifImport || activeTabName && activeTabName.value === final.more) {
+      config.beforeInsertCallback && config.beforeInsertCallback(dialogType.value)
       api.insertMore((ifImport ? dataFromExcel : state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
+          config.insertCallback && config.insertCallback(dialogType.value)
           getData()
         }
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
+      config.beforeInsertCallback && config.beforeInsertCallback(dialogType.value)
       api.insertOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
+          config.insertCallback && config.insertCallback(dialogType.value)
           getData()
         }
       })
@@ -112,10 +118,12 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   const updData = () => {
     tableLoadingRef.value = true
     if (activeTabName.value === final.more) {
+      config.beforeUpdateCallback && config.beforeUpdateCallback(dialogType.value)
       api.updateMore((state.dialogForms!).map(item => ({...item, ...config.insUpdParam}))).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
+          config.updateCallback && config.updateCallback(dialogType.value)
           getData()
         } else {
           tableLoadingRef.value = false
@@ -124,10 +132,12 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         tableLoadingRef.value = false
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
+      config.beforeUpdateCallback && config.beforeUpdateCallback(dialogType.value)
       api.updateOne({...state.dialogForm, ...config.insUpdParam}).then(res => {
         if (ifValid(res)) {
           ElMessage.success(Operate.success)
           dialogVisible.value = false
+          config.updateCallback && config.updateCallback(dialogType.value)
           getData()
         } else {
           tableLoadingRef.value = false
@@ -143,9 +153,11 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
    */
   const delData = (...ids: (number | string)[]) => {
     tableLoadingRef.value = true
+    config.beforeDeleteCallback && config.beforeDeleteCallback()
     api.deleteList(...ids).then(res => {
       if (ifValid(res)) {
         ElMessage.success(Operate.success)
+        config.deleteCallback && config.deleteCallback()
         getData()
       } else {
         tableLoadingRef.value = false
@@ -294,6 +306,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     ).then(() => {
       const arr: (number | string)[] = multipleSelection.value.map(item => item.id)
       delData(...arr)
+    }).catch(() => {
     })
   }
   // 导出
@@ -439,6 +452,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         }
     ).then(() => {
       delData(id)
+    }).catch(() => {
     })
   }
   const handleSelectionChange = (val: T[]) => {

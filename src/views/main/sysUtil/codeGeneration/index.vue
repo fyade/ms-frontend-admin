@@ -40,6 +40,7 @@ const state = reactive<State2<CodeGenTableDto, CodeGenTableUpdDto>>({
   dialogForms: [],
   dialogForms_error: {},
   filterForm: {
+    sysId: void 0,
     tableName: '',
     tableDescr: '',
     entityName: '',
@@ -613,6 +614,11 @@ const gUpd2 = () => {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
+      <el-form-item :label="codeGenTableDict.sysId" prop="sysId">
+        <el-select v-model="state.filterForm.sysId" :placeholder="codeGenTableDict.sysId" clearable>
+          <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
+        </el-select>
+      </el-form-item>
       <el-form-item :label="codeGenTableDict.tableName" prop="tableName">
         <el-input v-model="state.filterForm.tableName" :placeholder="codeGenTableDict.tableName"/>
       </el-form-item>
