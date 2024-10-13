@@ -6,7 +6,7 @@ import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
 import { selectFiles } from "@/utils/FileUtils.ts";
-import { TypeOM } from "@/type/utils/base.ts";
+import { TypeIU, TypeOM } from "@/type/utils/base.ts";
 
 export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                                                                            state,
@@ -37,8 +37,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   })
   const total = ref<number>(0)
   const multipleSelection: Ref<T[]> = ref([])
-  const dialogType = reactive({
-    value: '',
+  const dialogType = reactive<{ value: TypeIU, label: string }>({
+    value: final.ins,
     label: ''
   })
 
@@ -69,7 +69,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     }
     if (!ifByPage) {
       config.beforeSelectListCallback && config.beforeSelectListCallback()
-      api.selectAll({...state.filterForm, ...(config.selectParam || {})}).then(res => {
+      api.selectAll({...state.filterForm, ...(config.selectParam || {})} as any).then(res => {
         tableData.value = res
         config.selectListCallback && config.selectListCallback()
       }).finally(() => {
