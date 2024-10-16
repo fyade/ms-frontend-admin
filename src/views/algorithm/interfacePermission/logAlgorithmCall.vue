@@ -9,6 +9,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/ico
 import { LogAlgorithmCallDto, LogAlgorithmCallUpdDto } from "@/type/module/algorithm/logAlgorithmCall.ts";
 import { logAlgorithmCallApi } from "@/api/module/algorithm/logAlgorithmCall.ts";
 import { logAlgorithmCallDict } from "@/dict/module/algorithm/logAlgorithmCall.ts";
+import { formatDate } from "@/utils/TimeUtils.ts";
 
 const props = defineProps({
   selectUGPId: {
@@ -291,7 +292,11 @@ const {
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logAlgorithmCallDict.createBy" width="120"/>-->
       <!--<el-table-column prop="updateBy" :label="logAlgorithmCallDict.updateBy" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="logAlgorithmCallDict.createTime" width="220"/>-->
+      <el-table-column prop="createTime" :label="logAlgorithmCallDict.createTime" width="220">
+        <template #default="{row}">
+          {{ formatDate(new Date(row.createTime)) }}
+        </template>
+      </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logAlgorithmCallDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="logAlgorithmCallDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->

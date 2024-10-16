@@ -15,6 +15,7 @@ import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/ico
 import { LogUserLoginDto, LogUserLoginUpdDto } from "@/type/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginApi } from "@/api/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginDict } from "@/dict/module/main/sysLog/logUserLogin.ts";
+import { formatDate } from "@/utils/TimeUtils.ts";
 
 const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
   dialogForm: {
@@ -333,7 +334,11 @@ const {
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logUserLoginDict.createBy" width='120'/>-->
       <!--<el-table-column prop="updateBy" :label="logUserLoginDict.updateBy" width='120'/>-->
-      <el-table-column prop="createTime" :label="logUserLoginDict.createTime" width='240'/>
+      <el-table-column prop="createTime" :label="logUserLoginDict.createTime" width="220">
+        <template #default="{row}">
+          {{ formatDate(new Date(row.createTime)) }}
+        </template>
+      </el-table-column>
       <!--<el-table-column prop="updateTime" :label="logUserLoginDict.updateTime" width='220'/>-->
       <!--<el-table-column prop="deleted" :label="logUserLoginDict.deleted" width='60'/>-->
       <!--上方几个酌情使用-->
