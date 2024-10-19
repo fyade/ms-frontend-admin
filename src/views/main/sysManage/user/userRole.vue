@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, nextTick, reactive, ref, Ref, toRaw } from "vue";
+import { inject, nextTick, reactive, ref, Ref, toRaw, watch } from "vue";
 import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
@@ -10,6 +10,7 @@ import { RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
 import { roleApi } from "@/api/module/main/sysManage/role.ts";
 import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 import { UserDto2 } from "@/type/module/main/sysManage/user.ts";
+import { deepClone } from "@/utils/ObjectUtils.ts";
 
 const props = defineProps({
   user: {
@@ -90,25 +91,28 @@ const {
   dict: roleDict,
 })
 
+const selects = reactive<Record<string|number, boolean>>({})
 const selectRole: Ref<number[]> | undefined = inject('changeSelectRole')
+if (selectRole) {
+  selectRole.value.forEach(id => selects[id] = true)
+}
 const multipleTable = ref<TableInstance | null>(null)
 const handleDataChange = () => {
-  if (selectRole && selectRole.value && multipleTable && multipleTable.value) {
-    const value = toRaw(selectRole.value);
-    tableData.value.forEach(item => {
-      if (value.indexOf(item.id) > -1) {
-        multipleTable.value?.toggleRowSelection(item, true)
-      }
-    })
-    multipleSelection.value = tableData.value.filter(item => selectRole.value.indexOf(item.id) > -1)
+  const selects2 = deepClone<Record<string|number, boolean>>(toRaw(selects))
+  for (const role of tableData.value) {
+    multipleTable.value?.toggleRowSelection(role, !!selects2[role.id])
   }
 }
-const handleSelectionChange = (val: RoleDto[]) => {
-  multipleSelection.value = val
+const handleSelectionChange = (vals: RoleDto[]) => {
+  tableData.value.forEach(data => {
+    selects[data.id] = vals.findIndex(val => val.id === data.id) > -1
+  })
+}
+watch(selects, () => {
   if (selectRole) {
-    selectRole.value = multipleSelection.value.map(item => item.id)
+    selectRole.value = Object.keys(selects).filter(key => selects[key]).map(_ => Number(_))
   }
-}
+})
 </script>
 
 <template>
@@ -194,14 +198,10 @@ const handleSelectionChange = (val: RoleDto[]) => {
         v-loading="tableLoadingRef"
         :data="tableData"
         row-key="id"
-        @selection-change="handleSelectionChange"
+        @selectAll="handleSelectionChange"
+        @selectionChange="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"/>
-      <!--<el-table-column fixed type="selection" width="55" :reserve-selection="true">-->
-      <!--  <template #default="{row}">-->
-      <!--    <el-checkbox v-model="selects[row.id]" @change="handleSelectionChange(row)"/>-->
-      <!--  </template>-->
-      <!--</el-table-column>-->
+      <el-table-column fixed type="selection" width="55" :reserve-selection="true"/>
       <!--<el-table-column fixed prop="id" :label="roleDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
@@ -223,7 +223,7 @@ const handleSelectionChange = (val: RoleDto[]) => {
       </el-table-column>
       <template #append>
         <div class="el-table-append-box">
-          <span>此表格的多选<span class="underline">支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+          <span>此表格的多选<span class="underline">支持</span>{{ `跨分页保存，当前已选 ${Object.keys(selects).filter(key=>selects[key]).length} 条数据。` }}</span>
         </div>
       </template>
     </el-table>

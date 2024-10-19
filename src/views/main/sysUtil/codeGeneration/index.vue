@@ -176,7 +176,7 @@ const activeNameOfCodeView = ref('')
 const codeView = (rowId: number) => {
   codeViewState.value = []
   genCode(rowId).then(res => {
-    for (let key0 in codeViewState) {
+    for (const key0 in codeViewState) {
       if (res.cgRes) {
         codeViewState.value = res.cgRes
       }
