@@ -39,7 +39,7 @@ const menuIndex = computed(() => {
     <el-container class="el">
       <el-aside class="left" width="200px">
         <el-menu :default-active="defaultActive" :collapse="false" :unique-opened="true" router>
-          <el-menu-item v-for="(item, index) in menus" :index="item.index" style="z-index: 1;" :style="{
+          <el-menu-item v-for="(item, index) in menus" :key="index" :index="item.index" style="z-index: 1;" :style="{
             color: index === menuIndex ? '#fff' : '#000'
           }">
             <el-space class="elSpace">
