@@ -1,15 +1,15 @@
-import { defineConfig, loadEnv } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig, loadEnv } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import path, { join } from "path";
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import compressPlugin from "vite-plugin-compression";
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
-import Inspect from 'vite-plugin-inspect'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import { visualizer } from 'rollup-plugin-visualizer'
+import Icons from 'unplugin-icons/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import Inspect from 'vite-plugin-inspect';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -18,8 +18,9 @@ export default defineConfig(({mode}) => {
   const pathSrc = path.resolve(__dirname, 'src')
   return {
     plugins: [
-      vue(),
+      Inspect(),
       visualizer(),
+      vue(),
       createSvgIconsPlugin({
         iconDirs: [path.resolve(root, 'src/assets/icon')],
         symbolId: '[name]'
@@ -48,7 +49,6 @@ export default defineConfig(({mode}) => {
       Icons({
         autoInstall: true,
       }),
-      Inspect()
     ],
     resolve: {
       alias: {

@@ -84,3 +84,10 @@ export const dicDataApi: ApiConfig<DicDataDto, DicDataUpdDto> = {
     data: ids
   })
 }
+
+export function dicDataOfPerm(perm: string): Promise<DicDataDto[]> {
+  return request({
+    url: `/main/sys-manage/dic-data/perm/${perm}`,
+    method: 'GET'
+  })
+}
