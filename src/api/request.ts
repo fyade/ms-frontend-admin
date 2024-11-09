@@ -64,7 +64,7 @@ request.interceptors.response.use(
         ElMessage.error('登录已过期，请重新登录。')
         window.location.href = `/login?redirect=${window.location.pathname}`
       } else {
-        let msg = error.response.data.message
+        let msg = error.response.data.msg
         if (error.response.status === 403) msg = msg
         else if (error.response.status === 500) msg = '系统繁忙，请稍后再试。'
         else if (!msg) msg = '系统繁忙，请稍后再试。'

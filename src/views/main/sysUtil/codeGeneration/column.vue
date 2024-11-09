@@ -354,7 +354,7 @@ const gUpd2 = () => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.tsType" prop="tsType">
-              <el-select v-model="state.dialogForm.tsType" :placeholder="codeGenColumnDict.tsType" clearable>
+              <el-select v-model="state.dialogForm.tsType" :placeholder="codeGenColumnDict.tsType" clearable filterable>
                 <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
               </el-select>
             </el-form-item>
@@ -439,14 +439,14 @@ const gUpd2 = () => {
         <el-row>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.formType" prop="formType">
-              <el-select v-model="state.dialogForm.formType" :placeholder="codeGenColumnDict.formType" clearable>
+              <el-select v-model="state.dialogForm.formType" :placeholder="codeGenColumnDict.formType" clearable filterable>
                 <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="codeGenColumnDict.selType" prop="selType">
-              <el-select v-model="state.dialogForm.selType" :placeholder="codeGenColumnDict.selType" clearable>
+              <el-select v-model="state.dialogForm.selType" :placeholder="codeGenColumnDict.selType" clearable filterable>
                 <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
               </el-select>
             </el-form-item>
@@ -537,7 +537,7 @@ const gUpd2 = () => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-tsType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-select v-model="state.dialogForms[$index].tsType" :placeholder="codeGenColumnDict.tsType" clearable>
+                <el-select v-model="state.dialogForms[$index].tsType" :placeholder="codeGenColumnDict.tsType" clearable filterable>
                   <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
                 </el-select>
               </div>
@@ -623,7 +623,7 @@ const gUpd2 = () => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-formType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-select v-model="state.dialogForms[$index].formType" :placeholder="codeGenColumnDict.formType" clearable>
+                <el-select v-model="state.dialogForms[$index].formType" :placeholder="codeGenColumnDict.formType" clearable filterable>
                   <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
                 </el-select>
               </div>
@@ -635,7 +635,7 @@ const gUpd2 = () => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-selType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-select v-model="state.dialogForms[$index].selType" :placeholder="codeGenColumnDict.selType" clearable>
+                <el-select v-model="state.dialogForms[$index].selType" :placeholder="codeGenColumnDict.selType" clearable filterable>
                   <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
                 </el-select>
               </div>
@@ -692,7 +692,7 @@ const gUpd2 = () => {
         <el-input v-model="state.filterForm.mysqlType" :placeholder="codeGenColumnDict.mysqlType"/>
       </el-form-item>
       <el-form-item :label="codeGenColumnDict.tsType" prop="tsType">
-        <el-select v-model="state.filterForm.tsType" :placeholder="codeGenColumnDict.tsType" clearable>
+        <el-select v-model="state.filterForm.tsType" :placeholder="codeGenColumnDict.tsType" clearable filterable>
           <el-option v-for="item in tsTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
@@ -700,12 +700,12 @@ const gUpd2 = () => {
         <el-input v-model="state.filterForm.tsName" :placeholder="codeGenColumnDict.tsName"/>
       </el-form-item>
       <el-form-item :label="codeGenColumnDict.formType" prop="formType">
-        <el-select v-model="state.filterForm.formType" :placeholder="codeGenColumnDict.formType" clearable>
+        <el-select v-model="state.filterForm.formType" :placeholder="codeGenColumnDict.formType" clearable filterable>
           <el-option v-for="item in formTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item :label="codeGenColumnDict.selType" prop="selType">
-        <el-select v-model="state.filterForm.selType" :placeholder="codeGenColumnDict.selType" clearable>
+        <el-select v-model="state.filterForm.selType" :placeholder="codeGenColumnDict.selType" clearable filterable>
           <el-option v-for="item in selTypeDicts" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>

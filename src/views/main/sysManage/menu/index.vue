@@ -1343,6 +1343,7 @@ const gInsI22 = () => {
             v-model="selectSys"
             placeholder="系统"
             clearable
+            filterable
             @change="selectSysChange"
         >
           <el-option

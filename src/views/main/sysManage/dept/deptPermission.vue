@@ -204,6 +204,7 @@ const selectSysChange = (value: number | undefined) => {
           v-model="selectSys"
           placeholder="系统"
           clearable
+          filterable
           @change="selectSysChange"
       >
         <el-option

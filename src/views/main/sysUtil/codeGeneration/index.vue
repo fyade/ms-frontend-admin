@@ -308,7 +308,7 @@ const gUpd2 = () => {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="codeGenTableDict.sysId" prop="sysId">
-              <el-select v-model="state.dialogForm.sysId" :placeholder="codeGenTableDict.sysId" clearable>
+              <el-select v-model="state.dialogForm.sysId" :placeholder="codeGenTableDict.sysId" clearable filterable>
                 <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
               </el-select>
             </el-form-item>
@@ -437,7 +437,7 @@ const gUpd2 = () => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-sysId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-form-item :label="codeGenTableDict.sysId" prop="sysId">
-                  <el-select v-model="state.dialogForms[$index].sysId" :placeholder="codeGenTableDict.sysId" clearable>
+                  <el-select v-model="state.dialogForms[$index].sysId" :placeholder="codeGenTableDict.sysId" clearable filterable>
                     <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
                   </el-select>
                 </el-form-item>
@@ -615,7 +615,7 @@ const gUpd2 = () => {
     >
       <!--在此下方添加表单项-->
       <el-form-item :label="codeGenTableDict.sysId" prop="sysId">
-        <el-select v-model="state.filterForm.sysId" :placeholder="codeGenTableDict.sysId" clearable>
+        <el-select v-model="state.filterForm.sysId" :placeholder="codeGenTableDict.sysId" clearable filterable>
           <el-option v-for="item in allSyss" :key="item.id" :value="item.id" :label="item.name"/>
         </el-select>
       </el-form-item>

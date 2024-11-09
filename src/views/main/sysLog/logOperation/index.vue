@@ -16,10 +16,12 @@ import { LogOperationDto, LogOperationUpdDto } from "@/type/module/main/sysLog/l
 import { logOperationApi } from "@/api/module/main/sysLog/logOperation.ts";
 import { logOperationDict } from "@/dict/module/main/sysLog/logOperation.ts";
 import { formatDate } from "@/utils/TimeUtils.ts";
+import { interfaceDict } from "@/dict/module/algorithm/interface.ts";
 
 const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
   dialogForm: {
     id: -1,
+    reqId: '',
     perms: '',
     userId: '',
     reqParam: '',
@@ -31,11 +33,14 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
   dialogForms: [],
   dialogForms_error: {},
   filterForm: {
+    reqId: '',
     perms: '',
     userId: '',
+    ifSuccess: '',
   },
 })
 const dFormRules: FormRules = {
+  reqId: [{required: true, trigger: 'change'}],
   perms: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
   reqParam: [{required: true, trigger: 'change'}],
@@ -124,34 +129,41 @@ const {
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
+            <el-form-item :label="logOperationDict.reqId" prop="reqId">
+              <el-input v-model="state.dialogForm.reqId" :placeholder="logOperationDict.reqId"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="logOperationDict.perms" prop="perms">
               <el-input v-model="state.dialogForm.perms" :placeholder="logOperationDict.perms"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="logOperationDict.userId" prop="userId">
               <el-input v-model="state.dialogForm.userId" :placeholder="logOperationDict.userId"/>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="logOperationDict.reqParam" prop="reqParam">
               <el-input v-model="state.dialogForm.reqParam" :placeholder="logOperationDict.reqParam"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="logOperationDict.oldValue" prop="oldValue">
               <el-input v-model="state.dialogForm.oldValue" :placeholder="logOperationDict.oldValue"/>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="logOperationDict.operateType" prop="operateType">
               <el-input v-model="state.dialogForm.operateType" :placeholder="logOperationDict.operateType"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="logOperationDict.ifSuccess" prop="ifSuccess">
               <el-radio-group v-model="state.dialogForm.ifSuccess">
@@ -186,6 +198,16 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
+          <el-table-column prop="reqId" :label="logOperationDict.reqId" width="300">
+            <template #header>
+              <span :class="ifRequired('reqId')?'tp-table-header-required':''">{{ logOperationDict.reqId }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-reqId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].reqId" :placeholder="logOperationDict.reqId"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="perms" :label="logOperationDict.perms" width="300">
             <template #header>
               <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ logOperationDict.perms }}</span>
@@ -287,11 +309,21 @@ const {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
+      <el-form-item :label="logOperationDict.reqId" prop="reqId">
+        <el-input v-model="state.filterForm.reqId" :placeholder="logOperationDict.reqId"/>
+      </el-form-item>
       <el-form-item :label="logOperationDict.perms" prop="perms">
         <el-input v-model="state.filterForm.perms" :placeholder="logOperationDict.perms"/>
       </el-form-item>
       <el-form-item :label="logOperationDict.userId" prop="userId">
         <el-input v-model="state.filterForm.userId" :placeholder="logOperationDict.userId"/>
+      </el-form-item>
+      <el-form-item :label="logOperationDict.ifSuccess" prop="ifSuccess">
+        <!--<el-input v-model="state.filterForm.ifSuccess" :placeholder="logOperationDict.ifSuccess"/>-->
+        <el-select v-model="state.filterForm.ifSuccess" :placeholder="logOperationDict.ifSuccess" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
       </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
@@ -324,9 +356,17 @@ const {
       <!--<el-table-column fixed prop="id" :label="logOperationDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="perms" :label="logOperationDict.perms" width="300"/>
+      <el-table-column prop="reqId" :label="logOperationDict.reqId" width="180"/>
+      <el-table-column prop="perms" :label="logOperationDict.perms" width="240"/>
       <el-table-column prop="userId" :label="logOperationDict.userId" width="120"/>
-      <el-table-column prop="reqParam" :label="logOperationDict.reqParam" width="120"/>
+      <el-table-column prop="reqParam" :label="logOperationDict.reqParam" width="360">
+        <template #default="{row}">
+          <div style="max-height: 100px;overflow: auto;">
+            <div>query参数：{{ JSON.parse(row.reqParam).query }}</div>
+            <div>body参数：{{ JSON.parse(row.reqParam).body }}</div>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="oldValue" :label="logOperationDict.oldValue" width="120"/>
       <el-table-column prop="operateType" :label="logOperationDict.operateType" width="120"/>
       <el-table-column prop="ifSuccess" :label="logOperationDict.ifSuccess" width="120"/>
