@@ -151,13 +151,8 @@ const onChange = (currentPage: number, pageSize: number) => {
     <el-table-column fixed="right" label="操作" min-width="200">
       <template #default="{ row }">
         <el-button variant="text" theme="primary" @click="onlineView(row)">在线查看</el-button>
-        <el-button :disabled="Object.keys(downloadProgresses).indexOf(row.id) > -1" variant="text"
-                   theme="primary" @click="download(row)">
-          下载
-          <template v-if="Object.keys(downloadProgresses).indexOf(row.id) > -1">({{
-              downloadProgresses[row.id]
-            }}%)
-          </template>
+        <el-button :disabled="Object.keys(downloadProgresses).indexOf(row.id) > -1" variant="text" theme="primary" @click="download(row)">
+          下载<template v-if="Object.keys(downloadProgresses).indexOf(row.id) > -1">({{ downloadProgresses[row.id] }}%)</template>
         </el-button>
       </template>
     </el-table-column>

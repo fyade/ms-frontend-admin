@@ -24,7 +24,6 @@ stats.html
 *.sln
 *.sw?
 
-/config/authConfig.ts
 /config/config.ts
 .vscode/
 .env.test

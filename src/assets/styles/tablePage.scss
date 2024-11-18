@@ -57,6 +57,8 @@
   padding: 8px;
   background-color: #fff;
   border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .zs-table-data {
@@ -68,5 +70,17 @@
     &:nth-child(2) {
       margin-top: 18px;
     }
+  }
+}
+
+.zs-table-data-operate-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 6px;
+
+  > * {
+    margin-left: 0 !important;
   }
 }

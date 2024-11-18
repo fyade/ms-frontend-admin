@@ -1,13 +1,15 @@
-import { nextTick, onMounted, reactive, Ref, ref, toRaw, watch } from "vue"
+import { computed, nextTick, onMounted, reactive, Ref, ref, toRaw, watch } from "vue"
 import { ElMessage, ElMessageBox, FormInstance, FormItemRule, type FormRules } from "element-plus"
 import { final, Operate, PAGINATION } from "@/utils/base.ts"
 import { ApiConfig, State2, TablePageConfig } from "@/type/tablePage.ts";
-import { copyObject, deepClone, ifValid } from "@/utils/ObjectUtils.ts";
+import { copyObject, deepClone, ifHasKey, ifValid } from "@/utils/ObjectUtils.ts";
 import { downloadFromBlob } from "@/utils/DownloadUtils.ts";
 import { Workbook } from "exceljs";
 import { selectFiles } from "@/utils/FileUtils.ts";
 import { TypeIU, TypeOM } from "@/type/utils/base.ts";
 
+const exportIgnoreKeys = ['createBy', 'updateBy', 'createTime', 'updateTime', 'deleted']
+const importIgnoreKeys = ['id', ...exportIgnoreKeys]
 export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                                                                            state,
                                                                            dFormRules = {},
@@ -25,8 +27,10 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   const dialogFormRef = ref<FormInstance | null>(null)
   const dialogFormsRef = ref<FormInstance | null>(null)
   const filterFormRef = ref<FormInstance | null>(null)
+  const filterFormVisible = ref<boolean>(true)
   const dialogVisible = ref<boolean>(false)
   const dialogLoadingRef = ref<boolean>(false)
+  const dialogButtonLoadingRef = ref<boolean>(false)
   const tableLoadingRef = ref<boolean>(false)
   const switchLoadingRef = ref<boolean>(false)
   const activeTabName = ref<TypeOM>(final.one)
@@ -99,6 +103,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           config.insertCallback && config.insertCallback(dialogType.value)
           getData()
         }
+      }).finally(() => {
+        dialogButtonLoadingRef.value = false
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
       config.beforeInsertCallback && config.beforeInsertCallback(dialogType.value)
@@ -109,6 +115,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           config.insertCallback && config.insertCallback(dialogType.value)
           getData()
         }
+      }).finally(() => {
+        dialogButtonLoadingRef.value = false
       })
     }
   }
@@ -130,6 +138,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         }
       }).catch(() => {
         tableLoadingRef.value = false
+      }).finally(() => {
+        dialogButtonLoadingRef.value = false
       })
     } else if (!activeTabName || activeTabName.value === final.one) {
       config.beforeUpdateCallback && config.beforeUpdateCallback(dialogType.value)
@@ -144,6 +154,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         }
       }).catch(() => {
         tableLoadingRef.value = false
+      }).finally(() => {
+        dialogButtonLoadingRef.value = false
       })
     }
   }
@@ -201,6 +213,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   }
   // 弹窗确定
   const dCon = () => {
+    dialogButtonLoadingRef.value = true
+    // 去掉dialog表单中string类型的数据的前后空格
     Object.keys(state.dialogForm as object).forEach(ite => {
       const item = ite as keyof typeof state.dialogForm
       if (typeof state.dialogForm[item] === 'string') {
@@ -225,6 +239,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         if (dialogType.value === final.upd) updData()
       } else {
         ElMessage.warning(`校验未通过，请完善表格中红框字段。`)
+        dialogButtonLoadingRef.value = false
       }
     } else if (!activeTabName || activeTabName.value === final.one) {
       dialogFormRef.value?.validate((valid, fields) => {
@@ -237,6 +252,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
             Object.keys(fields).forEach(item => arr.push(dict[item as keyof typeof dict]))
             ElMessage.warning(`${arr.join('、')}不能为空。`)
           }
+          dialogButtonLoadingRef.value = false
         }
       })
     }
@@ -326,18 +342,21 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         }
     )
     const rows = deepClone<T[]>(toRaw(multipleSelection.value).map((item) => toRaw(item))).map(obj => {
+      exportIgnoreKeys.forEach(key => {
+        delete obj[key as keyof typeof obj]
+      })
       return obj
     }) as {}[];
     const workbook = new Workbook();
     // 添加sheet
     const worksheet = workbook.addWorksheet('sheet');
-    // sheet默认配置
-    worksheet.properties.defaultRowHeight = 20
     // 设置列
     worksheet.columns = Object.keys(rows[0]).map(key => ({header: key, key: key, width: 15}))
     // 设置行
-    const list = rows
-    worksheet.addRows(list)
+    worksheet.addRows(rows)
+    worksheet.getRows(1, rows.length + 1)?.forEach(row => {
+      row.height = 20
+    })
     // 导出excel
     const buffer = await workbook.xlsx.writeBuffer()
     const blob = new Blob([buffer], {type: ''})
@@ -365,7 +384,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       const workbook_ = new Workbook();
       const workbook = await workbook_.xlsx.load(buffer)
       const worksheet = workbook.getWorksheet(1)
-      if (!!!worksheet) {
+      if (!worksheet) {
         ElMessage.warning('读取Excel失败。')
         return
       }
@@ -376,14 +395,31 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         if (config.selectParam) {
           copyObject(obj, config.selectParam)
         }
+        importIgnoreKeys.forEach(key => {
+          delete obj[key]
+        })
         values.push(obj)
       })
-      insData({ifImport: true, dataFromExcel: values})
+      // 打开弹窗
+      if (!Object.keys(state).includes('dialogForms') || !ifHasConfig('bulkOperation', true)) {
+        ElMessage.warning('当前页面不支持批量导入。')
+        return
+      }
+      gIns()
+      activeTabName.value = final.more
+      state.dialogForms = []
+      values.forEach(value => {
+        state.dialogForms?.push(value)
+      })
     }
     reader.onerror = e => {
       console.error(e)
     }
     reader.readAsArrayBuffer(file);
+  }
+  // 显示/隐藏筛选表达
+  const gChangeFilterFormVisible = () => {
+    filterFormVisible.value = !filterFormVisible.value
   }
   // 修改
   const tUpd = async (id: number | string, ifMore?: boolean) => {
@@ -482,12 +518,17 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     state.dialogForms!.splice(index, 1)
   }
 
+  const filterFormVisible1 = computed(() => ifHasKey(state, 'filterForm') && Object.keys(state.filterForm).length > 0)
+
   return {
     dialogFormRef,
     dialogFormsRef,
     filterFormRef,
+    filterFormVisible1,
+    filterFormVisible,
     dialogVisible,
     dialogLoadingRef,
+    dialogButtonLoadingRef,
     tableLoadingRef,
     switchLoadingRef,
     activeTabName,
@@ -508,6 +549,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     gDel,
     gExport,
     gImport,
+    gChangeFilterFormVisible,
     tUpd,
     tDel,
     handleSelectionChange,

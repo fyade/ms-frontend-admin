@@ -1,5 +1,18 @@
 <script setup lang="ts">
-const props = defineProps(['pageNum', 'pageSize', 'total']);
+const props = defineProps({
+  pageNum: {
+    type: Number,
+    required: true
+  },
+  pageSize: {
+    type: Number,
+    required: true
+  },
+  total: {
+    type: Number,
+    required: true
+  }
+});
 const emits = defineEmits(['pageChange']);
 
 const handleSizeChange = (val: number) => {
@@ -28,6 +41,7 @@ const handleCurrentChange = (val: number) => {
       :page-size="props.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
+      :page-sizes="[5, 10, 20, 30, 40, 50, 100]"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
   />

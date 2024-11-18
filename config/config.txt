@@ -2,3 +2,5 @@ export const APP_NAME = '知笙后台管理系统'
 export const CHUNK_SIZE = 1024 * 1024 * 2
 
 export const currentVersion = '0.0.01'
+
+export const SECRET_KEY = '' // 前端-后端接口敏感信息加密盐，注意需与后端保持一致

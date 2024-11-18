@@ -1,8 +1,6 @@
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { final } from "@/utils/base.ts";
 
-// todo 下面几个使用了any类型的以后得改掉
-
 /**
  * sleep
  * @param ms

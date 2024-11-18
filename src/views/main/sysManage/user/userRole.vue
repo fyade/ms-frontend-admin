@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules, TableInstance } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
 import { roleApi } from "@/api/module/main/sysManage/role.ts";
 import { roleDict } from "@/dict/module/main/sysManage/role.ts";
@@ -55,8 +55,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -77,6 +80,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   pageChange,
@@ -144,7 +148,7 @@ watch(selects, () => {
   </el-divider>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+  <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="filterFormRef"
@@ -181,14 +185,17 @@ watch(selects, () => {
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -217,10 +224,12 @@ watch(selects, () => {
       <!--<el-table-column prop="updateTime" :label="roleDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="roleDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="200">
-        <template #default="{row}">
-        </template>
-      </el-table-column>
+      <!--<el-table-column fixed="right" label="操作" min-width="140">-->
+      <!--  <template #default="{row}">-->
+      <!--    <div class="zs-table-data-operate-button-row">-->
+      <!--    </div>-->
+      <!--  </template>-->
+      <!--</el-table-column>-->
       <template #append>
         <div class="el-table-append-box">
           <span>此表格的多选<span class="underline">支持</span>{{ `跨分页保存，当前已选 ${Object.keys(selects).filter(key=>selects[key]).length} 条数据。` }}</span>

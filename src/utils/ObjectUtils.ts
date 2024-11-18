@@ -68,14 +68,12 @@ export function ifNotValid(val: any) {
 }
 
 /**
- * 是否vue组件
- * @param val
+ * 对象是否有某键
+ * @param obj
+ * @param key
  */
-export function ifVueComponent(val: any) {
-  if (!val) {
-    return false
-  }
-  return false
+export function ifHasKey(obj: object, key: string) {
+  return Object.keys(obj).includes(key)
 }
 
 /**

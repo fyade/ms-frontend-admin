@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
@@ -47,8 +47,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -69,6 +72,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -269,7 +273,7 @@ const manageInterface = (row: InterfaceGroupDto) => {
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
           <template v-if="dialogType.value===final.ins" #append>
@@ -280,14 +284,14 @@ const manageInterface = (row: InterfaceGroupDto) => {
     </template>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+  <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="filterFormRef"
@@ -310,14 +314,16 @@ const manageInterface = (row: InterfaceGroupDto) => {
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
-    <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
+      <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
+      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
+      <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -346,12 +352,14 @@ const manageInterface = (row: InterfaceGroupDto) => {
       <!--<el-table-column prop="updateTime" :label="interfaceGroupDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="interfaceGroupDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="120">
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
-          <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
-          <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-          <el-button link type="primary" size="small" @click="manageInterface(row)">管理接口</el-button>
-          <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+          <div class="zs-table-data-operate-button-row">
+            <el-button link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
+            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+            <el-button link type="primary" size="small" :icon="Edit" @click="manageInterface(row)">管理接口</el-button>
+            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
       <template #append>

@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { InterfaceDto, InterfaceUpdDto } from "@/type/module/algorithm/interface.ts";
 import { interfaceApi } from "@/api/module/algorithm/interface.ts";
 import { interfaceDict } from "@/dict/module/algorithm/interface.ts";
@@ -53,8 +53,11 @@ const {
   dialogFormRef: interfaceInterfaceGroupDialogFormRef,
   dialogFormsRef: interfaceInterfaceGroupDialogFormsRef,
   filterFormRef: interfaceInterfaceGroupFilterFormRef,
+  filterFormVisible1: interfaceInterfaceGroupFilterFormVisible1,
+  filterFormVisible: interfaceInterfaceGroupFilterFormVisible,
   dialogVisible: interfaceInterfaceGroupDialogVisible,
   dialogLoadingRef: interfaceInterfaceGroupDialogLoadingRef,
+  dialogButtonLoadingRef: interfaceInterfaceGroupDialogButtonLoadingRef,
   tableLoadingRef: interfaceInterfaceGroupTableLoadingRef,
   switchLoadingRef: interfaceInterfaceGroupSwitchLoadingRef,
   activeTabName: interfaceInterfaceGroupActiveTabName,
@@ -75,6 +78,7 @@ const {
   gDel: interfaceInterfaceGroupGDel,
   gExport: interfaceInterfaceGroupGExport,
   gImport: interfaceInterfaceGroupGImport,
+  gChangeFilterFormVisible: interfaceInterfaceGroupGChangeFilterFormVisible,
   tUpd: interfaceInterfaceGroupTUpd,
   tDel: interfaceInterfaceGroupTDel,
   handleSelectionChange: interfaceInterfaceGroupHandleSelectionChange,
@@ -128,8 +132,11 @@ const {
   dialogFormRef: interfaceDialogFormRef,
   dialogFormsRef: interfaceDialogFormsRef,
   filterFormRef: interfaceFilterFormRef,
+  filterFormVisible1: interfaceFilterFormVisible1,
+  filterFormVisible: interfaceFilterFormVisible,
   dialogVisible: interfaceDialogVisible,
   dialogLoadingRef: interfaceDialogLoadingRef,
+  dialogButtonLoadingRef: interfaceDialogButtonLoadingRef,
   tableLoadingRef: interfaceTableLoadingRef,
   switchLoadingRef: interfaceSwitchLoadingRef,
   activeTabName: interfaceActiveTabName,
@@ -150,6 +157,7 @@ const {
   gDel: interfaceGDel,
   gExport: interfaceGExport,
   gImport: interfaceGImport,
+  gChangeFilterFormVisible: interfaceGChangeFilterFormVisible,
   tUpd: interfaceTUpd,
   tDel: interfaceTDel,
   handleSelectionChange: interfaceHandleSelectionChange,
@@ -241,7 +249,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
   </el-divider>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(interfaceInterfaceGroupState.filterForm).length>0">
+  <div class="zs-filter-form" v-show="interfaceInterfaceGroupFilterFormVisible1 && interfaceInterfaceGroupFilterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="interfaceInterfaceGroupFilterFormRef"
@@ -264,15 +272,18 @@ const confirmAddInterfaceInterfaceGroup = () => {
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="interfaceInterfaceGroupGRefresh">刷新</el-button>
-    <el-button type="primary" plain :icon="Plus" @click="beforeAddInterface">添加接口</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?interfaceInterfaceGroupMultipleSelection.length===0:interfaceInterfaceGroupMultipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <el-button type="danger" plain :icon="Delete" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gdelInterfaceInterfaceGroup">移除接口</el-button>
-    <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gExport()">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="interfaceInterfaceGroupGRefresh">刷新</el-button>
+      <el-button type="primary" plain :icon="Plus" @click="beforeAddInterface">添加接口</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?interfaceInterfaceGroupMultipleSelection.length===0:interfaceInterfaceGroupMultipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <el-button type="danger" plain :icon="Delete" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gdelInterfaceInterfaceGroup">移除接口</el-button>
+      <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceInterfaceGroupMultipleSelection.length===0" @click="gExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
+    </div>
+    <div>
+      <el-button v-if="interfaceInterfaceGroupFilterFormVisible1" plain :icon="Search" circle @click="interfaceInterfaceGroupGChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -300,9 +311,11 @@ const confirmAddInterfaceInterfaceGroup = () => {
       <!--<el-table-column prop="updateTime" :label="interfaceDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="interfaceDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="120">
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
-          <el-button link type="danger" size="small" @click="tdelInterfaceInterfaceGroup(row.id)">删除</el-button>
+          <div class="zs-table-data-operate-button-row">
+            <el-button link type="danger" size="small" :icon="Delete" @click="tdelInterfaceInterfaceGroup(row.id)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
       <template #append>
@@ -518,7 +531,7 @@ const confirmAddInterfaceInterfaceGroup = () => {
             <!--在此上方添加表格列-->
             <el-table-column fixed="right" label="操作" min-width="120">
               <template v-if="interfaceDialogType.value===final.ins" #default="{$index}">
-                <el-button link type="danger" size="small" @click="interfaceDfDel($index)">删除</el-button>
+                <el-button link type="danger" size="small" :icon="Delete" @click="interfaceDfDel($index)">删除</el-button>
               </template>
             </el-table-column>
             <template v-if="interfaceDialogType.value===final.ins" #append>
@@ -529,14 +542,14 @@ const confirmAddInterfaceInterfaceGroup = () => {
       </template>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="interfaceDCan">取消</el-button>
-        <el-button type="primary" @click="interfaceDCon">确认</el-button>
+        <el-button :disabled="interfaceDialogButtonLoadingRef" @click="interfaceDCan">取消</el-button>
+        <el-button type="primary" :disabled="interfaceDialogButtonLoadingRef" @click="interfaceDCon">确认</el-button>
       </span>
       </template>
     </el-dialog>
 
     <!--顶部筛选表单-->
-    <div class="zs-filter-form" v-if="Object.keys(interfaceState.filterForm).length>0">
+    <div class="zs-filter-form" v-show="interfaceFilterFormVisible1 && interfaceFilterFormVisible">
       <el-form
           class="demo-form-inline"
           ref="interfaceFilterFormRef"
@@ -574,14 +587,17 @@ const confirmAddInterfaceInterfaceGroup = () => {
 
     <!--操作按钮-->
     <div class="zs-button-row">
-      <!--<el-button-group>-->
-      <el-button type="primary" plain :icon="Refresh" @click="interfaceGRefresh">刷新</el-button>
-      <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGIns">新增</el-button>-->
-      <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceConfig.bulkOperation?interfaceMultipleSelection.length===0:interfaceMultipleSelection.length!==1" @click="interfaceGUpd">修改</el-button>-->
-      <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGDel()">删除</el-button>-->
-      <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGExport()">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGImport">上传</el-button>-->
-      <!--</el-button-group>-->
+      <div>
+        <el-button type="primary" plain :icon="Refresh" @click="interfaceGRefresh">刷新</el-button>
+        <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGIns">新增</el-button>-->
+        <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceConfig.bulkOperation?interfaceMultipleSelection.length===0:interfaceMultipleSelection.length!==1" @click="interfaceGUpd">修改</el-button>-->
+        <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGDel()">删除</el-button>-->
+        <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceMultipleSelection.length===0" @click="interfaceGExport()">导出</el-button>-->
+        <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGImport">上传</el-button>-->
+      </div>
+      <div>
+        <el-button v-if="interfaceFilterFormVisible1" plain :icon="Search" circle @click="interfaceGChangeFilterFormVisible"/>
+      </div>
     </div>
 
     <div class="zs-table-data">
@@ -609,12 +625,14 @@ const confirmAddInterfaceInterfaceGroup = () => {
         <!--<el-table-column prop="updateTime" :label="interfaceDict.updateTime" width="220"/>-->
         <!--<el-table-column prop="deleted" :label="interfaceDict.deleted" width="60"/>-->
         <!--上方几个酌情使用-->
-        <el-table-column fixed="right" label="操作" min-width="120">
-          <template #default="{row}">
-            <!--<el-button link type="primary" size="small" @click="interfaceTUpd(row.id)">修改</el-button>-->
-            <!--<el-button link type="danger" size="small" @click="interfaceTDel(row.id)">删除</el-button>-->
-          </template>
-        </el-table-column>
+        <!--<el-table-column fixed="right" label="操作" min-width="140">-->
+        <!--  <template #default="{row}">-->
+        <!--    <div class="zs-table-data-operate-button-row">-->
+        <!--      <el-button link type="primary" size="small" :icon="Edit" @click="interfaceTUpd(row.id)">修改</el-button>-->
+        <!--      <el-button link type="danger" size="small" :icon="Delete" @click="interfaceTDel(row.id)">删除</el-button>-->
+        <!--    </div>-->
+        <!--  </template>-->
+        <!--</el-table-column>-->
         <template #append>
           <div class="el-table-append-box">
             <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${interfaceMultipleSelection.length} 条数据。` }}</span>

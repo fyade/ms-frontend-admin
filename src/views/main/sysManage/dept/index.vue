@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
 import { DeptDto, DeptUpdDto } from "@/type/module/main/sysManage/dept.ts";
 import { deptApi } from "@/api/module/main/sysManage/dept.ts";
 import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
@@ -33,7 +33,11 @@ const state = reactive<State2<DeptDto, DeptUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    label: '',
+    ifAdmin: '',
+    ifDisabled: '',
+  },
 })
 const dFormRules: FormRules = {
   label: [{required: true, trigger: 'change'}],
@@ -51,8 +55,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -73,6 +80,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -368,7 +376,7 @@ const setSystem = (dept: DeptDto) => {
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
           <template v-if="dialogType.value===final.ins" #append>
@@ -379,14 +387,14 @@ const setSystem = (dept: DeptDto) => {
     </template>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+  <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="filterFormRef"
@@ -396,9 +404,21 @@ const setSystem = (dept: DeptDto) => {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="deptDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="deptDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="deptDict.label" prop="label">
+        <el-input v-model="state.filterForm.label" :placeholder="deptDict.label"/>
+      </el-form-item>
+      <el-form-item :label="deptDict.ifAdmin" prop="ifAdmin">
+        <el-select v-model="state.filterForm.ifAdmin" :placeholder="deptDict.ifAdmin" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="deptDict.ifDisabled" prop="ifDisabled">
+        <el-select v-model="state.filterForm.ifDisabled" :placeholder="deptDict.ifDisabled" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -409,14 +429,17 @@ const setSystem = (dept: DeptDto) => {
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
-    <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <el-button type="primary" plain :icon="Plus" @click="gIns2">新增</el-button>
+      <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
+      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
+      <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+      <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -446,14 +469,23 @@ const setSystem = (dept: DeptDto) => {
       <!--<el-table-column prop="updateTime" :label="deptDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="deptDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="200">
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
-          <el-button link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
-          <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-          <el-button link type="primary" size="small" @click="manageUser(row)">管理用户</el-button>
-          <el-button link type="primary" size="small" @click="setSystem(row)">分配系统</el-button>
-          <el-button link type="primary" size="small" @click="managePermission(row)">分配权限</el-button>
-          <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+          <div class="zs-table-data-operate-button-row">
+            <el-button link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
+            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+            <el-dropdown>
+              <el-button link type="primary" size="small" :icon="DArrowRight">更多</el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageUser(row)">管理用户</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="setSystem(row)">分配系统</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="managePermission(row)">分配权限</el-button></el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </template>
       </el-table-column>
       <template #append>

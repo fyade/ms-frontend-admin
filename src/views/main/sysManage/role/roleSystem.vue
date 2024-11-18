@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { SysDto, SysUpdDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
 import { sysDict } from "@/dict/module/main/sysManage/sys.ts";
@@ -53,8 +53,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -75,6 +78,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -178,15 +182,18 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
     <el-text size="large" style="font-weight: bold;">系统列表</el-text>
   </el-divider>
   <!--操作按钮-->
-  <div>
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
-    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
-    <!--</el-button-group>-->
+  <div class="zs-button-row">
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <br/>
@@ -196,7 +203,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
         v-for="item in stateList2"
         :key="item.id"
     >
-      <el-row>
+      <el-row align="middle">
         <el-col :span="16">
           {{ item.name }}
         </el-col>

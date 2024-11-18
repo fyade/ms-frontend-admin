@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Sort, Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Sort, Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { MenuDto, MenuUpdDto, T_COMP, T_Inter, T_IS, T_MENU, TType } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictI2, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
@@ -62,8 +62,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -84,6 +87,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -147,8 +151,11 @@ const {
   dialogFormRef: dialogFormRefInter,
   dialogFormsRef: dialogFormsRefInter,
   filterFormRef: filterFormRefInter,
+  filterFormVisible1: filterFormVisible1Inter,
+  filterFormVisible: filterFormVisibleInter,
   dialogVisible: dialogVisibleInter,
   dialogLoadingRef: dialogLoadingRefInter,
+  dialogButtonLoadingRef: dialogButtonLoadingRefInter,
   tableLoadingRef: tableLoadingRefInter,
   switchLoadingRef: switchLoadingRefInter,
   activeTabName: activeTabNameInter,
@@ -169,6 +176,7 @@ const {
   gDel: gDelInter,
   gExport: gExportInter,
   gImport: gImportInter,
+  gChangeFilterFormVisible: gChangeFilterFormVisibleInter,
   tUpd: tUpdInter,
   tDel: tDelInter,
   handleSelectionChange: handleSelectionChangeInter,
@@ -390,8 +398,11 @@ const {
   dialogFormRef: dialogFormRefI2,
   dialogFormsRef: dialogFormsRefI2,
   filterFormRef: filterFormRefI2,
+  filterFormVisible1: filterFormVisible1I2,
+  filterFormVisible: filterFormVisibleI2,
   dialogVisible: dialogVisibleI2,
   dialogLoadingRef: dialogLoadingRefI2,
+  dialogButtonLoadingRef: dialogButtonLoadingRefI2,
   tableLoadingRef: tableLoadingRefI2,
   switchLoadingRef: switchLoadingRefI2,
   activeTabName: activeTabNameI2,
@@ -412,6 +423,7 @@ const {
   gDel: gDelI2,
   gExport: gExportI2,
   gImport: gImportI2,
+  gChangeFilterFormVisible: gChangeFilterFormVisibleI2,
   tUpd: tUpdI2,
   tDel: tDelI2,
   handleSelectionChange: handleSelectionChangeI2,
@@ -657,7 +669,7 @@ const gInsI22 = () => {
             <!--在此上方添加表格列-->
             <el-table-column fixed="right" label="操作" min-width="120">
               <template v-if="dialogTypeI2.value===final.ins" #default="{$index}">
-                <el-button link type="danger" size="small" @click="dfDelI2($index)">删除</el-button>
+                <el-button link type="danger" size="small" :icon="Delete" @click="dfDelI2($index)">删除</el-button>
               </template>
             </el-table-column>
             <template v-if="dialogTypeI2.value===final.ins" #append>
@@ -668,14 +680,14 @@ const gInsI22 = () => {
       </template>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCanI2">取消</el-button>
-        <el-button type="primary" @click="dConI2">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRefI2" @click="dCanI2">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRefI2" @click="dConI2">确认</el-button>
       </span>
       </template>
     </el-dialog>
 
     <!--顶部筛选表单-->
-    <div class="zs-filter-form" v-if="Object.keys(stateI2.filterForm).length>0">
+    <div class="zs-filter-form" v-show="filterFormVisible1I2 && filterFormVisibleI2">
       <el-form
           class="demo-form-inline"
           ref="filterFormRefI2"
@@ -698,14 +710,17 @@ const gInsI22 = () => {
 
     <!--操作按钮-->
     <div class="zs-button-row">
-      <!--<el-button-group>-->
-      <el-button type="primary" plain :icon="Refresh" @click="gRefreshI2">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gInsI22">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="configI2.bulkOperation?multipleSelectionI2.length===0:multipleSelectionI2.length!==1" @click="gUpdI2">修改</el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelectionI2.length===0" @click="gDelI2()">删除</el-button>
-      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelectionI2.length===0" @click="gExportI2()">导出</el-button>-->
-      <!--<el-button type="warning" plain :icon="Upload" @click="gImportI2">上传</el-button>-->
-      <!--</el-button-group>-->
+      <div>
+        <el-button type="primary" plain :icon="Refresh" @click="gRefreshI2">刷新</el-button>
+        <el-button type="primary" plain :icon="Plus" @click="gInsI22">新增</el-button>
+        <el-button type="success" plain :icon="Edit" :disabled="configI2.bulkOperation?multipleSelectionI2.length===0:multipleSelectionI2.length!==1" @click="gUpdI2">修改</el-button>
+        <el-button type="danger" plain :icon="Delete" :disabled="multipleSelectionI2.length===0" @click="gDelI2()">删除</el-button>
+        <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelectionI2.length===0" @click="gExportI2()">导出</el-button>-->
+        <!--<el-button type="warning" plain :icon="Upload" @click="gImportI2">上传</el-button>-->
+      </div>
+      <div>
+        <el-button v-if="filterFormVisible1I2" plain :icon="Search" circle @click="gChangeFilterFormVisibleI2"/>
+      </div>
     </div>
 
     <div class="zs-table-data">
@@ -724,10 +739,12 @@ const gInsI22 = () => {
         <el-table-column prop="perms" :label="menuDictI2.perms" width="360"/>
         <el-table-column prop="remark" :label="menuDictI2.remark" width="200"/>
         <!--在此上方添加表格列-->
-        <el-table-column fixed="right" label="操作" min-width="120">
+        <el-table-column fixed="right" label="操作" min-width="140">
           <template #default="{row}">
-            <el-button link type="primary" size="small" @click="tUpdI2(row.id)">修改</el-button>
-            <el-button link type="danger" size="small" @click="tDelI2(row.id)">删除</el-button>
+            <div class="zs-table-data-operate-button-row">
+              <el-button link type="primary" size="small" :icon="Edit" @click="tUpdI2(row.id)">修改</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="tDelI2(row.id)">删除</el-button>
+            </div>
           </template>
         </el-table-column>
         <template #append>
@@ -1096,9 +1113,9 @@ const gInsI22 = () => {
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="200">
+          <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
           <template v-if="dialogType.value===final.ins" #append>
@@ -1109,8 +1126,8 @@ const gInsI22 = () => {
     </template>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -1317,9 +1334,9 @@ const gInsI22 = () => {
             </template>
           </el-table-column>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="200">
+          <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="dialogTypeInter.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDelInter($index)">删除</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="dfDelInter($index)">删除</el-button>
             </template>
           </el-table-column>
           <template v-if="dialogTypeInter.value===final.ins" #append>
@@ -1330,8 +1347,8 @@ const gInsI22 = () => {
     </template>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCanInter">取消</el-button>
-        <el-button type="primary" @click="dConInter">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRefInter" @click="dCanInter">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRefInter" @click="dConInter">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -1362,7 +1379,7 @@ const gInsI22 = () => {
   <el-tabs v-model="activeTab2Name" type="card">
     <el-tab-pane label="菜单及组件" name="a">
       <!--顶部筛选表单-->
-      <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+      <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
         <el-form
             class="demo-form-inline"
             ref="filterFormRef"
@@ -1385,15 +1402,18 @@ const gInsI22 = () => {
 
       <!--操作按钮-->
       <div class="zs-button-row">
-        <!--<el-button-group>-->
-        <el-button type="info" plain :icon="Sort" @click="expendAll">展开/折叠</el-button>
-        <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-        <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-        <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1||(multipleSelection.length>0&&checkVisible(multipleSelection[0].type,[T_Inter]))" @click="gUpd">修改</el-button>
-        <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
-        <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-        <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
-        <!--</el-button-group>-->
+        <div>
+          <el-button type="info" plain :icon="Sort" @click="expendAll">展开/折叠</el-button>
+          <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+          <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+          <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1||(multipleSelection.length>0&&checkVisible(multipleSelection[0].type,[T_Inter]))" @click="gUpd">修改</el-button>
+          <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
+          <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+          <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
+        </div>
+        <div>
+          <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+        </div>
       </div>
 
       <div class="zs-table-data">
@@ -1452,16 +1472,18 @@ const gInsI22 = () => {
             <!--<el-table-column prop="updateTime" :label="menuDict.updateTime" width="220"/>-->
             <!--<el-table-column prop="deleted" :label="menuDict.deleted" width="60"/>-->
             <!--上方几个酌情使用-->
-            <el-table-column fixed="right" label="操作" min-width="200">
+            <el-table-column fixed="right" label="操作" min-width="140">
               <template #default="{row}">
-                <el-button v-if="row.type!==T_Inter" link type="primary" size="small" @click="tIns(row.id)">新增</el-button>
-                <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-                <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+                <div class="zs-table-data-operate-button-row">
+                  <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tIns(row.id)">新增</el-button>
+                  <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
+                  <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+                </div>
               </template>
             </el-table-column>
             <template #append>
               <div class="el-table-append-box">
-            <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
+                <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>
               </div>
             </template>
           </el-table>
@@ -1479,7 +1501,7 @@ const gInsI22 = () => {
 
     <el-tab-pane label="接口" name="b">
       <!--顶部筛选表单-->
-      <div class="zs-filter-form" v-if="Object.keys(stateInter.filterForm).length>0">
+      <div class="zs-filter-form" v-show="filterFormVisible1Inter && filterFormVisibleInter">
         <el-form
             class="demo-form-inline"
             ref="filterFormRefInter"
@@ -1502,14 +1524,17 @@ const gInsI22 = () => {
 
       <!--操作按钮-->
       <div class="zs-button-row">
-        <!--<el-button-group>-->
-        <el-button type="primary" plain :icon="Refresh" @click="gRefreshInter">刷新</el-button>
-        <el-button type="primary" plain :icon="Plus" @click="gInsInter">新增</el-button>
-        <el-button type="success" plain :icon="Edit" :disabled="configInter.bulkOperation?multipleSelectionInter.length===0:multipleSelectionInter.length!==1" @click="gUpdInter">修改</el-button>
-        <el-button type="danger" plain :icon="Delete" :disabled="multipleSelectionInter.length===0" @click="gDelInter()">删除</el-button>
-        <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelectionInter.length===0" @click="gExportInter()">导出</el-button>-->
-        <!--<el-button type="warning" plain :icon="Upload" @click="gImportInter">上传</el-button>-->
-        <!--</el-button-group>-->
+        <div>
+          <el-button type="primary" plain :icon="Refresh" @click="gRefreshInter">刷新</el-button>
+          <el-button type="primary" plain :icon="Plus" @click="gInsInter">新增</el-button>
+          <el-button type="success" plain :icon="Edit" :disabled="configInter.bulkOperation?multipleSelectionInter.length===0:multipleSelectionInter.length!==1" @click="gUpdInter">修改</el-button>
+          <el-button type="danger" plain :icon="Delete" :disabled="multipleSelectionInter.length===0" @click="gDelInter()">删除</el-button>
+          <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelectionInter.length===0" @click="gExportInter()">导出</el-button>-->
+          <!--<el-button type="warning" plain :icon="Upload" @click="gImportInter">上传</el-button>-->
+        </div>
+        <div>
+          <el-button v-if="filterFormVisible1Inter" plain :icon="Search" circle @click="gChangeFilterFormVisibleInter"/>
+        </div>
       </div>
 
       <div class="zs-table-data">
@@ -1530,12 +1555,14 @@ const gInsI22 = () => {
           <el-table-column prop="perms" :label="menuDictInter.perms" width="280"/>
           <el-table-column prop="remark" :label="menuDictInter.remark" width="200"/>
           <!--在此上方添加表格列-->
-          <el-table-column fixed="right" label="操作" min-width="200">
+          <el-table-column fixed="right" label="操作" min-width="140">
             <template #default="{row}">
-              <el-button v-if="row.type!==T_Inter" link type="primary" size="small" @click="tInsInter(row.id)">新增</el-button>
-              <el-button link type="primary" size="small" @click="tUpdInter(row.id)">修改</el-button>
-              <el-button link type="primary" size="small" @click="manageInter(row)">接口管理</el-button>
-              <el-button link type="danger" size="small" @click="tDelInter(row.id)">删除</el-button>
+              <div class="zs-table-data-operate-button-row">
+                <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tInsInter(row.id)">新增</el-button>
+                <el-button link type="primary" size="small" :icon="Edit" @click="tUpdInter(row.id)">修改</el-button>
+                <el-button link type="primary" size="small" :icon="Edit" @click="manageInter(row)">接口管理</el-button>
+                <el-button link type="danger" size="small" :icon="Delete" @click="tDelInter(row.id)">删除</el-button>
+              </div>
             </template>
           </el-table-column>
           <template #append>

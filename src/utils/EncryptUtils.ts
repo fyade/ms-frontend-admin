@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js"
-import { SECRET_KEY } from "../../config/authConfig.ts";
+import { SECRET_KEY } from "../../config/config.ts";
 
 /**
  * 双向加密的加密

@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { LogUserLoginDto, LogUserLoginUpdDto } from "@/type/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginApi } from "@/api/module/main/sysLog/logUserLogin.ts";
 import { logUserLoginDict } from "@/dict/module/main/sysLog/logUserLogin.ts";
@@ -31,7 +31,11 @@ const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
   dialogForms: [],
   dialogForms_error: {},
   filterForm: {
-    userId: ''
+    userId: '',
+    loginIp: '',
+    loginBrowser: '',
+    loginOs: '',
+    ifSuccess: '',
   },
 })
 const dFormRules: FormRules = {
@@ -46,8 +50,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -68,6 +75,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -254,7 +262,7 @@ const {
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
             <template v-if="dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+              <el-button link type="danger" size="small" :icon="Delete" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
           <template v-if="dialogType.value===final.ins" #append>
@@ -265,14 +273,14 @@ const {
     </template>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+  <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="filterFormRef"
@@ -282,11 +290,23 @@ const {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="logUserLoginDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="logUserLoginDict."/>-->
-      <!--</el-form-item>-->
       <el-form-item :label="logUserLoginDict.userId" prop="userId">
         <el-input v-model="state.filterForm.userId" :placeholder="logUserLoginDict.userId"/>
+      </el-form-item>
+      <el-form-item :label="logUserLoginDict.loginIp" prop="loginIp">
+        <el-input v-model="state.filterForm.loginIp" :placeholder="logUserLoginDict.loginIp"/>
+      </el-form-item>
+      <el-form-item :label="logUserLoginDict.loginBrowser" prop="loginBrowser">
+        <el-input v-model="state.filterForm.loginBrowser" :placeholder="logUserLoginDict.loginBrowser"/>
+      </el-form-item>
+      <el-form-item :label="logUserLoginDict.loginOs" prop="loginOs">
+        <el-input v-model="state.filterForm.loginOs" :placeholder="logUserLoginDict.loginOs"/>
+      </el-form-item>
+      <el-form-item :label="logUserLoginDict.ifSuccess" prop="ifSuccess">
+        <el-select v-model="state.filterForm.ifSuccess" :placeholder="logUserLoginDict.ifSuccess" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
       </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
@@ -298,14 +318,17 @@ const {
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
-    <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
-    <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-    <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-    <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+      <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -342,10 +365,12 @@ const {
       <!--<el-table-column prop="updateTime" :label="logUserLoginDict.updateTime" width='220'/>-->
       <!--<el-table-column prop="deleted" :label="logUserLoginDict.deleted" width='60'/>-->
       <!--上方几个酌情使用-->
-      <!--<el-table-column fixed="right" label="操作" min-width="120">-->
+      <!--<el-table-column fixed="right" label="操作" min-width="140">-->
       <!--  <template #default="{row}">-->
-      <!--    <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
-      <!--    <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
+      <!--    <div class="zs-table-data-operate-button-row">-->
+      <!--      <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
+      <!--      <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
+      <!--    </div>-->
       <!--  </template>-->
       <!--</el-table-column>-->
       <template #append>

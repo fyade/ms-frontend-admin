@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
 import { UserDto, UserDto2, UserDto_, UserUpdDto } from "@/type/module/main/sysManage/user.ts";
 import { newUser, resetUserPsd, userApi } from "@/api/module/main/sysManage/user.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
@@ -50,8 +50,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -72,6 +75,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -102,16 +106,22 @@ const resetPsd = (id: string) => {
   newPsd.password = defaultNewPsd
   newpsdDialog.value = true
 }
+const npDialogButtonLoadingRef = ref(false)
 const npCan = () => {
   newpsdDialog.value = false
+  npDialogButtonLoadingRef.value = false
 }
 const npCon = () => {
+  npDialogButtonLoadingRef.value = true
   resetUserPsd(newPsd).then(res => {
     newpsdDialog.value = false
     ElMessage.success('密码已重置。')
+  }).finally(() => {
+    npDialogButtonLoadingRef.value = false
   })
 }
 const dCon2 = () => {
+  dialogButtonLoadingRef.value = true
   if (dialogFormRef.value) {
     dialogFormRef.value.validate((valid, fields) => {
       if (valid) {
@@ -124,6 +134,8 @@ const dCon2 = () => {
             dialogVisible.value = false
             refresh()
           }
+        }).finally(() => {
+          dialogButtonLoadingRef.value = false
         })
       } else {
         if (fields) {
@@ -131,6 +143,7 @@ const dCon2 = () => {
           Object.keys(fields).forEach(item => arr.push(userDict[item as keyof typeof userDict] as string))
           ElMessage.warning(`${arr.join('、')}不能为空。`)
         }
+        dialogButtonLoadingRef.value = false
       }
     })
   }
@@ -257,8 +270,8 @@ provide('changeSelectDept', selectDept)
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="npCan">取消</el-button>
-        <el-button type="primary" @click="npCon">确认</el-button>
+        <el-button :disabled="npDialogButtonLoadingRef" @click="npCan">取消</el-button>
+        <el-button type="primary" :disabled="npDialogButtonLoadingRef" @click="npCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -302,14 +315,14 @@ provide('changeSelectDept', selectDept)
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon2">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dCan">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dCon2">确认</el-button>
       </span>
     </template>
   </el-dialog>
 
   <!--顶部筛选表单-->
-  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">
+  <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
         class="demo-form-inline"
         ref="filterFormRef"
@@ -335,10 +348,13 @@ provide('changeSelectDept', selectDept)
 
   <!--操作按钮-->
   <div class="zs-button-row">
-    <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <!--</el-button-group>-->
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <div class="zs-table-data">
@@ -395,14 +411,23 @@ provide('changeSelectDept', selectDept)
       <!--<el-table-column prop="updateTime" :label="userDict.updateTime" width="220"/>-->
       <!--<el-table-column prop="deleted" :label="userDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
-      <el-table-column fixed="right" label="操作" min-width="200">
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
-          <!--<el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>-->
-          <!--<el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>-->
-          <el-button link type="primary" size="small" @click="resetPsd(row.id)">重置密码</el-button>
-          <el-button link type="primary" size="small" @click="manageRole(row)">分配角色</el-button>
-          <el-button link type="primary" size="small" @click="manageDept(row)">分配部门</el-button>
-          <!--<el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>-->
+          <div class="zs-table-data-operate-button-row">
+            <!--<el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
+            <!--<el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
+            <el-button link type="primary" size="small" :icon="Edit" @click="resetPsd(row.id)">重置密码</el-button>
+            <el-dropdown>
+              <el-button link type="primary" size="small" :icon="DArrowRight">更多</el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageRole(row)">分配角色</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageDept(row)">分配部门</el-button></el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <!--<el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>-->
+          </div>
         </template>
       </el-table-column>
       <!--<template #append>-->

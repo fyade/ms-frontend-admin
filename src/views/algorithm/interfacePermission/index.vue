@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts"
 import { State2, TablePageConfig } from "@/type/tablePage.ts"
 import { ElMessageBox, FormRules, TableInstance } from 'element-plus'
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search, View } from "@element-plus/icons-vue";
 import { UserGroupDto, UserGroupUpdDto } from "@/type/module/algorithm/userGroup.ts";
 import { userGroupApi } from "@/api/module/algorithm/userGroup.ts"
 import { InterfaceGroupDto, InterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceGroup.ts";
@@ -52,8 +52,11 @@ const {
   dialogFormRef: userGroupDialogFormRef,
   dialogFormsRef: userGroupDialogFormsRef,
   filterFormRef: userGroupFilterFormRef,
+  filterFormVisible1: userGroupFilterFormVisible1,
+  filterFormVisible: userGroupFilterFormVisible,
   dialogVisible: userGroupDialogVisible,
   dialogLoadingRef: userGroupDialogLoadingRef,
+  dialogButtonLoadingRef: userGroupDialogButtonLoadingRef,
   tableLoadingRef: userGroupTableLoadingRef,
   switchLoadingRef: userGroupSwitchLoadingRef,
   activeTabName: userGroupActiveTabName,
@@ -74,6 +77,7 @@ const {
   gDel: userGroupGDel,
   gExport: userGroupGExport,
   gImport: userGroupGImport,
+  gChangeFilterFormVisible: userGroupGChangeFilterFormVisible,
   tUpd: userGroupTUpd,
   tDel: userGroupTDel,
   handleSelectionChange: userGroupHandleSelectionChange,
@@ -118,8 +122,11 @@ const {
   dialogFormRef: interfaceGroupDialogFormRef,
   dialogFormsRef: interfaceGroupDialogFormsRef,
   filterFormRef: interfaceGroupFilterFormRef,
+  filterFormVisible1: interfaceGroupFilterFormVisible1,
+  filterFormVisible: interfaceGroupFilterFormVisible,
   dialogVisible: interfaceGroupDialogVisible,
   dialogLoadingRef: interfaceGroupDialogLoadingRef,
+  dialogButtonLoadingRef: interfaceGroupDialogButtonLoadingRef,
   tableLoadingRef: interfaceGroupTableLoadingRef,
   switchLoadingRef: interfaceGroupSwitchLoadingRef,
   activeTabName: interfaceGroupActiveTabName,
@@ -140,6 +147,7 @@ const {
   gDel: interfaceGroupGDel,
   gExport: interfaceGroupGExport,
   gImport: interfaceGroupGImport,
+  gChangeFilterFormVisible: interfaceGroupGChangeFilterFormVisible,
   tUpd: interfaceGroupTUpd,
   tDel: interfaceGroupTDel,
   handleSelectionChange: interfaceGroupHandleSelectionChange,
@@ -203,8 +211,11 @@ const {
   dialogFormRef: userGroupPermissionDialogFormRef,
   dialogFormsRef: userGroupPermissionDialogFormsRef,
   filterFormRef: userGroupPermissionFilterFormRef,
+  filterFormVisible1: userGroupPermissionFilterFormVisible1,
+  filterFormVisible: userGroupPermissionFilterFormVisible,
   dialogVisible: userGroupPermissionDialogVisible,
   dialogLoadingRef: userGroupPermissionDialogLoadingRef,
+  dialogButtonLoadingRef: userGroupPermissionDialogButtonLoadingRef,
   tableLoadingRef: userGroupPermissionTableLoadingRef,
   switchLoadingRef: userGroupPermissionSwitchLoadingRef,
   activeTabName: userGroupPermissionActiveTabName,
@@ -225,6 +236,7 @@ const {
   gDel: userGroupPermissionGDel,
   gExport: userGroupPermissionGExport,
   gImport: userGroupPermissionGImport,
+  gChangeFilterFormVisible: userGroupPermissionGChangeFilterFormVisible,
   tUpd: userGroupPermissionTUpd,
   tDel: userGroupPermissionTDel,
   handleSelectionChange: userGroupPermissionHandleSelectionChange,
@@ -641,8 +653,8 @@ const userGroupPermissionDCon2 = () => {
     <template #footer>
       <span class="dialog-footer">
         <el-button type="primary" @click="showUseLog" v-if="!ifAddUserGroupPermission">查看调用日志</el-button>
-        <el-button @click="userGroupPermissionDCan">取消</el-button>
-        <el-button type="primary" @click="userGroupPermissionDCon2" v-if="ifAddUserGroupPermission">确认</el-button>
+        <el-button :disabled="userGroupPermissionDialogButtonLoadingRef" @click="userGroupPermissionDCan">取消</el-button>
+        <el-button type="primary" :disabled="userGroupPermissionDialogButtonLoadingRef" @click="userGroupPermissionDCon2" v-if="ifAddUserGroupPermission">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -691,30 +703,24 @@ const userGroupPermissionDCon2 = () => {
                 </template>
               </el-table-column>
               <el-table-column prop="remark" :label="userGroupPermissionDict.remark" width="120"/>
-              <el-table-column fixed="right" label="操作" min-width="120">
+              <el-table-column fixed="right" label="操作" min-width="140">
                 <template #default="{row}">
-                  <el-button link type="primary" size="small" @click="detailUserGroupOfThisInterfaceGroup(row.id)">
-                    查看详情
-                  </el-button>
-                  <el-button link type="danger" size="small" @click="beforeDelUserGroupOfThisInterfaceGroup(row.id)">
-                    删除
-                  </el-button>
+                  <div class="zs-table-data-operate-button-row">
+                    <el-button link type="primary" size="small" :icon="View" @click="detailUserGroupOfThisInterfaceGroup(row.id)">查看详情</el-button>
+                    <el-button link type="danger" size="small" :icon="Delete" @click="beforeDelUserGroupOfThisInterfaceGroup(row.id)">删除</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
             <!--<el-table :data="userGroupsOfThisInterfaceGroup">-->
             <!--  <el-table-column prop="label" :label="userGroupDict.label" width="240"/>-->
             <!--  <el-table-column prop="remark" :label="userGroupDict.remark" width="240"/>-->
-            <!--  <el-table-column fixed="right" label="操作" min-width="120">-->
+            <!--  <el-table-column fixed="right" label="操作" min-width="140">-->
             <!--    <template #default="{row}">-->
-            <!--      <el-button link type="primary" size="small"-->
-            <!--                 @click="detailUserGroupOfThisInterfaceGroup(row.userGroupPermissionId)">-->
-            <!--        查看详情-->
-            <!--      </el-button>-->
-            <!--      <el-button link type="danger" size="small"-->
-            <!--                 @click="beforeDelUserGroupOfThisInterfaceGroup(row.userGroupPermissionId)">-->
-            <!--        删除-->
-            <!--      </el-button>-->
+            <!--      <div class="zs-table-data-operate-button-row">-->
+            <!--        <el-button link type="primary" size="small" :icon="View" @click="detailUserGroupOfThisInterfaceGroup(row.userGroupPermissionId)">查看详情</el-button>-->
+            <!--        <el-button link type="danger" size="small" :icon="Delete" @click="beforeDelUserGroupOfThisInterfaceGroup(row.userGroupPermissionId)">删除</el-button>-->
+            <!--      </div>-->
             <!--    </template>-->
             <!--  </el-table-column>-->
             <!--</el-table>-->
@@ -766,24 +772,24 @@ const userGroupPermissionDCon2 = () => {
                 </template>
               </el-table-column>
               <el-table-column prop="remark" :label="userGroupPermissionDict.remark" width="120"/>
-              <el-table-column fixed="right" label="操作" min-width="120">
+              <el-table-column fixed="right" label="操作" min-width="140">
                 <template #default="{row}">
-                  <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.id)">
-                    查看详情
-                  </el-button>
-                  <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.id)">
-                    删除
-                  </el-button>
+                  <div class="zs-table-data-operate-button-row">
+                    <el-button link type="primary" size="small" :icon="View" @click="detailInterfaceGroupOfThisUserGroup(row.id)">查看详情</el-button>
+                    <el-button link type="danger" size="small" :icon="Delete" @click="beforeDelInterfaceGroupOfThisUserGroup(row.id)">删除</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
             <!--<el-table :data="interfaceGroupsOfThisUserGroup">-->
             <!--  <el-table-column prop="label" :label="interfaceGroupDict.label" width="240"/>-->
             <!--  <el-table-column prop="remark" :label="interfaceGroupDict.remark" width="240"/>-->
-            <!--  <el-table-column fixed="right" label="操作" min-width="120">-->
+            <!--  <el-table-column fixed="right" label="操作" min-width="140">-->
             <!--    <template #default="{row}">-->
-            <!--      <el-button link type="primary" size="small" @click="detailInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">查看详情</el-button>-->
-            <!--      <el-button link type="danger" size="small" @click="beforeDelInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">删除</el-button>-->
+            <!--      <div class="zs-table-data-operate-button-row">-->
+            <!--        <el-button link type="primary" size="small" :icon="View" @click="detailInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">查看详情</el-button>-->
+            <!--        <el-button link type="danger" size="small" :icon="Delete" @click="beforeDelInterfaceGroupOfThisUserGroup(row.userGroupPermissionId)">删除</el-button>-->
+            <!--      </div>-->
             <!--    </template>-->
             <!--  </el-table-column>-->
             <!--</el-table>-->
@@ -793,7 +799,7 @@ const userGroupPermissionDCon2 = () => {
       <div>
         <el-scrollbar>
           <!--顶部筛选表单-->
-          <div class="zs-filter-form" v-if="Object.keys(userGroupState.filterForm).length>0">
+          <div class="zs-filter-form" v-show="userGroupFilterFormVisible1 && userGroupFilterFormVisible">
             <el-form
                 class="demo-form-inline"
                 ref="userGroupFilterFormRef"
@@ -816,14 +822,17 @@ const userGroupPermissionDCon2 = () => {
 
           <!--操作按钮-->
           <div class="zs-button-row">
-            <!--<el-button-group>-->
-            <el-button type="primary" plain :icon="Refresh" @click="userGroupGRefresh">刷新</el-button>
-            <!--<el-button type="primary" plain :icon="Plus" @click="userGroupGIns">新增</el-button>-->
-            <!--<el-button type="success" plain :icon="Edit" :disabled="userGroupConfig.bulkOperation?userGroupMultipleSelection.length===0:userGroupMultipleSelection.length!==1" @click="userGroupGUpd">修改</el-button>-->
-            <!--<el-button type="danger" plain :icon="Delete" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGDel()">删除</el-button>-->
-            <!--<el-button type="warning" plain :icon="Download" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGExport()">导出</el-button>-->
-            <!--<el-button type="warning" plain :icon="Upload" @click="userGroupGImport">上传</el-button>-->
-            <!--</el-button-group>-->
+            <div>
+              <el-button type="primary" plain :icon="Refresh" @click="userGroupGRefresh">刷新</el-button>
+              <!--<el-button type="primary" plain :icon="Plus" @click="userGroupGIns">新增</el-button>-->
+              <!--<el-button type="success" plain :icon="Edit" :disabled="userGroupConfig.bulkOperation?userGroupMultipleSelection.length===0:userGroupMultipleSelection.length!==1" @click="userGroupGUpd">修改</el-button>-->
+              <!--<el-button type="danger" plain :icon="Delete" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGDel()">删除</el-button>-->
+              <!--<el-button type="warning" plain :icon="Download" :disabled="userGroupMultipleSelection.length===0" @click="userGroupGExport()">导出</el-button>-->
+              <!--<el-button type="warning" plain :icon="Upload" @click="userGroupGImport">上传</el-button>-->
+            </div>
+            <div>
+              <el-button v-if="userGroupFilterFormVisible1" plain :icon="Search" circle @click="userGroupGChangeFilterFormVisible"/>
+            </div>
           </div>
 
           <div class="zs-table-data">
@@ -851,10 +860,12 @@ const userGroupPermissionDCon2 = () => {
               <!--<el-table-column prop="updateTime" :label="userGroupDict.updateTime" width="220"/>-->
               <!--<el-table-column prop="deleted" :label="userGroupDict.deleted" width="60"/>-->
               <!--上方几个酌情使用-->
-              <!--<el-table-column fixed="right" label="操作" min-width="120">-->
+              <!--<el-table-column fixed="right" label="操作" min-width="140">-->
               <!--  <template #default="{row}">-->
-              <!--    <el-button link type="primary" size="small" @click="userGroupTUpd(row.id)">修改</el-button>-->
-              <!--    <el-button link type="danger" size="small" @click="userGroupTDel(row.id)">删除</el-button>-->
+              <!--    <div class="zs-table-data-operate-button-row">-->
+              <!--      <el-button link type="primary" size="small" :icon="Edit" @click="userGroupTUpd(row.id)">修改</el-button>-->
+              <!--      <el-button link type="danger" size="small" :icon="Delete" @click="userGroupTDel(row.id)">删除</el-button>-->
+              <!--    </div>-->
               <!--  </template>-->
               <!--</el-table-column>-->
               <template #append>
@@ -881,7 +892,7 @@ const userGroupPermissionDCon2 = () => {
       <div>
         <el-scrollbar>
           <!--顶部筛选表单-->
-          <div class="zs-filter-form" v-if="Object.keys(interfaceGroupState.filterForm).length>0">
+          <div class="zs-filter-form" v-show="interfaceGroupFilterFormVisible1 && interfaceGroupFilterFormVisible">
             <el-form
                 class="demo-form-inline"
                 ref="interfaceGroupFilterFormRef"
@@ -904,14 +915,17 @@ const userGroupPermissionDCon2 = () => {
 
           <!--操作按钮-->
           <div class="zs-button-row">
-            <!--<el-button-group>-->
-            <el-button type="primary" plain :icon="Refresh" @click="interfaceGroupGRefresh">刷新</el-button>
-            <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGroupGIns">新增</el-button>-->
-            <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceGroupConfig.bulkOperation?interfaceGroupMultipleSelection.length===0:interfaceGroupMultipleSelection.length!==1" @click="interfaceGroupGUpd">修改</el-button>-->
-            <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceGroupMultipleSelection.length===0" @click="interfaceGroupGDel()">删除</el-button>-->
-            <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceGroupStateMultipleSelection.length===0" @click="interfaceGroupGExport()">导出</el-button>-->
-            <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGroupGImport">上传</el-button>-->
-            <!--</el-button-group>-->
+            <div>
+              <el-button type="primary" plain :icon="Refresh" @click="interfaceGroupGRefresh">刷新</el-button>
+              <!--<el-button type="primary" plain :icon="Plus" @click="interfaceGroupGIns">新增</el-button>-->
+              <!--<el-button type="success" plain :icon="Edit" :disabled="interfaceGroupConfig.bulkOperation?interfaceGroupMultipleSelection.length===0:interfaceGroupMultipleSelection.length!==1" @click="interfaceGroupGUpd">修改</el-button>-->
+              <!--<el-button type="danger" plain :icon="Delete" :disabled="interfaceGroupMultipleSelection.length===0" @click="interfaceGroupGDel()">删除</el-button>-->
+              <!--<el-button type="warning" plain :icon="Download" :disabled="interfaceGroupStateMultipleSelection.length===0" @click="interfaceGroupGExport()">导出</el-button>-->
+              <!--<el-button type="warning" plain :icon="Upload" @click="interfaceGroupGImport">上传</el-button>-->
+            </div>
+            <div>
+              <el-button v-if="interfaceGroupFilterFormVisible1" plain :icon="Search" circle @click="interfaceGroupGChangeFilterFormVisible"/>
+            </div>
           </div>
 
           <div class="zs-table-data">
@@ -940,10 +954,12 @@ const userGroupPermissionDCon2 = () => {
               <!--<el-table-column prop="updateTime" :label="interfaceGroupDict.updateTime" width="220"/>-->
               <!--<el-table-column prop="deleted" :label="interfaceGroupDict.deleted" width="60"/>-->
               <!--上方几个酌情使用-->
-              <!--<el-table-column fixed="right" label="操作" min-width="120">-->
+              <!--<el-table-column fixed="right" label="操作" min-width="140">-->
               <!--  <template #default="{row}">-->
-              <!--    <el-button link type="primary" size="small" @click="interfaceGroupTUpd(row.id)">修改</el-button>-->
-              <!--    <el-button link type="danger" size="small" @click="interfaceGroupTDel(row.id)">删除</el-button>-->
+              <!--    <div class="zs-table-data-operate-button-row">-->
+              <!--      <el-button link type="primary" size="small" :icon="Edit" @click="interfaceGroupTUpd(row.id)">修改</el-button>-->
+              <!--      <el-button link type="danger" size="small" :icon="Delete" @click="interfaceGroupTDel(row.id)">删除</el-button>-->
+              <!--    </div>-->
               <!--  </template>-->
               <!--</el-table-column>-->
               <template #append>

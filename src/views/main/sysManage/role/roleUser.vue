@@ -136,13 +136,16 @@ const selectRows2 = ref<UserDto[]>([])
 const handleSelectionChange2 = (val: UserDto[]) => {
   selectRows2.value = val
 }
+const dialogButtonLoadingRef = ref(false)
 // 取消新增用户角色
 const dialogCancel = () => {
+  dialogButtonLoadingRef.value = false
   addUserDialog.value = false
   selectRows2.value = []
 }
 // 确认新增用户角色
 const dialogConfirm = () => {
+  dialogButtonLoadingRef.value = true
   const param = {
     userId: selectRows2.value.map(item => item.id),
     roleId: props.selectRole.id
@@ -150,6 +153,8 @@ const dialogConfirm = () => {
   userRoleUpdRU(param).then(res => {
     getInfo()
     dialogCancel()
+  }).finally(() => {
+    dialogButtonLoadingRef.value = false
   })
 }
 
@@ -280,8 +285,8 @@ const deleteUserRole = (userId: string) => {
     />
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogCancel">取消</el-button>
-        <el-button type="primary" @click="dialogConfirm">确认</el-button>
+        <el-button :disabled="dialogButtonLoadingRef" @click="dialogCancel">取消</el-button>
+        <el-button type="primary" :disabled="dialogButtonLoadingRef" @click="dialogConfirm">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -314,9 +319,11 @@ const deleteUserRole = (userId: string) => {
     <el-table-column prop="sex" :label="userDict.sex" width="120"/>
     <el-table-column prop="email" :label="userDict.email" width="120"/>
     <el-table-column prop="tel" :label="userDict.tel" width="120"/>
-    <el-table-column fixed="right" label="操作" min-width="200">
+    <el-table-column fixed="right" label="操作" min-width="140">
       <template #default="{row}">
-        <el-button link type="danger" size="small" @click="deleteUserRole(row.id)">删除</el-button>
+        <div class="zs-table-data-operate-button-row">
+          <el-button link type="danger" size="small" :icon="Delete" @click="deleteUserRole(row.id)">删除</el-button>
+        </div>
       </template>
     </el-table-column>
     <template #append>

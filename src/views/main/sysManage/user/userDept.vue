@@ -5,7 +5,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules, TreeInstance } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
 import { DeptDto, DeptUpdDto } from "@/type/module/main/sysManage/dept.ts";
 import { deptApi } from "@/api/module/main/sysManage/dept.ts";
 import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
@@ -51,8 +51,11 @@ const {
   dialogFormRef,
   dialogFormsRef,
   filterFormRef,
+  filterFormVisible1,
+  filterFormVisible,
   dialogVisible,
   dialogLoadingRef,
+  dialogButtonLoadingRef,
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
@@ -73,6 +76,7 @@ const {
   gDel,
   gExport,
   gImport,
+  gChangeFilterFormVisible,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -148,8 +152,13 @@ const handleCheckChange = (
     <el-text size="large" style="font-weight: bold;">部门列表</el-text>
   </el-divider>
   <!--操作按钮-->
-  <div>
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+  <div class="zs-button-row">
+    <div>
+      <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    </div>
+    <div>
+      <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
+    </div>
   </div>
 
   <br/>
