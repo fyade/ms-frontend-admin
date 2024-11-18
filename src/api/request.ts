@@ -41,7 +41,6 @@ request.interceptors.response.use(
         return Promise.reject(response.data.msg)
       }
       count0 = 0
-      await sleep(1000)
       return Promise.resolve(response.data.data as any)
     },
     async error => {

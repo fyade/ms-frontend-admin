@@ -259,12 +259,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   }
   // 筛选
   const fEnter = () => {
-    const hasValue = Object.values(state.filterForm).some(item => !!item.toString().trim())
-    if (hasValue) {
-      fCon()
-    } else {
-      fCan()
-    }
+    fCon()
   }
   // 筛选
   const fCon = () => {
