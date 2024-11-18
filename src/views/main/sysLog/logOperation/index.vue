@@ -326,6 +326,7 @@ const {
         <el-select v-model="state.filterForm.ifSuccess" :placeholder="logOperationDict.ifSuccess" clearable filterable>
           <el-option label="是" :value="final.Y"/>
           <el-option label="否" :value="final.N"/>
+          <el-option label="不确定" value="O"/>
         </el-select>
       </el-form-item>
       <!--在此上方添加表单项-->
@@ -375,7 +376,16 @@ const {
       </el-table-column>
       <el-table-column prop="oldValue" :label="logOperationDict.oldValue" width="120"/>
       <el-table-column prop="operateType" :label="logOperationDict.operateType" width="120"/>
-      <el-table-column prop="ifSuccess" :label="logOperationDict.ifSuccess" width="120"/>
+      <el-table-column prop="ifSuccess" :label="logOperationDict.ifSuccess" width="120">
+        <template #header>
+          <Tooltip content="Y表示成功，N表示失败，O表示接口无返回值，无法确定是否成功。">
+            {{ logOperationDict.ifSuccess }}
+          </Tooltip>
+        </template>
+        <template #default="{row}">
+          {{ row.ifSuccess }}
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" :label="logOperationDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logOperationDict.createBy" width="120"/>-->
