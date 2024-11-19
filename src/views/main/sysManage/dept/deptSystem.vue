@@ -12,6 +12,7 @@ import { sysDict } from "@/dict/module/main/sysManage/sys.ts";
 import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
 import { DeptSysDto } from "@/type/module/main/sysManage/deptSys.ts";
 import { deptSysApi } from "@/api/module/main/sysManage/deptSys.ts";
+import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {
@@ -103,7 +104,7 @@ const allDeptSyss = ref<DeptSysDto[]>([])
 const stateList2 = ref<SysDto2[]>([])
 const getDeptSyss = () => {
   stateList2.value = tableData.value.map(item => ({...item, ifTrue: false, loading: true}))
-  deptSysApi.selectAll({deptId: props.selectDept?.id}).then((res: DeptSysDto[]) => {
+  deptSysApi.selectAll({deptId: props.selectDept.id}).then((res: DeptSysDto[]) => {
     allDeptSyss.value = res
     res.forEach(ite => {
       const find = stateList2.value.find(item => item.id === ite.sysId);
@@ -118,7 +119,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      deptSysApi.insertOne({deptId: props.selectDept?.id, sysId: dto.id, remark: ''}).then(res => {
+      deptSysApi.insertOne({deptId: props.selectDept.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)
@@ -131,7 +132,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
     })
   } else {
     return new Promise((resolve, reject) => {
-      const find = allDeptSyss.value.find(item => item.deptId === props.selectDept?.id && item.sysId === dto.id);
+      const find = allDeptSyss.value.find(item => item.deptId === props.selectDept.id && item.sysId === dto.id);
       if (find) {
         deptSysApi.deleteList(find.id).then(res => {
           if (res) {
@@ -159,13 +160,13 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="部门id">
-          <el-input disabled v-model="props.selectDept.id"></el-input>
+        <el-form-item :label="deptDict.label">
+          {{ props.selectDept.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="部门名">
-          <el-input disabled v-model="props.selectDept.label"></el-input>
+        <el-form-item :label="deptDict.ifAdmin">
+          {{ props.selectDept.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>

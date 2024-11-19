@@ -34,6 +34,8 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
 const dFormRules: FormRules = {
   userGroupPermissionId: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
+  callIp: [{required: true, trigger: 'change'}],
+  ifSuccess: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
   bulkOperation: true,

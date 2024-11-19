@@ -40,6 +40,10 @@ const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
 })
 const dFormRules: FormRules = {
   userId: [{required: true, trigger: 'change'}],
+  loginIp: [{required: true, trigger: 'change'}],
+  loginPosition: [{required: true, trigger: 'change'}],
+  loginBrowser: [{required: true, trigger: 'change'}],
+  loginOs: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({

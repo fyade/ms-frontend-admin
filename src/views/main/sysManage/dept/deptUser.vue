@@ -12,6 +12,7 @@ import { PageDto } from "@/type/tablePage.ts";
 import { UserDto } from "@/type/module/main/sysManage/user.ts";
 import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
+import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {
@@ -190,13 +191,13 @@ const deleteUserDept = (userId: string) => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="部门id">
-          <el-input disabled v-model="props.selectDept.id"></el-input>
+        <el-form-item :label="deptDict.label">
+          {{ props.selectDept.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="部门名">
-          <el-input disabled v-model="props.selectDept.label"></el-input>
+        <el-form-item :label="deptDict.ifAdmin">
+          {{ props.selectDept.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>

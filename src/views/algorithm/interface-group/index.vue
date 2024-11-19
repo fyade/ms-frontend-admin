@@ -17,6 +17,7 @@ import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import InterfaceGroupInterface from "@/views/algorithm/interface-group/interfaceGroupInterface.vue";
+import { copyObject } from "@/utils/ObjectUtils.ts";
 
 const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
   dialogForm: {
@@ -101,10 +102,10 @@ const tIns = (id: number) => {
   gIns()
 }
 
-let selectInterfaceGroupInfo: InterfaceGroupDto = new InterfaceGroupDto()
+const selectInterfaceGroupInfo = ref<InterfaceGroupDto>(new InterfaceGroupDto())
 const drawer2 = ref(false)
 const manageInterface = (row: InterfaceGroupDto) => {
-  selectInterfaceGroupInfo = row
+  selectInterfaceGroupInfo.value = row
   drawer2.value = true
 }
 </script>

@@ -11,6 +11,7 @@ import { deptApi } from "@/api/module/main/sysManage/dept.ts";
 import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { UserDto2 } from "@/type/module/main/sysManage/user.ts";
+import { userDict } from "@/dict/module/main/sysManage/user.ts";
 
 const props = defineProps({
   user: {
@@ -131,18 +132,18 @@ const handleCheckChange = (
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="用户id">
-          <el-input disabled v-model="props.user.id"></el-input>
+        <el-form-item :label="userDict.id">
+          {{ props.user.id }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="用户名">
-          <el-input disabled v-model="props.user.username"></el-input>
+        <el-form-item :label="userDict.username">
+          {{ props.user.username }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="用户昵称">
-          <el-input disabled v-model="props.user.nickname"></el-input>
+        <el-form-item :label="userDict.nickname">
+          {{ props.user.nickname }}
         </el-form-item>
       </el-col>
     </el-row>

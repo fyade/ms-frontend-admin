@@ -12,6 +12,7 @@ import { sysDict } from "@/dict/module/main/sysManage/sys.ts";
 import { RoleDto } from "@/type/module/main/sysManage/role.ts";
 import { roleSysApi } from "@/api/module/main/sysManage/roleSys.ts";
 import { RoleSysDto } from "@/type/module/main/sysManage/roleSys.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {
@@ -103,7 +104,7 @@ const allRoleSyss = ref<RoleSysDto[]>([])
 const stateList2 = ref<SysDto2[]>([])
 const getRoleSyss = () => {
   stateList2.value = tableData.value.map(item => ({...item, ifTrue: false, loading: true}))
-  roleSysApi.selectAll({roleId: props.selectRole?.id}).then((res: RoleSysDto[]) => {
+  roleSysApi.selectAll({roleId: props.selectRole.id}).then((res: RoleSysDto[]) => {
     allRoleSyss.value = res
     res.forEach(ite => {
       const find = stateList2.value.find(item => item.id === ite.sysId);
@@ -118,7 +119,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      roleSysApi.insertOne({roleId: props.selectRole?.id, sysId: dto.id, remark: ''}).then(res => {
+      roleSysApi.insertOne({roleId: props.selectRole.id, sysId: dto.id, remark: ''}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)
@@ -131,7 +132,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
     })
   } else {
     return new Promise((resolve, reject) => {
-      const find = allRoleSyss.value.find(item => item.roleId === props.selectRole?.id && item.sysId === dto.id);
+      const find = allRoleSyss.value.find(item => item.roleId === props.selectRole.id && item.sysId === dto.id);
       if (find) {
         roleSysApi.deleteList(find.id).then(res => {
           if (res) {
@@ -160,18 +161,13 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="角色名">
-          <el-input disabled v-model="props.selectRole.label"></el-input>
+        <el-form-item :label="roleDict.label">
+          {{ props.selectRole.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="是否管理员权限">
-          <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="是否禁用">
-          <el-input disabled v-model="props.selectRole.ifDisabled"></el-input>
+        <el-form-item :label="roleDict.ifAdmin">
+          {{ props.selectRole.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>

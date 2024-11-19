@@ -11,6 +11,7 @@ import { interfaceGroupApi } from "@/api/module/algorithm/interfaceGroup.ts";
 import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
 import { InterfaceDto } from "@/type/module/algorithm/interface.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { interfaceDict } from "@/dict/module/algorithm/interface.ts";
 
 const props = defineProps({
   interface: {
@@ -127,18 +128,13 @@ const handleCheckChange = (
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="接口id">
-          <el-input disabled v-model="props.interface.id"></el-input>
+        <el-form-item :label="interfaceDict.label">
+          {{ props.interface.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="接口名">
-          <el-input disabled v-model="props.interface.label"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="接口权限标识">
-          <el-input disabled v-model="props.interface.perms"></el-input>
+        <el-form-item :label="interfaceDict.perms">
+          {{ props.interface.perms }}
         </el-form-item>
       </el-col>
     </el-row>

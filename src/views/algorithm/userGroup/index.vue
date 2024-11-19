@@ -99,10 +99,10 @@ const tIns = (id: number) => {
   state.dialogForm.parentId = id
   gIns()
 }
-let selectUserGroupInfo: UserGroupDto = new UserGroupDto()
+const selectUserGroupInfo = ref<UserGroupDto>(new UserGroupDto())
 const drawer2 = ref(false)
 const manageUser = (row: UserGroupDto) => {
-  selectUserGroupInfo = row
+  selectUserGroupInfo.value = row
   drawer2.value = true
 }
 </script>

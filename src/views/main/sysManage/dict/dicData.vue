@@ -11,10 +11,11 @@ import { dicDataApi } from "@/api/module/main/sysManage/dicData.ts";
 import { dicDataDict } from "@/dict/module/main/sysManage/dicData.ts";
 import { dicTypeApi } from "@/api/module/main/sysManage/dicType.ts";
 import { DicTypeDto } from "@/type/module/main/sysManage/dicType.ts";
+import { dicTypeDict } from "@/dict/module/main/sysManage/dicType.ts";
 
 const props = defineProps({
-  dicTypeId: {
-    type: Number,
+  dicType: {
+    type: DicTypeDto,
     required: true
   }
 })
@@ -24,7 +25,7 @@ const state = reactive<State2<DicDataDto, DicDataUpdDto>>({
     id: -1,
     label: '',
     value: '',
-    dicTypeId: props.dicTypeId,
+    dicTypeId: props.dicType.id,
     ifDefault: final.N,
     ifDisabled: final.N,
     orderNum: final.DEFAULT_ORDER_NUM,
@@ -49,7 +50,7 @@ const dFormRules: FormRules = {
 }
 const config = new TablePageConfig({
   selectParam: {
-    dicTypeId: props.dicTypeId
+    dicTypeId: props.dicType.id
   },
   bulkOperation: true,
 })
@@ -279,6 +280,28 @@ dicTypeApi.selectAll({}).then(res => {
       </span>
     </template>
   </el-dialog>
+
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">字典类型信息</el-text>
+  </el-divider>
+  <el-form>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item :label="dicTypeDict.name">
+          {{ props.dicType.name }}
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item :label="dicTypeDict.type">
+          {{ props.dicType.type }}
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+
+  <el-divider content-position="left">
+    <el-text size="large" style="font-weight: bold;">字典数据列表</el-text>
+  </el-divider>
 
   <!--顶部筛选表单-->
   <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">

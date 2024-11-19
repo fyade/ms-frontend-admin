@@ -3,6 +3,7 @@ import { BaseClass, PageDto } from "@/type/tablePage.ts";
 export class LogOperationDto extends BaseClass {
   id!: number;
   reqId!: string;
+  callIp!: string;
   perms!: string;
   userId!: string;
   reqParam!: string;
@@ -20,6 +21,7 @@ export class LogOperationSelAllDto {
 
 export class LogOperationInsDto {
   reqId!: string;
+  callIp!: string;
   perms!: string;
   userId!: string;
   reqParam!: string;

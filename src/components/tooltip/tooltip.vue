@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { QuestionFilled } from "@element-plus/icons-vue";
 
-let props = defineProps({
+const props = defineProps({
   content: {
     type: String,
     required: true

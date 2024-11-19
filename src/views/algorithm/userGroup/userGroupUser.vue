@@ -12,6 +12,7 @@ import { PageDto } from "@/type/tablePage.ts";
 import { UserDto } from "@/type/module/main/sysManage/user.ts";
 import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
+import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
 
 const props = defineProps({
   selectUserGroup: {
@@ -190,13 +191,8 @@ const deleteUserUserGroup = (userId: string) => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="用户组id">
-          <el-input disabled v-model="props.selectUserGroup.id"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="用户组名">
-          <el-input disabled v-model="props.selectUserGroup.label"></el-input>
+        <el-form-item :label="userGroupDict.label">
+          {{ props.selectUserGroup.label }}
         </el-form-item>
       </el-col>
     </el-row>

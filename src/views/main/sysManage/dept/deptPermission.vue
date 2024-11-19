@@ -14,6 +14,7 @@ import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
 import type Node from "element-plus/es/components/tree/src/model/node";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
+import { deptDict } from "@/dict/module/main/sysManage/dept.ts";
 
 const props = defineProps({
   selectDept: {
@@ -182,13 +183,13 @@ const selectSysChange = (value: number | undefined) => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="部门id">
-          <el-input disabled v-model="props.selectDept.id"></el-input>
+        <el-form-item :label="deptDict.label">
+          {{ props.selectDept.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="部门名">
-          <el-input disabled v-model="props.selectDept.label"></el-input>
+        <el-form-item :label="deptDict.ifAdmin">
+          {{ props.selectDept.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>

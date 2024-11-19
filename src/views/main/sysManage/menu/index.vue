@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Sort, Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
+import { Sort, Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
 import { MenuDto, MenuUpdDto, T_COMP, T_Inter, T_IS, T_MENU, TType } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictI2, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
@@ -20,6 +20,7 @@ import { copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
+import MenuIpWhiteList from "@/views/main/sysManage/menu/menuIpWhiteList.vue";
 
 const state = reactive<State2<MenuDto, MenuUpdDto>>({
   dialogForm: {
@@ -443,9 +444,33 @@ const gInsI22 = () => {
   stateI2.dialogForm.parentId = selectInterGroup.id
   gInsI2()
 }
+
+const drawerIpWhiteList = ref(false)
+const selectMenu = ref<MenuDto>(new MenuDto())
+const setIpWhiteList = (row: MenuDto) => {
+  selectMenu.value = row
+  drawerIpWhiteList.value = true
+}
 </script>
 
 <template>
+  <!--ip白名单管理-->
+  <el-dialog
+      v-model="drawerIpWhiteList"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="ip白名单管理"
+  >
+    <MenuIpWhiteList
+        :menu="selectMenu"
+    />
+    <template #footer>
+      <el-button plain @click="drawerIpWhiteList=false">取消</el-button>
+    </template>
+  </el-dialog>
+
   <!--接口管理-->
   <el-dialog
       v-model="manageInterDialogShow"
@@ -1560,8 +1585,16 @@ const gInsI22 = () => {
               <div class="zs-table-data-operate-button-row">
                 <el-button v-if="row.type!==T_Inter" link type="primary" size="small" :icon="Plus" @click="tInsInter(row.id)">新增</el-button>
                 <el-button link type="primary" size="small" :icon="Edit" @click="tUpdInter(row.id)">修改</el-button>
-                <el-button link type="primary" size="small" :icon="Edit" @click="manageInter(row)">接口管理</el-button>
                 <el-button link type="danger" size="small" :icon="Delete" @click="tDelInter(row.id)">删除</el-button>
+                <el-dropdown>
+                  <el-button link type="primary" size="small" :icon="DArrowRight">更多</el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageInter(row)">接口管理</el-button></el-dropdown-item>
+                      <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="setIpWhiteList(row)">IP白名单管理</el-button></el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </div>
             </template>
           </el-table-column>

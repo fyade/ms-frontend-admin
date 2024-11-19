@@ -14,6 +14,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import { RoleDto } from "@/type/module/main/sysManage/role.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {
@@ -183,18 +184,13 @@ const selectSysChange = (value: number | undefined) => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="角色名">
-          <el-input disabled v-model="props.selectRole.label"></el-input>
+        <el-form-item :label="roleDict.label">
+          {{ props.selectRole.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="是否管理员权限">
-          <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="是否禁用">
-          <el-input disabled v-model="props.selectRole.ifDisabled"></el-input>
+        <el-form-item :label="roleDict.ifAdmin">
+          {{ props.selectRole.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>

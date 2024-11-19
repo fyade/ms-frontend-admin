@@ -93,19 +93,19 @@ const {
 })
 
 // 选择的角色信息
-let selectRoleInfo: RoleDto = new RoleDto()
+const selectRoleInfo = ref<RoleDto>(new RoleDto())
 const drawer2 = ref(false)
 const selectPermission = ref<number[]>([])
 const manageUser = (row: RoleDto) => {
-  selectRoleInfo = row
+  selectRoleInfo.value = row
   drawer2.value = true
 }
 
 // 角色权限
 const drawer = ref(false)
 const setPermission = (row: RoleDto) => {
-  selectRoleInfo = row
-  rolePermissionApi.selectAll({roleId: selectRoleInfo.id}).then(res => {
+  selectRoleInfo.value = row
+  rolePermissionApi.selectAll({roleId: selectRoleInfo.value.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
     drawer.value = true
   })
@@ -115,7 +115,7 @@ const drawerCancelRolePermission = () => {
 }
 const drawerConfirmRolePermission = () => {
   const param = {
-    roleId: selectRoleInfo.id,
+    roleId: selectRoleInfo.value.id,
     permissionId: selectPermission.value
   }
   rolePermissionUpdRp(param).then(res => {
@@ -130,7 +130,7 @@ provide('changeSelectPermission', selectPermission)
 // 分配系统
 const drawer3 = ref(false)
 const setSystem = (row: RoleDto) => {
-  selectRoleInfo = row
+  selectRoleInfo.value = row
   drawer3.value = true
 }
 </script>

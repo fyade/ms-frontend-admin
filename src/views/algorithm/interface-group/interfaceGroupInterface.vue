@@ -13,6 +13,7 @@ import { interfaceInterfaceGroupApi, interfaceInterfaceGroupUpdIGI } from "@/api
 import { InterfaceGroupDto } from "@/type/module/algorithm/interfaceGroup.ts";
 import { interfaceInterfaceGroupDict } from "@/dict/module/algorithm/interfaceInterfaceGroup.ts";
 import { InterfaceInterfaceGroupDto, InterfaceInterfaceGroupUpdDto } from "@/type/module/algorithm/interfaceInterfaceGroup.ts";
+import { interfaceGroupDict } from "@/dict/module/algorithm/interfaceGroup.ts";
 
 const props = defineProps({
   selectInterfaceGroupInfo: {
@@ -231,13 +232,13 @@ const confirmAddInterfaceInterfaceGroup = () => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="接口组id">
-          <el-input disabled v-model="props.selectInterfaceGroupInfo.id"></el-input>
+        <el-form-item :label="interfaceGroupDict.label">
+          {{ props.selectInterfaceGroupInfo.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="接口组名">
-          <el-input disabled v-model="props.selectInterfaceGroupInfo.label"></el-input>
+        <el-form-item :label="interfaceGroupDict.baseURL">
+          {{ props.selectInterfaceGroupInfo.baseURL }}
         </el-form-item>
       </el-col>
     </el-row>

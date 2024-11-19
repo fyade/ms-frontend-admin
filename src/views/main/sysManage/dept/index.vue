@@ -110,10 +110,10 @@ const tIns = (id: number) => {
 }
 
 // 选择的部门信息
-let selectDept: DeptDto = new DeptDto()
+const selectDept = ref<DeptDto>(new DeptDto())
 const drawer = ref(false)
 const manageUser = (row: DeptDto) => {
-  selectDept = row
+  selectDept.value = row
   drawer.value = true
 }
 
@@ -121,15 +121,15 @@ const manageUser = (row: DeptDto) => {
 const drawer2 = ref(false)
 const selectPermission = ref<number[]>([])
 const managePermission = (row: DeptDto) => {
-  selectDept = row
-  deptPermissionApi.selectAll({deptId: selectDept.id}).then(res => {
+  selectDept.value = row
+  deptPermissionApi.selectAll({deptId: selectDept.value.id}).then(res => {
     selectPermission.value = res.map(item => item.permissionId)
     drawer2.value = true
   })
 }
 const drawerConfirmDeptPermission = () => {
   const param = {
-    deptId: selectDept.id,
+    deptId: selectDept.value.id,
     permissionId: selectPermission.value
   }
   deptPermissionUpdDP(param).then(res => {
@@ -147,7 +147,7 @@ provide('changeSelectPermission', selectPermission)
 // 分配系统
 const drawer3 = ref(false)
 const setSystem = (dept: DeptDto) => {
-  selectDept = dept
+  selectDept.value = dept
   drawer3.value = true
 }
 </script>

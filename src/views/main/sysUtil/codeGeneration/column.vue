@@ -17,11 +17,11 @@ import { TypeOM } from "@/type/utils/base.ts";
 
 const props = defineProps({
   tableId: {
-    require: true,
+    required: true,
     type: Number
   },
   tableNameEn: {
-    require: true,
+    required: true,
     type: String
   }
 })
@@ -29,7 +29,7 @@ const props = defineProps({
 const state = reactive<State2<CodeGenColumnDto, CodeGenColumnUpdDto>>({
   dialogForm: {
     id: -1,
-    tableId: props.tableId as number,
+    tableId: props.tableId,
     colName: '',
     colDescr: '',
     mysqlType: '',

@@ -12,6 +12,7 @@ import { PageDto } from "@/type/tablePage.ts";
 import { UserDto } from "@/type/module/main/sysManage/user.ts";
 import { RoleDto } from "@/type/module/main/sysManage/role.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
 const props = defineProps({
   selectRole: {
@@ -190,18 +191,13 @@ const deleteUserRole = (userId: string) => {
   <el-form>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="角色名">
-          <el-input disabled v-model="props.selectRole.label"></el-input>
+        <el-form-item :label="roleDict.label">
+          {{ props.selectRole.label }}
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="是否管理员权限">
-          <el-input disabled v-model="props.selectRole.ifAdmin"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item label="是否禁用">
-          <el-input disabled v-model="props.selectRole.ifDisabled"></el-input>
+        <el-form-item :label="roleDict.ifAdmin">
+          {{ props.selectRole.ifAdmin }}
         </el-form-item>
       </el-col>
     </el-row>
