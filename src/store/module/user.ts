@@ -8,8 +8,6 @@ import { loginApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
-// const modules = import.meta.glob("../../views/**/**/**/**.vue")
-
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
   const userinfo: UserDto = reactive({
@@ -36,26 +34,6 @@ export const useUserStore = defineStore('userStore', () => {
             duration: 0,
           });
           try {
-            // const permissions = (await Promise.all((deepClone<menuDto[]>(res.permissions).filter(item => {
-            //   return ['mm', 'mc'].indexOf(item.type) > -1 && item.ifVisible === final.Y
-            // }) as unknown as (RouteRecordNormalized & menuDto & { component: any })[]).map(async item => {
-            //   item.meta = {
-            //     ...item,
-            //     asideMenu: true
-            //   }
-            //   item.name = item.perms
-            //   if (item.type === 'mc') {
-            //     const component = await modules[`${item.component.indexOf('@') === 0 ? item.component.replace('@', '../..') : item.component}`]()
-            //     item.component = component.default
-            //   } else {
-            //     delete item.component
-            //   }
-            //   return item
-            // })))
-            // const permissionsObj = arr2ToDiguiObj(permissions, {ifDeepClone: false});
-            // for (let i = 0; i < permissionsObj.length; i++) {
-            //   router.addRoute('/', permissionsObj[i])
-            // }
             token.value = res.token
             ifLogin.value = true
             copyObject(userinfo, res.user)

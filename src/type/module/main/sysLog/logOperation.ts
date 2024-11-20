@@ -4,6 +4,7 @@ export class LogOperationDto extends BaseClass {
   id!: number;
   reqId!: string;
   callIp!: string;
+  hostName!: string;
   perms!: string;
   userId!: string;
   reqParam!: string;
@@ -22,6 +23,7 @@ export class LogOperationSelAllDto {
 export class LogOperationInsDto {
   reqId!: string;
   callIp!: string;
+  hostName!: string;
   perms!: string;
   userId!: string;
   reqParam!: string;

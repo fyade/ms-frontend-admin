@@ -1,6 +1,28 @@
 import { CascaderProps } from "element-plus";
 import { INS, MORE, N, ONE, UPD, Y } from '@/type/utils/base.ts'
 
+export const T_MENU = 'mm'
+export const T_COMP = 'mc'
+export const T_IS = 'ma'
+export const T_Inter = 'mb'
+export type T_MENU = 'mm'
+export type T_COMP = 'mc'
+export type T_IS = 'ma'
+export type T_Inter = 'mb'
+export type TMenuType = T_MENU | T_COMP | T_IS | T_Inter
+export const menuTypeDict = {
+  [T_MENU]: '菜单',
+  [T_COMP]: '组件',
+  [T_IS]: '接口组',
+  [T_Inter]: '接口',
+};
+
+export const T_IP = 'ip'
+export const T_HOST = 'ho'
+export type T_IP = 'ip'
+export type T_HOST = 'ho'
+export type TMIWLType = T_IP | T_HOST
+
 export const CONFIG = {
   dialog_width: '800px',
   dialog_width_wider: 'calc(100% - 50px)',
@@ -33,15 +55,6 @@ export const publicDict = {
   deleted: '逻辑删除'
 }
 
-export const EXPORT_IGNORE_KEYS = [
-  'id',
-  'createBy',
-  'updateBy',
-  'createTime',
-  'updateTime',
-  'deleted'
-]
-
 const Y = 'Y'
 const N = 'N'
 export const final: {
@@ -62,11 +75,6 @@ export const final: {
   more: 'MORE',
   ins: 'INS',
   upd: 'UPD'
-}
-
-export interface FinalIU {
-  'INS': 'INS'
-  'UPD': 'UPD'
 }
 
 export interface PublicDictInterface {

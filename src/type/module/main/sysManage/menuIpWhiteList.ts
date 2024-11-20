@@ -3,7 +3,8 @@ import { BaseClass, PageDto } from "@/type/tablePage.ts";
 export class MenuIpWhiteListDto extends BaseClass {
   id!: number;
   menuId!: number;
-  ipWhiteList!: string;
+  whiteList!: string;
+  fromType!: string;
   type!: string;
   remark!: string;
 }
@@ -16,7 +17,8 @@ export class MenuIpWhiteListSelAllDto {
 
 export class MenuIpWhiteListInsDto {
   menuId!: number;
-  ipWhiteList!: string;
+  whiteList!: string;
+  fromType!: string;
   type!: string;
   remark!: string;
 }

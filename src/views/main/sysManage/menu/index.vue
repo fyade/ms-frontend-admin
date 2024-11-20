@@ -6,13 +6,13 @@ export default {
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue";
-import { cascaderProps2, CONFIG, final } from "@/utils/base.ts";
+import { cascaderProps2, CONFIG, final, menuTypeDict, T_COMP, T_Inter, T_IS, T_MENU, TMenuType } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
 import { Sort, Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
-import { MenuDto, MenuUpdDto, T_COMP, T_Inter, T_IS, T_MENU, TType } from "@/type/module/main/sysManage/menu.ts";
+import { MenuDto, MenuUpdDto } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictI2, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
 import { useRouterStore } from "@/store/module/router.ts";
@@ -196,15 +196,9 @@ const {
 const routerStore = useRouterStore();
 // 页面显示为菜单/组件（a）还是接口（b）
 const activeTab2Name = ref('a')
-const menuTypeDict = {
-  [T_MENU]: '菜单',
-  [T_COMP]: '组件',
-  [T_IS]: '接口组',
-  [T_Inter]: '接口',
-};
 
 // 可选择的类型
-const canChooseTypes = ref<TType[]>([])
+const canChooseTypes = ref<TMenuType[]>([])
 // 校验规则的修改
 watch(() => [state.dialogForm.type, activeTabName.value], () => {
   if (activeTabName.value === final.more) {
@@ -276,7 +270,7 @@ const tIns = (id: number) => {
 }
 
 // 检查是否需要显示
-const checkVisible = (a: TType, b: TType[]): boolean => {
+const checkVisible = (a: TMenuType, b: TMenuType[]): boolean => {
   return b.indexOf(a) > -1
 }
 

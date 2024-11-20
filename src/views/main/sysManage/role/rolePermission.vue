@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, inject, nextTick, reactive, ref, Ref } from "vue";
-import { CONFIG, final } from "@/utils/base.ts";
+import { CONFIG, final, T_COMP, T_Inter, T_IS, T_MENU } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
-import { MenuDto, MenuUpdDto, T_COMP, T_Inter, T_IS, T_MENU } from "@/type/module/main/sysManage/menu.ts";
+import { MenuDto, MenuUpdDto } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi, menuApi2 } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict } from "@/dict/module/main/sysManage/menu.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";

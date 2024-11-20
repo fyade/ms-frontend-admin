@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { CONFIG, final } from "@/utils/base.ts";
+import { CONFIG, final, T_HOST, T_IP, T_IS } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
@@ -9,8 +9,8 @@ import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-
 import { MenuIpWhiteListDto, MenuIpWhiteListUpdDto } from "@/type/module/main/sysManage/menuIpWhiteList.ts";
 import { menuIpWhiteListApi } from "@/api/module/main/sysManage/menuIpWhiteList.ts";
 import { menuIpWhiteListDict } from "@/dict/module/main/sysManage/menuIpWhiteList.ts";
-import { MenuDto, T_IS } from "@/type/module/main/sysManage/menu.ts";
-import { menuDict, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
+import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
+import { menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
 
 const props = defineProps({
   menu: {
@@ -23,7 +23,8 @@ const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
   dialogForm: {
     id: -1,
     menuId: props.menu.id,
-    ipWhiteList: '',
+    whiteList: '',
+    fromType: T_IP,
     type: T_IS,
     remark: '',
   },
@@ -33,7 +34,8 @@ const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
 })
 const dFormRules: FormRules = {
   menuId: [{required: true, trigger: 'change'}],
-  ipWhiteList: [{required: true, trigger: 'change'}],
+  whiteList: [{required: true, trigger: 'change'}],
+  fromType: [{required: true, trigger: 'change'}],
   type: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
@@ -123,24 +125,21 @@ const {
         -->
         <!--在此下方添加表单项-->
         <el-row>
-          <!--<el-col :span="12">-->
-          <!--  <el-form-item :label="menuIpWhiteListDict.menuId" prop="menuId">-->
-          <!--    <el-input v-model="state.dialogForm.menuId" :placeholder="menuIpWhiteListDict.menuId"/>-->
-          <!--  </el-form-item>-->
-          <!--</el-col>-->
-          <el-col :span="24">
-            <el-form-item :label="menuIpWhiteListDict.ipWhiteList" prop="ipWhiteList">
-              <el-input v-model="state.dialogForm.ipWhiteList" :placeholder="menuIpWhiteListDict.ipWhiteList"/>
+          <el-col :span="12">
+            <el-form-item :label="menuIpWhiteListDict.whiteList" prop="whiteList">
+              <el-input v-model="state.dialogForm.whiteList" :placeholder="menuIpWhiteListDict.whiteList"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="menuIpWhiteListDict.fromType" prop="fromType">
+              <!--<el-input v-model="state.dialogForm.fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
+              <el-radio-group v-model="state.dialogForm.fromType">
+                <el-radio :value="T_IP">ip</el-radio>
+                <el-radio :value="T_HOST">host</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
-        <!--<el-row>-->
-        <!--  <el-col :span="12">-->
-        <!--    <el-form-item :label="menuIpWhiteListDict.type" prop="type">-->
-        <!--      <el-input v-model="state.dialogForm.type" :placeholder="menuIpWhiteListDict.type"/>-->
-        <!--    </el-form-item>-->
-        <!--  </el-col>-->
-        <!--</el-row>-->
         <el-row>
           <el-col :span="24">
             <el-form-item :label="menuIpWhiteListDict.remark" prop="remark">
@@ -182,36 +181,30 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <!--<el-table-column prop="menuId" :label="menuIpWhiteListDict.menuId" width="300">-->
-          <!--  <template #header>-->
-          <!--    <span :class="ifRequired('menuId')?'tp-table-header-required':''">{{ menuIpWhiteListDict.menuId }}</span>-->
-          <!--  </template>-->
-          <!--  <template #default="{$index}">-->
-          <!--    <div :class="state.dialogForms_error?.[`${$index}-menuId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-          <!--      <el-input v-model="state.dialogForms[$index].menuId" :placeholder="menuIpWhiteListDict.menuId"/>-->
-          <!--    </div>-->
-          <!--  </template>-->
-          <!--</el-table-column>-->
-          <el-table-column prop="ipWhiteList" :label="menuIpWhiteListDict.ipWhiteList" width="480">
+          <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="480">
             <template #header>
-              <span :class="ifRequired('ipWhiteList')?'tp-table-header-required':''">{{ menuIpWhiteListDict.ipWhiteList }}</span>
+              <span :class="ifRequired('whiteList')?'tp-table-header-required':''">{{ menuIpWhiteListDict.whiteList }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ipWhiteList`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].ipWhiteList" :placeholder="menuIpWhiteListDict.ipWhiteList"/>
+              <div :class="state.dialogForms_error?.[`${$index}-whiteList`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].whiteList" :placeholder="menuIpWhiteListDict.whiteList"/>
               </div>
             </template>
           </el-table-column>
-          <!--<el-table-column prop="type" :label="menuIpWhiteListDict.type" width="300">-->
-          <!--  <template #header>-->
-          <!--    <span :class="ifRequired('type')?'tp-table-header-required':''">{{ menuIpWhiteListDict.type }}</span>-->
-          <!--  </template>-->
-          <!--  <template #default="{$index}">-->
-          <!--    <div :class="state.dialogForms_error?.[`${$index}-type`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">-->
-          <!--      <el-input v-model="state.dialogForms[$index].type" :placeholder="menuIpWhiteListDict.type"/>-->
-          <!--    </div>-->
-          <!--  </template>-->
-          <!--</el-table-column>-->
+          <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="300">
+            <template #header>
+              <span :class="ifRequired('fromType')?'tp-table-header-required':''">{{ menuIpWhiteListDict.fromType }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-fromType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-input v-model="state.dialogForms[$index].fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
+                <el-radio-group v-model="state.dialogForms[$index].fromType">
+                  <el-radio :value="T_IP">ip</el-radio>
+                  <el-radio :value="T_HOST">host</el-radio>
+                </el-radio-group>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="300">
             <template #header>
               <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ menuIpWhiteListDict.remark }}</span>
@@ -312,9 +305,8 @@ const {
       <!--<el-table-column fixed prop="id" :label="menuIpWhiteListDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <!--<el-table-column prop="menuId" :label="menuIpWhiteListDict.menuId" width="120"/>-->
-      <el-table-column prop="ipWhiteList" :label="menuIpWhiteListDict.ipWhiteList" width="360"/>
-      <!--<el-table-column prop="type" :label="menuIpWhiteListDict.type" width="120"/>-->
+      <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="360"/>
+      <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="120"/>
       <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="menuIpWhiteListDict.createBy" width="120"/>-->
