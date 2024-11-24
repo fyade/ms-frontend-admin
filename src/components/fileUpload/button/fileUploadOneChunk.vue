@@ -2,30 +2,23 @@
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/fileUpload.ts";
 import SparkMd5 from "spark-md5";
-import { removeElementsByIndices } from "@/utils/ObjectUtils";
-import { CHUNK_SIZE } from "../../../config/config";
+import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
+import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { FileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceOneChunk } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
-
-interface ProgressI {
-  started: number[],
-  ended: number[],
-  total: number
-}
 
 let pageNotUnmounted = true
 onBeforeUnmount(() => {
   pageNotUnmounted = false
 })
-const fileUploadRequests: (() => Promise<null>)[] = []
 const emit = defineEmits(['uploadSuccess', 'uploadFail']);
 const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive<FileUploadInterfaceOneChunkConcur>({
+const state = reactive<FileUploadInterfaceOneChunk>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -41,11 +34,9 @@ const state = reactive<FileUploadInterfaceOneChunkConcur>({
   fileSize: 0,
   fileNewName: '',
   progress_total: 0,
-  progress_started: 0,
-  progress_ended: 0,
 })
 
-const upload6 = async () => {
+const upload3 = async () => {
   state.currentStage = 'a'
   state.chunkNum = 0
   state.chunkTotal = 0
@@ -79,9 +70,6 @@ const upload6 = async () => {
   // 开始分片上传
   state.currentStage = 'c'
   state.fileNewName = res1.fileNewName
-  state.progress_started = 0
-  state.progress_ended = 0
-  state.progress_total = newChunks.length
   await startUpload(indexs, newChunks)
   // 分片上传完成，合并分片
   state.currentStage = 'e'
@@ -91,7 +79,7 @@ const upload6 = async () => {
       fileMd5: state.fileMd5
     })
   } catch (e) {
-    uploadFail(`${file.name}合并失败。`)
+    uploadFail(`${file.name}合并失败`)
   }
   // 分片合并完成
   uploadSuccess()
@@ -143,36 +131,33 @@ const hash = (chunks: Blob[]): Promise<string> => {
  * @param chunks
  */
 const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
-  return new Promise(async (resolve) => {
-    fileUploadRequests.splice(0, fileUploadRequests.length)
-    for (let i = 0; i < chunks.length; i++) {
-      fileUploadRequests.push(uploading(indexs[i], chunks[i]))
-    }
-    await concurRequest2(fileUploadRequests, {
-      downloadProgress: (progress: ProgressI) => {
-        state.progress_started = progress.started.length
-        state.progress_ended = progress.ended.length
+  state.progress_total = indexs.length
+  return new Promise((resolve) => {
+    const _upload = (i: number) => {
+      // 如果上传完成
+      if (i >= chunks.length) {
+        resolve(null)
+        return
       }
-    })
-    resolve(null)
+      state.chunkNum = i + 1
+      const blob = chunks[i];
+      const fd = new FormData()
+      fd.append('file', blob)
+      // 上传当前分片
+      const obj = {
+        fileMd5: state.fileMd5,
+        fileNewName: state.fileNewName,
+        chunkIndex: indexs[i],
+        file: fd
+      }
+      fileUploadOneChunk_upload(obj).then(() => {
+        if (pageNotUnmounted) {
+          _upload(i + 1)
+        }
+      })
+    }
+    _upload(0)
   })
-}
-/**
- * 上传
- * @param chunkIndex
- * @param blob
- */
-const uploading = (chunkIndex: number, blob: Blob) => {
-  const fd = new FormData()
-  fd.append('file', blob)
-  // 上传当前分片
-  const obj = {
-    fileMd5: state.fileMd5,
-    fileNewName: state.fileNewName,
-    chunkIndex: chunkIndex,
-    file: fd
-  }
-  return () => fileUploadOneChunk_upload(obj)
 }
 /**
  * 上传完成
@@ -197,78 +182,18 @@ const uploadFail = (msg?: string) => {
   ElMessage.warning(msg)
   emit('uploadFail', msg)
 }
-
-/**
- * 并发请求
- * @param promises
- * @param maxNum
- * @param downloadProgress
- */
-function concurRequest2(promises: (() => Promise<null>)[],
-                        {
-                          maxNum = 4,
-                          downloadProgress
-                        }: {
-                          maxNum?: number
-                          downloadProgress?: Function
-                        } = {}
-): Promise<(string | boolean | null)[]> {
-  const progress = {
-    started: [] as number[],
-    ended: [] as number[],
-    total: promises.length
-  }
-  return new Promise((resolve) => {
-    if (promises.length === 0) {
-      resolve([])
-    }
-    let index = 0
-    let count = 0
-    const result: (string | boolean | null)[] = []
-
-    async function request() {
-      const i = index
-      const pormis = promises[index]
-      index++
-      try {
-        progress.started.push(i)
-        result[i] = await (pormis)()
-      } catch (err) {
-        result[i] = err as string
-      } finally {
-        progress.ended.push(i)
-        count++
-        if (downloadProgress) {
-          downloadProgress(progress)
-        }
-        if (count === promises.length) {
-          resolve(result)
-        }
-        if (index < promises.length) {
-          if (pageNotUnmounted) {
-            request()
-          }
-        }
-      }
-    }
-
-    for (let i = 0; i < Math.min(promises.length, maxNum); i++) {
-      request()
-    }
-  })
-}
 </script>
 
 <template>
-  <el-button :loading="isLoading" :disabled="isDisabled" theme="primary" @click="upload6" :icon="Upload">
-    <span>单文件并发分片上传</span>
+  <el-button :loading="isLoading" :disabled="isDisabled" theme="primary" @click="upload3" :icon="Upload">
+    <span>单文件分片上传</span>
     <template v-if="isDisabled">&nbsp;
       <span>({{
-          ['a', 'b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] :
-              `${state.progress_started}/${state.progress_ended}/${state.progress_total}`
+          ['a', 'b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] : `${state.chunkNum}/${state.progress_total}`
         }})</span>
     </template>
   </el-button>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+</style>

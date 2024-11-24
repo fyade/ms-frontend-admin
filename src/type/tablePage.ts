@@ -49,7 +49,7 @@ export interface ApiConfig<T, T2 = T> {
   deleteList: (...ids: (number | string)[]) => Promise<any>
 }
 
-export class TablePageConfig {
+export class TablePageConfig<T = {}> {
   /**
    * 补充的查询参数
    */
@@ -153,8 +153,8 @@ export class TablePageConfig {
                 activeTabMoreInsFinishCallback = null,
                 activeTabMoreDelCallback = null,
               }: {
-                selectParam?: object
-                insUpdParam?: object
+                selectParam?: { [P in keyof T]?: T[P] }
+                insUpdParam?: { [P in keyof T]?: T[P] }
                 getDataOnMounted?: boolean
                 pageQuery?: boolean
                 watchDialogVisible?: boolean

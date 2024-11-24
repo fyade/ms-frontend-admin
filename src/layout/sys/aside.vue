@@ -2,7 +2,7 @@
 import { useRouterStore } from "@/store/module/router.ts";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
-import AsideMenu from "@/components/menu/asideMenu.vue";
+import AsideMenu from "@/layout/sys/asideMenu.vue";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 
 const defaultActive = ref('')
@@ -99,8 +99,7 @@ defineExpose({
     <div class="bottom">
       <div class="row">
         <div @click="changeMenuCollapse">
-          <SvgIcon :name="sysConfigStore.getMenuCollapse()?'indent-right':'indent-left'" color="#000"
-                   style="cursor: pointer;"/>
+          <SvgIcon :name="sysConfigStore.getMenuCollapse()?'indent-right':'indent-left'" color="#000" style="cursor: pointer;"/>
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ const dFormRules: FormRules = {
   fromType: [{required: true, trigger: 'change'}],
   type: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<MenuIpWhiteListDto>({
   bulkOperation: true,
   selectParam: {
     menuId: props.menu.id

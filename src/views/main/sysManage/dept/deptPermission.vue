@@ -59,11 +59,11 @@ const dFormRules: FormRules = {
   ifPublic: [{required: true, trigger: 'change'}],
   perms: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<MenuDto<string>>({
   bulkOperation: true,
   pageQuery: false,
   selectParam: {
-    type: {in: {value: [T_MENU, T_COMP]}},
+    type: JSON.stringify({in: {value: [T_MENU, T_COMP]}}),
     sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
@@ -144,9 +144,9 @@ const handleCheckChange = (
 const loadNode = (node: Node, resolve: (data: MenuDto[]) => void) => {
   menuApi.selectAll({
     parentId: node.level === 0 ? final.DEFAULT_PARENT_ID : node.data.id,
-    type: {in: {value: [T_IS, T_Inter]}},
+    type: JSON.stringify({in: {value: [T_IS, T_Inter]}}),
     sysId: selectSys.value || final.DEFAULT_PARENT_ID,
-  } as any).then((res: MenuDto[]) => {
+  }).then((res: MenuDto[]) => {
     resolve(res)
   })
 }
@@ -167,7 +167,7 @@ const selAllSyss = () => {
 }
 const selectSysChange = (value: number | undefined) => {
   const v = value || final.DEFAULT_PARENT_ID;
-  (config.selectParam as any).sysId = v;
+  config.selectParam.sysId = v;
   gRefresh();
   treeShow.value = false
   nextTick(() => {

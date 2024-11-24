@@ -16,14 +16,7 @@ export interface AllMenus2I {
 const sysStore = useSysStore();
 
 export const useRouterStore = defineStore('routerStore', () => {
-  // const allMenus1: RouteRecordNormalized[] = routes.filter(item => item.path === '/');
-  const allMenus1 = computed<RouteRecordNormalized[]>(() => {
-    return router.getRoutes().filter(item => {
-      return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
-    }).sort((m1, m2) => {
-      return (typeof m1.meta.orderNum === 'number' && typeof m2.meta.orderNum === 'number') ? (m1.meta.orderNum - m2.meta.orderNum) : 0
-    })
-  })
+  const allMenus1 = ref<RouteRecordNormalized[]>([])
   const allMenus2 = computed(() => {
     return diguiObjToArr2<RouteRecordNormalized>(allMenus1.value).map(ar => {
       const meta = ar[ar.length - 1].meta;
@@ -36,6 +29,14 @@ export const useRouterStore = defineStore('routerStore', () => {
       }
     })
   });
+  const reloadAllMenu1 = () => {
+    allMenus1.value = router.getRoutes().filter(item => {
+      return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
+    }).sort((m1, m2) => {
+      return (typeof m1.meta.orderNum === 'number' && typeof m2.meta.orderNum === 'number') ? (m1.meta.orderNum - m2.meta.orderNum) : 0
+    })
+  }
+  reloadAllMenu1()
   const menuList: Ref<AllMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
   const addMenu = (menu: AllMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
@@ -79,6 +80,7 @@ export const useRouterStore = defineStore('routerStore', () => {
     getMenuList,
     getMenuListNames,
     allMenus1,
-    allMenus2
+    allMenus2,
+    reloadAllMenu1
   }
 })

@@ -15,6 +15,7 @@ export class UserDto extends BaseClass {
 }
 
 export class UserSelDto extends PageDto {
+  ifWithRole!: string
 }
 
 export class UserSelAllDto {

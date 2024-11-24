@@ -2,11 +2,11 @@
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/fileUpload.ts";
 import SparkMd5 from "spark-md5";
-import { removeElementsByIndices } from "@/utils/ObjectUtils";
-import { CHUNK_SIZE } from "../../../config/config";
+import { CHUNK_SIZE } from "~/config/config.ts";
+import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { FileUploadInterfaceOneChunk } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceMoreChunk } from "@/type/demo/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
 let pageNotUnmounted = true
@@ -18,7 +18,7 @@ const isDisabled = computed(() => {
   return ['o', 'd'].indexOf(state.currentStage) === -1
 })
 const isLoading = ref(false)
-const state = reactive<FileUploadInterfaceOneChunk>({
+const state = reactive<FileUploadInterfaceMoreChunk>({
   currentStage: 'o',
   dictStage: {
     o: '无上传任务',
@@ -30,58 +30,64 @@ const state = reactive<FileUploadInterfaceOneChunk>({
   },
   chunkNum: 0,
   chunkTotal: 0,
+  fileNum: 0,
+  fileTotal: 0,
   fileMd5: '',
   fileSize: 0,
   fileNewName: '',
   progress_total: 0,
 })
 
-const upload3 = async () => {
+const upload4 = async () => {
   state.currentStage = 'a'
   state.chunkNum = 0
   state.chunkTotal = 0
+  state.fileNum = 0
+  state.fileTotal = 0
   const filepicks = []
   try {
-    filepicks.push(...await selectFiles())
+    filepicks.push(...await selectFiles(true))
   } catch (e) {
     state.currentStage = 'o'
     return
   }
-  state.currentStage = 'b'
-  isLoading.value = true
-  const file = filepicks[0]
-  // 开始
-  state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
-  const chunks = createChunks(file)
-  state.fileMd5 = await hash(chunks)
-  // 上传前检查
-  const res1 = await fileUploadOneChunk_check({
-    fileName: file.name,
-    fileMd5: state.fileMd5,
-    fileSize: state.fileSize,
-    chunkNum: state.chunkTotal
-  })
-  if (res1.merge) {
-    uploadSuccess()
-    return
-  }
-  const indexs = removeElementsByIndices(new Array(chunks.length).fill(null).map((item, i) => i), ...res1.uploadedIndexs)
-  const newChunks = removeElementsByIndices(chunks, ...res1.uploadedIndexs);
-  // 开始分片上传
-  state.currentStage = 'c'
-  state.fileNewName = res1.fileNewName
-  await startUpload(indexs, newChunks)
-  // 分片上传完成，合并分片
-  state.currentStage = 'e'
-  try {
-    await fileUploadOneChunk_merge({
-      fileNewName: state.fileNewName,
-      fileMd5: state.fileMd5
+  state.fileTotal = filepicks.length
+  for (let i = 0; i < filepicks.length; i++) {
+    state.fileNum = i + 1
+    state.currentStage = 'b'
+    isLoading.value = true
+    const file = filepicks[i]
+    // 开始
+    state.chunkTotal = Math.ceil(file.size / CHUNK_SIZE)
+    const chunks = createChunks(file)
+    state.fileMd5 = await hash(chunks)
+    // 上传前检查
+    const res1 = await fileUploadOneChunk_check({
+      fileName: file.name,
+      fileMd5: state.fileMd5,
+      fileSize: state.fileSize,
+      chunkNum: state.chunkTotal
     })
-  } catch (e) {
-    uploadFail(`${file.name}合并失败`)
+    if (!res1.merge) {
+      const indexs = removeElementsByIndices(new Array(chunks.length).fill(null).map((item, i) => i), ...res1.uploadedIndexs)
+      const newChunks = removeElementsByIndices(chunks, ...res1.uploadedIndexs);
+      // 开始分片上传
+      state.currentStage = 'c'
+      state.fileNewName = res1.fileNewName
+      await startUpload(indexs, newChunks)
+      // 分片上传完成，合并分片
+      state.currentStage = 'e'
+      try {
+        await fileUploadOneChunk_merge({
+          fileNewName: state.fileNewName,
+          fileMd5: state.fileMd5
+        })
+      } catch (e) {
+        uploadFail(`${file.name}合并失败。`)
+      }
+      // 分片合并完成
+    }
   }
-  // 分片合并完成
   uploadSuccess()
 }
 /**
@@ -185,12 +191,15 @@ const uploadFail = (msg?: string) => {
 </script>
 
 <template>
-  <el-button :loading="isLoading" :disabled="isDisabled" theme="primary" @click="upload3" :icon="Upload">
-    <span>单文件分片上传</span>
+  <el-button :loading="isLoading" :disabled="isDisabled" theme="primary" @click="upload4" :icon="Upload">
+    <span>多文件分片上传</span>
     <template v-if="isDisabled">&nbsp;
-      <span>({{
-          ['a', 'b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] : `${state.chunkNum}/${state.progress_total}`
-        }})</span>
+      <span>(
+        {{
+          state.currentStage === 'a' ? state.dictStage[state.currentStage] :
+              (`${state.fileNum}/${state.fileTotal},` + (['b', 'e'].indexOf(state.currentStage) > -1 ? state.dictStage[state.currentStage] : `${state.chunkNum}/${state.progress_total}`))
+        }}
+        )</span>
     </template>
   </el-button>
 </template>

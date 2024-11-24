@@ -37,7 +37,7 @@ const interfaceInterfaceGroupDFormRules: FormRules = {
   interfaceId: [{required: true, trigger: 'change'}],
   interfaceGroupId: [{required: true, trigger: 'change'}],
 }
-const interfaceInterfaceGroupConfig = new TablePageConfig({
+const interfaceInterfaceGroupConfig = new TablePageConfig<InterfaceInterfaceGroupDto>({
   bulkOperation: true,
   selectParam: {
     interfaceGroupId: props.selectInterfaceGroupInfo.id

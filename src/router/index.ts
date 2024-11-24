@@ -18,70 +18,39 @@ export const routes: RouteRecordRaw[] = [
       label: '控制台主页'
     },
     component: () => import('@/layout/sys/index.vue'),
-    children: [
-      // {
-      //   path: 'sys',
-      //   name: 'sys',
-      //   meta: {
-      //     asideMenu: true,
-      //     label: '系统管理'
-      //   },
-      //   children: [
-      //     {
-      //       path: 'user',
-      //       name: 'user',
-      //       meta: {
-      //         asideMenu: true,
-      //         label: '用户管理'
-      //       },
-      //       component: () => import('@/views/sys/user/index.vue')
-      //     },
-      //     {
-      //       path: 'role',
-      //       name: 'role',
-      //       meta: {
-      //         asideMenu: true,
-      //         label: '角色管理'
-      //       },
-      //       component: () => import('@/views/sys/role/index.vue')
-      //     },
-      //     {
-      //       path: 'menu',
-      //       name: 'menu',
-      //       meta: {
-      //         asideMenu: true,
-      //         label: '菜单管理'
-      //       },
-      //       component: () => import('@/views/sys/menu/index.vue')
-      //     },
-      //     {
-      //       path: 'interface',
-      //       name: 'interface',
-      //       meta: {
-      //         asideMenu: true,
-      //         label: '接口管理'
-      //       },
-      //       component: () => import('@/views/sys/interface/index.vue')
-      //     }
-      //   ]
-      // }
-    ]
+    children: []
   },
   {
     path: '/user',
+    name: '/user',
+    meta: {
+      label: '个人中心'
+    },
     component: () => import('@/layout/user/index.vue'),
     redirect: '/user/info',
     children: [
       {
         path: 'info',
+        meta: {
+          icon: 'info',
+          label: '我的资料',
+        },
         component: () => import('@/views/user/info.vue')
       },
       {
         path: 'edit-avatar',
+        meta: {
+          icon: 'avatar',
+          label: '修改头像',
+        },
         component: () => import('@/views/user/edit-avatar.vue')
       },
       {
         path: 'edit-psd',
+        meta: {
+          icon: 'electronic-locks-open',
+          label: '修改密码',
+        },
         component: () => import('@/views/user/edit-psd.vue')
       }
     ]
@@ -92,7 +61,8 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('@/views/error/404.vue')
+    // component: () => import('@/views/error/404.vue')
+    redirect: '/'
   }
 ]
 

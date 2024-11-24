@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import PublicIndex from "@/layout/publicIndex.vue";
 import { CONFIG } from "@/utils/base.ts";
 import { useRoute } from 'vue-router';
+import router from "@/router";
 
 const route = useRoute()
 const defaultActive = ref('')
@@ -12,23 +13,12 @@ watch(route, () => {
   immediate: true
 })
 
-const menus = [
-  {
-    index: '/user/info',
-    icon: 'info',
-    label: '我的资料'
-  },
-  {
-    index: '/user/edit-avatar',
-    icon: 'avatar',
-    label: '修改头绪'
-  },
-  {
-    index: '/user/edit-psd',
-    icon: 'electronic-locks-open',
-    label: '修改密码'
-  }
-]
+const routeOfUser = router.getRoutes().find(item => item.name === '/user');
+const menus = routeOfUser ? routeOfUser.children.map(item => ({
+  index: `/user/${item.path}`,
+  icon: item.meta ? `${item.meta.icon}` : '',
+  label: item.meta ? `${item.meta.label}` : '',
+})) : []
 const menuIndex = computed(() => {
   return menus.findIndex(itm => itm.index === defaultActive.value)
 })
@@ -43,8 +33,7 @@ const menuIndex = computed(() => {
             color: index === menuIndex ? '#fff' : '#000'
           }">
             <el-space class="elSpace">
-              <SvgIcon :name="item.icon"
-                :color="index === menuIndex ? CONFIG.icon_white : CONFIG.theme_color_menu_bg_active" />
+              <SvgIcon :name="item.icon" :color="index === menuIndex ? CONFIG.icon_white : CONFIG.theme_color_menu_bg_active"/>
               <span>{{ item.label }}</span>
             </el-space>
             <div v-if="index === menuIndex" class="bg" style="position: absolute;padding: 3px 0">
@@ -56,7 +45,7 @@ const menuIndex = computed(() => {
         </el-menu>
       </el-aside>
       <el-main class="right">
-        <router-view />
+        <router-view/>
       </el-main>
     </el-container>
   </PublicIndex>
@@ -68,17 +57,17 @@ const menuIndex = computed(() => {
   justify-content: center;
   height: 100%;
 
-  >.left {
+  > .left {
     flex: none;
     width: 200px;
     height: 100%;
 
-    >* {
+    > * {
       height: 100%;
     }
   }
 
-  >.right {
+  > .right {
     flex: auto;
     padding: 8px;
     min-width: 600px;
@@ -102,7 +91,7 @@ const menuIndex = computed(() => {
   height: 50px;
   transition: all .2s;
 
-  >.r0,
+  > .r0,
   .r2 {
     flex: none;
     width: var(--padding);
@@ -112,15 +101,15 @@ const menuIndex = computed(() => {
     background-clip: padding-box;
   }
 
-  >.r0 {
+  > .r0 {
     background-image: radial-gradient(circle at 0 0, transparent var(--padding), var(--theme-color-menu-bg-active) var(--padding));
   }
 
-  >.r2 {
+  > .r2 {
     background-image: radial-gradient(circle at 0 var(--padding), transparent var(--padding), var(--theme-color-menu-bg-active) var(--padding));
   }
 
-  >.r1 {
+  > .r1 {
     flex: auto;
     width: 100%;
     background-color: var(--theme-color-menu-bg-active);

@@ -48,7 +48,7 @@ const dFormRules: FormRules = {
   ifDisabled: [{required: true, trigger: 'change'}],
   orderNum: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<DicDataDto>({
   selectParam: {
     dicTypeId: props.dicType.id
   },

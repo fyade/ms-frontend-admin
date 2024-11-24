@@ -5,14 +5,15 @@ import { dicDataOfPerm } from "@/api/module/main/sysManage/dicData.ts";
 
 export const useDictStore = defineStore('dictStore', () => {
   const dicts = ref(new Map<string, DicDataDto[]>())
-  const getDict_ = async (perm: string) => {
+  const getDict = (perm: string) => computed(() => {
     if (!dicts.value.has(perm)) {
-      const data = await dicDataOfPerm(perm);
-      dicts.value.set(perm, data)
+      dicts.value.set(perm, [])
+      dicDataOfPerm(perm).then(data => {
+        dicts.value.set(perm, data)
+      })
     }
     return dicts.value.get(perm)
-  }
-  const getDict = (perm: string) => computed(() => getDict_(perm))
+  })
   return {
     getDict
   }

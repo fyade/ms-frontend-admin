@@ -47,11 +47,11 @@ const state = reactive<State2<MenuDto, MenuUpdDto>>({
   },
 })
 const dFormRules: FormRules = reactive({})
-const config = new TablePageConfig({
+const config = new TablePageConfig<MenuDto<String>>({
   pageQuery: false,
   bulkOperation: true,
   selectParam: {
-    type: {in: {value: [T_MENU, T_COMP]}},
+    type: JSON.stringify({in: {value: [T_MENU, T_COMP]}}),
     sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
@@ -136,11 +136,11 @@ const dFormRulesInter: FormRules = {
   ifPublic: [{required: true, trigger: 'change'}],
   sysId: [{required: true, trigger: 'change'}],
 }
-const configInter = new TablePageConfig({
+const configInter = new TablePageConfig<MenuDto<string>>({
   pageQuery: false,
   bulkOperation: true,
   selectParam: {
-    type: {in: {value: [T_IS]}},
+    type: JSON.stringify({in: {value: [T_IS]}}),
     sysId: final.DEFAULT_PARENT_ID,
   },
   selectListCallback: () => {
@@ -318,9 +318,9 @@ const selectSysChange = (value: number | undefined) => {
   state.dialogForm.sysId = selectSys;
   stateInter.dialogForm.sysId = selectSys;
   stateI2.dialogForm.sysId = selectSys;
-  (config.selectParam as any).sysId = selectSys;
-  (configInter.selectParam as any).sysId = selectSys;
-  (configI2.selectParam as any).sysId = selectSys;
+  config.selectParam.sysId = selectSys;
+  configInter.selectParam.sysId = selectSys;
+  configI2.selectParam.sysId = selectSys;
   gRefresh();
   gRefreshInter();
   // gRefreshI2();
@@ -338,8 +338,8 @@ const selectInterGroup = reactive(new MenuDto())
 const manageInterDialogShow = ref(false)
 const manageInter = (row: MenuDto) => {
   copyObject(selectInterGroup, row);
-  (configI2.insUpdParam as any).sysId = selectSys.value;
-  (configI2.selectParam as any).parentId = row.id;
+  configI2.insUpdParam.sysId = selectSys.value;
+  configI2.selectParam.parentId = row.id;
   manageInterDialogShow.value = true
   gRefreshI2()
 }
@@ -374,11 +374,11 @@ const dFormRulesI2: FormRules = {
   ifPublic: [{required: true, trigger: 'change'}],
   sysId: [{required: true, trigger: 'change'}],
 }
-const configI2 = new TablePageConfig({
+const configI2 = new TablePageConfig<MenuDto<string>>({
   getDataOnMounted: false,
   bulkOperation: true,
   selectParam: {
-    type: {in: {value: [T_Inter]}},
+    type: JSON.stringify({in: {value: [T_Inter]}}),
     parentId: selectInterGroup.id,
     sysId: final.DEFAULT_PARENT_ID,
   },

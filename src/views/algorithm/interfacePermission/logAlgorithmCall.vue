@@ -37,7 +37,7 @@ const dFormRules: FormRules = {
   callIp: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<LogAlgorithmCallDto>({
   bulkOperation: true,
   selectParam: {
     userGroupPermissionId: props.selectUGPId

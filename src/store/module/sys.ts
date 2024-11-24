@@ -16,7 +16,7 @@ export const useSysStore = defineStore('sysStore', () => {
 
   const currentSystem = reactive<SysDto>(new SysDto())
   const setCurrentSystem = (dto: SysDto) => {
-    copyObject(currentSystem,dto)
+    copyObject(currentSystem, dto)
   }
   const getCurrentSystem = computed(() => {
     return currentSystem

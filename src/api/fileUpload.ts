@@ -38,7 +38,7 @@ export function fileUploadOneFull(file: FormData, fileName: string = '') {
 }
 
 /**
- * 上传头绪
+ * 上传头像
  * @param file
  */
 export function fileUploadAvatar(file: FormData) {

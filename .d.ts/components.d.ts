@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AsideMenu: typeof import('./../src/components/menu/asideMenu.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
@@ -52,13 +51,13 @@ declare module 'vue' {
     ElText: typeof import('element-plus/es')['ElText']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
-    FileUploadMoreChunk: typeof import('./../src/components/fileUpload/fileUploadMoreChunk.vue')['default']
-    FileUploadMoreChunkConcur: typeof import('./../src/components/fileUpload/fileUploadMoreChunkConcur.vue')['default']
-    FileUploadMoreFull: typeof import('./../src/components/fileUpload/fileUploadMoreFull.vue')['default']
-    FileUploadMoreFullConcur: typeof import('./../src/components/fileUpload/fileUploadMoreFullConcur.vue')['default']
-    FileUploadOneChunk: typeof import('./../src/components/fileUpload/fileUploadOneChunk.vue')['default']
-    FileUploadOneChunkConcur: typeof import('./../src/components/fileUpload/fileUploadOneChunkConcur.vue')['default']
-    FileUploadOneFull: typeof import('./../src/components/fileUpload/fileUploadOneFull.vue')['default']
+    FileUploadMoreChunk: typeof import('./../src/components/fileUpload/button/fileUploadMoreChunk.vue')['default']
+    FileUploadMoreChunkConcur: typeof import('./../src/components/fileUpload/button/fileUploadMoreChunkConcur.vue')['default']
+    FileUploadMoreFull: typeof import('./../src/components/fileUpload/button/fileUploadMoreFull.vue')['default']
+    FileUploadMoreFullConcur: typeof import('./../src/components/fileUpload/button/fileUploadMoreFullConcur.vue')['default']
+    FileUploadOneChunk: typeof import('./../src/components/fileUpload/button/fileUploadOneChunk.vue')['default']
+    FileUploadOneChunkConcur: typeof import('./../src/components/fileUpload/button/fileUploadOneChunkConcur.vue')['default']
+    FileUploadOneFull: typeof import('./../src/components/fileUpload/button/fileUploadOneFull.vue')['default']
     IconSelect: typeof import('./../src/components/iconSelect/iconSelect.vue')['default']
     ImageCrop: typeof import('./../src/components/imageCrop/imageCrop.vue')['default']
     Pagination: typeof import('./../src/components/pagination/pagination.vue')['default']

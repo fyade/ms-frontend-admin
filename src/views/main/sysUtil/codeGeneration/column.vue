@@ -72,7 +72,7 @@ const dFormRules: FormRules = {
   formType: [{required: true, trigger: 'change'}],
   orderNum: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig({
+const config = new TablePageConfig<CodeGenColumnDto>({
   bulkOperation: true,
   selectParam: {
     tableId: props.tableId

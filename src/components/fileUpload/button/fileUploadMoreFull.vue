@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from "vue";
 import { fileUploadOneFull } from "@/api/fileUpload.ts";
-import { unitConversion_storage } from "@/utils/NumberUtils";
-import { CHUNK_SIZE } from "../../../config/config";
+import { unitConversion_storage } from "@/utils/NumberUtils.ts";
+import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { selectFiles } from "@/utils/FileUtils.ts";

@@ -93,7 +93,7 @@ const {
 const gDel2 = () => {
   gDel()
 }
-const tDel2 = (value: any) => {
+const tDel2 = (value: number) => {
   tDel(value)
 }
 </script>

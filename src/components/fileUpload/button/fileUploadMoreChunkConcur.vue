@@ -2,8 +2,8 @@
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
 import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/fileUpload.ts";
 import SparkMd5 from "spark-md5";
-import { removeElementsByIndices } from "@/utils/ObjectUtils";
-import { CHUNK_SIZE } from "../../../config/config";
+import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
+import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
 import { FileUploadInterfaceMoreChunkConcur } from "@/type/demo/fileUpload.ts";

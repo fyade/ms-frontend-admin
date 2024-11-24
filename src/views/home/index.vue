@@ -89,6 +89,7 @@ const goToSystem = async (dto: SysDto) => {
     }
     sysStore.setCurrentSystem(dto)
     const routerStore = useRouterStore();
+    routerStore.reloadAllMenu1()
     routerStore.deleteAllMenu()
     router.push(`/${dto.path}`)
   } catch (e) {
