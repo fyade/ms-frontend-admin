@@ -8,9 +8,7 @@ export interface State2<T = object, T2 = T> {
   dialogForm: T2
   dialogForms?: T2[]
   dialogForms_error?: DialogForms_error
-  filterForm: {
-    [P in keyof T]?: T[P]
-  }
+  filterForm: Partial<T>
 }
 
 export class BaseClass {
@@ -153,8 +151,8 @@ export class TablePageConfig<T = {}> {
                 activeTabMoreInsFinishCallback = null,
                 activeTabMoreDelCallback = null,
               }: {
-                selectParam?: { [P in keyof T]?: T[P] }
-                insUpdParam?: { [P in keyof T]?: T[P] }
+                selectParam?: Partial<T>
+                insUpdParam?: Partial<T>
                 getDataOnMounted?: boolean
                 pageQuery?: boolean
                 watchDialogVisible?: boolean

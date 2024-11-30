@@ -2,6 +2,7 @@
 import { reactive, ref } from 'vue'
 import { useUserStore } from "@/store/module/user.ts";
 import { useSysStore } from "@/store/module/sys.ts";
+import { APP_NAME } from "~/config/config.ts";
 
 const userStore = useUserStore();
 const sysStore = useSysStore();
@@ -17,45 +18,43 @@ const onSubmit = async () => {
     logining.value = false
   })
 }
-
-const activeName = ref('a')
 </script>
 
 <template>
   <div class="main">
+    <p class="title">{{ APP_NAME }}</p>
     <el-form
         :model="form"
         label-width="60px"
         label-position="left"
     >
-      <!--<div style="text-align: center;margin-bottom: 10px;font-size: 20px;font-family: 'Microsoft Yahei';">网络安全设备</div>-->
-      <!--<el-tabs v-model="activeName" class="demo-tabs">-->
-      <!--  &lt;!&ndash;<el-tab-pane label="网络安全设备" name="a"></el-tab-pane>&ndash;&gt;-->
-      <!--  <el-tab-pane label="超级用户登录" name="b"></el-tab-pane>-->
-      <!--  <el-tab-pane label="普通用户登录" name="c"></el-tab-pane>-->
-      <!--</el-tabs>-->
-      <!--<br/>-->
       <el-form-item label="用户名">
         <el-input v-model="form.username"/>
       </el-form-item>
       <el-form-item label="密码">
         <el-input type="password" v-model="form.password"/>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" :disabled="logining" @click="onSubmit">登录</el-button>
-        <!--<el-button text type="info" :disabled="logining">忘记密码</el-button>-->
-      </el-form-item>
+      <el-button style="width: 100%" type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录</el-button>
     </el-form>
   </div>
 
-  <div style="position: absolute;bottom: 0;left: 50%;transform: translateX(-50%);">
-    <p>前端版本：{{ sysStore.version.qd }}</p>
-    <p>后端版本：{{ sysStore.version.hd }}</p>
+  <div class="bottom-text">
+    <div>
+      <p>前端版本：{{ sysStore.version.qd }}</p>
+      <p>后端版本：{{ sysStore.version.hd }}</p>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .main {
+  > .title {
+    text-align: center;
+    font-size: 24px;
+    line-height: 2;
+    margin-bottom: 24px;
+  }
+
   position: fixed;
   z-index: 1;
   left: 50%;
@@ -66,12 +65,19 @@ const activeName = ref('a')
   //background: #ffffff;
 }
 
-.bg {
-  position: fixed;
-  z-index: 0;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+.bottom-text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  > * {
+    display: flex;
+    gap: 24px;
+  }
 }
 </style>

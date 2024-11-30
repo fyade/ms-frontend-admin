@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSysStore } from "@/store/module/sys.ts";
-import { getPermissions, getSysInfo, getSystems } from "@/api/sys.ts";
+import { getPermissions, getSysInfo, getSystems } from "@/api/common/sys.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { onBeforeUnmount, ref } from "vue";
 import { deepClone } from "@/utils/ObjectUtils.ts";
@@ -13,6 +13,7 @@ import { ElLoading, ElNotification, NotificationHandle } from "element-plus";
 import { useRouterStore } from "@/store/module/router.ts";
 import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 import Header from "@/layout/sys/header.vue";
+import { Refresh } from "@element-plus/icons-vue";
 
 const sysStore = useSysStore();
 
@@ -30,19 +31,23 @@ const serverMonitor = () => {
 serverMonitor()
 
 // 我的资源
+const systemsLoading = ref(false)
 const allSystems = ref<SysDto[]>([])
 const getData = () => {
+  systemsLoading.value = true
   allSystems.value = []
   getSystems().then(res => {
     allSystems.value = res
+  }).finally(() => {
+    systemsLoading.value = false
   })
 }
 getData()
 
 // 引入资源
 const modules = {
+  ...import.meta.glob(`../../views/**/**/**/**/**.vue`),
   ...import.meta.glob(`../../views/**/**/**/**.vue`),
-  ...import.meta.glob(`../../views/**/**/**.vue`),
 }
 const goToSystem = async (dto: SysDto) => {
   loading = ElLoading.service({
@@ -63,7 +68,7 @@ const goToSystem = async (dto: SysDto) => {
         }
         item.name = item.perms
         if (item.type === T_COMP) {
-          const component = await modules[`../${dto.path}${item.component}`]()
+          const component = await modules[`../module/${dto.path}${item.component}`]()
           item.component = component.default
         } else {
           delete item.component
@@ -119,8 +124,13 @@ onBeforeUnmount(() => {
     <div class="box">
       <!--我的资源-->
       <div class="wdzy">
-        <el-divider content-position="left">我的资源</el-divider>
-        <div class="boxs">
+        <el-divider content-position="left">
+          <div style="display: flex;gap: 12px;align-items: center;">
+            <span>我的资源</span>
+            <el-button :disabled="systemsLoading" size="small" :icon="Refresh" circle plain @click="getData"/>
+          </div>
+        </el-divider>
+        <div class="boxs" v-loading="systemsLoading">
           <el-card shadow="hover" v-for="item in allSystems" :key="item.id" @click="goToSystem(item)">
             {{ item.name }}
           </el-card>
@@ -150,9 +160,11 @@ onBeforeUnmount(() => {
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
       width: 100%;
+      min-height: 60px;
 
       > * {
         cursor: pointer;
+        height: 60px;
       }
     }
   }

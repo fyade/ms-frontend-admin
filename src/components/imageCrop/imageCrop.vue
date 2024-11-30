@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { blobToFile } from "@/utils/FileUtils.ts";
 import { ElMessage } from "element-plus";
-import { fileUploadAvatar } from "@/api/fileUpload.ts";
+import { fileUploadAvatar } from "@/api/common/fileUpload.ts";
 
 const emits = defineEmits(['uploadSuccess']);
 

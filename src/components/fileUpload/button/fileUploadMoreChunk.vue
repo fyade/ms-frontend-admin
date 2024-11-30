@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
-import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/fileUpload.ts";
+import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/common/fileUpload.ts";
 import SparkMd5 from "spark-md5";
 import { CHUNK_SIZE } from "~/config/config.ts";
 import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { FileUploadInterfaceMoreChunk } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceMoreChunk } from "@/type/common/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
 let pageNotUnmounted = true

@@ -105,6 +105,13 @@ export function loginApi(data: LoginDto) {
   })
 }
 
+export function logOutApi() {
+  return request({
+    url: '/sys/user/log-out',
+    method: 'POST',
+  })
+}
+
 export function getSelfInfo() {
   return request({
     url: '/main/sys-manage/user/self-info',

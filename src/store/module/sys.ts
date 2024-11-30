@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import { getSysVersion } from "@/api/sys.ts";
+import { getSysVersion } from "@/api/common/sys.ts";
 import { currentVersion } from "../../../config/config.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { copyObject } from "@/utils/ObjectUtils.ts";

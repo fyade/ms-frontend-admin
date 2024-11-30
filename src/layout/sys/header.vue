@@ -87,23 +87,25 @@ if (props.ifShowBreadcrumb) {
     <div class="center"></div>
     <div class="right">
       <el-space>
-        <div v-if="userStore.userinfo.avatar">
+        <div>
           <el-dropdown>
             <el-image style="width: 30px;height: 30px;border-radius: 8px;"
+                      v-if="userStore.userinfo.avatar"
                       :src="fileBaseUrl+userStore.userinfo.avatar"
-                      fit="contain"></el-image>
+                      fit="contain"
+            ></el-image>
+            <SvgIcon v-else name="user" color="#000000"/>
+            {{ userStore.userinfo.nickname }}
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>
                   <div @click="router.push('/user')">个人中心</div>
                 </el-dropdown-item>
-                <el-dropdown-item>登出</el-dropdown-item>
+                <el-dropdown-item @click="userStore.logOut">登出</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
-        <SvgIcon v-else name="user" color="#000000"/>
-        {{ userStore.userinfo.nickname }}
       </el-space>
     </div>
   </div>

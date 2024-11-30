@@ -4,7 +4,7 @@ import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle } from "element-plus";
 import { useRoute } from "vue-router";
 import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
-import { loginApi } from "@/api/module/main/sysManage/user.ts";
+import { loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
@@ -62,6 +62,13 @@ export const useUserStore = defineStore('userStore', () => {
       })
     })
   }
+  const logOut = () => {
+    logOutApi()
+    setTimeout(() => {
+      removeToken()
+      location.reload()
+    })
+  }
   const removeToken = () => {
     token.value = ''
     ifLogin.value = false
@@ -72,6 +79,7 @@ export const useUserStore = defineStore('userStore', () => {
     userinfo,
     ifLogin,
     login,
-    removeToken
+    removeToken,
+    logOut
   }
 })

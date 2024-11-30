@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from "vue";
-import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/fileUpload.ts";
+import { fileUploadOneChunk_check, fileUploadOneChunk_merge, fileUploadOneChunk_upload } from "@/api/common/fileUpload.ts";
 import SparkMd5 from "spark-md5";
 import { removeElementsByIndices } from "@/utils/ObjectUtils.ts";
 import { CHUNK_SIZE } from "~/config/config.ts";
 import { Upload } from '@element-plus/icons-vue'
 import { ElMessage } from "element-plus"
-import { FileUploadInterfaceOneChunkConcur } from "@/type/demo/fileUpload.ts";
+import { FileUploadInterfaceOneChunkConcur } from "@/type/common/fileUpload.ts";
 import { selectFiles } from "@/utils/FileUtils.ts";
 
 interface ProgressI {
