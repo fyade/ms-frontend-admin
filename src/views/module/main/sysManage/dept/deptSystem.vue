@@ -119,7 +119,7 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   dto.loading = true
   if (!dto.ifTrue) {
     return new Promise((resolve, reject) => {
-      deptSysApi.insertOne({deptId: props.selectDept.id, sysId: dto.id, remark: ''}).then(res => {
+      deptSysApi.insertOne({deptId: props.selectDept.id, sysId: dto.id}).then(res => {
         if (res) {
           gRefresh()
           resolve(true)

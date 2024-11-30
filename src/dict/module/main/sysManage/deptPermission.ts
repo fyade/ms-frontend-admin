@@ -4,6 +4,5 @@ import { DeptPermissionDto } from "@/type/module/main/sysManage/deptPermission.t
 export const deptPermissionDict: { [P in keyof DeptPermissionDto]: string } = {
   ...publicDict,
   deptId: '部门',
-  type: '权限类型',
   permissionId: '权限',
 }

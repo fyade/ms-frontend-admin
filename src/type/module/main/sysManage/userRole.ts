@@ -4,7 +4,6 @@ export class UserRoleDto extends BaseClass {
   id!: number;
   userId!: string;
   roleId!: number;
-  remark!: string;
 }
 
 export class UserRoleSelDto extends PageDto {
@@ -16,7 +15,6 @@ export class UserRoleSelAllDto {
 export class UserRoleInsDto {
   userId!: string;
   roleId!: number;
-  remark!: string;
 }
 
 export class UserRoleUpdDto extends UserRoleInsDto {
