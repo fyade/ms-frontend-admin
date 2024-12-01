@@ -6,44 +6,37 @@ import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
-import { LogAlgorithmCallDto, LogAlgorithmCallUpdDto } from "@/type/module/algorithm/logAlgorithmCall.ts";
-import { logAlgorithmCallApi } from "@/api/module/algorithm/logAlgorithmCall.ts";
-import { logAlgorithmCallDict } from "@/dict/module/algorithm/logAlgorithmCall.ts";
-import { formatDate } from "@/utils/TimeUtils.ts";
+import { RoleDto, RoleUpdDto } from "@/type/module/main/sysManage/role.ts";
+import { roleApi } from "@/api/module/main/sysManage/role.ts";
+import { roleDict } from "@/dict/module/main/sysManage/role.ts";
 
-const props = defineProps({
-  selectUGPId: {
-    type: Number,
-    required: true
-  }
-})
+const emits = defineEmits(['choose']);
 
-const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
+const state = reactive<State2<RoleDto, RoleUpdDto>>({
   dialogForm: {
     id: -1,
-    userGroupPermissionId: -1,
-    userId: '',
-    callIp: '',
-    ifSuccess: '',
-    loginRole: '',
+    label: '',
+    ifAdmin: '',
+    ifDisabled: final.N,
+    orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    label: '',
+    ifAdmin: '',
+    ifDisabled: ''
+  }
 })
 const dFormRules: FormRules = {
-  userGroupPermissionId: [{required: true, trigger: 'change'}],
-  userId: [{required: true, trigger: 'change'}],
-  callIp: [{required: true, trigger: 'change'}],
-  ifSuccess: [{required: true, trigger: 'change'}],
-  loginRole: [{required: true, trigger: 'change'}],
+  label: [{required: true, trigger: 'change'}],
+  ifAdmin: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig<LogAlgorithmCallDto>({
+const config = new TablePageConfig({
   bulkOperation: true,
-  selectParam: {
-    userGroupPermissionId: props.selectUGPId
-  }
 })
 
 const {
@@ -83,13 +76,17 @@ const {
   dfIns,
   dfDel,
   ifRequired,
-} = funcTablePage<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>({
+} = funcTablePage<RoleDto, RoleUpdDto>({
   state,
   dFormRules,
   config,
-  api: logAlgorithmCallApi,
-  dict: logAlgorithmCallDict,
+  api: roleApi,
+  dict: roleDict,
 })
+
+const choose = (row: RoleDto) => {
+  emits('choose', row)
+}
 </script>
 
 <template>
@@ -117,7 +114,7 @@ const {
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="dialogType.value!==final.ins" :label="logAlgorithmCallDict.id" prop="id">
+        <el-form-item v-if="dialogType.value!==final.ins" :label="roleDict.id" prop="id">
           <span>{{ state.dialogForm.id }}</span>
         </el-form-item>
         <!--
@@ -127,25 +124,13 @@ const {
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.userGroupPermissionId" prop="userGroupPermissionId">
-              <el-input-number v-model="state.dialogForm.userGroupPermissionId" controls-position="right"/>
+            <el-form-item :label="roleDict.label" prop="label">
+              <el-input v-model="state.dialogForm.label" :placeholder="roleDict.label"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.userId" prop="userId">
-              <el-input v-model="state.dialogForm.userId" :placeholder="logAlgorithmCallDict.userId"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.callIp" prop="callIp">
-              <el-input v-model="state.dialogForm.callIp" :placeholder="logAlgorithmCallDict.callIp"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.ifSuccess" prop="ifSuccess">
-              <el-radio-group v-model="state.dialogForm.ifSuccess">
+            <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
+              <el-radio-group v-model="state.dialogForm.ifAdmin">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
@@ -154,19 +139,43 @@ const {
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.loginRole" prop="loginRole">
-              <el-input v-model="state.dialogForm.loginRole" :placeholder="logAlgorithmCallDict.loginRole"/>
+            <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
+              <el-radio-group v-model="state.dialogForm.ifDisabled">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="roleDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item :label="logAlgorithmCallDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="logAlgorithmCallDict.remark"/>
+            <el-form-item :label="roleDict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="roleDict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
+        <!--<el-form-item :label="roleDict.orderNum" prop='orderNum'>-->
+        <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="roleDict.ifDefault" prop='ifDefault'>-->
+        <!--  <el-switch v-model="state.dialogForm.ifDefault" :active-value='final.Y' :inactive-value='final.N'/>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="roleDict.ifDisabled" prop='ifDisabled'>-->
+        <!--  <el-radio-group v-model="state.dialogForm.ifDisabled">-->
+        <!--    <el-radio :value="final.Y">是</el-radio>-->
+        <!--    <el-radio :value="final.N">否</el-radio>-->
+        <!--  </el-radio-group>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">-->
+        <!--  <el-switch v-model="state.dialogForm.ifDisabled" :active-value="final.N" :inactive-value="final.Y"/>-->
+        <!--</el-form-item>-->
+        <!--上方几个酌情使用-->
       </el-form>
     </template>
     <template v-if="activeTabName===final.more">
@@ -184,63 +193,53 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <el-table-column prop="userGroupPermissionId" :label="logAlgorithmCallDict.userGroupPermissionId" width="300">
+          <el-table-column prop="label" :label="roleDict.label" width="300">
             <template #header>
-              <span :class="ifRequired('userGroupPermissionId')?'tp-table-header-required':''">{{ logAlgorithmCallDict.userGroupPermissionId }}</span>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ roleDict.label }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-userGroupPermissionId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index].userGroupPermissionId" controls-position="right"/>
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].label" :placeholder="roleDict.label"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="userId" :label="logAlgorithmCallDict.userId" width="300">
+          <el-table-column prop="ifAdmin" :label="roleDict.ifAdmin" width="70">
             <template #header>
-              <span :class="ifRequired('userId')?'tp-table-header-required':''">{{ logAlgorithmCallDict.userId }}</span>
+              <span :class="ifRequired('ifAdmin')?'tp-table-header-required':''">{{ roleDict.ifAdmin }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-userId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].userId" :placeholder="logAlgorithmCallDict.userId"/>
+              <div :class="state.dialogForms_error?.[`${$index}-ifAdmin`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index].ifAdmin" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="callIp" :label="logAlgorithmCallDict.callIp" width="300">
+          <el-table-column prop="ifDisabled" :label="roleDict.ifDisabled" width="70">
             <template #header>
-              <span :class="ifRequired('callIp')?'tp-table-header-required':''">{{ logAlgorithmCallDict.callIp }}</span>
+              <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ roleDict.ifDisabled }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-callIp`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].callIp" :placeholder="logAlgorithmCallDict.callIp"/>
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifSuccess" :label="logAlgorithmCallDict.ifSuccess" width="70">
+          <el-table-column prop="orderNum" :label="roleDict.orderNum" width="300">
             <template #header>
-              <span :class="ifRequired('ifSuccess')?'tp-table-header-required':''">{{ logAlgorithmCallDict.ifSuccess }}</span>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ roleDict.orderNum }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-ifSuccess`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index].ifSuccess" :true-value="final.Y" :false-value="final.N"/>
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="loginRole" :label="logAlgorithmCallDict.loginRole" width="300">
+          <el-table-column prop="remark" :label="roleDict.remark" width="300">
             <template #header>
-              <span :class="ifRequired('loginRole')?'tp-table-header-required':''">{{ logAlgorithmCallDict.loginRole }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-loginRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].loginRole" :placeholder="logAlgorithmCallDict.loginRole"/>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="remark" :label="logAlgorithmCallDict.remark" width="300">
-            <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ logAlgorithmCallDict.remark }}</span>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ roleDict.remark }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="logAlgorithmCallDict.remark"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="roleDict.remark"/>
               </div>
             </template>
           </el-table-column>
@@ -275,9 +274,21 @@ const {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="logAlgorithmCallDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="logAlgorithmCallDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="roleDict.label" prop="label">
+        <el-input v-model="state.filterForm.label" :placeholder="roleDict.label"/>
+      </el-form-item>
+      <el-form-item :label="roleDict.ifAdmin" prop="ifAdmin">
+        <el-select v-model="state.filterForm.ifAdmin" :placeholder="roleDict.ifAdmin" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="roleDict.ifDisabled" prop="ifDisabled">
+        <el-select v-model="state.filterForm.ifDisabled" :placeholder="roleDict.ifDisabled" clearable filterable>
+          <el-option label="是" :value="final.Y"/>
+          <el-option label="否" :value="final.N"/>
+        </el-select>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -293,7 +304,7 @@ const {
       <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
       <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
       <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
-      <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
       <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     </div>
     <div>
@@ -309,34 +320,32 @@ const {
         @selection-change="handleSelectionChange"
     >
       <el-table-column fixed type="selection" width="55"/>
-      <!--<el-table-column fixed prop="id" :label="logAlgorithmCallDict.id" width="180"/>-->
+      <!--<el-table-column fixed prop="id" :label="roleDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="userGroupPermissionId" :label="logAlgorithmCallDict.userGroupPermissionId" width="120"/>
-      <el-table-column prop="userId" :label="logAlgorithmCallDict.userId" width="120"/>
-      <el-table-column prop="loginRole" :label="logAlgorithmCallDict.loginRole" width="120"/>
-      <el-table-column prop="callIp" :label="logAlgorithmCallDict.callIp" width="120"/>
-      <el-table-column prop="ifSuccess" :label="logAlgorithmCallDict.ifSuccess" width="120"/>
-      <el-table-column prop="remark" :label="logAlgorithmCallDict.remark" width="120"/>
+      <el-table-column prop="label" :label="roleDict.label" width="120"/>
+      <el-table-column prop="ifAdmin" :label="roleDict.ifAdmin" width="120"/>
+      <el-table-column prop="ifDisabled" :label="roleDict.ifDisabled" width="120"/>
+      <el-table-column prop="orderNum" :label="roleDict.orderNum" width="120"/>
+      <el-table-column prop="remark" :label="roleDict.remark" width="120"/>
       <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createBy" :label="logAlgorithmCallDict.createBy" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="logAlgorithmCallDict.updateBy" width="120"/>-->
-      <el-table-column prop="createTime" :label="logAlgorithmCallDict.createTime" width="220">
+      <!--<el-table-column prop="createRole" :label="roleDict.createRole" width="120"/>-->
+      <!--<el-table-column prop="updateRole" :label="roleDict.updateRole" width="120"/>-->
+      <!--<el-table-column prop="createBy" :label="roleDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="roleDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="roleDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="roleDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="roleDict.deleted" width="60"/>-->
+      <!--上方几个酌情使用-->
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
-          {{ formatDate(new Date(row.createTime)) }}
+          <div class="zs-table-data-operate-button-row">
+            <el-button link type="primary" size="small" :icon="Edit" @click="choose(row)">选择</el-button>
+            <!--<el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
+            <!--<el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
+          </div>
         </template>
       </el-table-column>
-      <!--<el-table-column prop="updateTime" :label="logAlgorithmCallDict.updateTime" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="logAlgorithmCallDict.deleted" width="60"/>-->
-      <!--上方几个酌情使用-->
-      <!--<el-table-column fixed="right" label="操作" min-width="140">-->
-      <!--  <template #default="{row}">-->
-      <!--    <div class="zs-table-data-operate-button-row">-->
-      <!--      <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
-      <!--      <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
-      <!--    </div>-->
-      <!--  </template>-->
-      <!--</el-table-column>-->
       <template #append>
         <div class="el-table-append-box">
           <span>此表格的多选<span class="underline">不支持</span>{{ `跨分页保存，当前已选 ${multipleSelection.length} 条数据。` }}</span>

@@ -5,4 +5,5 @@ export const userDeptDict: { [P in keyof UserDeptDto]: string } = {
   ...publicDict,
   userId: '用户',
   deptId: '部门',
+  loginRole: '登录身份',
 }

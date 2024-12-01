@@ -1,6 +1,16 @@
 import { CascaderProps } from "element-plus";
 import { INS, MORE, N, ONE, UPD, Y } from '@/type/utils/base.ts'
 
+export const allLoginRoles: LoginRoleDto[] = [
+  {label: '系统管理员', value: 'admin'},
+  {label: '访客', value: 'visitor'},
+]
+
+export class LoginRoleDto {
+  label!: string
+  value!: string
+}
+
 export const T_MENU = 'mm'
 export const T_COMP = 'mc'
 export const T_IS = 'ma'
@@ -22,6 +32,23 @@ export const T_HOST = 'ho'
 export type T_IP = 'ip'
 export type T_HOST = 'ho'
 export type TMIWLType = T_IP | T_HOST
+export const mIWLTypeDict = {
+  [T_IP]: 'ip',
+  [T_HOST]: 'host',
+}
+
+export const T_ROLE = 'ro'
+export const T_DEPT = 'de'
+export const T_UG = 'ug'
+export type T_ROLE = 'ro'
+export type T_DEPT = 'de'
+export type T_UG = 'ug'
+export type TUTDPType = T_ROLE | T_DEPT | T_UG
+export const uTDPTypeDict = {
+  [T_ROLE]: '角色',
+  [T_DEPT]: '部门',
+  [T_UG]: '用户组',
+}
 
 export const CONFIG = {
   dialog_width: '800px',
@@ -48,6 +75,8 @@ export const publicDict = {
   orderNum: '顺序',
   ifDefault: '是否默认',
   ifDisabled: '是否禁用',
+  createRole: 'createRole',
+  updateRole: 'updateRole',
   createBy: 'createBy',
   updateBy: 'updateBy',
   createTime: 'createTime',

@@ -1,20 +1,20 @@
 <script lang="ts">
 export default {
-  name: 'main:sysManage:user'
+  name: 'main:otherUser:userVisitor'
 }
 </script>
 
 <script setup lang="ts">
-import { provide, reactive, ref } from "vue"
+import { provide, reactive, ref } from "vue";
 import { CONFIG, final, Operate } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
 import { Delete, Download, Edit, Plus, Refresh, Upload, Search, DArrowRight } from "@element-plus/icons-vue";
-import { UserDto, UserDto2, UserDto_, UserSelDto, UserUpdDto } from "@/type/module/main/sysManage/user.ts";
-import { newUser, resetUserPsd, userApi } from "@/api/module/main/sysManage/user.ts";
-import { userDict } from "@/dict/module/main/sysManage/user.ts";
+import { UserVisitorDto, UserVisitorDto2, UserVisitorDto_, UserVisitorSelDto, UserVisitorUpdDto } from "@/type/module/main/otherUser/userVisitor.ts";
+import { newUserVisitor, resetUserVisitorPsd, userVisitorApi } from "@/api/module/main/otherUser/userVisitor.ts";
+import { userVisitorDict } from "@/dict/module/main/otherUser/userVisitor.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import { RoleDto } from "@/type/module/main/sysManage/role.ts";
 import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
@@ -22,25 +22,27 @@ import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { userRoleApi, userRoleUpdUR } from "@/api/module/main/sysManage/userRole.ts";
 import { userDeptApi, userDeptUpdUD } from "@/api/module/main/sysManage/userDept.ts";
-import UserRole from "@/views/module/main/sysManage/user/userRole.vue";
-import UserDept from "@/views/module/main/sysManage/user/userDept.vue";
+import UserVisitorRole from "@/views/module/main/otherUser/userVisitor/userVisitorRole.vue";
+import UserVisitorDept from "@/views/module/main/otherUser/userVisitor/userVisitorDept.vue";
+import { userUserGroupApi, userUserGroupUpdUGU, userUserGroupUpdUUG } from "@/api/module/algorithm/userUserGroup.ts";
+import UserVisitorUserGroup from "@/views/module/main/otherUser/userVisitor/userVisitorUserGroup.vue";
 
-const state = reactive<State2<UserDto, UserUpdDto>>({
+const state = reactive<State2<UserVisitorDto, UserVisitorUpdDto>>({
   dialogForm: {
     id: '',
     username: '',
-    password: '123456'
+    password: '123456',
   },
   filterForm: {
     username: '',
-    nickname: ''
+    nickname: '',
   },
 })
 const dFormRules: FormRules = {
   username: [{required: true, trigger: 'change'}],
-  password: [{required: true, trigger: 'change'}]
+  password: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig<UserSelDto>({
+const config = new TablePageConfig<UserVisitorSelDto>({
   selectParam: {
     ifWithRole: final.Y
   },
@@ -83,12 +85,12 @@ const {
   dfIns,
   dfDel,
   ifRequired,
-} = funcTablePage<UserDto, UserUpdDto>({
+} = funcTablePage<UserVisitorDto, UserVisitorUpdDto>({
   state,
   dFormRules,
   config,
-  api: userApi,
-  dict: userDict,
+  api: userVisitorApi,
+  dict: userVisitorDict,
 })
 
 // 重置密码
@@ -113,7 +115,7 @@ const npCan = () => {
 }
 const npCon = () => {
   npDialogButtonLoadingRef.value = true
-  resetUserPsd(newPsd).then(res => {
+  resetUserVisitorPsd(newPsd).then(res => {
     newpsdDialog.value = false
     ElMessage.success('密码已重置。')
   }).finally(() => {
@@ -125,7 +127,7 @@ const dCon2 = () => {
   if (dialogFormRef.value) {
     dialogFormRef.value.validate((valid, fields) => {
       if (valid) {
-        newUser({
+        newUserVisitor({
           username: state.dialogForm.username as string,
           password: state.dialogForm.password as string
         }).then(res => {
@@ -140,7 +142,7 @@ const dCon2 = () => {
       } else {
         if (fields) {
           let arr: string[] = []
-          Object.keys(fields).forEach(item => arr.push(userDict[item as keyof typeof userDict] as string))
+          Object.keys(fields).forEach(item => arr.push(userVisitorDict[item as keyof typeof userVisitorDict] as string))
           ElMessage.warning(`${arr.join('、')}不能为空。`)
         }
         dialogButtonLoadingRef.value = false
@@ -149,18 +151,18 @@ const dCon2 = () => {
   }
 }
 
-const selectUser = ref<UserDto2>({
+const selectUser = ref<UserVisitorDto2>({
   id: '',
   username: '',
-  nickname: ''
+  nickname: '',
 })
 
 // 用户角色
 const drawer = ref(false)
 const selectRole = ref<number[]>([])
-const manageRole = (row: UserDto_) => {
+const manageRole = (row: UserVisitorDto_) => {
   selectUser.value = deepClone(row)
-  userRoleApi.selectAll({userId: selectUser.value.id, loginRole: 'admin'}).then(res => {
+  userRoleApi.selectAll({userId: selectUser.value.id, loginRole: 'visitor'}).then(res => {
     selectRole.value = res.map(item => item.roleId)
     drawer.value = true
   })
@@ -169,7 +171,7 @@ const drawerConfirmUserRole = () => {
   const obj = {
     userId: selectUser.value.id,
     roleId: selectRole.value,
-    loginRole: 'admin',
+    loginRole: 'visitor',
   }
   userRoleUpdUR(obj).then(res => {
     if (res) {
@@ -186,9 +188,9 @@ provide('changeSelectRole', selectRole)
 // 用户部门
 const drawer2 = ref(false)
 const selectDept = ref<number[]>([])
-const manageDept = (row: UserDto_) => {
+const manageDept = (row: UserVisitorDto_) => {
   selectUser.value = deepClone(row)
-  userDeptApi.selectAll({userId: selectUser.value.id, loginRole: 'admin'}).then(res => {
+  userDeptApi.selectAll({userId: selectUser.value.id, loginRole: 'visitor'}).then(res => {
     selectDept.value = res.map(item => item.deptId)
     drawer2.value = true
   })
@@ -197,7 +199,7 @@ const drawerConfirmUserDept = () => {
   const param = {
     userId: selectUser.value.id,
     deptId: selectDept.value,
-    loginRole: 'admin'
+    loginRole: 'visitor'
   }
   userDeptUpdUD(param).then(res => {
     if (res) {
@@ -210,6 +212,34 @@ const drawerCancelUserDept = () => {
   drawer2.value = false
 }
 provide('changeSelectDept', selectDept)
+
+// 用户用户组
+const drawer3 = ref(false)
+const selectUserGroup = ref<number[]>([])
+const manageUserGroup = (row: UserVisitorDto_) => {
+  selectUser.value = deepClone(row)
+  userUserGroupApi.selectAll({userId: selectUser.value.id, loginRole: 'visitor'}).then(res => {
+    selectUserGroup.value = res.map(item => item.userGroupId)
+    drawer3.value = true
+  })
+}
+const drawerConfirmUserUserGroup = () => {
+  const param = {
+    userId: selectUser.value.id,
+    userGroupId: selectUserGroup.value,
+    loginRole: 'visitor'
+  }
+  userUserGroupUpdUUG(param).then(res => {
+    if (res) {
+      drawer3.value = false
+      gRefresh()
+    }
+  })
+}
+const drawerCancelUserUserGroup = () => {
+  drawer3.value = false
+}
+provide('changeSelectUserGroup', selectUserGroup)
 </script>
 
 <template>
@@ -222,7 +252,7 @@ provide('changeSelectDept', selectDept)
       destroy-on-close
       title="分配角色"
   >
-    <UserRole
+    <UserVisitorRole
         :user="selectUser"
     />
     <template #footer>
@@ -240,12 +270,30 @@ provide('changeSelectDept', selectDept)
       destroy-on-close
       title="分配部门"
   >
-    <UserDept
+    <UserVisitorDept
         :user="selectUser"
     />
     <template #footer>
       <el-button plain @click="drawerCancelUserDept">取消</el-button>
       <el-button type="primary" plain @click="drawerConfirmUserDept">提交</el-button>
+    </template>
+  </el-dialog>
+
+  <!--用户用户组-->
+  <el-dialog
+      v-model="drawer3"
+      :width="CONFIG.dialog_width_wider"
+      draggable
+      append-to-body
+      destroy-on-close
+      title="分配用户组"
+  >
+    <UserVisitorUserGroup
+        :user="selectUser"
+    />
+    <template #footer>
+      <el-button plain @click="drawerCancelUserUserGroup">取消</el-button>
+      <el-button type="primary" plain @click="drawerConfirmUserUserGroup">提交</el-button>
     </template>
   </el-dialog>
 
@@ -262,7 +310,7 @@ provide('changeSelectDept', selectDept)
         :label-width="CONFIG.dialog_form_label_width"
         :rules="newPsdRule"
     >
-      <el-form-item :label="userDict.id" prop="id">
+      <el-form-item :label="userVisitorDict.id" prop="id">
         <span>{{ newPsd.id }}</span>
       </el-form-item>
       <el-form-item label="新密码" prop="password">
@@ -292,7 +340,7 @@ provide('changeSelectDept', selectDept)
         :label-width="CONFIG.dialog_form_label_width"
         :rules="dFormRules"
     >
-      <el-form-item v-if="dialogType.value!==final.ins" :label="userDict.id" prop="id">
+      <el-form-item v-if="dialogType.value!==final.ins" :label="userVisitorDict.id" prop="id">
         <span>{{ state.dialogForm.id }}</span>
       </el-form-item>
       <!--
@@ -302,13 +350,13 @@ provide('changeSelectDept', selectDept)
       <!--在此下方添加表单项-->
       <el-row>
         <el-col :span="12">
-          <el-form-item :label="userDict.username" prop="username">
-            <el-input v-model="state.dialogForm.username" :placeholder="userDict.username"/>
+          <el-form-item :label="userVisitorDict.username" prop="username">
+            <el-input v-model="state.dialogForm.username" :placeholder="userVisitorDict.username"/>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="dialogType.value!==final.ins?userDict.password:'初始密码'" prop="password">
-            <el-input v-model="state.dialogForm.password" :placeholder="userDict.password"/>
+          <el-form-item :label="dialogType.value!==final.ins?userVisitorDict.password:'初始密码'" prop="password">
+            <el-input v-model="state.dialogForm.password" :placeholder="userVisitorDict.password"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -333,11 +381,11 @@ provide('changeSelectDept', selectDept)
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <el-form-item :label="userDict.username" prop="username">
-        <el-input v-model="state.filterForm.username" :placeholder="userDict.username"/>
+      <el-form-item :label="userVisitorDict.username" prop="username">
+        <el-input v-model="state.filterForm.username" :placeholder="userVisitorDict.username"/>
       </el-form-item>
-      <el-form-item :label="userDict.nickname" prop="nickname">
-        <el-input v-model="state.filterForm.nickname" :placeholder="userDict.nickname"/>
+      <el-form-item :label="userVisitorDict.nickname" prop="nickname">
+        <el-input v-model="state.filterForm.nickname" :placeholder="userVisitorDict.nickname"/>
       </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
@@ -352,6 +400,10 @@ provide('changeSelectDept', selectDept)
     <div>
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     </div>
     <div>
       <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
@@ -366,12 +418,12 @@ provide('changeSelectDept', selectDept)
         @selection-change="handleSelectionChange"
     >
       <!--<el-table-column fixed type="selection" width="55"/>-->
-      <el-table-column fixed prop="id" :label="userDict.id" width="80"/>
+      <el-table-column fixed prop="id" :label="userVisitorDict.id" width="120"/>
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="username" :label="userDict.username" width="120"/>
-      <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
-      <el-table-column prop="avatar" :label="userDict.avatar" width="120">
+      <el-table-column prop="username" :label="userVisitorDict.username" width="120"/>
+      <el-table-column prop="nickname" :label="userVisitorDict.nickname" width="120"/>
+      <el-table-column prop="avatar" :label="userVisitorDict.avatar" width="120">
         <template #default="{row}">
           <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
             <template #error>
@@ -380,37 +432,38 @@ provide('changeSelectDept', selectDept)
           </el-image>
         </template>
       </el-table-column>
-      <el-table-column prop="roles" :label="userDict.roles" width="240">
+      <el-table-column prop="roles" :label="userVisitorDict.roles" width="240">
         <template #default="{row}">
           <el-space wrap>
-            <el-tag v-if="row.ifTopAdmin" type="success">超级管理员</el-tag>
             <el-tag v-for="item in row.roles as RoleDto[]" :key="item.id" type="primary">{{ item.label }}</el-tag>
           </el-space>
         </template>
       </el-table-column>
-      <el-table-column prop="depts" :label="userDict.depts" width="240">
+      <el-table-column prop="depts" :label="userVisitorDict.depts" width="240">
         <template #default="{row}">
           <el-space wrap>
             <el-tag v-for="item in (row.depts as DeptDto[])" :key="item.id" type="primary">{{ item.label }}</el-tag>
           </el-space>
         </template>
       </el-table-column>
-      <el-table-column prop="ugs" :label="userDict.ugs" width="240">
+      <el-table-column prop="ugs" :label="userVisitorDict.ugs" width="240">
         <template #default="{row}">
           <el-space wrap>
             <el-tag v-for="item in (row.ugs as UserGroupDto[])" :key="item.id" type="primary">{{ item.label }}</el-tag>
           </el-space>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" :label="userDict.sex" width="120"/>
-      <el-table-column prop="email" :label="userDict.email" width="120"/>
-      <el-table-column prop="tel" :label="userDict.tel" width="120"/>
+      <el-table-column prop="sex" :label="userVisitorDict.sex" width="120"/>
+      <el-table-column prop="email" :label="userVisitorDict.email" width="120"/>
+      <el-table-column prop="tel" :label="userVisitorDict.tel" width="120"/>
       <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createBy" :label="userDict.createBy" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="userDict.updateBy" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="userDict.createTime" width="220"/>-->
-      <!--<el-table-column prop="updateTime" :label="userDict.updateTime" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="userDict.deleted" width="60"/>-->
+      <!--<el-table-column prop="createRole" :label="userVisitorDict.createRole" width="120"/>-->
+      <!--<el-table-column prop="updateRole" :label="userVisitorDict.updateRole" width="120"/>-->
+      <!--<el-table-column prop="createBy" :label="userVisitorDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="userVisitorDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="userVisitorDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="userVisitorDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="userVisitorDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
       <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
@@ -424,10 +477,10 @@ provide('changeSelectDept', selectDept)
                 <el-dropdown-menu>
                   <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageRole(row)">分配角色</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageDept(row)">分配部门</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button link type="info" size="small" :icon="Edit" @click="manageUserGroup(row)">分配用户组</el-button></el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <!--<el-button link type="primary" size="small" @click="manageUserGroup(row)">分配用户组</el-button>-->
           </div>
         </template>
       </el-table-column>

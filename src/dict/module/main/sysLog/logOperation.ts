@@ -12,4 +12,5 @@ export const logOperationDict: { [P in keyof LogOperationDto]: string } = {
   oldValue: '旧值',
   operateType: '操作类型',
   ifSuccess: '是否成功',
+  loginRole: '登录身份',
 }

@@ -26,6 +26,8 @@ const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
     loginBrowser: '',
     loginOs: '',
     ifSuccess: '',
+    failType: '',
+    loginRole: '',
     remark: '',
   },
   dialogForms: [],
@@ -36,6 +38,7 @@ const state = reactive<State2<LogUserLoginDto, LogUserLoginUpdDto>>({
     loginBrowser: '',
     loginOs: '',
     ifSuccess: '',
+    loginRole: '',
   },
 })
 const dFormRules: FormRules = {
@@ -45,6 +48,8 @@ const dFormRules: FormRules = {
   loginBrowser: [{required: true, trigger: 'change'}],
   loginOs: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
+  failType: [{required: true, trigger: 'change'}],
+  loginRole: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
   bulkOperation: true,
@@ -169,6 +174,18 @@ const {
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item :label="logUserLoginDict.failType" prop="failType">
+              <el-input v-model="state.dialogForm.failType" :placeholder="logUserLoginDict.failType"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="logUserLoginDict.loginRole" prop="loginRole">
+              <el-input v-model="state.dialogForm.loginRole" :placeholder="logUserLoginDict.loginRole"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="24">
             <el-form-item :label="logUserLoginDict.remark" prop="remark">
               <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="logUserLoginDict.remark"/>
@@ -253,6 +270,26 @@ const {
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="failType" :label="logUserLoginDict.failType" width="300">
+            <template #header>
+              <span :class="ifRequired('failType')?'tp-table-header-required':''">{{ logUserLoginDict.failType }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-failType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].failType" :placeholder="logUserLoginDict.failType"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="loginRole" :label="logUserLoginDict.loginRole" width="300">
+            <template #header>
+              <span :class="ifRequired('loginRole')?'tp-table-header-required':''">{{ logUserLoginDict.loginRole }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-loginRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].loginRole" :placeholder="logUserLoginDict.loginRole"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" :label="logUserLoginDict.remark" width="300">
             <template #header>
               <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ logUserLoginDict.remark }}</span>
@@ -312,6 +349,9 @@ const {
           <el-option label="否" :value="final.N"/>
         </el-select>
       </el-form-item>
+      <el-form-item :label="logUserLoginDict.loginRole" prop="loginRole">
+        <el-input v-model="state.filterForm.loginRole" :placeholder="logUserLoginDict.loginRole"/>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -357,6 +397,8 @@ const {
           <el-tag type="danger" v-else>登录失败</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="failType" :label="logUserLoginDict.failType" width="160"/>
+      <el-table-column prop="loginRole" :label="logUserLoginDict.loginRole" width="120"/>
       <el-table-column prop="remark" :label="logUserLoginDict.remark" width='160'/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logUserLoginDict.createBy" width='120'/>-->

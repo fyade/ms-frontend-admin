@@ -11,6 +11,7 @@ export class LogOperationDto extends BaseClass {
   oldValue!: string;
   operateType!: string;
   ifSuccess!: string;
+  loginRole!: string;
   remark!: string;
 }
 
@@ -30,6 +31,7 @@ export class LogOperationInsDto {
   oldValue!: string;
   operateType!: string;
   ifSuccess!: string;
+  loginRole!: string;
   remark!: string;
 }
 

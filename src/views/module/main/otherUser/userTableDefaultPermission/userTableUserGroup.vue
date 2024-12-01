@@ -1,31 +1,25 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import { CONFIG, final, mIWLTypeDict, T_HOST, T_IP, T_IS } from "@/utils/base.ts";
+import { computed, reactive, ref } from "vue";
+import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { FormRules } from "element-plus";
-import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from "@element-plus/icons-vue";
-import { MenuIpWhiteListDto, MenuIpWhiteListUpdDto } from "@/type/module/main/sysManage/menuIpWhiteList.ts";
-import { menuIpWhiteListApi } from "@/api/module/main/sysManage/menuIpWhiteList.ts";
-import { menuIpWhiteListDict } from "@/dict/module/main/sysManage/menuIpWhiteList.ts";
-import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
-import { menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
+import { Delete, Download, Edit, Plus, Refresh, Upload, Search } from "@element-plus/icons-vue";
+import { UserGroupDto, UserGroupUpdDto } from "@/type/module/algorithm/userGroup.ts";
+import { userGroupApi } from "@/api/module/algorithm/userGroup.ts";
+import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
+import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { DeptDto } from "@/type/module/main/sysManage/dept.ts";
 
-const props = defineProps({
-  menu: {
-    type: MenuDto,
-    required: true,
-  }
-})
+const emits = defineEmits(['choose']);
 
-const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
+const state = reactive<State2<UserGroupDto, UserGroupUpdDto>>({
   dialogForm: {
     id: -1,
-    menuId: props.menu.id,
-    whiteList: '',
-    fromType: T_IP,
-    type: T_IS,
+    label: '',
+    parentId: final.DEFAULT_PARENT_ID,
+    orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
   },
   dialogForms: [],
@@ -33,16 +27,12 @@ const state = reactive<State2<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>>({
   filterForm: {},
 })
 const dFormRules: FormRules = {
-  menuId: [{required: true, trigger: 'change'}],
-  whiteList: [{required: true, trigger: 'change'}],
-  fromType: [{required: true, trigger: 'change'}],
-  type: [{required: true, trigger: 'change'}],
+  label: [{required: true, trigger: 'change'}],
+  parentId: [{required: true, trigger: 'change'}],
+  orderNum: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig<MenuIpWhiteListDto>({
+const config = new TablePageConfig({
   bulkOperation: true,
-  selectParam: {
-    menuId: props.menu.id
-  }
 })
 
 const {
@@ -82,13 +72,22 @@ const {
   dfIns,
   dfDel,
   ifRequired,
-} = funcTablePage<MenuIpWhiteListDto, MenuIpWhiteListUpdDto>({
+} = funcTablePage<UserGroupDto, UserGroupUpdDto>({
   state,
   dFormRules,
   config,
-  api: menuIpWhiteListApi,
-  dict: menuIpWhiteListDict,
+  api: userGroupApi,
+  dict: userGroupDict,
 })
+
+const expandRowKeys = ref<string[]>([])
+const tableData2 = computed(() => {
+  return arr2ToDiguiObj(tableData.value)
+})
+
+const choose = (row: DeptDto) => {
+  emits('choose', row)
+}
 </script>
 
 <template>
@@ -116,7 +115,7 @@ const {
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="dialogType.value!==final.ins" :label="menuIpWhiteListDict.id" prop="id">
+        <el-form-item v-if="dialogType.value!==final.ins" :label="userGroupDict.id" prop="id">
           <span>{{ state.dialogForm.id }}</span>
         </el-form-item>
         <!--
@@ -126,41 +125,44 @@ const {
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="menuIpWhiteListDict.whiteList" prop="whiteList">
-              <el-input v-model="state.dialogForm.whiteList" :placeholder="menuIpWhiteListDict.whiteList"/>
+            <el-form-item :label="userGroupDict.label" prop="label">
+              <el-input v-model="state.dialogForm.label" :placeholder="userGroupDict.label"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="menuIpWhiteListDict.fromType" prop="fromType">
-              <!--<el-input v-model="state.dialogForm.fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
-              <el-radio-group v-model="state.dialogForm.fromType">
-                <el-radio :value="T_IP">{{ mIWLTypeDict[T_IP] }}</el-radio>
-                <el-radio :value="T_HOST">{{ mIWLTypeDict[T_HOST] }}</el-radio>
-              </el-radio-group>
+            <el-form-item :label="userGroupDict.parentId" prop="parentId">
+              <el-input-number v-model="state.dialogForm.parentId" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="userGroupDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item :label="menuIpWhiteListDict.remark" prop="remark">
-              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="menuIpWhiteListDict.remark"/>
+            <el-form-item :label="userGroupDict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="userGroupDict.remark"/>
             </el-form-item>
           </el-col>
         </el-row>
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label="menuIpWhiteListDict.orderNum" prop='orderNum'>-->
+        <!--<el-form-item :label="userGroupDict.orderNum" prop='orderNum'>-->
         <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuIpWhiteListDict.ifDefault" prop='ifDefault'>-->
+        <!--<el-form-item :label="userGroupDict.ifDefault" prop='ifDefault'>-->
         <!--  <el-switch v-model="state.dialogForm.ifDefault" :active-value='final.Y' :inactive-value='final.N'/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuIpWhiteListDict.ifDisabled" prop='ifDisabled'>-->
+        <!--<el-form-item :label="userGroupDict.ifDisabled" prop='ifDisabled'>-->
         <!--  <el-radio-group v-model="state.dialogForm.ifDisabled">-->
         <!--    <el-radio :value="final.Y">是</el-radio>-->
         <!--    <el-radio :value="final.N">否</el-radio>-->
         <!--  </el-radio-group>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label="menuIpWhiteListDict.ifDisabled" prop="ifDisabled">-->
+        <!--<el-form-item :label="userGroupDict.ifDisabled" prop="ifDisabled">-->
         <!--  <el-switch v-model="state.dialogForm.ifDisabled" :active-value="final.N" :inactive-value="final.Y"/>-->
         <!--</el-form-item>-->
         <!--上方几个酌情使用-->
@@ -181,37 +183,43 @@ const {
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->
-          <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="480">
+          <el-table-column prop="label" :label="userGroupDict.label" width="300">
             <template #header>
-              <span :class="ifRequired('whiteList')?'tp-table-header-required':''">{{ menuIpWhiteListDict.whiteList }}</span>
+              <span :class="ifRequired('label')?'tp-table-header-required':''">{{ userGroupDict.label }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-whiteList`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].whiteList" :placeholder="menuIpWhiteListDict.whiteList"/>
+              <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].label" :placeholder="userGroupDict.label"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="300">
+          <el-table-column prop="parentId" :label="userGroupDict.parentId" width="300">
             <template #header>
-              <span :class="ifRequired('fromType')?'tp-table-header-required':''">{{ menuIpWhiteListDict.fromType }}</span>
+              <span :class="ifRequired('parentId')?'tp-table-header-required':''">{{ userGroupDict.parentId }}</span>
             </template>
             <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-fromType`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <!--<el-input v-model="state.dialogForms[$index].fromType" :placeholder="menuIpWhiteListDict.fromType"/>-->
-                <el-radio-group v-model="state.dialogForms[$index].fromType">
-                  <el-radio :value="T_IP">{{ mIWLTypeDict[T_IP] }}</el-radio>
-                  <el-radio :value="T_HOST">{{ mIWLTypeDict[T_HOST] }}</el-radio>
-                </el-radio-group>
+              <div :class="state.dialogForms_error?.[`${$index}-parentId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index].parentId" controls-position="right"/>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="300">
+          <el-table-column prop="orderNum" :label="userGroupDict.orderNum" width="300">
             <template #header>
-              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ menuIpWhiteListDict.remark }}</span>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ userGroupDict.orderNum }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" :label="userGroupDict.remark" width="300">
+            <template #header>
+              <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ userGroupDict.remark }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-remark`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="menuIpWhiteListDict.remark"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].remark" :placeholder="userGroupDict.remark"/>
               </div>
             </template>
           </el-table-column>
@@ -235,28 +243,6 @@ const {
     </template>
   </el-dialog>
 
-  <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">接口组信息</el-text>
-  </el-divider>
-  <el-form>
-    <el-row>
-      <el-col :span="8">
-        <el-form-item :label="menuDictInter.label">
-          {{ props.menu.label }}
-        </el-form-item>
-      </el-col>
-      <el-col :span="8">
-        <el-form-item :label="menuDictInter.perms">
-          {{ props.menu.perms }}
-        </el-form-item>
-      </el-col>
-    </el-row>
-  </el-form>
-
-  <el-divider content-position="left">
-    <el-text size="large" style="font-weight: bold;">ip白名单列表</el-text>
-  </el-divider>
-
   <!--顶部筛选表单-->
   <div class="zs-filter-form" v-show="filterFormVisible1 && filterFormVisible">
     <el-form
@@ -268,8 +254,8 @@ const {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="menuIpWhiteListDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="menuIpWhiteListDict."/>-->
+      <!--<el-form-item :label="userGroupDict." prop="">-->
+      <!--  <el-input v-model="state.filterForm." :placeholder="userGroupDict."/>-->
       <!--</el-form-item>-->
       <!--在此上方添加表单项-->
       <el-form-item>
@@ -283,11 +269,11 @@ const {
   <div class="zs-button-row">
     <div>
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-      <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-      <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
-      <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-      <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
+      <!--<el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>-->
+      <!--<el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>-->
+      <!--<el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>-->
+      <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+      <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
     </div>
     <div>
       <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
@@ -298,28 +284,35 @@ const {
     <!--数据表格-->
     <el-table
         v-loading="tableLoadingRef"
-        :data="tableData"
+        :data="tableData2"
+        :expand-row-keys="expandRowKeys"
+        row-key="id"
+        :default-expand-all="true"
         @selection-change="handleSelectionChange"
     >
       <el-table-column fixed type="selection" width="55"/>
-      <!--<el-table-column fixed prop="id" :label="menuIpWhiteListDict.id" width="180"/>-->
+      <!--<el-table-column fixed prop="id" :label="userGroupDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
-      <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="360"/>
-      <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="120"/>
-      <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="120"/>
+      <el-table-column prop="label" :label="userGroupDict.label" width="120"/>
+      <el-table-column prop="parentId" :label="userGroupDict.parentId" width="120"/>
+      <el-table-column prop="orderNum" :label="userGroupDict.orderNum" width="120"/>
+      <el-table-column prop="remark" :label="userGroupDict.remark" width="120"/>
       <!--在此上方添加表格列-->
-      <!--<el-table-column prop="createBy" :label="menuIpWhiteListDict.createBy" width="120"/>-->
-      <!--<el-table-column prop="updateBy" :label="menuIpWhiteListDict.updateBy" width="120"/>-->
-      <!--<el-table-column prop="createTime" :label="menuIpWhiteListDict.createTime" width="220"/>-->
-      <!--<el-table-column prop="updateTime" :label="menuIpWhiteListDict.updateTime" width="220"/>-->
-      <!--<el-table-column prop="deleted" :label="menuIpWhiteListDict.deleted" width="60"/>-->
+      <!--<el-table-column prop="createRole" :label="userGroupDict.createRole" width="120"/>-->
+      <!--<el-table-column prop="updateRole" :label="userGroupDict.updateRole" width="120"/>-->
+      <!--<el-table-column prop="createBy" :label="userGroupDict.createBy" width="120"/>-->
+      <!--<el-table-column prop="updateBy" :label="userGroupDict.updateBy" width="120"/>-->
+      <!--<el-table-column prop="createTime" :label="userGroupDict.createTime" width="220"/>-->
+      <!--<el-table-column prop="updateTime" :label="userGroupDict.updateTime" width="220"/>-->
+      <!--<el-table-column prop="deleted" :label="userGroupDict.deleted" width="60"/>-->
       <!--上方几个酌情使用-->
       <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
           <div class="zs-table-data-operate-button-row">
-            <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
+            <el-button link type="primary" size="small" :icon="Edit" @click="choose(row)">选择</el-button>
+            <!--<el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>-->
+            <!--<el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>-->
           </div>
         </template>
       </el-table-column>

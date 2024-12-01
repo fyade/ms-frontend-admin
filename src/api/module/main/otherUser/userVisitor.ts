@@ -1,19 +1,20 @@
 import request from "@/api/request.ts";
 import { ApiConfig } from "@/type/tablePage.ts";
 import {
-  UserUserGroupDto,
-  UserUserGroupUpdDto,
-  UserUserGroupUpdUGUDtp,
-  UserUserGroupUpdUUGDtp
-} from "@/type/module/algorithm/userUserGroup.ts";
+  AdminResetUserVisitorPsdDto,
+  UserVisitorDto,
+  UserVisitorRegistDto,
+  UserVisitorUpdDto
+} from "@/type/module/main/otherUser/userVisitor.ts";
+import { encrypt } from "@/utils/EncryptUtils.ts";
 
-export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> = {
+export const userVisitorApi: ApiConfig<UserVisitorDto, UserVisitorUpdDto> = {
   /**
    * 分页查询
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-visitor',
     method: 'GET',
     params: params
   }),
@@ -22,7 +23,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm/user-user-group/all',
+    url: '/main/other-user/user-visitor/all',
     method: 'GET',
     params: params
   }),
@@ -31,7 +32,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm/user-user-group/${id}`,
+    url: `/main/other-user/user-visitor/${id}`,
     method: 'GET'
   }),
   /**
@@ -39,7 +40,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm/user-user-group/ids`,
+    url: `/main/other-user/user-visitor/ids`,
     method: 'GET',
     params: ids
   }),
@@ -48,7 +49,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-visitor',
     method: 'POST',
     data: obj
   }),
@@ -57,7 +58,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-visitor',
     method: 'PUT',
     data: obj
   }),
@@ -66,7 +67,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm/user-user-group/s',
+    url: '/main/other-user/user-visitor/s',
     method: 'POST',
     data: objs
   }),
@@ -75,7 +76,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm/user-user-group/s',
+    url: '/main/other-user/user-visitor/s',
     method: 'PUT',
     data: objs
   }),
@@ -84,24 +85,32 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-visitor',
     method: 'DELETE',
     data: ids
   })
 }
 
-export function userUserGroupUpdUGU(param: UserUserGroupUpdUGUDtp) {
+export function newUserVisitor(params: UserVisitorRegistDto) {
   return request({
-    url: `/algorithm/user-user-group/ugu`,
+    url: '/main/other-user/user-visitor/admin-new',
     method: 'POST',
-    data: param
+    data: {
+      ...params,
+      password: encrypt(params.password),
+      psdType: 'b'
+    }
   })
 }
 
-export function userUserGroupUpdUUG(param: UserUserGroupUpdUUGDtp) {
+export function resetUserVisitorPsd(params: AdminResetUserVisitorPsdDto) {
   return request({
-    url: `/algorithm/user-user-group/uug`,
+    url: '/main/other-user/user-visitor/admin-reset-user-psd',
     method: 'POST',
-    data: param
+    data: {
+      ...params,
+      password: encrypt(params.password),
+      psdType: 'b'
+    }
   })
 }

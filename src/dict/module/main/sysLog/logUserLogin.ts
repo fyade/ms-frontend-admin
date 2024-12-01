@@ -9,4 +9,6 @@ export const logUserLoginDict: { [P in keyof LogUserLoginDto]: string } = {
   loginBrowser: '登录浏览器',
   loginOs: '登录系统',
   ifSuccess: '是否成功',
+  failType: '失败类型',
+  loginRole: '登录身份',
 }

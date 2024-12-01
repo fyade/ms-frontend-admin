@@ -52,7 +52,7 @@ const getInfo = () => {
   usersOfThisDept.value = []
   userDeptsOfThisDept.value = []
   table1LoadingRef.value = true
-  userDeptApi.selectList({deptId: props.selectDept.id, ...state.pageParam1}).then(res => {
+  userDeptApi.selectList({deptId: props.selectDept.id, loginRole: 'admin', ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userDeptsOfThisDept.value = res.list
     userApi.selectByIds(userDeptsOfThisDept.value.map(item => item.userId)).then(res => {
@@ -149,7 +149,8 @@ const dialogConfirm = () => {
   dialogButtonLoadingRef.value = true
   const param = {
     userId: selectRows2.value.map(item => item.id),
-    deptId: props.selectDept.id
+    deptId: props.selectDept.id,
+    loginRole: 'admin',
   }
   userDeptUpdDU(param).then(res => {
     getInfo()

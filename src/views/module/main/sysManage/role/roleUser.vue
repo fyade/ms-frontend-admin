@@ -52,7 +52,7 @@ const getInfo = () => {
   usersOfThisRole.value = []
   userRolesOfThisRole.value = []
   table1LoadingRef.value = true
-  userRoleApi.selectList({roleId: props.selectRole.id, ...state.pageParam1}).then(res => {
+  userRoleApi.selectList({roleId: props.selectRole.id, loginRole: 'admin', ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userRolesOfThisRole.value = res.list
     userApi.selectByIds(userRolesOfThisRole.value.map(item => item.userId)).then(res => {
@@ -149,7 +149,8 @@ const dialogConfirm = () => {
   dialogButtonLoadingRef.value = true
   const param = {
     userId: selectRows2.value.map(item => item.id),
-    roleId: props.selectRole.id
+    roleId: props.selectRole.id,
+    loginRole: 'admin'
   }
   userRoleUpdRU(param).then(res => {
     getInfo()

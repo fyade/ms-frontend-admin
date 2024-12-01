@@ -29,6 +29,7 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     oldValue: '',
     operateType: '',
     ifSuccess: '',
+    loginRole: '',
     remark: '',
   },
   dialogForms: [],
@@ -40,6 +41,7 @@ const state = reactive<State2<LogOperationDto, LogOperationUpdDto>>({
     perms: '',
     userId: '',
     ifSuccess: '',
+    loginRole: '',
   },
 })
 const dFormRules: FormRules = {
@@ -52,6 +54,7 @@ const dFormRules: FormRules = {
   oldValue: [{required: true, trigger: 'change'}],
   operateType: [{required: true, trigger: 'change'}],
   ifSuccess: [{required: true, trigger: 'change'}],
+  loginRole: [{required: true, trigger: 'change'}],
 }
 const config = new TablePageConfig({
   bulkOperation: true,
@@ -193,6 +196,11 @@ const {
               </el-radio-group>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
+              <el-input v-model="state.dialogForm.loginRole" :placeholder="logOperationDict.loginRole"/>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
@@ -309,6 +317,16 @@ const {
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="300">
+            <template #header>
+              <span :class="ifRequired('loginRole')?'tp-table-header-required':''">{{ logOperationDict.loginRole }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-loginRole`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].loginRole" :placeholder="logOperationDict.loginRole"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" :label="logOperationDict.remark" width="300">
             <template #header>
               <span :class="ifRequired('remark')?'tp-table-header-required':''">{{ logOperationDict.remark }}</span>
@@ -373,6 +391,9 @@ const {
           <el-option label="不确定" value="O"/>
         </el-select>
       </el-form-item>
+      <el-form-item :label="logOperationDict.loginRole" prop="loginRole">
+        <el-input v-model="state.filterForm.loginRole" :placeholder="logOperationDict.loginRole"/>
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
@@ -432,6 +453,7 @@ const {
           {{ row.ifSuccess }}
         </template>
       </el-table-column>
+      <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="120"/>
       <el-table-column prop="remark" :label="logOperationDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logOperationDict.createBy" width="120"/>-->

@@ -52,11 +52,11 @@ const modules = {
 const goToSystem = async (dto: SysDto) => {
   loading = ElLoading.service({
     lock: true,
-    text: '系统资源加载中，请稍后。。。',
+    text: '系统资源加载中，请稍候。。。',
     background: 'rgba(0, 0, 0, .7)',
   });
-  const res = await getPermissions(dto.id)
   try {
+    const res = await getPermissions(dto.id)
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
       const permissions = (await Promise.all((deepClone<MenuDto[]>(res).filter(item => {
         return [T_MENU, T_COMP].indexOf(item.type) > -1 && item.ifVisible === final.Y

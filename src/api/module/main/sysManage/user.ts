@@ -121,7 +121,7 @@ export function getSelfInfo() {
 
 export function newUser(params: RegistDto) {
   return request({
-    url: '/main/sys-manage/user',
+    url: '/main/sys-manage/user/admin-new',
     method: 'POST',
     data: {
       ...params,

@@ -1,19 +1,14 @@
 import request from "@/api/request.ts";
 import { ApiConfig } from "@/type/tablePage.ts";
-import {
-  UserUserGroupDto,
-  UserUserGroupUpdDto,
-  UserUserGroupUpdUGUDtp,
-  UserUserGroupUpdUUGDtp
-} from "@/type/module/algorithm/userUserGroup.ts";
+import { UserTableDefaultPermissionDto, UserTableDefaultPermissionUpdDto } from "@/type/module/main/otherUser/userTableDefaultPermission.ts";
 
-export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> = {
+export const userTableDefaultPermissionApi: ApiConfig<UserTableDefaultPermissionDto, UserTableDefaultPermissionUpdDto> = {
   /**
    * 分页查询
    * @param params
    */
   selectList: (params) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-table-default-permission',
     method: 'GET',
     params: params
   }),
@@ -22,7 +17,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param params
    */
   selectAll: (params) => request({
-    url: '/algorithm/user-user-group/all',
+    url: '/main/other-user/user-table-default-permission/all',
     method: 'GET',
     params: params
   }),
@@ -31,7 +26,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param id
    */
   selectById: (id) => request({
-    url: `/algorithm/user-user-group/${id}`,
+    url: `/main/other-user/user-table-default-permission/${id}`,
     method: 'GET'
   }),
   /**
@@ -39,7 +34,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param ids
    */
   selectByIds: (ids) => request({
-    url: `/algorithm/user-user-group/ids`,
+    url: `/main/other-user/user-table-default-permission/ids`,
     method: 'GET',
     params: ids
   }),
@@ -48,7 +43,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param obj
    */
   insertOne: (obj) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-table-default-permission',
     method: 'POST',
     data: obj
   }),
@@ -57,7 +52,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param obj
    */
   updateOne: (obj) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-table-default-permission',
     method: 'PUT',
     data: obj
   }),
@@ -66,7 +61,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param objs
    */
   insertMore: (objs) => request({
-    url: '/algorithm/user-user-group/s',
+    url: '/main/other-user/user-table-default-permission/s',
     method: 'POST',
     data: objs
   }),
@@ -75,7 +70,7 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param objs
    */
   updateMore: (objs) => request({
-    url: '/algorithm/user-user-group/s',
+    url: '/main/other-user/user-table-default-permission/s',
     method: 'PUT',
     data: objs
   }),
@@ -84,24 +79,8 @@ export const userUserGroupApi: ApiConfig<UserUserGroupDto, UserUserGroupUpdDto> 
    * @param ids
    */
   deleteList: (...ids) => request({
-    url: '/algorithm/user-user-group',
+    url: '/main/other-user/user-table-default-permission',
     method: 'DELETE',
     data: ids
-  })
-}
-
-export function userUserGroupUpdUGU(param: UserUserGroupUpdUGUDtp) {
-  return request({
-    url: `/algorithm/user-user-group/ugu`,
-    method: 'POST',
-    data: param
-  })
-}
-
-export function userUserGroupUpdUUG(param: UserUserGroupUpdUUGDtp) {
-  return request({
-    url: `/algorithm/user-user-group/uug`,
-    method: 'POST',
-    data: param
   })
 }

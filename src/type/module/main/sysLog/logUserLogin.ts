@@ -8,6 +8,8 @@ export class LogUserLoginDto extends BaseClass {
   loginBrowser!: string;
   loginOs!: string;
   ifSuccess!: string;
+  failType!: string;
+  loginRole!: string;
   remark!: string;
 }
 
@@ -24,6 +26,8 @@ export class LogUserLoginInsDto {
   loginBrowser!: string;
   loginOs!: string;
   ifSuccess!: string;
+  failType!: string;
+  loginRole!: string;
   remark!: string;
 }
 

@@ -52,7 +52,7 @@ const getInfo = () => {
   usersOfThisUserGroup.value = []
   userUserGroupsOfThisUserGroup.value = []
   table1LoadingRef.value = true
-  userUserGroupApi.selectList({userGroupId: props.selectUserGroup.id, ...state.pageParam1}).then(res => {
+  userUserGroupApi.selectList({userGroupId: props.selectUserGroup.id, loginRole: 'admin', ...state.pageParam1}).then(res => {
     state.total1 = res.total
     userUserGroupsOfThisUserGroup.value = res.list
     userApi.selectByIds(userUserGroupsOfThisUserGroup.value.map(item => item.userId)).then(res => {
@@ -149,7 +149,8 @@ const dialogConfirm = () => {
   dialogButtonLoadingRef.value = true
   const param = {
     userId: selectRows2.value.map(item => item.id),
-    userGroupId: props.selectUserGroup.id
+    userGroupId: props.selectUserGroup.id,
+    loginRole: 'admin',
   }
   userUserGroupUpdUGU(param).then(res => {
     getInfo()

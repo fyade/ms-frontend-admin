@@ -179,11 +179,11 @@ const selCol = () => {
 const d1Can = () => {
   dialog2Visible.value = false
 }
-const ifInsIgnoreKeys = ['id', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
-const ifUpdIgnoreKeys = ['id', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
-const ifSelOneIgnoreKeys = ['id', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
-const ifSelMoreIgnoreKeys = ['id', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
-const ifRequiredIgnoreKeys = ['id', 'remark', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
+const ifInsIgnoreKeys = ['id', 'create_role', 'update_role', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
+const ifUpdIgnoreKeys = ['id', 'create_role', 'update_role', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
+const ifSelOneIgnoreKeys = ['id', 'create_role', 'update_role', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
+const ifSelMoreIgnoreKeys = ['id', 'create_role', 'update_role', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
+const ifRequiredIgnoreKeys = ['id', 'remark', 'create_role', 'update_role', 'create_by', 'update_by', 'create_time', 'update_time', 'deleted']
 const d1Con = () => {
   if (multipleSelection1.value.length > 1) {
     activeTabName.value = final.more

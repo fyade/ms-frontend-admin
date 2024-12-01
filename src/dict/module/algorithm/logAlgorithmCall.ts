@@ -7,4 +7,5 @@ export const logAlgorithmCallDict: { [P in keyof LogAlgorithmCallDto]: string } 
   userId: '用户id',
   callIp: '请求源ip',
   ifSuccess: '是否成功',
+  loginRole: '登录身份',
 }

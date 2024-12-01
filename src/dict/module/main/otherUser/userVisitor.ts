@@ -1,7 +1,7 @@
 import { publicDict } from "@/utils/base.ts";
-import { UserDto, UserDto_ } from "@/type/module/main/sysManage/user.ts";
+import { UserVisitorDto, UserVisitorDto_ } from "@/type/module/main/otherUser/userVisitor.ts";
 
-export const userDict: { [P in keyof UserDto_]: string } & { roles: string, depts: string, ugs: string } = {
+export const userVisitorDict: { [P in keyof UserVisitorDto_]: string } = {
   ...publicDict,
   username: '用户名',
   nickname: '昵称',
