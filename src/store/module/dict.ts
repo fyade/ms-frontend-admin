@@ -12,7 +12,7 @@ export const useDictStore = defineStore('dictStore', () => {
         dicts.value.set(perm, data)
       })
     }
-    return dicts.value.get(perm)
+    return dicts.value.get(perm)!
   })
   return {
     getDict
