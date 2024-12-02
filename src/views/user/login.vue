@@ -47,7 +47,7 @@ const onSubmit = async () => {
   </div>
 
   <div class="bottom-text">
-    <div>
+    <div class="grey">
       <p>前端版本：{{ sysStore.version.qd }}</p>
       <p>后端版本：{{ sysStore.version.hd }}</p>
     </div>
@@ -82,6 +82,10 @@ const onSubmit = async () => {
   flex-direction: column;
   gap: 8px;
   align-items: center;
+
+  .grey {
+    color: gray;
+  }
 
   > * {
     display: flex;

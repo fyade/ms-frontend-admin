@@ -1,4 +1,4 @@
-import { BaseClass, BaseClass2, PageDto } from "@/type/tablePage.ts";
+import { BaseClass, PageDto } from "@/type/tablePage.ts";
 
 export class FileUploadDto extends BaseClass {
   id!: string;

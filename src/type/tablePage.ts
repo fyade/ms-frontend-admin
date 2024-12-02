@@ -12,18 +12,12 @@ export interface State2<T = object, T2 = T> {
 }
 
 export class BaseClass {
+  createRole?: string;
+  updateRole?: string;
   createBy?: string;
   updateBy?: string;
   createTime?: Date;
   updateTime?: Date;
-  deleted?: string;
-}
-
-export class BaseClass2 {
-  create_by?: string;
-  update_by?: string;
-  create_time?: Date;
-  update_time?: Date;
   deleted?: string;
 }
 
