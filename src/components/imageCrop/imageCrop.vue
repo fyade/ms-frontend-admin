@@ -6,29 +6,27 @@ import { fileUploadAvatar } from "@/api/common/fileUpload.ts";
 
 const emits = defineEmits(['uploadSuccess']);
 
-let cSize = 200
-let scale = 1
-let transformX = 0
-let transformY = 0
-let offsetX = 0
-let offsetY = 0
+let cSize = 200 // 画布大小
+let scale = 1 // 画布缩放
+let transformX = cSize / 2 // 图片中心的x坐标
+let transformY = cSize / 2 // 图片y坐标
+let offsetX = 0 // 鼠标当前坐标
+let offsetY = 0 // 鼠标当前坐标
 const isDisabled = ref(false)
-// @ts-ignore
-const inp = ref<HTMLInputElement>(null)
-// @ts-ignore
-const c1 = ref<HTMLCanvasElement>(null)
-let ctx: CanvasRenderingContext2D | null = null
+const inp = ref<HTMLInputElement | null>(null)
+const c1 = ref<HTMLCanvasElement | null>(null)
+let ctx: CanvasRenderingContext2D | null | void = null
 let img: HTMLImageElement | null = null
 let fileName = ''
 let imgWidth = 0
 let imgHeight = 0
 
 onMounted(() => {
-  ctx = c1.value.getContext('2d');
+  ctx = c1.value?.getContext('2d');
 })
 
 const inpClick = () => {
-  inp.value.click()
+  inp.value?.click()
 }
 const onInpClick = (e: any) => {
   const file: File = e.target.files[0]
@@ -56,51 +54,32 @@ const draw = (file: File) => {
   }
 }
 const reDraw = () => {
-  if (ctx && img) {
-    ctx.reset()
-    let obj
-    if (scale < 1) {
-      scale = 1
-      transformX = 0
-      transformY = 0
-    }
-    if (imgWidth < imgHeight) {
-      obj = [
-        img,
-        0,
-        0,
-        imgHeight,
-        imgHeight,
-        transformX,
-        transformY,
-        cSize * scale,
-        cSize * scale
-      ]
-    } else {
-      obj = [
-        img,
-        0,
-        0,
-        imgWidth,
-        imgWidth,
-        transformX,
-        transformY,
-        cSize * scale,
-        cSize * scale
-      ]
-    }
-    // @ts-ignore
-    ctx.drawImage(...obj)
+  if (!(ctx && img)) {
+    return
   }
+  ctx.reset()
+  ctx.drawImage(
+      img,
+      0,
+      0,
+      imgWidth,
+      imgHeight,
+      transformX - (imgWidth / 2) * scale,
+      transformY - (imgHeight / 2) * scale,
+      imgWidth * scale,
+      imgHeight * scale
+  )
 }
 const initCanvas = () => {
-  scale = 1
-  transformX = 0
-  transformY = 0
+  scale = Math.max(cSize / imgWidth, cSize / imgHeight)
+  transformX = cSize / 2
+  transformY = cSize / 2
 }
 const upload = () => {
-  c1.value.toBlob(cb => {
-    // @ts-ignore
+  c1.value?.toBlob(cb => {
+    if (!cb) {
+      return
+    }
     const file = blobToFile(cb, fileName, cb.type);
     const fd: FormData = new FormData()
     fd.append('file', file)
@@ -134,7 +113,13 @@ const onMouseUp = (e: MouseEvent) => {
   document.removeEventListener('mouseleave', onMouseUp)
 }
 const onWheel = (e: WheelEvent) => {
-  scale -= e.deltaY / 1000
+  offsetX = e.offsetX
+  offsetY = e.offsetY
+  scale = Math.max(scale - e.deltaY / 2000, .05)
+  reDraw()
+}
+const setCenter = () => {
+  initCanvas()
   reDraw()
 }
 </script>
@@ -143,10 +128,17 @@ const onWheel = (e: WheelEvent) => {
   <!--<el-button :disabled="isDisabled" type="primary" :icon="Upload" @click="inpClick">上传文件</el-button>-->
   <input ref="inp" type="file" v-show="false" @change="onInpClick"/>
   <div>
-    <canvas class="c1" ref="c1" :width="cSize" :height="cSize" @mousedown="onMouseDown"
-            @wheel="onWheel"></canvas>
+    <canvas
+        class="c1"
+        ref="c1"
+        :width="cSize"
+        :height="cSize"
+        @mousedown="onMouseDown"
+        @wheel="onWheel"
+    ></canvas>
   </div>
-  <el-button :disabled="isDisabled" type="primary" @click="upload">上传</el-button>
+  <el-button :disabled="isDisabled" type="primary" @click="setCenter">居中</el-button>
+  <el-button :disabled="isDisabled" type="primary" @click="upload">保存</el-button>
 </template>
 
 <style scoped lang="scss">
