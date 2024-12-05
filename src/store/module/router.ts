@@ -29,14 +29,14 @@ export const useRouterStore = defineStore('routerStore', () => {
       }
     })
   });
-  const reloadAllMenu1 = () => {
+  const reloadAllMenu = () => {
     allMenus1.value = router.getRoutes().filter(item => {
       return (item.meta && item.meta.asideMenu) && item.meta.sysPerms === sysStore.getCurrentSystem.perms && item.meta.parentId === final.DEFAULT_PARENT_ID
     }).sort((m1, m2) => {
       return (typeof m1.meta.orderNum === 'number' && typeof m2.meta.orderNum === 'number') ? (m1.meta.orderNum - m2.meta.orderNum) : 0
     })
   }
-  reloadAllMenu1()
+  reloadAllMenu()
   const menuList: Ref<AllMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
   const addMenu = (menu: AllMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
@@ -81,6 +81,6 @@ export const useRouterStore = defineStore('routerStore', () => {
     getMenuListNames,
     allMenus1,
     allMenus2,
-    reloadAllMenu1
+    reloadAllMenu
   }
 })

@@ -61,8 +61,11 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:pathMatch(.*)*',
-    // component: () => import('@/views/error/404.vue')
-    redirect: '/'
+    component: () => import('@/views/redirect/index.vue')
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/error/404.vue')
   }
 ]
 

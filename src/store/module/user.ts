@@ -37,7 +37,7 @@ export const useUserStore = defineStore('userStore', () => {
             token.value = res.token
             ifLogin.value = true
             copyObject(userinfo, res.user)
-            if (route.query?.redirect && route.query?.redirect !== '/404' && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
+            if (route.query?.redirect && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
               notification.close()
               await router.push(route.query.redirect as string)
             } else {

@@ -41,8 +41,7 @@ const onSubmit = async () => {
           <el-option v-for="item in allLoginRoles" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-button style="width: 100%" type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录
-      </el-button>
+      <el-button style="width: 100%" type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录</el-button>
     </el-form>
   </div>
 

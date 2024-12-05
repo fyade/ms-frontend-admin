@@ -1,24 +1,21 @@
 <script setup lang="ts">
-import { useSysStore } from "@/store/module/sys.ts";
-import { getPermissions, getSysInfo, getSystems } from "@/api/common/sys.ts";
+import { getSystems } from "@/api/common/sys.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { onBeforeUnmount, ref } from "vue";
-import { deepClone } from "@/utils/ObjectUtils.ts";
-import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
-import { final, T_COMP, T_MENU } from "@/utils/base.ts";
-import { RouteRecordNormalized } from "vue-router";
-import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
-import router from "@/router";
-import { ElLoading, ElNotification, NotificationHandle } from "element-plus";
-import { useRouterStore } from "@/store/module/router.ts";
-import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 import Header from "@/layout/sys/header.vue";
 import { Refresh } from "@element-plus/icons-vue";
+import { goToSystem } from "@/views/home/homeUtilFunc.ts";
+import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
+import { ElLoading } from "element-plus";
 
-const sysStore = useSysStore();
-
-let intervalTimers: number[] = []
 let loading: LoadingInstance | null
+let intervalTimers: number[] = []
+onBeforeUnmount(() => {
+  if (loading) {
+    loading.close()
+  }
+  intervalTimers.forEach(timer => clearInterval(timer))
+})
 
 // 服务器监控
 const serverMonitor = () => {
@@ -44,78 +41,14 @@ const getData = () => {
 }
 getData()
 
-// 引入资源
-const modules = {
-  ...import.meta.glob(`../../views/**/**/**/**/**.vue`),
-  ...import.meta.glob(`../../views/**/**/**/**.vue`),
-}
-const goToSystem = async (dto: SysDto) => {
+const goToSystem2 = (item: SysDto) => {
   loading = ElLoading.service({
     lock: true,
     text: '系统资源加载中，请稍候。。。',
     background: 'rgba(0, 0, 0, .7)',
   });
-  try {
-    const res = await getPermissions(dto.id)
-    if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
-      const permissions = (await Promise.all((deepClone<MenuDto[]>(res).filter(item => {
-        return [T_MENU, T_COMP].indexOf(item.type) > -1 && item.ifVisible === final.Y
-      }) as unknown as (RouteRecordNormalized & MenuDto & { component: any })[]).map(async item => {
-        item.meta = {
-          ...item,
-          asideMenu: true,
-          sysPerms: dto.perms,
-        }
-        item.name = item.perms
-        if (item.type === T_COMP) {
-          const component = await modules[`../module/${dto.path}${item.component}`]()
-          item.component = component.default
-        } else {
-          delete item.component
-        }
-        return item
-      })))
-      const permissionsObj = arr2ToDiguiObj(permissions, {ifDeepClone: false}).sort((m1, m2) => {
-        return m1.orderNum - m2.orderNum
-      })
-      router.addRoute({
-        path: `/${dto.path}`,
-        name: `/${dto.path}`,
-        meta: {
-          label: `${dto.name}首页`
-        },
-        redirect: `/${dto.path}/${permissionsObj[0].path}`,
-        component: () => import('@/layout/sys/index.vue'),
-        children: []
-      })
-      for (let i = 0; i < permissionsObj.length; i++) {
-        router.addRoute(`/${dto.path}`, permissionsObj[i])
-      }
-    }
-    sysStore.setCurrentSystem(dto)
-    const routerStore = useRouterStore();
-    routerStore.reloadAllMenu1()
-    routerStore.deleteAllMenu()
-    router.push(`/${dto.path}`)
-  } catch (e) {
-    console.error(e);
-    ElMessage.error({
-      message: '系统发生故障，请检查菜单是否有错误，若无法解决，请查看开发文档或联系开发者。',
-      duration: 0,
-      showClose: true
-    })
-    if (loading) {
-      loading.close()
-    }
-  }
+  goToSystem(item)
 }
-
-onBeforeUnmount(() => {
-  if (loading) {
-    loading.close()
-  }
-  intervalTimers.forEach(timer => clearInterval(timer))
-})
 </script>
 
 <template>
@@ -131,7 +64,7 @@ onBeforeUnmount(() => {
           </div>
         </el-divider>
         <div class="boxs" v-loading="systemsLoading">
-          <el-card shadow="hover" v-for="item in allSystems" :key="item.id" @click="goToSystem(item)">
+          <el-card shadow="hover" v-for="item in allSystems" :key="item.id" @click="goToSystem2(item)">
             {{ item.name }}
           </el-card>
         </div>
