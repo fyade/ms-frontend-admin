@@ -120,10 +120,13 @@ export function removeElementsByIndices<T>(arr: T[], ...indices: number[]): T[] 
  * 复制对象
  * @param to
  * @param from
+ * @param ignoreKeys
  */
-export function copyObject<T = object>(to: T, from: T) {
+export function copyObject<T = object>(to: T, from: T, ignoreKeys: string[] = []) {
   for (const key in from) {
-    to[key] = from[key]
+    if (!ignoreKeys.includes(key)) {
+      to[key] = from[key]
+    }
   }
 }
 

@@ -112,6 +112,8 @@ export interface PublicDictInterface {
   orderNum: string,
   ifDefault: string,
   ifDisabled: string,
+  createRole: string,
+  updateRole: string,
   createBy: string,
   updateBy: string,
   createTime: string,

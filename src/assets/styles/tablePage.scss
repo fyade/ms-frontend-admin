@@ -84,3 +84,26 @@
     margin-left: 0 !important;
   }
 }
+
+.zs-view-data-message-box {
+  p {
+    display: flex;
+    line-height: 2 !important;
+
+    > span {
+      display: block;
+
+      &:nth-child(1) {
+        width: 100px;
+        text-align: right;
+
+        &::after {
+          content: '：';
+        }
+      }
+
+      &:nth-child(2) {
+      }
+    }
+  }
+}

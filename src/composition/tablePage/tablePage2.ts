@@ -8,7 +8,7 @@ import { Workbook } from "exceljs";
 import { selectFiles } from "@/utils/FileUtils.ts";
 import { TypeIU, TypeOM } from "@/type/utils/base.ts";
 
-const exportIgnoreKeys = ['createBy', 'updateBy', 'createTime', 'updateTime', 'deleted']
+const exportIgnoreKeys = ['createRole', 'updateRole', 'createBy', 'updateBy', 'createTime', 'updateTime', 'deleted']
 const importIgnoreKeys = ['id', ...exportIgnoreKeys]
 export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                                                                            state,
@@ -416,6 +416,41 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
   const gChangeFilterFormVisible = () => {
     filterFormVisible.value = !filterFormVisible.value
   }
+  // 查看
+  const tView = (id: number | string) => {
+    api.selectById(id).then(res => {
+      const keys = Object.keys(state.dialogForm as object) as (keyof T)[];
+      ElMessageBox.alert(
+          `
+<div class="zs-view-data-message-box">
+  <el-row>
+    <el-col :span="12">
+      <p>
+        <span>${dict.id}</span>
+        <span>${res.id}</span>
+      </p>
+    </el-col>
+  </el-row>
+  ${keys.filter(item => item !== 'id').map(key => `
+<el-row>
+  <p>
+    <span>${dict[key]}</span>
+    <span>${res[key]}</span>
+  </p>
+</el-row>
+`).join('')}
+</div>
+          `,
+          '查看',
+          {
+            dangerouslyUseHTMLString: true,
+            draggable: true,
+            closeOnClickModal: true,
+            closeOnPressEscape: true,
+          }
+      )
+    })
+  }
   // 修改
   const tUpd = async (id: number | string, ifMore?: boolean) => {
     dialogType.value = final.upd
@@ -463,7 +498,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
           activeTabName.value = final.one
         }
         api.selectById(id).then(res => {
-          copyObject(state.dialogForm, res as unknown as T2)
+          copyObject(state.dialogForm, res as unknown as T2, exportIgnoreKeys)
         }).catch(() => {
           dialogVisible.value = false
         }).finally(() => {
@@ -545,6 +580,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
     gExport,
     gImport,
     gChangeFilterFormVisible,
+    tView,
     tUpd,
     tDel,
     handleSelectionChange,
