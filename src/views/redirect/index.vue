@@ -6,7 +6,8 @@ import { ElLoading } from "element-plus";
 import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 import { goToSystem } from "@/views/home/homeUtilFunc.ts";
 import { splitUrlByX } from "@/utils/RegularUtils.ts";
-import { onBeforeUnmount } from "vue";
+import { onBeforeUnmount, ref } from "vue";
+import Header from "@/layout/sys/header.vue";
 
 let loading: LoadingInstance | null
 onBeforeUnmount(() => {
@@ -15,8 +16,10 @@ onBeforeUnmount(() => {
   }
 })
 
+const msg = ref('')
 const route = useRoute()
 const init = () => {
+  msg.value = 'Loading...'
   const pushPath = route.path;
   const allPaths = splitUrlByX(pushPath);
   if (allPaths.length === 0) {
@@ -41,6 +44,7 @@ const init = () => {
       });
     }
   }).catch(() => {
+    msg.value = 'Error...'
     if (loading) {
       loading.close()
     }
@@ -50,7 +54,8 @@ init()
 </script>
 
 <template>
-  Loading...
+  <Header style="height: 60px;background-color: #fff;" :if-show-breadcrumb="false"/>
+  {{ msg }}
 </template>
 
 <style scoped lang="scss">

@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { useUserStore } from "@/store/module/user.ts";
 import { ElMessage } from "element-plus";
 import { sleep } from "@/utils/baseUtils.ts";
+import { useSysStore } from "@/store/module/sys.ts";
 
 export const baseURL = import.meta.env.VITE_API_PREFIX
 export const fileBaseUrl = import.meta.env.VITE_API_FILE_PREFIX + '/'
@@ -14,7 +15,10 @@ const request = axios.create({
 })
 request.interceptors.request.use(
     config => {
-      config.headers['Authorization'] = `Bearer ${useUserStore().token}`
+      const publicHeader = useSysStore().publicHeader();
+      Object.keys(publicHeader).forEach(key => {
+        config.headers[key] = publicHeader[key]
+      })
       return config
     }
 )

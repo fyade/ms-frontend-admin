@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { getSysVersion } from "@/api/common/sys.ts";
-import { currentVersion } from "../../../config/config.ts";
+import { currentVersion } from "~/config/config.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { copyObject } from "@/utils/ObjectUtils.ts";
+import { useUserStore } from "@/store/module/user.ts";
 
 export const useSysStore = defineStore('sysStore', () => {
   const version = reactive({
@@ -22,9 +23,14 @@ export const useSysStore = defineStore('sysStore', () => {
     return currentSystem
   })
 
+  const publicHeader = (): Record<string, string> => ({
+    'Authorization': `Bearer ${useUserStore().token}`
+  })
+
   return {
     version,
     setCurrentSystem,
-    getCurrentSystem
+    getCurrentSystem,
+    publicHeader
   }
 })

@@ -275,6 +275,7 @@ const chooseUserGroup = (row: UserGroupDto) => {
                   <div v-else>未选择</div>
                 </div>
               </div>
+              &nbsp;&nbsp;&nbsp;
               <el-button @click="selectPerm">点此选择</el-button>
             </el-form-item>
           </el-col>

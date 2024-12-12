@@ -244,6 +244,13 @@ const setSystem = (dept: DeptDto) => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item :label="deptDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item :label="deptDict.ifAdmin" prop="ifAdmin">
               <el-radio-group v-model="state.dialogForm.ifAdmin">
                 <el-radio :value="final.Y">是</el-radio>
@@ -251,8 +258,6 @@ const setSystem = (dept: DeptDto) => {
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="deptDict.ifDisabled" prop="ifDisabled">
               <el-radio-group v-model="state.dialogForm.ifDisabled">
@@ -261,6 +266,8 @@ const setSystem = (dept: DeptDto) => {
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="deptDict.parentId" prop="parentId">
               <!--<el-input-number v-model="state.dialogForm.parentId" controls-position="right"/>-->
@@ -271,13 +278,6 @@ const setSystem = (dept: DeptDto) => {
                   clearable
                   :value-on-clear="final.DEFAULT_PARENT_ID"
               />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="deptDict.orderNum" prop="orderNum">
-              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -316,6 +316,16 @@ const setSystem = (dept: DeptDto) => {
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="orderNum" :label="deptDict.orderNum" width="200">
+            <template #header>
+              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ deptDict.orderNum }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="ifAdmin" :label="deptDict.ifAdmin" width="100">
             <template #header>
               <span :class="ifRequired('ifAdmin')?'tp-table-header-required':''">{{ deptDict.ifAdmin }}</span>
@@ -350,16 +360,6 @@ const setSystem = (dept: DeptDto) => {
                     clearable
                     :value-on-clear="final.DEFAULT_PARENT_ID"
                 />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="orderNum" :label="deptDict.orderNum" width="200">
-            <template #header>
-              <span :class="ifRequired('orderNum')?'tp-table-header-required':''">{{ deptDict.orderNum }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index].orderNum" controls-position="right"/>
               </div>
             </template>
           </el-table-column>

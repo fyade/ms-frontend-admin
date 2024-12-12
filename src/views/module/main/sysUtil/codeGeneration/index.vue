@@ -372,7 +372,7 @@ const gUpd2 = () => {
           </el-col>
           <el-col :span="12">
             <el-form-item :label="codeGenTableDict.orderNum" prop="orderNum">
-              <el-input-number v-model="state.dialogForm.orderNum" :placeholder="codeGenTableDict.orderNum"/>
+              <el-input-number v-model="state.dialogForm.orderNum" :placeholder="codeGenTableDict.orderNum" controls-position="right"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -518,7 +518,7 @@ const gUpd2 = () => {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-orderNum`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index].orderNum" :placeholder="codeGenTableDict.orderNum"/>
+                <el-input-number v-model="state.dialogForms[$index].orderNum" :placeholder="codeGenTableDict.orderNum" controls-position="right"/>
               </div>
             </template>
           </el-table-column>

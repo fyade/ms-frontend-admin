@@ -319,7 +319,7 @@ const choose = (row: RoleDto) => {
         :data="tableData"
         @selection-change="handleSelectionChange"
     >
-      <el-table-column fixed type="selection" width="55"/>
+      <!--<el-table-column fixed type="selection" width="55"/>-->
       <!--<el-table-column fixed prop="id" :label="roleDict.id" width="180"/>-->
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
