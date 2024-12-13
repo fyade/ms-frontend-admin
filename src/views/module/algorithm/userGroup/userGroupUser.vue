@@ -13,6 +13,9 @@ import { UserDto } from "@/type/module/main/sysManage/user.ts";
 import { UserGroupDto } from "@/type/module/algorithm/userGroup.ts";
 import { userDict } from "@/dict/module/main/sysManage/user.ts";
 import { userGroupDict } from "@/dict/module/algorithm/userGroup.ts";
+import { useSysStore } from "@/store/module/sys.ts";
+
+const sysStore = useSysStore()
 
 const props = defineProps({
   selectUserGroup: {
@@ -252,7 +255,7 @@ const deleteUserUserGroup = (userId: string) => {
       <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
       <el-table-column prop="avatar" :label="userDict.avatar" width="120">
         <template #default="{row}">
-          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
+          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="sysStore.urlAddAuth(fileBaseUrl+row.avatar)" fit="contain">
             <template #error>
               <div></div>
             </template>
@@ -301,7 +304,7 @@ const deleteUserUserGroup = (userId: string) => {
     <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
     <el-table-column prop="avatar" :label="userDict.avatar" width="120">
       <template #default="{row}">
-        <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
+        <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="sysStore.urlAddAuth(fileBaseUrl+row.avatar)" fit="contain">
           <template #error>
             <div></div>
           </template>

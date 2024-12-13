@@ -24,13 +24,19 @@ export const useSysStore = defineStore('sysStore', () => {
   })
 
   const publicHeader = (): Record<string, string> => ({
-    'Authorization': `Bearer ${useUserStore().token}`
+    'authorization': `Bearer ${useUserStore().token}`
   })
+
+  const urlAddAuth = (url: string) => {
+    const header = publicHeader();
+    return `${url}?` + Object.keys(header).map(key => `${key}=${header[key]}`).join('&')
+  }
 
   return {
     version,
     setCurrentSystem,
     getCurrentSystem,
-    publicHeader
+    publicHeader,
+    urlAddAuth,
   }
 })

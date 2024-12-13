@@ -26,6 +26,9 @@ import UserVisitorRole from "@/views/module/main/otherUser/userVisitor/userVisit
 import UserVisitorDept from "@/views/module/main/otherUser/userVisitor/userVisitorDept.vue";
 import { userUserGroupApi, userUserGroupUpdUGU, userUserGroupUpdUUG } from "@/api/module/algorithm/userUserGroup.ts";
 import UserVisitorUserGroup from "@/views/module/main/otherUser/userVisitor/userVisitorUserGroup.vue";
+import { useSysStore } from "@/store/module/sys.ts";
+
+const sysStore = useSysStore()
 
 const state = reactive<State2<UserVisitorDto, UserVisitorUpdDto>>({
   dialogForm: {
@@ -425,7 +428,7 @@ provide('changeSelectUserGroup', selectUserGroup)
       <el-table-column prop="nickname" :label="userVisitorDict.nickname" width="120"/>
       <el-table-column prop="avatar" :label="userVisitorDict.avatar" width="120">
         <template #default="{row}">
-          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
+          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="sysStore.urlAddAuth(fileBaseUrl+row.avatar)" fit="contain">
             <template #error>
               <div></div>
             </template>

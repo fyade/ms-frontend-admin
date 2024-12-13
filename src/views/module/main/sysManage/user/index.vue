@@ -24,6 +24,9 @@ import { userRoleApi, userRoleUpdUR } from "@/api/module/main/sysManage/userRole
 import { userDeptApi, userDeptUpdUD } from "@/api/module/main/sysManage/userDept.ts";
 import UserRole from "@/views/module/main/sysManage/user/userRole.vue";
 import UserDept from "@/views/module/main/sysManage/user/userDept.vue";
+import { useSysStore } from "@/store/module/sys.ts";
+
+const sysStore = useSysStore()
 
 const state = reactive<State2<UserDto, UserUpdDto>>({
   dialogForm: {
@@ -373,7 +376,7 @@ provide('changeSelectDept', selectDept)
       <el-table-column prop="nickname" :label="userDict.nickname" width="120"/>
       <el-table-column prop="avatar" :label="userDict.avatar" width="120">
         <template #default="{row}">
-          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="fileBaseUrl+row.avatar" fit="contain">
+          <el-image style="width: 50px;height: 50px;border-radius: 8px;" :src="sysStore.urlAddAuth(fileBaseUrl+row.avatar)" fit="contain">
             <template #error>
               <div></div>
             </template>

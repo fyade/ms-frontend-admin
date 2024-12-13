@@ -91,7 +91,7 @@ if (props.ifShowBreadcrumb) {
           <el-dropdown>
             <el-image style="width: 30px;height: 30px;border-radius: 8px;"
                       v-if="userStore.userinfo.avatar"
-                      :src="fileBaseUrl+userStore.userinfo.avatar"
+                      :src="sysStore.urlAddAuth(fileBaseUrl+userStore.userinfo.avatar)"
                       fit="contain"
             ></el-image>
             <SvgIcon v-else name="user" color="#000000"/>
