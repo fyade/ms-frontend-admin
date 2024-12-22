@@ -10,6 +10,7 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Inspect from 'vite-plugin-inspect';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { currentVersion } from "./config/config";
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -81,7 +82,8 @@ export default defineConfig(({mode}) => {
             }
           }
         }
-      }
+      },
+      assetsDir: `./${currentVersion}`
     }
   }
 })
