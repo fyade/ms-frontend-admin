@@ -1,5 +1,5 @@
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
-import { getPermissions } from "@/api/common/sys.ts";
+import { getButtons, getPages } from "@/api/common/sys.ts";
 import { RouteRecordNormalized, RouteRecordRaw } from "vue-router";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
@@ -29,7 +29,10 @@ export const goToSystem = async (
     } = {}
 ) => {
   try {
-    const res = await getPermissions(dto.id)
+    const res = await getPages(dto.id)
+    const res2 = await getButtons(dto.id)
+    const buttonPerms = res2.map(item => item.perms);
+    sysStore.setVisibleButtons(dto.perms, buttonPerms)
     if (router.getRoutes().findIndex(item => item.name === `/${dto.path}`) === -1) {
       const permissions = (await Promise.all((deepClone<MenuDto[]>(res).filter(item => {
         return [T_MENU, T_COMP].indexOf(item.type) > -1 && item.ifVisible === final.Y

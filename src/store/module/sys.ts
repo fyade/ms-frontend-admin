@@ -32,11 +32,25 @@ export const useSysStore = defineStore('sysStore', () => {
     return `${url}?` + Object.keys(header).map(key => `${key}=${header[key]}`).join('&')
   }
 
+  const visibleButtons = ref(new Map<string, string[]>())
+  const setVisibleButtons = (sysPerm: string, buttonPerms: string[]) => {
+    visibleButtons.value.set(sysPerm, buttonPerms)
+  }
+  const getVisibleButton = (sysPerm: string, buttonPerm: string) => {
+    const newVar = visibleButtons.value.get(sysPerm);
+    if (newVar && newVar.includes(buttonPerm)) {
+      return true
+    }
+    return false
+  }
+
   return {
     version,
     setCurrentSystem,
     getCurrentSystem,
     publicHeader,
     urlAddAuth,
+    setVisibleButtons,
+    getVisibleButton,
   }
 })

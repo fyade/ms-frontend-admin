@@ -79,6 +79,6 @@ request.interceptors.response.use(
     }
 )
 
-export default function (param: AxiosRequestConfig): Promise<any> {
+export default function <T = any>(param: AxiosRequestConfig): Promise<T> {
   return request(param)
 }
