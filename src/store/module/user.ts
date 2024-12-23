@@ -58,7 +58,7 @@ export const useUserStore = defineStore('userStore', () => {
         resolve(null)
       }).catch((e) => {
         console.error(e)
-        reject()
+        reject(e)
       })
     })
   }

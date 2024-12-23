@@ -4,6 +4,7 @@ import { useUserStore } from "@/store/module/user.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { APP_NAME } from "~/config/config.ts";
 import { allLoginRoles } from "@/utils/base.ts";
+import { getVerificationCode } from "@/api/module/main/sysManage/user.ts";
 
 const userStore = useUserStore();
 const sysStore = useSysStore();
@@ -11,15 +12,29 @@ const form = reactive({
   username: '',
   password: '',
   loginRole: allLoginRoles[0].value,
+  verificationCode: '',
+  verificationCodeUuid: '',
 })
 
 const logining = ref(false)
 const onSubmit = async () => {
   logining.value = true
-  userStore.login(form).then().catch(() => {
+  userStore.login(form).then().catch((e) => {
     logining.value = false
+    if (e?.response?.data?.code === 50002) {
+      refreshVerificationCode()
+    }
   })
 }
+
+const vcode = ref('')
+const refreshVerificationCode = () => {
+  getVerificationCode().then(res => {
+    form.verificationCodeUuid = res.uuid
+    vcode.value = res.svg
+  })
+}
+refreshVerificationCode()
 </script>
 
 <template>
@@ -29,6 +44,7 @@ const onSubmit = async () => {
         :model="form"
         label-width="80px"
         label-position="left"
+        @keyup.enter="onSubmit"
     >
       <el-form-item label="用户名">
         <el-input v-model="form.username"/>
@@ -40,6 +56,15 @@ const onSubmit = async () => {
         <el-select v-model="form.loginRole">
           <el-option v-for="item in allLoginRoles" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
+      </el-form-item>
+      <el-form-item label="验证码">
+        <el-input v-model="form.verificationCode">
+          <template #append>
+            <div @click="refreshVerificationCode" style="margin: 0 -20px;min-width: 120px;height: 40px;">
+              <div v-html="vcode"></div>
+            </div>
+          </template>
+        </el-input>
       </el-form-item>
       <el-button style="width: 100%" type="primary" :disabled="logining" :loading="logining" @click="onSubmit">登录</el-button>
     </el-form>

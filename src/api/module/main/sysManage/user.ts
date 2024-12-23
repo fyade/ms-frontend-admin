@@ -93,6 +93,10 @@ export const userApi: ApiConfig<UserDto, UserUpdDto> = {
   })
 }
 
+/**
+ * 管理员登录
+ * @param data
+ */
 export function loginApi(data: LoginDto) {
   return request({
     url: '/sys/user/adminlogin',
@@ -105,6 +109,9 @@ export function loginApi(data: LoginDto) {
   })
 }
 
+/**
+ * 登出
+ */
 export function logOutApi() {
   return request({
     url: '/sys/user/log-out',
@@ -112,6 +119,19 @@ export function logOutApi() {
   })
 }
 
+/**
+ * 获取验证码
+ */
+export function getVerificationCode() {
+  return request({
+    url: '/sys/user/verification-code',
+    method: 'GET',
+  })
+}
+
+/**
+ * 查询个人信息
+ */
 export function getSelfInfo() {
   return request({
     url: '/main/sys-manage/user/self-info',

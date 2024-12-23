@@ -49,7 +49,7 @@ request.interceptors.response.use(
     },
     async error => {
       const response = error.response
-      if (response.config.url && whiteList.indexOf(response.config.url) === -1 && [401, 403].indexOf(response.status) === -1) {
+      if (response.config.url && whiteList.indexOf(response.config.url) === -1 && [401, 403].indexOf(response.data.code) === -1) {
         await sleep(100)
         for (let i = 0; i < maxReqCount - 1 && count0 < maxReqCount - 1; i++) {
           count0++
@@ -63,14 +63,14 @@ request.interceptors.response.use(
           return Promise.resolve(response1 as any)
         }
       }
-      if (error.response.status === 401) {
+      if (error.response.data.code === 401) {
         useUserStore().removeToken()
         ElMessage.error('登录已过期，请重新登录。')
         window.location.href = `/login?redirect=${window.location.pathname}`
       } else {
         let msg = error.response.data.msg
-        if (error.response.status === 403) msg = msg
-        else if (error.response.status === 500) msg = '系统繁忙，请稍后再试。'
+        if (error.response.data.code === 403) msg = msg
+        else if (error.response.data.code === 500) msg = '系统繁忙，请稍后再试。'
         else if (!msg) msg = '系统繁忙，请稍后再试。'
         ElMessage.error(msg)
       }

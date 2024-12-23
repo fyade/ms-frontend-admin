@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import { CONFIG, final, mIWLTypeDict, T_HOST, T_IP, T_IS } from "@/utils/base.ts";
+import { CONFIG, final, mIWLTypeDict, T_HOST, T_IP, T_IS, TMIWLType } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
@@ -306,7 +306,11 @@ const {
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
       <el-table-column prop="whiteList" :label="menuIpWhiteListDict.whiteList" width="360"/>
-      <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="120"/>
+      <el-table-column prop="fromType" :label="menuIpWhiteListDict.fromType" width="120">
+        <template #default="{row}">
+          {{ mIWLTypeDict[row.fromType as TMIWLType] }}
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" :label="menuIpWhiteListDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="menuIpWhiteListDict.createBy" width="120"/>-->
