@@ -18,6 +18,9 @@ const form = reactive({
 
 const logining = ref(false)
 const onSubmit = async () => {
+  if (logining.value) {
+    return;
+  }
   logining.value = true
   userStore.login(form).then().catch((e) => {
     logining.value = false
