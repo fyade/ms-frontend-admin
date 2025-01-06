@@ -115,6 +115,8 @@ const ifParentMenuItem = (item: RouteRecordNormalized) => {
 
 <style scoped lang="scss">
 .asideMenu {
+  overflow: hidden;
+
   a {
     color: #000;
   }

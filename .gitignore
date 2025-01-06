@@ -24,6 +24,8 @@ stats.html
 *.sln
 *.sw?
 
+package-lock.json
+
 /config/config.ts
 .vscode/
 .env.test

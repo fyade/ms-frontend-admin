@@ -83,7 +83,7 @@ const sysConfigStore = useSysConfigStore();
 <template>
   <PublicIndex>
     <el-container style="height: calc(100% - 50px)">
-      <el-aside :width="sysConfigStore.getMenuCollapse()?'64px':'200px'">
+      <el-aside class="aside" :width="sysConfigStore.getMenuCollapse() ? '64px' : '200px'">
         <Aside ref="aside"/>
       </el-aside>
       <el-main class="content">
@@ -126,6 +126,10 @@ const sysConfigStore = useSysConfigStore();
 </template>
 
 <style scoped lang="scss">
+.aside {
+  transition: width .3s;
+}
+
 .content {
   display: flex;
   flex-direction: column;

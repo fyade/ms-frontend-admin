@@ -81,11 +81,12 @@ defineExpose({
 })
 </script>
 <template>
-  <div :class="`el ${sysConfigStore.getMenuCollapse()?'menuCollapseTrue':''}`">
+  <div :class="`el ${ sysConfigStore.getMenuCollapse() ? 'menuCollapseTrue' : '' }`">
     <el-menu
         :default-active="defaultActive"
         :collapse="sysConfigStore.getMenuCollapse()"
         :unique-opened="true"
+        :collapse-transition="false"
         router
         style="border-right: 0;"
     >
