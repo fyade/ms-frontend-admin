@@ -107,3 +107,22 @@
     }
   }
 }
+
+.zs-two-col {
+  height: 100%;
+  display: flex;
+  column-gap: 12px;
+  overflow: auto;
+
+  > .left {
+    width: 240px;
+    flex: none;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+
+  > .right {
+    flex: auto;
+    overflow: auto;
+  }
+}

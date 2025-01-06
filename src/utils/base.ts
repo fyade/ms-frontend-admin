@@ -1,12 +1,12 @@
 import { CascaderProps } from "element-plus";
 import { INS, MORE, N, ONE, UPD, Y } from '@/type/utils/base.ts'
 
-export const allLoginRoles: LoginRoleDto[] = [
+export const allLoginRoles: LV[] = [
   {label: '系统管理员', value: 'admin'},
   {label: '访客', value: 'visitor'},
 ]
 
-export class LoginRoleDto {
+export class LV {
   label!: string
   value!: string
 }
@@ -50,6 +50,15 @@ export const uTDPTypeDict = {
   [T_UG]: '用户组',
 }
 
+export const allTRPDataTypes: LV[] = [
+  {label: '全部', value: 'ALL'},
+  {label: '本部门', value: 'SELF_DEPT'},
+  {label: '本部门及直属子部门', value: 'DEPT_ONE_SON'},
+  {label: '本部门及全部子部门', value: 'DEPT_ALL_SON'},
+  {label: '本角色', value: 'SELF_ROLE'},
+  {label: '自己', value: 'SELF'},
+]
+
 export const CONFIG = {
   dialog_width: '800px',
   dialog_width_wider: 'calc(100% - 50px)',
@@ -61,7 +70,7 @@ export const CONFIG = {
   theme_color_menu_bg_active_lighten: '#d5e4ff',
   theme_color_menu_bg_not_active: '#fff',
   theme_color_menu_color: '#fff',
-  theme_color_main_bg: '#fafaff'
+  theme_color_main_bg: '#f1f2f6'
 }
 
 export const PAGINATION = {

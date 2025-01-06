@@ -18,6 +18,9 @@ import { fileBaseUrl } from "@/api/request.ts";
 import { unitConversion_storage } from "@/utils/NumberUtils.ts";
 import { FileUploadDto, FileUploadUpdDto } from "@/type/common/file.ts";
 import { AxiosProgressEvent } from "axios";
+import { useSysStore } from "@/store/module/sys.ts";
+
+const sysStore = useSysStore();
 
 const state = reactive<State2<FileUploadDto, FileUploadUpdDto>>({
   dialogForm: {
@@ -101,7 +104,7 @@ const {
 
 const downloadProgresses = reactive<Record<string, number>>({})
 const onlineView = (row: FileUploadDto) => {
-  window.open(`${fileBaseUrl}${row.fileNewName}`)
+  window.open(sysStore.urlAddAuth(`${fileBaseUrl}${row.fileNewName}`))
 }
 const download = async (row: FileUploadDto) => {
   downloadProgresses[row.id] = 0
