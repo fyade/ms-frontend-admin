@@ -22,6 +22,7 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
   dialogForm: {
     id: -1,
     userGroupPermissionId: -1,
+    pperms: '',
     perms: '',
     userId: '',
     callIp: '',
@@ -35,6 +36,7 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
 })
 const dFormRules: FormRules = {
   userGroupPermissionId: [{required: true, trigger: 'change'}],
+  pperms: [{required: true, trigger: 'change'}],
   perms: [{required: true, trigger: 'change'}],
   userId: [{required: true, trigger: 'change'}],
   callIp: [{required: true, trigger: 'change'}],
@@ -134,24 +136,29 @@ const {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="logAlgorithmCallDict.perms" prop="perms">
-              <el-input v-model="state.dialogForm.perms" :placeholder="logAlgorithmCallDict.perms"/>
+            <el-form-item :label="logAlgorithmCallDict.pperms" prop="pperms">
+              <el-input v-model="state.dialogForm.pperms" :placeholder="logAlgorithmCallDict.pperms"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item :label="logAlgorithmCallDict.perms" prop="perms">
+              <el-input v-model="state.dialogForm.perms" :placeholder="logAlgorithmCallDict.perms"/>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item :label="logAlgorithmCallDict.userId" prop="userId">
               <el-input v-model="state.dialogForm.userId" :placeholder="logAlgorithmCallDict.userId"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="logAlgorithmCallDict.callIp" prop="callIp">
               <el-input v-model="state.dialogForm.callIp" :placeholder="logAlgorithmCallDict.callIp"/>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item :label="logAlgorithmCallDict.ifSuccess" prop="ifSuccess">
               <el-radio-group v-model="state.dialogForm.ifSuccess">
@@ -160,6 +167,8 @@ const {
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="logAlgorithmCallDict.loginRole" prop="loginRole">
               <el-input v-model="state.dialogForm.loginRole" :placeholder="logAlgorithmCallDict.loginRole"/>
@@ -198,6 +207,16 @@ const {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-userGroupPermissionId`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input-number v-model="state.dialogForms[$index].userGroupPermissionId" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pperms" :label="logAlgorithmCallDict.pperms" width="300">
+            <template #header>
+              <span :class="ifRequired('pperms')?'tp-table-header-required':''">{{ logAlgorithmCallDict.pperms }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-pperms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].pperms" :placeholder="logAlgorithmCallDict.pperms"/>
               </div>
             </template>
           </el-table-column>
@@ -330,6 +349,7 @@ const {
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
       <!--<el-table-column prop="userGroupPermissionId" :label="logAlgorithmCallDict.userGroupPermissionId" width="120"/>-->
+      <el-table-column prop="pperms" :label="logAlgorithmCallDict.pperms" width="180"/>
       <el-table-column prop="perms" :label="logAlgorithmCallDict.perms" width="180"/>
       <el-table-column prop="userId" :label="logAlgorithmCallDict.userId" width="120"/>
       <el-table-column prop="loginRole" :label="logAlgorithmCallDict.loginRole" width="120"/>

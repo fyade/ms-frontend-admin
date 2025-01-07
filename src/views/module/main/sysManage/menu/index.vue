@@ -1427,8 +1427,8 @@ const setIpWhiteList = (row: MenuDto) => {
           <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
           <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1||(multipleSelection.length>0&&checkVisible(multipleSelection[0].type,[T_Inter]))" @click="gUpd">修改</el-button>
           <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
-          <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
-          <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
+          <!--<el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>-->
+          <!--<el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>-->
         </div>
         <div>
           <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>

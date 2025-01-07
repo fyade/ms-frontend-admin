@@ -24,6 +24,7 @@ const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
     id: -1,
     label: '',
     parentId: final.DEFAULT_PARENT_ID,
+    perms: '',
     baseURL: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
@@ -37,6 +38,7 @@ const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
 const dFormRules: FormRules = {
   label: [{required: true, trigger: 'change'}],
   parentId: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
   baseURL: [{required: true, trigger: 'change'}],
   orderNum: [{required: true, trigger: 'change'}],
 }
@@ -180,10 +182,17 @@ const manageInterface = (row: InterfaceGroupDto) => {
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item :label="interfaceGroupDict.perms" prop="perms">
+              <el-input v-model="state.dialogForm.perms" :placeholder="interfaceGroupDict.perms"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="interfaceGroupDict.baseURL" prop="baseURL">
               <el-input v-model="state.dialogForm.baseURL" :placeholder="interfaceGroupDict.baseURL"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="interfaceGroupDict.orderNum" prop="orderNum">
               <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
@@ -238,6 +247,16 @@ const manageInterface = (row: InterfaceGroupDto) => {
                     clearable
                     :value-on-clear="final.DEFAULT_PARENT_ID"
                 />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="perms" :label="interfaceGroupDict.perms" width="300">
+            <template #header>
+              <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ interfaceGroupDict.perms }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].perms" :placeholder="interfaceGroupDict.perms"/>
               </div>
             </template>
           </el-table-column>
@@ -321,6 +340,7 @@ const manageInterface = (row: InterfaceGroupDto) => {
       <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
       <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
       <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
+      <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     </div>
     <div>
       <el-button v-if="filterFormVisible1" plain :icon="Search" circle @click="gChangeFilterFormVisible"/>
@@ -343,6 +363,7 @@ const manageInterface = (row: InterfaceGroupDto) => {
       <!--在此下方添加表格列-->
       <el-table-column prop="label" :label="interfaceGroupDict.label" width="240"/>
       <!--<el-table-column prop="parentId" :label="interfaceGroupDict.parentId" width="120"/>-->
+      <el-table-column prop="perms" :label="interfaceGroupDict.perms" width="180"/>
       <el-table-column prop="baseURL" :label="interfaceGroupDict.baseURL" width="240"/>
       <el-table-column prop="orderNum" :label="interfaceGroupDict.orderNum" width="120"/>
       <el-table-column prop="remark" :label="interfaceGroupDict.remark" width="120"/>
