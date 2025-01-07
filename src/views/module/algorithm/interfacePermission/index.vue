@@ -98,6 +98,7 @@ const interfaceGroupState = reactive<State2<InterfaceGroupDto, InterfaceGroupUpd
     id: -1,
     label: '',
     parentId: final.DEFAULT_PARENT_ID,
+    perms: '',
     baseURL: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',

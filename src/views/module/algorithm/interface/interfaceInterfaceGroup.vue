@@ -25,6 +25,7 @@ const state = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
     id: -1,
     label: '',
     parentId: final.DEFAULT_PARENT_ID,
+    perms: '',
     baseURL: '',
     orderNum: final.DEFAULT_ORDER_NUM,
     remark: '',
