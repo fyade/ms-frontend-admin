@@ -59,7 +59,7 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
    */
   const getData = () => {
     tableLoadingRef.value = true
-    tableData.value = []
+    // tableData.value = []
     const ifByPage = !ifHasConfig('pageQuery', false)
     if (ifByPage) {
       config.beforeSelectListCallback && config.beforeSelectListCallback()
