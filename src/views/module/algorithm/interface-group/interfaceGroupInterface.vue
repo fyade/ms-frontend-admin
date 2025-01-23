@@ -92,6 +92,9 @@ const {
   config: interfaceInterfaceGroupConfig,
   api: interfaceInterfaceGroupApi,
   dict: interfaceInterfaceGroupDict,
+  dialogFormRefName: 'interfaceInterfaceGroupDialogFormRef',
+  dialogFormsRefName: 'interfaceInterfaceGroupDialogFormsRef',
+  filterFormRefName: 'interfaceInterfaceGroupFilterFormRef',
 })
 
 const interfaceState = reactive<State2<InterfaceDto, InterfaceUpdDto>>({
@@ -171,6 +174,9 @@ const {
   config: interfaceConfig,
   api: interfaceApi,
   dict: interfaceDict,
+  dialogFormRefName: 'interfaceDialogFormRef',
+  dialogFormsRefName: 'interfaceDialogFormsRef',
+  filterFormRefName: 'interfaceFilterFormRef',
 })
 
 const selectInterfaceModel = ref(false)

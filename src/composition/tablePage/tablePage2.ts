@@ -15,18 +15,24 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                                                                            dFormRules = {},
                                                                            config = new TablePageConfig(),
                                                                            api,
-                                                                           dict
+                                                                           dict,
+                                                                           dialogFormRefName = 'dialogFormRef',
+                                                                           dialogFormsRefName = 'dialogFormsRef',
+                                                                           filterFormRefName = 'filterFormRef',
                                                                          }: {
                                                                            state: State2<T, T2>
                                                                            dFormRules: FormRules,
                                                                            config: TablePageConfig
                                                                            api: ApiConfig<T, T2>
                                                                            dict: { [P in keyof T]: string }
+                                                                           dialogFormRefName?: string
+                                                                           dialogFormsRefName?: string
+                                                                           filterFormRefName?: string
                                                                          }
 ) => {
-  const dialogFormRef = useTemplateRef<FormInstance>('dialogFormRef')
-  const dialogFormsRef = useTemplateRef<FormInstance>('dialogFormsRef')
-  const filterFormRef = useTemplateRef<FormInstance>('filterFormRef')
+  const dialogFormRef = useTemplateRef<FormInstance>(dialogFormRefName)
+  const dialogFormsRef = useTemplateRef<FormInstance>(dialogFormsRefName)
+  const filterFormRef = useTemplateRef<FormInstance>(filterFormRefName)
   const filterFormVisible = ref<boolean>(true)
   const dialogVisible = ref<boolean>(false)
   const dialogLoadingRef = ref<boolean>(false)

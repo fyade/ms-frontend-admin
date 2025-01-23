@@ -91,6 +91,9 @@ const {
   config: userGroupConfig,
   api: userGroupApi,
   dict: userGroupDict,
+  dialogFormRefName: 'userGroupDialogFormRef',
+  dialogFormsRefName: 'userGroupDialogFormsRef',
+  filterFormRefName: 'userGroupFilterFormRef',
 })
 
 const interfaceGroupState = reactive<State2<InterfaceGroupDto, InterfaceGroupUpdDto>>({
@@ -162,6 +165,9 @@ const {
   config: interfaceGroupConfig,
   api: interfaceGroupApi,
   dict: interfaceGroupDict,
+  dialogFormRefName: 'interfaceGroupDialogFormRef',
+  dialogFormsRefName: 'interfaceGroupDialogFormsRef',
+  filterFormRefName: 'interfaceGroupFilterFormRef',
 })
 
 const userGroupPermissionState = reactive<State2<UserGroupPermissionDto, UserGroupPermissionUpdDto>>({
@@ -251,6 +257,9 @@ const {
   config: userGroupPermissionConfig,
   api: userGroupPermissionApi,
   dict: userGroupPermissionDict,
+  dialogFormRefName: 'userGroupPermissionDialogFormRef',
+  dialogFormsRefName: 'userGroupPermissionDialogFormsRef',
+  filterFormRefName: 'userGroupPermissionFilterFormRef',
 })
 
 const USER_GROUP = 'userGroup'

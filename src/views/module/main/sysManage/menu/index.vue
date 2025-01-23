@@ -191,6 +191,9 @@ const {
   config: configInter,
   api: menuApi,
   dict: menuDictInter,
+  dialogFormRefName: 'dialogFormRefInter',
+  dialogFormsRefName: 'dialogFormsRefInter',
+  filterFormRefName: 'filterFormRefInter',
 })
 
 const routerStore = useRouterStore();
@@ -432,6 +435,9 @@ const {
   config: configI2,
   api: menuApi,
   dict: menuDictI2,
+  dialogFormRefName: 'dialogFormRefI2',
+  dialogFormsRefName: 'dialogFormsRefI2',
+  filterFormRefName: 'filterFormRefI2',
 })
 
 const gInsI22 = () => {
