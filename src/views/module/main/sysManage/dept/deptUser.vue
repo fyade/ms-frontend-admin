@@ -3,7 +3,7 @@ import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
 import { fileBaseUrl } from "@/api/request.ts";
 import { Delete, Plus, Refresh } from "@element-plus/icons-vue";
 import Pagination from "@/components/pagination/pagination.vue";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, useTemplateRef } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { userDeptApi, userDeptUpdDU } from "@/api/module/main/sysManage/userDept.ts";
 import { userApi } from "@/api/module/main/sysManage/user.ts";
@@ -44,7 +44,7 @@ const state = reactive({
 // 所有用户
 const allUsers = ref<UserDto[]>([])
 // 筛选表单
-const filterFormRef = ref<FormInstance | null>(null)
+const filterFormRef = useTemplateRef<FormInstance>('filterFormRef')
 const table1LoadingRef = ref(false)
 // 此部门的用户
 const usersOfThisDept = ref<UserDto[]>([])

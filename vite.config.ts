@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path, { join } from "path";
 import AutoImport from 'unplugin-auto-import/vite';
@@ -10,14 +10,18 @@ import IconsResolver from 'unplugin-icons/resolver';
 import Inspect from 'vite-plugin-inspect';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { currentVersion } from "./config/config";
+// @ts-ignore 你 TM 爆红干什么
+import { currentVersion, currentEnv } from './config/config';
 
+const root = process.cwd()
+const env = currentEnv()
+const pathSrc = path.resolve(__dirname, 'src')
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
-  const root = process.cwd()
-  const env = loadEnv(mode, root)
-  const pathSrc = path.resolve(__dirname, 'src')
   return {
+    define: {
+      'import.meta.env.MODE': JSON.stringify(mode),
+    },
     plugins: [
       Inspect(),
       visualizer(),
@@ -59,7 +63,7 @@ export default defineConfig(({mode}) => {
     },
     server: {
       host: '0.0.0.0',
-      port: '5100',
+      port: 5100,
       proxy: {
         [env.VITE_API_PREFIX]: {
           target: env.VITE_BASEURL,

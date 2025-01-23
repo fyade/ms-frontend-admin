@@ -9,6 +9,7 @@ const uploadSuccess = (fileName: string) => {
   updUser({id: userStore.userinfo.id, avatar: fileName}).then(res => {
     if (res) {
       ElMessage.success('头像上传成功。')
+      userStore.refreshSelfInfo()
     } else {
       ElMessage.error('头像上传失败。')
     }

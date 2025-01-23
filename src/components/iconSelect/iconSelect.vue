@@ -57,7 +57,7 @@ icons.value = Object.keys(files).map((path) => {
     <template #footer>
       <div style="display: flex;gap: 12px;align-items: center;">
         <el-tag type="info" effect="plain">当前本地图标库中共有{{ icons.length }}个图标。</el-tag>
-        <a class="link-text" href="https://iconpark.oceanengine.com/official" target="_blank">IconPark</a>
+        <a class="link-text" href="https://iconpark.oceanengine.com/official" target="_blank">前往 IconPark 下载更多图标</a>
       </div>
     </template>
   </el-select-v2>

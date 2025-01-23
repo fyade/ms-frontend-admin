@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, useTemplateRef } from "vue";
 import { blobToFile } from "@/utils/FileUtils.ts";
 import { ElMessage } from "element-plus";
 import { fileUploadAvatar } from "@/api/common/fileUpload.ts";
@@ -13,8 +13,8 @@ let transformY = cSize / 2 // 图片y坐标
 let offsetX = 0 // 鼠标当前坐标
 let offsetY = 0 // 鼠标当前坐标
 const isDisabled = ref(false)
-const inp = ref<HTMLInputElement | null>(null)
-const c1 = ref<HTMLCanvasElement | null>(null)
+const inp = useTemplateRef<HTMLInputElement>('inp')
+const c1 = useTemplateRef<HTMLCanvasElement>('c1')
 let ctx: CanvasRenderingContext2D | null | void = null
 let img: HTMLImageElement | null = null
 let fileName = ''

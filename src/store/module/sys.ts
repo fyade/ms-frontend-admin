@@ -8,7 +8,7 @@ import { useUserStore } from "@/store/module/user.ts";
 
 export const useSysStore = defineStore('sysStore', () => {
   const version = reactive({
-    hd: '',
+    hd: '-.-.--.-',
     qd: currentVersion
   })
   getSysVersion().then(res => {

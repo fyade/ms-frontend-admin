@@ -1,4 +1,4 @@
-import { computed, nextTick, onMounted, reactive, Ref, ref, toRaw, watch } from "vue"
+import { computed, nextTick, onMounted, reactive, Ref, ref, toRaw, useTemplateRef, watch } from "vue"
 import { ElMessage, ElMessageBox, FormInstance, FormItemRule, type FormRules } from "element-plus"
 import { final, Operate, PAGINATION } from "@/utils/base.ts"
 import { ApiConfig, State2, TablePageConfig } from "@/type/tablePage.ts";
@@ -24,9 +24,9 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
                                                                            dict: { [P in keyof T]: string }
                                                                          }
 ) => {
-  const dialogFormRef = ref<FormInstance | null>(null)
-  const dialogFormsRef = ref<FormInstance | null>(null)
-  const filterFormRef = ref<FormInstance | null>(null)
+  const dialogFormRef = useTemplateRef<FormInstance>('dialogFormRef')
+  const dialogFormsRef = useTemplateRef<FormInstance>('dialogFormsRef')
+  const filterFormRef = useTemplateRef<FormInstance>('filterFormRef')
   const filterFormVisible = ref<boolean>(true)
   const dialogVisible = ref<boolean>(false)
   const dialogLoadingRef = ref<boolean>(false)

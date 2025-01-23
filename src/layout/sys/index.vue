@@ -2,7 +2,7 @@
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
 import { AllMenus2I, useRouterStore } from "@/store/module/router.ts";
-import { computed, Ref, ref, watch } from "vue";
+import { computed, Ref, ref, useTemplateRef, watch } from "vue";
 import { routerPinList } from "@/router";
 import PublicIndex from "@/layout/publicIndex.vue";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
@@ -11,7 +11,7 @@ import { useSysStore } from "@/store/module/sys.ts";
 const route = useRoute()
 const routerStore = useRouterStore();
 const sysStore = useSysStore();
-const aside: Ref<InstanceType<typeof Aside> | null> = ref<InstanceType<typeof Aside> | null>(null)
+const aside = useTemplateRef<InstanceType<typeof Aside>>('aside')
 
 const homeRouter = computed(() => {
   return `/${sysStore.getCurrentSystem.path}`

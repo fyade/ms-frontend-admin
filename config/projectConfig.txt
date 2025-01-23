@@ -1,0 +1,24 @@
+import * as process from "process";
+
+export const APP_NAME = '知笙后台管理系统' // 系统名
+export const CHUNK_SIZE = 1024 * 1024 * 2 // 文件分片大小
+
+export const currentVersion = '0.0.01' // 版本号
+
+export const SECRET_KEY = '' // 前端-后端接口敏感信息加密盐，注意需与后端保持一致
+
+export const currentEnv = () => {
+  const env = process.env?.NODE_ENV || 'dev';
+  return Object.keys(config).includes(env) ? config[env as keyof typeof config] : config.dev;
+};
+
+const config = {
+  dev: {
+    VITE_MODE: 'dev',
+    VITE_BASEURL: 'http://localhost:8060',
+    VITE_BASEURL_SOCKET: 'ws://localhost:8061',
+    VITE_FILE_BASEURL: 'http://localhost:8060/static/file/',
+    VITE_API_PREFIX: '/api-dev',
+    VITE_API_FILE_PREFIX: '/api-file-dev',
+  },
+}

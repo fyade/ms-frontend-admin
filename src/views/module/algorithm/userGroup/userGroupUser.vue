@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CONFIG, PAGINATION, publicDict } from "@/utils/base.ts";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, useTemplateRef } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { userApi } from "@/api/module/main/sysManage/user.ts";
 import { userUserGroupApi, userUserGroupUpdUGU } from "@/api/module/algorithm/userUserGroup.ts";
@@ -44,7 +44,7 @@ const state = reactive({
 // 所有用户
 const allUsers = ref<UserDto[]>([])
 // 筛选表单
-const filterFormRef = ref<FormInstance | null>(null)
+const filterFormRef = useTemplateRef<FormInstance>('filterFormRef')
 const table1LoadingRef = ref(false)
 // 此用户组的用户
 const usersOfThisUserGroup = ref<UserDto[]>([])

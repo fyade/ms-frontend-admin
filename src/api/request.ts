@@ -3,9 +3,11 @@ import { useUserStore } from "@/store/module/user.ts";
 import { ElMessage } from "element-plus";
 import { sleep } from "@/utils/baseUtils.ts";
 import { useSysStore } from "@/store/module/sys.ts";
+import { currentEnv } from "~/config/config.ts";
 
-export const baseURL = import.meta.env.VITE_API_PREFIX
-export const fileBaseUrl = import.meta.env.VITE_API_FILE_PREFIX + '/'
+const env = currentEnv();
+export const baseURL = env.VITE_API_PREFIX
+export const fileBaseUrl = env.VITE_API_FILE_PREFIX + '/'
 const maxReqCount = 1
 // const whiteList: string[] = []
 const whiteList: string[] = ['/sys/user/adminlogin']

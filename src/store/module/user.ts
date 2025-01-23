@@ -4,13 +4,13 @@ import { reactive, ref } from "vue";
 import { ElNotification, NotificationHandle } from "element-plus";
 import { useRoute } from "vue-router";
 import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
-import { loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
+import { getSelfInfo, loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
-  const userinfo: UserDto = reactive({
+  const userinfo = reactive<UserDto>({
     id: '',
     username: '',
     nickname: '',
@@ -74,12 +74,18 @@ export const useUserStore = defineStore('userStore', () => {
     ifLogin.value = false
     clearObject(userinfo)
   }
+  const refreshSelfInfo = () => {
+    getSelfInfo().then(res => {
+      copyObject(userinfo, res)
+    })
+  }
   return {
     token,
     userinfo,
     ifLogin,
     login,
     removeToken,
-    logOut
+    logOut,
+    refreshSelfInfo
   }
 })

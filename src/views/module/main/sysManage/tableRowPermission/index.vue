@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, useTemplateRef } from "vue";
 import { State2, TablePageConfig } from "@/type/tablePage.ts";
 import { MenuDto, MenuUpdDto } from "@/type/module/main/sysManage/menu.ts";
 import { final, T_DEPT, T_IS, T_ROLE, uTDPTypeDict } from "@/utils/base.ts";
@@ -104,8 +104,8 @@ const selectRTChange = () => {
   // }
 }
 selectRTChange()
-const treeRole = ref<null | TreeInstance>(null)
-const treeDept = ref<null | TreeInstance>(null)
+const treeRole = useTemplateRef<TreeInstance>('treeRole')
+const treeDept = useTemplateRef<TreeInstance>('treeDept')
 const selectActionId = ref(0)
 const nodeClickRole = (row: RoleDto) => {
   selectRT.value = T_ROLE

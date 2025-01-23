@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, ref, useTemplateRef } from "vue";
 
 const props = defineProps({
   name: {
@@ -18,7 +18,7 @@ const props = defineProps({
 const symbolId = computed(() => `#${props.name}`)
 
 const offsetNumber = ref(200)
-const el = ref<HTMLElement | null>(null)
+const el = useTemplateRef<HTMLElement>('el')
 nextTick(() => {
   offsetNumber.value = props.size
   if (el.value) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, nextTick, reactive, ref, Ref, toRaw, watch } from "vue";
+import { inject, nextTick, reactive, ref, Ref, toRaw, useTemplateRef, watch } from "vue";
 import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
@@ -101,7 +101,7 @@ const selectRole: Ref<number[]> | undefined = inject('changeSelectRole')
 if (selectRole) {
   selectRole.value.forEach(id => selects[id] = true)
 }
-const multipleTable = ref<TableInstance | null>(null)
+const multipleTable = useTemplateRef<TableInstance>('multipleTable')
 const handleDataChange = () => {
   const selects2 = deepClone<Record<string|number, boolean>>(toRaw(selects))
   for (const role of tableData.value) {

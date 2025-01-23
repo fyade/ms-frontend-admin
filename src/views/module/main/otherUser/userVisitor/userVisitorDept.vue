@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, reactive, ref, Ref, watch } from "vue";
+import { computed, inject, nextTick, reactive, ref, Ref, useTemplateRef, watch } from "vue";
 import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
@@ -91,7 +91,7 @@ const {
   dict: deptDict,
 })
 
-const selectDeptTree = ref<TreeInstance | null>(null)
+const selectDeptTree = useTemplateRef<TreeInstance>('selectDeptTree')
 const tableData2 = computed(() => arr2ToDiguiObj(tableData.value))
 const selectDept: Ref<number[]> | undefined = inject('changeSelectDept')
 const selectDept2 = ref<number[]>(selectDept ? selectDept.value : [])

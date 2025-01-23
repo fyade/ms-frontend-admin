@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref, toRaw, watch } from "vue"
+import { reactive, ref, toRaw, useTemplateRef, watch } from "vue"
 import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
 import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts"
@@ -260,7 +260,7 @@ const selectType = ref<typeof USER_GROUP | typeof INTERFACE_GROUP | null>(null)
 const userGroupPermissionsOfSelectUserGroupOrSelectInterfaceGroup = ref<UserGroupPermissionDto[]>([])
 
 const leftCardLoading = ref(false)
-const userGroupTableRef = ref<TableInstance | null>(null)
+const userGroupTableRef = useTemplateRef<TableInstance>('userGroupTableRef')
 const selectUserGroupInfo = reactive<UserGroupDto>({
   id: -1,
   label: '',
@@ -339,7 +339,7 @@ const detailInterfaceGroupOfThisUserGroup = (userGroupPermissionId: number) => {
 }
 
 const rightCardLoading = ref(false)
-const interfaceGroupTableRef = ref<TableInstance | null>(null)
+const interfaceGroupTableRef = useTemplateRef<TableInstance>('interfaceGroupTableRef')
 const selectInterfaceGroupInfo = reactive({
   id: -1,
   label: '',
@@ -632,7 +632,7 @@ const userGroupPermissionDCon2 = () => {
             :end-placeholder="userGroupPermissionDict.permissionEndTime"
             format="YYYY-MM-DD HH:mm:ss"
             date-format="YYYY/MM/DD ddd"
-            time-format="A hh:mm:ss"
+            time-format="HH:mm:ss"
         />
       </el-form-item>
       <el-form-item v-if="userGroupPermissionState.dialogForm.ifLimitRequestTimes === final.Y" :label="userGroupPermissionDict.limitRequestTimes" prop="limitRequestTimes">

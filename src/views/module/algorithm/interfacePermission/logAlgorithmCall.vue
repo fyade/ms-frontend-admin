@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { CONFIG, final } from "@/utils/base.ts";
 import Pagination from "@/components/pagination/pagination.vue";
 import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";
@@ -32,7 +32,13 @@ const state = reactive<State2<LogAlgorithmCallDto, LogAlgorithmCallUpdDto>>({
   },
   dialogForms: [],
   dialogForms_error: {},
-  filterForm: {},
+  filterForm: {
+    pperms: '',
+    perms: '',
+    userId: '',
+    loginRole: '',
+    callIp: '',
+  },
 })
 const dFormRules: FormRules = {
   userGroupPermissionId: [{required: true, trigger: 'change'}],
@@ -43,10 +49,19 @@ const dFormRules: FormRules = {
   ifSuccess: [{required: true, trigger: 'change'}],
   loginRole: [{required: true, trigger: 'change'}],
 }
-const config = new TablePageConfig<LogAlgorithmCallDto>({
+const config = new TablePageConfig({
   bulkOperation: true,
   selectParam: {
-    userGroupPermissionId: props.selectUGPId
+    userGroupPermissionId: props.selectUGPId,
+    createTime: {
+      between: {
+        type: 'date',
+        value: [null, null]
+      } as {
+        type: string
+        value: [null, null] | [Date, Date]
+      }
+    }
   },
 })
 
@@ -94,6 +109,79 @@ const {
   api: logAlgorithmCallApi,
   dict: logAlgorithmCallDict,
 })
+
+const datePickerValue = ref('')
+const shortcuts = [
+  {
+    text: '前一周',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setDate(start.getDate() - 7)
+      return [start, end]
+    },
+  },
+  {
+    text: '前两周',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setDate(start.getDate() - 14)
+      return [start, end]
+    },
+  },
+  {
+    text: '前一个月',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setMonth(start.getMonth() - 1)
+      return [start, end]
+    },
+  },
+  {
+    text: '前三个月',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setMonth(start.getMonth() - 3)
+      return [start, end]
+    },
+  },
+  {
+    text: '前半年',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setMonth(start.getMonth() - 6)
+      return [start, end]
+    },
+  },
+  {
+    text: '前一年',
+    value: () => {
+      const start = new Date()
+      const end = new Date()
+      start.setFullYear(start.getFullYear() - 1)
+      return [start, end]
+    },
+  },
+]
+const datePickerValueChange = (value: Date[]) => {
+  if (value) {
+    config!.selectParam!.createTime!.between!.value[0] = value[0]
+    config!.selectParam!.createTime!.between!.value[1] = value[1]
+  } else {
+    config!.selectParam!.createTime!.between!.value[0] = null
+    config!.selectParam!.createTime!.between!.value[1] = null
+  }
+}
+const fCan2 = () => {
+  datePickerValue.value = ''
+  config!.selectParam!.createTime!.between!.value[0] = null
+  config!.selectParam!.createTime!.between!.value[1] = null
+  fCan()
+}
 </script>
 
 <template>
@@ -311,13 +399,38 @@ const {
         @submit.prevent
     >
       <!--在此下方添加表单项-->
-      <!--<el-form-item :label="logAlgorithmCallDict." prop="">-->
-      <!--  <el-input v-model="state.filterForm." :placeholder="logAlgorithmCallDict."/>-->
-      <!--</el-form-item>-->
+      <el-form-item :label="logAlgorithmCallDict.pperms" prop="pperms">
+        <el-input v-model="state.filterForm.pperms" :placeholder="logAlgorithmCallDict.pperms"/>
+      </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.perms" prop="perms">
+        <el-input v-model="state.filterForm.perms" :placeholder="logAlgorithmCallDict.perms"/>
+      </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.userId" prop="userId">
+        <el-input v-model="state.filterForm.userId" :placeholder="logAlgorithmCallDict.userId"/>
+      </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.loginRole" prop="loginRole">
+        <el-input v-model="state.filterForm.loginRole" :placeholder="logAlgorithmCallDict.loginRole"/>
+      </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.callIp" prop="callIp">
+        <el-input v-model="state.filterForm.callIp" :placeholder="logAlgorithmCallDict.callIp"/>
+      </el-form-item>
+      <el-form-item :label="logAlgorithmCallDict.createTime" prop="createTime">
+        <el-date-picker
+            v-model="datePickerValue"
+            type="datetimerange"
+            :shortcuts="shortcuts"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="YYYY-MM-DD HH:mm:ss"
+            date-format="YYYY/MM/DD ddd"
+            time-format="HH:mm:ss"
+            @change="datePickerValueChange"
+        />
+      </el-form-item>
       <!--在此上方添加表单项-->
       <el-form-item>
         <el-button type="primary" @click="fCon">筛选</el-button>
-        <el-button @click="fCan">重置</el-button>
+        <el-button @click="fCan2">重置</el-button>
       </el-form-item>
     </el-form>
   </div>

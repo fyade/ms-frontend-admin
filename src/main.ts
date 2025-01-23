@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/global.scss'
 import router from './router'
-import { APP_NAME } from "../config/config.ts";
+import { APP_NAME, currentEnv } from "../config/config.ts";
 import './autoUpdate.ts'
 import directives from "@/dicevtive/index.ts";
 import { createPinia } from "pinia";
@@ -24,5 +24,5 @@ app.mount('#app')
 
 document.title = APP_NAME
 
-const NODE_ENV = import.meta.env.VITE_MODE
-console.info(NODE_ENV)
+const env = currentEnv();
+console.info(env.VITE_MODE)
