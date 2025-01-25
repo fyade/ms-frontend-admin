@@ -155,7 +155,7 @@ export function fileUploadOneChunk_upload({fileMd5, fileNewName, chunkIndex, fil
   file: FormData
 }) {
   return request({
-    url: `/main/sys/file-upload/one-chunk/upload/${fileMd5}/${fileNewName}/${chunkIndex}`,
+    url: `/main/sys/file-upload/one-chunk/upload/${fileMd5}/${chunkIndex}/${fileNewName}`,
     method: 'POST',
     data: file
   })
