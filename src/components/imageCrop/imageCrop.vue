@@ -37,11 +37,9 @@ const onInpClick = () => {
   draw(file)
 }
 const draw = (file: File) => {
-  console.time('a')
   const reader = new FileReader();
   reader.readAsDataURL(file)
   reader.onload = () => {
-    console.timeEnd('a')
     img = new Image();
     img.src = reader.result as string
     img.onload = () => {
