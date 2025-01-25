@@ -12,6 +12,7 @@ export const menuDict: { [P in keyof MenuDto]: string } = {
   ifLink: '是否外链',
   ifVisible: '是否显示',
   ifPublic: '是否公共接口',
+  ifFixed: '是否固定',
   perms: '权限标识',
   sysId: '所属系统',
 }

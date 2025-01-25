@@ -2,8 +2,7 @@
 import Aside from "@/layout/sys/aside.vue";
 import { useRoute } from "vue-router";
 import { AllMenus2I, useRouterStore } from "@/store/module/router.ts";
-import { computed, Ref, ref, useTemplateRef, watch } from "vue";
-import { routerPinList } from "@/router";
+import { computed, useTemplateRef } from "vue";
 import PublicIndex from "@/layout/publicIndex.vue";
 import { useSysConfigStore } from "@/store/module/sysConfig.ts";
 import { useSysStore } from "@/store/module/sys.ts";
@@ -32,7 +31,7 @@ const contextMenu = (info: AllMenus2I, index: number) => [
     {
       label: '关闭此标签页',
       operate: () => {
-        if (routerPinList.indexOf(info.path) > -1) {
+        if (routerStore.getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(info.path) > -1) {
           return
         }
         deleteMenu(index)
@@ -62,13 +61,13 @@ const contextMenu = (info: AllMenus2I, index: number) => [
         if (route.path !== info.path) {
           aside.value && aside.value.gotoMenu(homeRouter.value)
         }
-        routerStore.deleteOtherMenu(index, routerPinList.indexOf(info.path) > -1)
+        routerStore.deleteOtherMenu(index, routerStore.getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(info.path) > -1)
       }
     },
     {
       label: '关闭全部标签页',
       operate: () => {
-        if (routerPinList.indexOf(route.path) === -1) {
+        if (routerStore.getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(route.path) === -1) {
           aside.value && aside.value.gotoMenu(homeRouter.value)
         }
         routerStore.deleteAllMenu()
@@ -98,7 +97,7 @@ const sysConfigStore = useSysConfigStore();
                 <el-tag
                     type="info"
                     :effect="item.path===route.path?'light':'plain'"
-                    :closable="routerPinList.indexOf(item.path)===-1"
+                    :closable="routerStore.getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path)===-1"
                     @click="gotoMenu(item.path)"
                     @close="deleteMenu(index)"
                     style="cursor: pointer;"

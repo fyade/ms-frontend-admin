@@ -30,12 +30,13 @@ const state = reactive<State2<MenuDto, MenuUpdDto>>({
     path: '#',
     parentId: final.DEFAULT_PARENT_ID,
     component: '#',
-    icon: '',
+    icon: '#',
     orderNum: final.DEFAULT_ORDER_NUM,
     ifLink: final.N,
     ifVisible: final.Y,
     ifDisabled: final.N,
     ifPublic: final.N,
+    ifFixed: final.N,
     perms: '',
     sysId: final.DEFAULT_PARENT_ID,
     remark: '',
@@ -112,12 +113,13 @@ const stateInter = reactive<State2<MenuDto, MenuUpdDto>>({
     path: '#',
     parentId: final.DEFAULT_PARENT_ID,
     component: '#',
-    icon: '',
+    icon: '#',
     orderNum: final.DEFAULT_ORDER_NUM,
     ifLink: final.N,
     ifVisible: final.Y,
     ifDisabled: final.N,
     ifPublic: final.N,
+    ifFixed: final.N,
     perms: '',
     sysId: final.DEFAULT_PARENT_ID,
     remark: '',
@@ -355,12 +357,13 @@ const stateI2 = reactive<State2<MenuDto, MenuUpdDto>>({
     path: '#',
     parentId: final.DEFAULT_PARENT_ID,
     component: '#',
-    icon: '',
+    icon: '#',
     orderNum: final.DEFAULT_ORDER_NUM,
     ifLink: final.N,
     ifVisible: final.Y,
     ifDisabled: final.N,
     ifPublic: final.N,
+    ifFixed: final.N,
     perms: '',
     sysId: final.DEFAULT_PARENT_ID,
     remark: '',
@@ -915,11 +918,11 @@ const setIpWhiteList = (row: MenuDto) => {
         </el-row>
         <el-row>
           <el-col :span="12" v-show="checkVisible(state.dialogForm.type, [T_COMP])">
-            <el-form-item :label="menuDict.component" prop="component">
-              <template #label>
-                <Tooltip content="这里填写项目文件夹中的路径。">{{ menuDict.component }}</Tooltip>
-              </template>
-              <el-input v-model="state.dialogForm.component" :placeholder="menuDict.component"/>
+            <el-form-item :label="menuDict.ifFixed" prop="ifFixed">
+              <el-radio-group v-model="state.dialogForm.ifFixed">
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -936,6 +939,16 @@ const setIpWhiteList = (row: MenuDto) => {
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="checkVisible(state.dialogForm.type, [T_COMP])">
+          <el-col :span="24">
+            <el-form-item :label="menuDict.component" prop="component">
+              <template #label>
+                <Tooltip content="这里填写项目文件夹中的路径。">{{ menuDict.component }}</Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm.component" :placeholder="menuDict.component"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -1095,6 +1108,23 @@ const setIpWhiteList = (row: MenuDto) => {
                   <!--  <el-radio :value="final.N">否</el-radio>-->
                   <!--</el-radio-group>-->
                   <el-checkbox v-model="state.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
+                </div>
+              </template>
+              <template v-else></template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="80">
+            <template #header>
+              <span :class="ifRequired('ifFixed')?'tp-table-header-required':''">{{ menuDict.ifFixed }}</span>
+            </template>
+            <template #default="{$index}">
+              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
+                <div :class="state.dialogForms_error?.[`${$index}-ifFixed`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <!--<el-radio-group v-model="state.dialogForms[$index].ifFixed">-->
+                  <!--  <el-radio :value="final.Y">是</el-radio>-->
+                  <!--  <el-radio :value="final.N">否</el-radio>-->
+                  <!--</el-radio-group>-->
+                  <el-checkbox v-model="state.dialogForms[$index].ifFixed" :true-value="final.Y" :false-value="final.N"/>
                 </div>
               </template>
               <template v-else></template>
@@ -1485,6 +1515,12 @@ const setIpWhiteList = (row: MenuDto) => {
             <el-table-column prop="ifPublic" :label="menuDict.ifPublic" width="120">
               <template #default="{row}">
                 <el-tag v-if="row.ifPublic===final.Y" type="primary">是</el-tag>
+                <el-tag v-else type="info">否</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
+              <template #default="{row}">
+                <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
                 <el-tag v-else type="info">否</el-tag>
               </template>
             </el-table-column>

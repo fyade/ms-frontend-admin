@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, Ref, ref } from "vue";
-import router, { routerPinList } from "@/router";
+import router from "@/router";
 import { diguiObjToArr2 } from "@/utils/baseUtils.ts";
 import { RouteRecordName, RouteRecordNormalized } from "vue-router";
 import { useSysStore } from "@/store/module/sys.ts";
@@ -14,6 +14,15 @@ export interface AllMenus2I {
 }
 
 const sysStore = useSysStore();
+
+const fixedMenus = new Map<string, string[]>()
+
+const setFixedMenus = (sysPerm: string, menuPaths: string[]) => {
+  fixedMenus.set(sysPerm, menuPaths)
+}
+const getFixedMenus = (sysPerm: string) => {
+  return fixedMenus.get(sysPerm) || []
+}
 
 export const useRouterStore = defineStore('routerStore', () => {
   const allMenus1 = ref<RouteRecordNormalized[]>([])
@@ -35,9 +44,10 @@ export const useRouterStore = defineStore('routerStore', () => {
     }).sort((m1, m2) => {
       return (typeof m1.meta.orderNum === 'number' && typeof m2.meta.orderNum === 'number') ? (m1.meta.orderNum - m2.meta.orderNum) : 0
     })
+    menuList.value = allMenus2.value.filter(item => getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path) > -1)
   }
+  const menuList: Ref<AllMenus2I[]> = ref([])
   reloadAllMenu()
-  const menuList: Ref<AllMenus2I[]> = ref(allMenus2.value.filter(item => routerPinList.indexOf(item.path) > -1))
   const addMenu = (menu: AllMenus2I) => {
     if (menuList.value.findIndex(men => men.name === menu.name) === -1) {
       menuList.value.push(menu)
@@ -47,21 +57,21 @@ export const useRouterStore = defineStore('routerStore', () => {
     menuList.value.splice(index, 1)
   }
   const deleteLeftMenu = (index: number) => {
-    const pinNum = menuList.value.filter(item => routerPinList.indexOf(item.path) > -1).length
+    const pinNum = menuList.value.filter(item => getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path) > -1).length
     menuList.value.splice(pinNum, index - pinNum)
   }
   const deleteRightMenu = (index: number) => {
-    const pinNum = menuList.value.filter(item => routerPinList.indexOf(item.path) > -1).length
+    const pinNum = menuList.value.filter(item => getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path) > -1).length
     const startIndex = index + 1 < pinNum ? pinNum : index + 1
     menuList.value.splice(startIndex, menuList.value.length - startIndex)
   }
   const deleteOtherMenu = (index: number, ifPin: boolean) => {
-    const pinNum = menuList.value.filter(item => routerPinList.indexOf(item.path) > -1).length
-    menuList.value.splice(pinNum, index - 1)
+    const pinNum = menuList.value.filter(item => getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path) > -1).length
+    menuList.value.splice(pinNum, index - pinNum)
     menuList.value.splice(ifPin ? pinNum : (pinNum + 1), menuList.value.length - 1)
   }
   const deleteAllMenu = () => {
-    const pinNum = menuList.value.filter(item => routerPinList.indexOf(item.path) > -1).length
+    const pinNum = menuList.value.filter(item => getFixedMenus(sysStore.getCurrentSystem.perms).indexOf(item.path) > -1).length
     menuList.value.splice(pinNum, menuList.value.length - pinNum)
   }
   const getMenuList = () => {
@@ -81,6 +91,8 @@ export const useRouterStore = defineStore('routerStore', () => {
     getMenuListNames,
     allMenus1,
     allMenus2,
-    reloadAllMenu
+    reloadAllMenu,
+    setFixedMenus,
+    getFixedMenus,
   }
 })

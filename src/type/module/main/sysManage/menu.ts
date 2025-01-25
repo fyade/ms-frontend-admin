@@ -14,6 +14,7 @@ export class MenuDto<T = TMenuType> extends BaseClass {
   ifVisible!: string;
   ifDisabled!: string;
   ifPublic!: string;
+  ifFixed!: string;
   perms!: string;
   sysId!: number;
   remark!: string;
@@ -37,6 +38,7 @@ export class MenuInsDto<T = TMenuType> {
   ifVisible!: string;
   ifDisabled!: string;
   ifPublic!: string;
+  ifFixed!: string;
   perms!: string;
   sysId!: number;
   remark!: string;

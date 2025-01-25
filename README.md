@@ -1,10 +1,10 @@
-## 前言 Forward
+## 前言
 
 作为一个 TS 项目，我对这个项目中的编码规范、TS 的使用并不满意，并没有完全把 TS 的优势发挥出来，所以在此给希望或者正在使用本项目的小伙伴说声抱歉，我会尽量抽时间系统性地学习 TS，早日将次项目改的健壮一点！
 
 另外，在 1.0 版本发布之前，可能会经常出现页面大改的情况，以及目前部分页面代码较为混乱，未来我会专门进行优化，再次抱歉！
 
-## 关于 About
+## 关于
 
 这是一个后台管理系统模板，前端语言为 Vue.js（Vue3），后端语言为 Nest.js。
 
@@ -37,15 +37,15 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
-## 运行教程 How to run
+## 运行教程
 
 在 /config 目录下新建 config.ts 文件，随后将 /config/projectConfig.txt 内的内容复制进去并根据自身情况做修改。
 
-## 打包教程 How to build
+## 打包教程
 
 以生产环境为例子：在 config.ts 中有一个变量，叫 config，其第一个键为 dev，表示开发环境的配置，接下来你需要加一个键 prod，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
 
-## 注意 NOTICE
+## 注意
 
 菜单相关常量：
 * mm 表示菜单
@@ -76,7 +76,7 @@
 * 图标风格：线性
 * 描边颜色：#333
 
-## 许可证 License
+## 许可证
 
 注意：本项目允许任何组织和个人进行以学习为目的的使用，不允许任何未经许可的商用。
 
@@ -86,6 +86,6 @@ License file name in this project: COPYING
 
 Copyright (c) 2024-present, Fei Yang
 
-## 已获得商用许可的组织和个人：
+## 已获得商用许可的组织和个人
 
 - 无

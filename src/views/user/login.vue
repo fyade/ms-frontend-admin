@@ -24,9 +24,7 @@ const onSubmit = async () => {
   logining.value = true
   userStore.login(form).then().catch((e) => {
     logining.value = false
-    if (e?.response?.data?.code === 50002) {
-      refreshVerificationCode()
-    }
+    refreshVerificationCode()
   })
 }
 

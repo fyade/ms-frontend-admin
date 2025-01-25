@@ -37,6 +37,7 @@ const state = reactive<State2<MenuDto<string>, MenuUpdDto<string>>>({
     ifVisible: '',
     ifDisabled: final.N,
     ifPublic: '',
+    ifFixed: '',
     perms: '',
     sysId: final.DEFAULT_PARENT_ID,
     remark: '',

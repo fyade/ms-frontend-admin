@@ -4,7 +4,7 @@ import { RouteRecordNormalized, RouteRecordRaw } from "vue-router";
 import { deepClone } from "@/utils/ObjectUtils.ts";
 import { MenuDto } from "@/type/module/main/sysManage/menu.ts";
 import { final, T_COMP, T_MENU } from "@/utils/base.ts";
-import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
+import { arr2ToDiguiObj, diguiRun } from "@/utils/baseUtils.ts";
 import { useSysStore } from "@/store/module/sys.ts";
 import { useRouterStore } from "@/store/module/router.ts";
 import router from "@/router";
@@ -67,6 +67,18 @@ export const goToSystem = async (
       for (let i = 0; i < permissionsObj.length; i++) {
         router.addRoute(`/${dto.path}`, permissionsObj[i])
       }
+      const routes = router.getRoutes();
+      const fixs = permissions.filter(item => item.ifFixed === final.Y).map(item => item.perms);
+      const fixedMenus: string[] = []
+      diguiRun(permissionsObj, obj => {
+        if (fixs.includes(obj.perms)) {
+          const find = routes.find(item => item.name === obj.perms);
+          if (find) {
+            fixedMenus.push(find.path)
+          }
+        }
+      })
+      routerStore.setFixedMenus(dto.perms, fixedMenus)
     }
     sysStore.setCurrentSystem(dto)
     routerStore.reloadAllMenu()

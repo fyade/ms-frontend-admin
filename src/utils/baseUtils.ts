@@ -151,3 +151,23 @@ export function arr1GetDiguiRelation(objs: any[], {
   })
   return objs
 }
+
+/**
+ * 递归执行
+ * @param objs
+ * @param func
+ * @param key
+ */
+export function diguiRun<T>(objs: T[], func: (data: T) => void, {
+  key = 'children'
+}: {
+  key?: string
+} = {}) {
+  for (const obj of objs) {
+    const objElement = obj[key as keyof typeof obj] as T[];
+    if (objElement && objElement.length > 0) {
+      diguiRun(objElement, func)
+    }
+    func(obj)
+  }
+}

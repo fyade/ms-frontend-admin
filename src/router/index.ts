@@ -2,8 +2,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/module/user.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
 
-export const routerPinList: string[] = []
-
 export const routes: RouteRecordRaw[] = [
   {
     path: '/home',
