@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef } from "vue";
-import { blobToFile } from "@/utils/FileUtils.ts";
+import { blobToFile, selectFiles } from "@/utils/FileUtils.ts";
 import { ElMessage } from "element-plus";
 import { fileUploadAvatar } from "@/api/common/fileUpload.ts";
 
@@ -13,7 +13,6 @@ let transformY = cSize / 2 // 图片y坐标
 let offsetX = 0 // 鼠标当前坐标
 let offsetY = 0 // 鼠标当前坐标
 const isDisabled = ref(false)
-const inp = useTemplateRef<HTMLInputElement>('inp')
 const c1 = useTemplateRef<HTMLCanvasElement>('c1')
 let ctx: CanvasRenderingContext2D | null | void = null
 let img: HTMLImageElement | null = null
@@ -25,11 +24,9 @@ onMounted(() => {
   ctx = c1.value?.getContext('2d');
 })
 
-const inpClick = () => {
-  inp.value?.click()
-}
-const onInpClick = (e: any) => {
-  const file: File = e.target.files[0]
+const selectedFiles: File[] = []
+const onInpClick = () => {
+  const file: File = selectedFiles[0]
   if (['png', 'jpg', 'jpeg'].indexOf(file.name.substring(file.name.lastIndexOf('.') + 1)) === -1) {
     return ElMessage.warning('只允许上传图片。')
   }
@@ -40,9 +37,11 @@ const onInpClick = (e: any) => {
   draw(file)
 }
 const draw = (file: File) => {
+  console.time('a')
   const reader = new FileReader();
   reader.readAsDataURL(file)
   reader.onload = () => {
+    console.timeEnd('a')
     img = new Image();
     img.src = reader.result as string
     img.onload = () => {
@@ -89,8 +88,15 @@ const upload = () => {
   })
 }
 
-const onCanvasClick = () => {
-  inpClick()
+const onCanvasClick = async () => {
+  try {
+    selectedFiles.splice(0)
+    selectFiles().then(res => {
+      selectedFiles.push(...res)
+      onInpClick()
+    })
+  } catch (e) {
+  }
 }
 const onMouseDown = (e: MouseEvent) => {
   offsetX = e.offsetX
@@ -104,9 +110,9 @@ const onMouseMove = (e: MouseEvent) => {
   transformY += e.movementY
   reDraw()
 }
-const onMouseUp = (e: MouseEvent) => {
+const onMouseUp = async (e: MouseEvent) => {
   if (e.offsetX === offsetX && e.offsetY === offsetY) {
-    onCanvasClick()
+    await onCanvasClick()
   }
   document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
@@ -126,7 +132,6 @@ const setCenter = () => {
 
 <template>
   <!--<el-button :disabled="isDisabled" type="primary" :icon="Upload" @click="inpClick">上传文件</el-button>-->
-  <input ref="inp" type="file" v-show="false" @change="onInpClick"/>
   <div>
     <canvas
         class="c1"
