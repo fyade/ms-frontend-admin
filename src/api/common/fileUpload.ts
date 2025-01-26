@@ -103,29 +103,36 @@ export const fileUploadApi: ApiConfig<FileUploadDto, FileUploadUpdDto> = {
  * @param file
  * @param fileName
  */
-export function fileUploadOneFull(file: FormData, fileName: string = '') {
+export function fileUploadOneFull(file: Blob, fileName: string = '') {
+  const formData = new FormData();
+  formData.append('file', file)
+  formData.append('fileName', fileName)
   return request({
-    url: `/main/sys/file-upload/one-full${fileName ? `/${fileName}` : ''}`,
+    url: `/main/sys/file-upload/one-full`,
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data;charset=utf-8'
     },
-    data: file
+    data: formData
   })
 }
 
 /**
  * 上传头像
  * @param file
+ * @param fileName
  */
-export function fileUploadAvatar(file: FormData) {
+export function fileUploadAvatar(file: Blob, fileName: string = '') {
+  const formData = new FormData();
+  formData.append('file', file)
+  formData.append('fileName', fileName)
   return request({
     url: `/main/sys/file-upload/one-full-avatar`,
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data;charset=utf-8'
     },
-    data: file
+    data: formData
   })
 }
 
@@ -152,12 +159,20 @@ export function fileUploadOneChunk_upload({fileMd5, fileNewName, chunkIndex, fil
   fileMd5: string,
   fileNewName: string,
   chunkIndex: number,
-  file: FormData
+  file: Blob
 }) {
+  const formData = new FormData();
+  formData.append('fileMd5', fileMd5)
+  formData.append('fileNewName', fileNewName)
+  formData.append('chunkIndex', `${chunkIndex}`)
+  formData.append('file', file)
   return request({
-    url: `/main/sys/file-upload/one-chunk/upload/${fileMd5}/${chunkIndex}/${fileNewName}`,
+    url: `/main/sys/file-upload/one-chunk/upload`,
     method: 'POST',
-    data: file
+    headers:{
+      'Content-Type': 'multipart/form-data;charset=utf-8'
+    },
+    data: formData
   })
 }
 

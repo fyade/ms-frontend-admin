@@ -32,10 +32,10 @@ const upload2 = async () => {
         // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
         ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
       } else {
-        const fd = new FormData();
-        fd.append('file', file)
+        // const fd = new FormData();
+        // fd.append('file', file)
         try {
-          await fileUploadOneFull(fd, file.name);
+          await fileUploadOneFull(file, file.name);
         } catch (e) {
           uploadFail(`${file.name}上传失败。`)
         }

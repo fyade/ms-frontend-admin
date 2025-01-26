@@ -58,9 +58,9 @@ const upload5 = async () => {
       // MessagePlugin.error(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
       ElMessage.warning(file.name + '文件大小超过' + unitConversion_storage(CHUNK_SIZE) + '。')
     } else {
-      const fd = new FormData();
-      fd.append('file', file)
-      fileUploadRequests.push(() => fileUploadOneFull(fd, file.name))
+      // const fd = new FormData();
+      // fd.append('file', file)
+      fileUploadRequests.push(() => fileUploadOneFull(file, file.name))
     }
   }
   state.total -= state.beyondMaxSizeNum

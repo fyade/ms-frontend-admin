@@ -1,34 +1,65 @@
 /**
+ * @param format
+ * @param ifUseUTC
+ */
+class FormatDateParam {
+  format!: string
+  ifUseUTC!: boolean
+
+  constructor(
+      {
+        format = 'YYYY-MM-DD HH:mm:ss',
+        ifUseUTC = false,
+      }: {
+        format?: string
+        ifUseUTC?: boolean
+      } = {}
+  ) {
+    this.format = format
+    this.ifUseUTC = ifUseUTC
+  }
+}
+
+/**
  * 日期格式化
  * @param date
- * @param format
+ * @param param
  */
-export function formatDate(date: Date, format: string = 'YYYY-MM-DD HH:mm:ss'): string {
+export function formatDate(date: Date, param?: string | FormatDateParam): string {
   const pad: (n: number) => string = (n: number) => (n < 10 ? '0' + n : n.toString());
-  return format.replace(/YYYY|MM(M)?|Do|DD|HH|hh|mm|ss|a|A/g, (match: string) => {
+  const fdp = param ? (typeof param === 'string' ? new FormatDateParam({format: param}) : new FormatDateParam(param)) : new FormatDateParam()
+  const format = fdp.format
+  const ifUseUTC = fdp.ifUseUTC;
+  return format.replace(/YYYY|MMMM|MM|DD|Do|HH|hh|mm|ss|a|A/g, (match: string) => {
+    const _year = ifUseUTC ? date.getUTCFullYear() : date.getFullYear()
+    const _month = ifUseUTC ? (date.getUTCMonth() + 1) : (date.getMonth() + 1)
+    const _date = ifUseUTC ? date.getUTCDate() : date.getDate()
+    const _hour = ifUseUTC ? date.getUTCHours() : date.getHours()
+    const _minute = ifUseUTC ? date.getUTCMinutes() : date.getMinutes()
+    const _second = ifUseUTC ? date.getUTCSeconds() : date.getSeconds()
     switch (match) {
       case 'YYYY':
-        return date.getFullYear().toString();
+        return _year.toString();
       case 'MMMM':
-        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()];
+        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][_month - 1];
       case 'MM':
-        return pad(date.getMonth() + 1).toString();
+        return pad(_month).toString();
       case 'DD':
-        return pad(date.getDate());
+        return pad(_date);
       case 'Do':
-        return date.getDate().toString() + ordinal(date.getDate());
+        return ordinal(_date);
       case 'HH':
-        return pad(date.getHours());
+        return pad(_hour);
       case 'hh':
-        return pad(date.getHours() % 12 || 12);
+        return pad(_hour % 12 || 12);
       case 'mm':
-        return pad(date.getMinutes());
+        return pad(_minute);
       case 'ss':
-        return pad(date.getSeconds());
+        return pad(_second);
       case 'a':
-        return date.getHours() < 12 ? 'am' : 'pm';
+        return _hour < 12 ? 'am' : 'pm';
       case 'A':
-        return date.getHours() < 12 ? 'AM' : 'PM';
+        return _hour < 12 ? 'AM' : 'PM';
       default:
         return match;
     }

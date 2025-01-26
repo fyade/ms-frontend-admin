@@ -29,14 +29,14 @@ const upload1 = async () => {
     isLoading.value = false
     return
   }
-  const fd = new FormData();
-  fd.append('file', file)
-  fileUploadOneFull(fd, file.name).then(res => {
+  // const fd = new FormData();
+  // fd.append('file', file)
+  fileUploadOneFull(file, file.name).then(res => {
     uploadSuccess()
   }).catch(err => {
     uploadFail(`${file.name}上传失败。`)
   }).finally(() => {
-    fd.delete('file')
+    // fd.delete('file')
   })
 }
 const uploadSuccess = () => {

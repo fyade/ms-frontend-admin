@@ -141,14 +141,14 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
       }
       state.chunkNum = i + 1
       const blob = chunks[i];
-      const fd = new FormData()
-      fd.append('file', blob)
+      // const fd = new FormData()
+      // fd.append('file', blob)
       // 上传当前分片
       const obj = {
         fileMd5: state.fileMd5,
         fileNewName: state.fileNewName,
         chunkIndex: indexs[i],
-        file: fd
+        file: blob
       }
       fileUploadOneChunk_upload(obj).then(() => {
         if (pageNotUnmounted) {

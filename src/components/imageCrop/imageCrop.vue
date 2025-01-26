@@ -77,10 +77,10 @@ const upload = () => {
     if (!cb) {
       return
     }
-    const file = blobToFile(cb, fileName, cb.type);
-    const fd: FormData = new FormData()
-    fd.append('file', file)
-    fileUploadAvatar(fd).then(res => {
+    // const file = blobToFile(cb, fileName, cb.type);
+    // const fd: FormData = new FormData()
+    // fd.append('file', file)
+    fileUploadAvatar(cb, fileName).then(res => {
       emits('uploadSuccess', res)
     })
   })

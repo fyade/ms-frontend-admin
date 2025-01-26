@@ -169,14 +169,14 @@ const startUpload = (indexs: number[], chunks: Blob[]): Promise<null> => {
  * @param blob
  */
 const uploading = (chunkIndex: number, blob: Blob) => {
-  const fd = new FormData()
-  fd.append('file', blob)
+  // const fd = new FormData()
+  // fd.append('file', blob)
   // 上传当前分片
   const obj = {
     fileMd5: state.fileMd5,
     fileNewName: state.fileNewName,
     chunkIndex: chunkIndex,
-    file: fd
+    file: blob
   }
   return () => fileUploadOneChunk_upload(obj)
 }
