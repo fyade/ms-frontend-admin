@@ -16,7 +16,7 @@ import { MenuDto, MenuUpdDto } from "@/type/module/main/sysManage/menu.ts";
 import { menuApi } from "@/api/module/main/sysManage/menu.ts";
 import { menuDict, menuDictI2, menuDictInter } from "@/dict/module/main/sysManage/menu.ts";
 import { useRouterStore } from "@/store/module/router.ts";
-import { copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
+import { arrNoRepeat, copyObject, ifNull, ifUndefined } from "@/utils/ObjectUtils.ts";
 import { arr2ToDiguiObj } from "@/utils/baseUtils.ts";
 import { SysDto } from "@/type/module/main/sysManage/sys.ts";
 import { sysApi } from "@/api/module/main/sysManage/sys.ts";
@@ -27,7 +27,7 @@ const state = reactive<State2<MenuDto, MenuUpdDto>>({
     id: -1,
     label: '',
     type: T_MENU,
-    path: '#',
+    path: '',
     parentId: final.DEFAULT_PARENT_ID,
     component: '#',
     icon: '#',
@@ -57,6 +57,7 @@ const config = new TablePageConfig<MenuDto<String>>({
   },
   selectListCallback: () => {
     selAllSyss()
+    clearExpandRowKeys()
   }
 })
 
@@ -212,28 +213,24 @@ watch(() => [state.dialogForm.type, activeTabName.value], () => {
   }
   Object.keys(dFormRules).forEach(key => delete dFormRules[key])
   const rule: FormRules = {
-    type: [{required: true, trigger: 'change'}],
     label: [{required: true, trigger: 'change'}],
+    type: [{required: true, trigger: 'change'}],
+    path: [{required: true, trigger: 'change'}],
+    // parentId: [{required: true, trigger: 'change'}],
+    icon: [{required: true, trigger: 'change'}],
     orderNum: [{required: true, trigger: 'change'}],
-    path: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
-    component: [{required: [T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
-    icon: [{required: [T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1, trigger: 'change'}],
+    ifLink: [{required: true, trigger: 'change'}],
+    ifVisible: [{required: true, trigger: 'change'}],
+    ifDisabled: [{required: true, trigger: 'change'}],
+    // ifPublic: [{required: true, trigger: 'change'}],
     perms: [{required: true, trigger: 'change'}],
     sysId: [{required: true, trigger: 'change'}],
   }
   Object.keys(rule).forEach(key => dFormRules[key] = rule[key])
-  if ([T_MENU, T_COMP].indexOf(state.dialogForm.type) > -1) {
+  if ([T_COMP].indexOf(state.dialogForm.type) > -1) {
     const rule: FormRules = {
-      ifLink: [{required: true, trigger: 'change'}],
-      ifVisible: [{required: true, trigger: 'change'}],
-      ifDisabled: [{required: true, trigger: 'change'}],
-    }
-    Object.keys(rule).forEach(key => dFormRules[key] = rule[key])
-  }
-  if ([T_Inter].indexOf(state.dialogForm.type) > -1) {
-    const rule: FormRules = {
-      parentId: [{required: true, trigger: 'change'}],
-      ifPublic: [{required: true, trigger: 'change'}],
+      component: [{required: true, trigger: 'change'}],
+      ifFixed: [{required: true, trigger: 'change'}],
     }
     Object.keys(rule).forEach(key => dFormRules[key] = rule[key])
   }
@@ -293,16 +290,24 @@ const tableData3 = computed(() => {
 
 // 表格的展开
 const expandRowKeys = ref<string[]>([])
-let level = 0
+const expandRowKeys2 = ref<string[]>([])
 const expendAll = () => {
-  if (level % 3 === 0) {
-    expandRowKeys.value = routerStore.allMenus2.filter(item => item.meta.parentId === 0).map(item => item.meta.id!.toString())
-  } else if (level % 3 === 1) {
-    expandRowKeys.value = routerStore.allMenus2.map(item => item.ar[item.ar.length - 1].meta.id).filter(item => item).map(item => item!.toString())
-  } else if (level % 3 === 2) {
+  if (expandRowKeys.value.length === 0) {
+    expandRowKeys.value = arrNoRepeat(tableData.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
+  } else {
     expandRowKeys.value = []
   }
-  level++
+}
+const expendAll2 = () => {
+  if (expandRowKeys2.value.length === 0) {
+    expandRowKeys2.value = arrNoRepeat(tableDataInter.value.map(item => item.parentId)).filter(item => item !== final.DEFAULT_PARENT_ID).map(_ => `${_}`)
+  } else {
+    expandRowKeys2.value = []
+  }
+}
+const clearExpandRowKeys = () => {
+  expandRowKeys.value = []
+  expandRowKeys2.value = []
 }
 
 // 系统
@@ -373,11 +378,12 @@ const stateI2 = reactive<State2<MenuDto, MenuUpdDto>>({
   filterForm: {},
 })
 const dFormRulesI2: FormRules = {
-  type: [{required: true, trigger: 'change'}],
   label: [{required: true, trigger: 'change'}],
+  type: [{required: true, trigger: 'change'}],
   orderNum: [{required: true, trigger: 'change'}],
-  perms: [{required: true, trigger: 'change'}],
+  ifDisabled: [{required: true, trigger: 'change'}],
   ifPublic: [{required: true, trigger: 'change'}],
+  perms: [{required: true, trigger: 'change'}],
   sysId: [{required: true, trigger: 'change'}],
 }
 const configI2 = new TablePageConfig<MenuDto<string>>({
@@ -572,16 +578,29 @@ const setIpWhiteList = (row: MenuDto) => {
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item :label="menuDictI2.perms" prop="perms">
-                <el-input v-model="stateI2.dialogForm.perms" :placeholder="menuDictI2.perms"/>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
               <el-form-item :label="menuDictI2.ifPublic" prop="ifPublic">
                 <el-radio-group v-model="stateI2.dialogForm.ifPublic">
                   <el-radio :value="final.Y">是</el-radio>
                   <el-radio :value="final.N">否</el-radio>
                 </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="menuDictI2.ifDisabled" prop="ifDisabled">
+                <el-radio-group v-model="stateI2.dialogForm.ifDisabled">
+                  <el-radio :value="final.Y">是</el-radio>
+                  <el-radio :value="final.N">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label="menuDictI2.perms" prop="perms">
+                <template #label>
+                  <Tooltip content="这里填写权限标识，注意需与后端配合。">{{ menuDictI2.perms }}</Tooltip>
+                </template>
+                <el-input v-model="stateI2.dialogForm.perms" :placeholder="menuDictI2.perms"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -661,26 +680,43 @@ const setIpWhiteList = (row: MenuDto) => {
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="perms" :label="menuDictI2.perms" width="300">
-              <template #header>
-                <span :class="ifRequiredI2('perms')?'tp-table-header-required':''">{{ menuDictI2.perms }}</span>
-              </template>
-              <template #default="{$index}">
-                <div :class="stateI2.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="stateI2.dialogForms[$index].perms" :placeholder="menuDictI2.perms"/>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="ifPublic" :label="menuDictI2.ifPublic" width="300">
+            <el-table-column prop="ifPublic" :label="menuDictI2.ifPublic" width="80">
               <template #header>
                 <span :class="ifRequiredI2('ifPublic')?'tp-table-header-required':''">{{ menuDictI2.ifPublic }}</span>
               </template>
               <template #default="{$index}">
                 <div :class="stateI2.dialogForms_error?.[`${$index}-ifPublic`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-radio-group v-model="stateI2.dialogForms[$index].ifPublic">
-                    <el-radio :value="final.Y">是</el-radio>
-                    <el-radio :value="final.N">否</el-radio>
-                  </el-radio-group>
+                  <!--<el-radio-group v-model="stateI2.dialogForms[$index].ifPublic">-->
+                  <!--  <el-radio :value="final.Y">是</el-radio>-->
+                  <!--  <el-radio :value="final.N">否</el-radio>-->
+                  <!--</el-radio-group>-->
+                  <el-checkbox v-model="stateI2.dialogForms[$index].ifPublic" :true-value="final.Y" :false-value="final.N"/>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ifDisabled" :label="menuDictI2.ifDisabled" width="80">
+              <template #header>
+                <span :class="ifRequiredI2('ifDisabled')?'tp-table-header-required':''">{{ menuDictI2.ifDisabled }}</span>
+              </template>
+              <template #default="{$index}">
+                <div :class="stateI2.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <!--<el-radio-group v-model="stateI2.dialogForms[$index].ifDisabled">-->
+                  <!--  <el-radio :value="final.Y">是</el-radio>-->
+                  <!--  <el-radio :value="final.N">否</el-radio>-->
+                  <!--</el-radio-group>-->
+                  <el-checkbox v-model="stateI2.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="perms" :label="menuDictI2.perms" width="300">
+              <template #header>
+                <Tooltip content="这里填写权限标识，注意需与后端配合。">
+                  <span :class="ifRequiredI2('perms')?'tp-table-header-required':''">{{ menuDictI2.perms }}</span>
+                </Tooltip>
+              </template>
+              <template #default="{$index}">
+                <div :class="stateI2.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                  <el-input v-model="stateI2.dialogForms[$index].perms" :placeholder="menuDictI2.perms"/>
                 </div>
               </template>
             </el-table-column>
@@ -763,7 +799,18 @@ const setIpWhiteList = (row: MenuDto) => {
         <!--在此下方添加表格列-->
         <el-table-column prop="label" :label="menuDictI2.label" width="240"/>
         <el-table-column prop="orderNum" :label="menuDictI2.orderNum" width="120"/>
-        <el-table-column prop="ifPublic" :label="menuDictI2.ifPublic" width="120"/>
+        <el-table-column prop="ifPublic" :label="menuDictI2.ifPublic" width="120">
+          <template #default="{row}">
+            <el-tag v-if="row.ifPublic===final.Y" type="primary">是</el-tag>
+            <el-tag v-else type="info">否</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="ifDisabled" :label="menuDictI2.ifDisabled" width="120">
+          <template #default="{row}">
+            <el-tag v-if="row.ifDisabled===final.Y" type="primary">是</el-tag>
+            <el-tag v-else type="info">否</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="perms" :label="menuDictI2.perms" width="360"/>
         <el-table-column prop="remark" :label="menuDictI2.remark" width="200"/>
         <!--在此上方添加表格列-->
@@ -843,7 +890,7 @@ const setIpWhiteList = (row: MenuDto) => {
           <el-col :span="24">
             <el-form-item :label="menuDict.type" prop="type">
               <template #label>
-                <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
+                <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单。">
                   {{ menuDict.type }}
                 </Tooltip>
               </template>
@@ -858,7 +905,7 @@ const setIpWhiteList = (row: MenuDto) => {
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-show="checkVisible(state.dialogForm.type, [T_MENU,T_COMP])">
+        <el-row>
           <el-col :span="24">
             <el-form-item :label="menuDict.icon" prop="icon">
               <IconSelect v-model="state.dialogForm.icon" :placeholder="menuDict.icon"/>
@@ -872,24 +919,6 @@ const setIpWhiteList = (row: MenuDto) => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="menuDict.orderNum" prop="orderNum">
-              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row v-show="checkVisible(state.dialogForm.type, [T_MENU,T_COMP])">
-          <el-col :span="12">
-            <el-form-item :label="menuDict.ifLink" prop="ifLink">
-              <template #label>
-                <Tooltip content="若选是，则点击会跳转至外部链接。">{{ menuDict.ifLink }}</Tooltip>
-              </template>
-              <el-radio-group v-model="state.dialogForm.ifLink">
-                <el-radio :value="final.Y">是</el-radio>
-                <el-radio :value="final.N">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item :label="menuDict.path" prop="path">
               <template #label>
                 <Tooltip content="这里填写路由地址。">{{ menuDict.path }}</Tooltip>
@@ -898,7 +927,22 @@ const setIpWhiteList = (row: MenuDto) => {
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-show="checkVisible(state.dialogForm.type, [T_MENU,T_COMP])">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="menuDict.perms" prop="perms">
+              <template #label>
+                <Tooltip content="这里填写权限标识。">{{ menuDict.perms }}</Tooltip>
+              </template>
+              <el-input v-model="state.dialogForm.perms" :placeholder="menuDict.perms"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="menuDict.orderNum" prop="orderNum">
+              <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item :label="menuDict.ifVisible" prop="ifVisible">
               <el-radio-group v-model="state.dialogForm.ifVisible">
@@ -917,25 +961,17 @@ const setIpWhiteList = (row: MenuDto) => {
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12" v-show="checkVisible(state.dialogForm.type, [T_COMP])">
-            <el-form-item :label="menuDict.ifFixed" prop="ifFixed">
-              <el-radio-group v-model="state.dialogForm.ifFixed">
+          <el-col :span="12">
+            <el-form-item :label="menuDict.ifLink" prop="ifLink">
+              <el-radio-group v-model="state.dialogForm.ifLink">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item :label="menuDict.perms" prop="perms">
-              <template #label>
-                <Tooltip content="与后端配合。">{{ menuDict.perms }}</Tooltip>
-              </template>
-              <el-input v-model="state.dialogForm.perms" :placeholder="menuDict.perms"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-show="checkVisible(state.dialogForm.type, [T_Inter])">
-            <el-form-item :label="menuDict.ifPublic" prop="ifPublic">
-              <el-radio-group v-model="state.dialogForm.ifPublic">
+          <el-col :span="12" v-show="checkVisible(state.dialogForm.type, [T_COMP])">
+            <el-form-item :label="menuDict.ifFixed" prop="ifFixed">
+              <el-radio-group v-model="state.dialogForm.ifFixed">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
@@ -995,7 +1031,7 @@ const setIpWhiteList = (row: MenuDto) => {
           </el-table-column>
           <el-table-column prop="type" :label="menuDict.type" width="300">
             <template #header>
-              <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单，接口的父级只允许为组件。">
+              <Tooltip content="菜单的父级只允许为菜单，组件的父级只允许为菜单。">
                 <span :class="ifRequired('type')?'tp-table-header-required':''">{{ menuDict.type }}</span>
               </Tooltip>
             </template>
@@ -1017,12 +1053,9 @@ const setIpWhiteList = (row: MenuDto) => {
               <span :class="ifRequired('icon')?'tp-table-header-required':''">{{ menuDict.icon }}</span>
             </template>
             <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
-                <div :class="state.dialogForms_error?.[`${$index}-icon`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <IconSelect v-model="state.dialogForms[$index].icon" :placeholder="menuDict.icon"/>
-                </div>
-              </template>
-              <template v-else></template>
+              <div :class="state.dialogForms_error?.[`${$index}-icon`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <IconSelect v-model="state.dialogForms[$index].icon" :placeholder="menuDict.icon"/>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="label" :label="menuDict.label" width="300">
@@ -1032,6 +1065,30 @@ const setIpWhiteList = (row: MenuDto) => {
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[`${$index}-label`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                 <el-input v-model="state.dialogForms[$index].label" :placeholder="menuDict.label"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="path" :label="menuDict.path" width="300">
+            <template #header>
+              <Tooltip content="这里填写路由地址。">
+                <span :class="ifRequired('path')?'tp-table-header-required':''">{{ menuDict.path }}</span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-path`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].path" :placeholder="menuDict.path"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="perms" :label="menuDict.perms" width="300">
+            <template #header>
+              <Tooltip content="这里填写权限标识。">
+                <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ menuDict.perms }}</span>
+              </Tooltip>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index].perms" :placeholder="menuDict.perms"/>
               </div>
             </template>
           </el-table-column>
@@ -1045,55 +1102,18 @@ const setIpWhiteList = (row: MenuDto) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ifLink" :label="menuDict.ifLink" width="80">
-            <template #header>
-              <Tooltip content="若选是，则点击会跳转至外部链接。">
-                <span :class="ifRequired('ifLink')?'tp-table-header-required':''">{{ menuDict.ifLink }}</span>
-              </Tooltip>
-            </template>
-            <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
-                <div :class="state.dialogForms_error?.[`${$index}-ifLink`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <!--<el-radio-group v-model="state.dialogForms[$index].ifLink">-->
-                  <!--  <el-radio :value="final.Y">是</el-radio>-->
-                  <!--  <el-radio :value="final.N">否</el-radio>-->
-                  <!--</el-radio-group>-->
-                  <el-checkbox v-model="state.dialogForms[$index].ifLink" :true-value="final.Y" :false-value="final.N"/>
-                </div>
-              </template>
-              <template v-else></template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="path" :label="menuDict.path" width="300">
-            <template #header>
-              <Tooltip content="这里填写路由地址。">
-                <span :class="ifRequired('path')?'tp-table-header-required':''">{{ menuDict.path }}</span>
-              </Tooltip>
-            </template>
-            <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
-                <div :class="state.dialogForms_error?.[`${$index}-path`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <el-input v-model="state.dialogForms[$index].path" :placeholder="menuDict.path"/>
-                </div>
-              </template>
-              <template v-else></template>
-            </template>
-          </el-table-column>
           <el-table-column prop="ifVisible" :label="menuDict.ifVisible" width="80">
             <template #header>
               <span :class="ifRequired('ifVisible')?'tp-table-header-required':''">{{ menuDict.ifVisible }}</span>
             </template>
             <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
-                <div :class="state.dialogForms_error?.[`${$index}-ifVisible`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <!--<el-radio-group v-model="state.dialogForms[$index].ifVisible">-->
-                  <!--  <el-radio :value="final.Y">是</el-radio>-->
-                  <!--  <el-radio :value="final.N">否</el-radio>-->
-                  <!--</el-radio-group>-->
-                  <el-checkbox v-model="state.dialogForms[$index].ifVisible" :true-value="final.Y" :false-value="final.N"/>
-                </div>
-              </template>
-              <template v-else></template>
+              <div :class="state.dialogForms_error?.[`${$index}-ifVisible`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index].ifVisible">-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index].ifVisible" :true-value="final.Y" :false-value="final.N"/>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="ifDisabled" :label="menuDict.ifDisabled" width="80">
@@ -1101,16 +1121,27 @@ const setIpWhiteList = (row: MenuDto) => {
               <span :class="ifRequired('ifDisabled')?'tp-table-header-required':''">{{ menuDict.ifDisabled }}</span>
             </template>
             <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
-                <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                  <!--<el-radio-group v-model="state.dialogForms[$index].ifDisabled">-->
-                  <!--  <el-radio :value="final.Y">是</el-radio>-->
-                  <!--  <el-radio :value="final.N">否</el-radio>-->
-                  <!--</el-radio-group>-->
-                  <el-checkbox v-model="state.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
-                </div>
-              </template>
-              <template v-else></template>
+              <div :class="state.dialogForms_error?.[`${$index}-ifDisabled`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index].ifDisabled">-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index].ifDisabled" :true-value="final.Y" :false-value="final.N"/>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ifLink" :label="menuDict.ifLink" width="80">
+            <template #header>
+              <span :class="ifRequired('ifLink')?'tp-table-header-required':''">{{ menuDict.ifLink }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[`${$index}-ifLink`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <!--<el-radio-group v-model="state.dialogForms[$index].ifLink">-->
+                <!--  <el-radio :value="final.Y">是</el-radio>-->
+                <!--  <el-radio :value="final.N">否</el-radio>-->
+                <!--</el-radio-group>-->
+                <el-checkbox v-model="state.dialogForms[$index].ifLink" :true-value="final.Y" :false-value="final.N"/>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="80">
@@ -1118,7 +1149,7 @@ const setIpWhiteList = (row: MenuDto) => {
               <span :class="ifRequired('ifFixed')?'tp-table-header-required':''">{{ menuDict.ifFixed }}</span>
             </template>
             <template #default="{$index}">
-              <template v-if="checkVisible(state.dialogForms[$index].type, [T_MENU,T_COMP])">
+              <template v-if="checkVisible(state.dialogForms[$index].type, [T_COMP])">
                 <div :class="state.dialogForms_error?.[`${$index}-ifFixed`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
                   <!--<el-radio-group v-model="state.dialogForms[$index].ifFixed">-->
                   <!--  <el-radio :value="final.Y">是</el-radio>-->
@@ -1143,18 +1174,6 @@ const setIpWhiteList = (row: MenuDto) => {
                 </div>
               </template>
               <template v-else></template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="perms" :label="menuDict.perms" width="300">
-            <template #header>
-              <Tooltip content="与后端配合。">
-                <span :class="ifRequired('perms')?'tp-table-header-required':''">{{ menuDict.perms }}</span>
-              </Tooltip>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index].perms" :placeholder="menuDict.perms"/>
-              </div>
             </template>
           </el-table-column>
           <el-table-column prop="remark" :label="menuDict.remark" width="300">
@@ -1236,11 +1255,6 @@ const setIpWhiteList = (row: MenuDto) => {
         <el-row>
           <el-col :span="24">
             <el-form-item :label="menuDictInter.type" prop="type">
-              <template #label>
-                <Tooltip content="接口的父级只允许为接口组，建议以业务名-模块名-接口为结构。">
-                  {{ menuDictInter.type }}
-                </Tooltip>
-              </template>
               <el-radio-group v-model="stateInter.dialogForm.type">
                 <el-radio :value="T_IS">
                   {{ menuTypeDict[T_IS] }}
@@ -1265,17 +1279,9 @@ const setIpWhiteList = (row: MenuDto) => {
           <el-col :span="12">
             <el-form-item :label="menuDictInter.perms" prop="perms">
               <template #label>
-                <Tooltip content="与后端配合。">{{ menuDictInter.perms }}</Tooltip>
+                <Tooltip content="这里填写权限标识。">{{ menuDictInter.perms }}</Tooltip>
               </template>
               <el-input v-model="stateInter.dialogForm.perms" :placeholder="menuDictInter.perms"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-show="checkVisible(stateInter.dialogForm.type, [T_Inter])">
-            <el-form-item :label="menuDictInter.ifPublic" prop="ifPublic">
-              <el-radio-group v-model="stateInter.dialogForm.ifPublic">
-                <el-radio :value="final.Y">是</el-radio>
-                <el-radio :value="final.N">否</el-radio>
-              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -1357,7 +1363,9 @@ const setIpWhiteList = (row: MenuDto) => {
           </el-table-column>
           <el-table-column prop="perms" :label="menuDictInter.perms" width="300">
             <template #header>
-              <span :class="ifRequiredInter('perms')?'tp-table-header-required':''">{{ menuDictInter.perms }}</span>
+              <Tooltip content="这里填写权限标识。">
+                <span :class="ifRequiredInter('perms')?'tp-table-header-required':''">{{ menuDictInter.perms }}</span>
+              </Tooltip>
             </template>
             <template #default="{$index}">
               <div :class="stateInter.dialogForms_error?.[`${$index}-perms`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
@@ -1486,13 +1494,13 @@ const setIpWhiteList = (row: MenuDto) => {
             <!--上面id列的宽度改一下-->
             <!--在此下方添加表格列-->
             <el-table-column fixed prop="label" :label="menuDict.label" width="240"/>
-            <el-table-column prop="path" :label="menuDict.path" width="200"/>
-            <el-table-column prop="component" :label="menuDict.component" width="280"/>
             <el-table-column prop="icon" :label="menuDict.icon" width="120">
               <template #default="{row}">
                 <SvgIcon :name="row.icon" :color="CONFIG.icon_black"/>
               </template>
             </el-table-column>
+            <el-table-column prop="path" :label="menuDict.path" width="200"/>
+            <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
             <el-table-column prop="orderNum" :label="menuDict.orderNum" width="120"/>
             <el-table-column prop="ifLink" :label="menuDict.ifLink" width="120">
               <template #default="{row}">
@@ -1512,19 +1520,16 @@ const setIpWhiteList = (row: MenuDto) => {
                 <el-tag v-else type="info">否</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="ifPublic" :label="menuDict.ifPublic" width="120">
-              <template #default="{row}">
-                <el-tag v-if="row.ifPublic===final.Y" type="primary">是</el-tag>
-                <el-tag v-else type="info">否</el-tag>
-              </template>
-            </el-table-column>
             <el-table-column prop="ifFixed" :label="menuDict.ifFixed" width="120">
               <template #default="{row}">
-                <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
-                <el-tag v-else type="info">否</el-tag>
+                <template v-if="row.type === T_COMP">
+                  <el-tag v-if="row.ifFixed===final.Y" type="primary">是</el-tag>
+                  <el-tag v-else type="info">否</el-tag>
+                </template>
+                <template v-else></template>
               </template>
             </el-table-column>
-            <el-table-column prop="perms" :label="menuDict.perms" width="280"/>
+            <el-table-column prop="component" :label="menuDict.component" width="280"/>
             <el-table-column prop="remark" :label="menuDict.remark" width="200"/>
             <!--在此上方添加表格列-->
             <!--<el-table-column prop="createBy" :label="menuDict.createBy" width="120"/>-->
@@ -1560,7 +1565,7 @@ const setIpWhiteList = (row: MenuDto) => {
       </div>
     </el-tab-pane>
 
-    <el-tab-pane label="接口" name="b">
+    <el-tab-pane label="接口组" name="b">
       <!--顶部筛选表单-->
       <div class="zs-filter-form" v-show="filterFormVisible1Inter && filterFormVisibleInter">
         <el-form
@@ -1586,6 +1591,7 @@ const setIpWhiteList = (row: MenuDto) => {
       <!--操作按钮-->
       <div class="zs-button-row">
         <div>
+          <el-button type="info" plain :icon="Sort" @click="expendAll2">展开/折叠</el-button>
           <el-button type="primary" plain :icon="Refresh" @click="gRefreshInter">刷新</el-button>
           <el-button type="primary" plain :icon="Plus" @click="gInsInter">新增</el-button>
           <el-button type="success" plain :icon="Edit" :disabled="configInter.bulkOperation?multipleSelectionInter.length===0:multipleSelectionInter.length!==1" @click="gUpdInter">修改</el-button>
@@ -1603,7 +1609,7 @@ const setIpWhiteList = (row: MenuDto) => {
         <el-table
             v-loading="tableLoadingRefInter"
             :data="tableData3Inter"
-            :expand-row-keys="expandRowKeys"
+            :expand-row-keys="expandRowKeys2"
             row-key="id"
             :default-expand-all="false"
             @selection-change="handleSelectionChangeInter"

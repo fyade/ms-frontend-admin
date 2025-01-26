@@ -116,6 +116,14 @@ export function deepClone<T>(value: any, {
 }
 
 /**
+ * 数组不重复
+ * @param arr
+ */
+export function arrNoRepeat<T = any>(arr: T[]): T[] {
+  return Array.from(new Set(arr));
+}
+
+/**
  * 返回删除数组特定下标位置的数据后的数组
  * @param arr
  * @param indices
