@@ -73,6 +73,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
         tableData.value = res.list
         total.value = res.total
         config.selectListCallback && config.selectListCallback()
+      }).catch(() => {
+        tableData.value = []
       }).finally(() => {
         tableLoadingRef.value = false
       })
@@ -82,6 +84,8 @@ export const funcTablePage = <T extends { id: number | string }, T2 = T>({
       api.selectAll({...state.filterForm, ...(config.selectParam || {})} as any).then(res => {
         tableData.value = res
         config.selectListCallback && config.selectListCallback()
+      }).catch(() => {
+        tableData.value = []
       }).finally(() => {
         tableLoadingRef.value = false
       })

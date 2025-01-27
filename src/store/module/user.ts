@@ -7,10 +7,12 @@ import { LoginDto, UserDto } from "@/type/module/main/sysManage/user.ts";
 import { getSelfInfo, loginApi, logOutApi } from "@/api/module/main/sysManage/user.ts";
 import { clearObject, copyObject } from "@/utils/ObjectUtils.ts";
 import { ifWebsiteLink } from "@/utils/LinkUtils.ts";
+import { UserVisitorDto } from "@/type/module/main/otherUser/userVisitor.ts";
 
 export const useUserStore = defineStore('userStore', () => {
   const token = ref('')
-  const userinfo = reactive<UserDto>({
+  const loginRole = ref('')
+  const userinfo = reactive<UserDto | UserVisitorDto>({
     id: '',
     username: '',
     nickname: '',
@@ -35,6 +37,7 @@ export const useUserStore = defineStore('userStore', () => {
           });
           try {
             token.value = res.token
+            loginRole.value = res.loginRole
             ifLogin.value = true
             copyObject(userinfo, res.user)
             if (route.query?.redirect && !ifWebsiteLink(route.query?.redirect.toString(), '/')) {
@@ -81,6 +84,7 @@ export const useUserStore = defineStore('userStore', () => {
   }
   return {
     token,
+    loginRole,
     userinfo,
     ifLogin,
     login,
