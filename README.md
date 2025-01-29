@@ -37,6 +37,10 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
+## 二开注意事项
+
+- 本项目中未对 DTO、VO、POJO、ENTITY 等做区分，均使用 DTO；
+
 ## 运行教程
 
 在 /config 目录下新建 config.ts 文件，随后将 /config/projectConfig.txt 内的内容复制进去并根据自身情况做修改。
