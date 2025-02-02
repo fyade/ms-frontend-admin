@@ -599,10 +599,6 @@ const userGroupPermissionDCon2 = () => {
       <el-form-item v-if="!ifAddUserGroupPermission" :label="userGroupPermissionDict.id" prop="id">
         <span>{{ userGroupPermissionState.dialogForm.id }}</span>
       </el-form-item>
-      <!--
-      第一个input添加如下属性
-      v-focus
-      -->
       <!--在此下方添加表单项-->
       <el-form-item :label="userGroupPermissionDict.userGroupId" prop="userGroupId">
         <el-select v-model="userGroupPermissionState.dialogForm.userGroupId" clearable filterable disabled>

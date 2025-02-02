@@ -533,10 +533,6 @@ const setIpWhiteList = (row: MenuDto) => {
           <el-form-item v-if="dialogTypeI2.value!==final.ins" :label="menuDictI2.id" prop="id">
             <span>{{ stateI2.dialogForm.id }}</span>
           </el-form-item>
-          <!--
-          第一个input添加如下属性
-          v-focus
-          -->
           <!--在此下方添加表单项-->
           <el-row>
             <el-col :span="24">
@@ -867,10 +863,6 @@ const setIpWhiteList = (row: MenuDto) => {
             </el-form-item>
           </el-col>
         </el-row>
-        <!--
-        第一个input添加如下属性
-        v-focus
-        -->
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="24">
@@ -1233,10 +1225,6 @@ const setIpWhiteList = (row: MenuDto) => {
         <el-form-item v-if="dialogTypeInter.value!==final.ins" :label="menuDictInter.id" prop="id">
           <span>{{ stateInter.dialogForm.id }}</span>
         </el-form-item>
-        <!--
-        第一个input添加如下属性
-        v-focus
-        -->
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="24">

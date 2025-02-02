@@ -309,10 +309,6 @@ const gUpd2 = () => {
         <el-form-item v-if="dialogType.value!==final.ins" :label="codeGenColumnDict.id" prop="id">
           <span>{{ state.dialogForm.id }}</span>
         </el-form-item>
-        <!--
-        第一个input添加如下属性
-        v-focus
-        -->
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="24">

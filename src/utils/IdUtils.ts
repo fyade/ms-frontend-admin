@@ -8,10 +8,12 @@ const idsOfLengthStr: string[] = []
 
 /**
  * 生成id
+ * @param length
+ * @param suffix
  */
-export function genId(length: number = 16) {
+export function genId(length = 16, suffix = true): string {
   if (idsOfLengthStr.length >= Math.pow(strArr.length, length)) {
-    throw new Error("数量过多，无法计算")
+    throw new Error('数量过多，无法计算。');
   }
 
   /**
@@ -19,16 +21,16 @@ export function genId(length: number = 16) {
    * @returns {string}
    */
   function generateLengthStr() {
-    let str = ''
+    let str: string = '';
     while (!!!str || idsOfLengthStr.includes(str)) {
-      str = ''
+      str = '';
       for (let i = 0; i < length; i++) {
-        str += strArr[Math.floor(Math.random() * strArr.length)]
+        str += strArr[Math.floor(Math.random() * strArr.length)];
       }
     }
-    idsOfLengthStr.push(str)
-    return str
+    idsOfLengthStr.push(str);
+    return str;
   }
 
-  return `${generateLengthStr()}${new Date().getTime()}`
+  return suffix ? `${generateLengthStr()}_${new Date().getTime()}` : generateLengthStr();
 }

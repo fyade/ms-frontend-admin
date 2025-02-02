@@ -216,10 +216,6 @@ const setSystem = (row: RoleDto) => {
             </el-form-item>
           </el-col>
         </el-row>
-        <!--
-        第一个input添加如下属性
-        v-focus
-        -->
         <!--在此下方添加表单项-->
         <el-row>
           <el-col :span="12">
