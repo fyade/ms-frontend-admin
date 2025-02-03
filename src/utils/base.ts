@@ -93,8 +93,6 @@ export const publicDict = {
   deleted: '逻辑删除'
 }
 
-const Y = 'Y'
-const N = 'N'
 export const final: {
   Y: Y
   N: N
@@ -105,8 +103,8 @@ export const final: {
   ins: INS,
   upd: UPD
 } = {
-  Y,
-  N,
+  Y: 'Y',
+  N: 'N',
   DEFAULT_PARENT_ID: 0,
   DEFAULT_ORDER_NUM: 0,
   one: 'ONE',
@@ -135,8 +133,8 @@ export const Operate = {
 }
 
 export const shift_yes_no = {
-  Y: N,
-  N: Y
+  Y: 'N',
+  N: 'Y',
 }
 
 export const publicCascaderProps = {

@@ -150,7 +150,7 @@ export class TablePageConfig<T = {}> {
                 getDataOnMounted?: boolean
                 pageQuery?: boolean
                 watchDialogVisible?: boolean
-                dialogVisibleCallback?: null | Function
+                dialogVisibleCallback?: null | ((newVal: boolean) => void)
                 beforeSelectListCallback?: null | Function
                 selectListCallback?: null | Function
                 beforeInsertCallback?: null | ((dialogType: TypeIU) => void)
