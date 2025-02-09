@@ -43,7 +43,7 @@
 
 ## 运行教程
 
-在 /config 目录下新建 config.ts 文件，随后将 /config/projectConfig.txt 内的内容复制进去并根据自身情况做修改。
+在 /config 目录下新建 config.ts 文件，随后将 /config/config.txt 内的内容复制进去并根据自身情况做修改。
 
 ## 打包教程
 
