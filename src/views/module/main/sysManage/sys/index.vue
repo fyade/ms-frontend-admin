@@ -89,13 +89,6 @@ const {
   api: sysApi,
   dict: sysDict,
 })
-
-const gDel2 = () => {
-  gDel()
-}
-const tDel2 = (value: number) => {
-  tDel(value)
-}
 </script>
 
 <template>
@@ -274,7 +267,6 @@ const tDel2 = (value: number) => {
         :model="state.filterForm"
         :inline="true"
         @keyup.enter="fEnter"
-        @submit.prevent
     >
       <!--在此下方添加表单项-->
       <el-form-item :label="sysDict.name" prop="name">
@@ -303,7 +295,7 @@ const tDel2 = (value: number) => {
       <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
       <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
       <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>
-      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel2()">删除</el-button>
+      <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>
       <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>
       <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>
     </div>
@@ -330,6 +322,8 @@ const tDel2 = (value: number) => {
       <el-table-column prop="ifDisabled" :label="sysDict.ifDisabled" width="120"/>
       <el-table-column prop="remark" :label="sysDict.remark" width="120"/>
       <!--在此上方添加表格列-->
+      <!--<el-table-column prop="createRole" :label="sysDict.createRole" width="120"/>-->
+      <!--<el-table-column prop="updateRole" :label="sysDict.updateRole" width="120"/>-->
       <!--<el-table-column prop="createBy" :label="sysDict.createBy" width="120"/>-->
       <!--<el-table-column prop="updateBy" :label="sysDict.updateBy" width="120"/>-->
       <!--<el-table-column prop="createTime" :label="sysDict.createTime" width="220"/>-->
@@ -340,7 +334,7 @@ const tDel2 = (value: number) => {
         <template #default="{row}">
           <div class="zs-table-data-operate-button-row">
             <el-button link type="primary" size="small" :icon="Edit" @click="tUpd(row.id)">修改</el-button>
-            <el-button link type="danger" size="small" :icon="Delete" @click="tDel2(row.id)">删除</el-button>
+            <el-button link type="danger" size="small" :icon="Delete" @click="tDel(row.id)">删除</el-button>
           </div>
         </template>
       </el-table-column>

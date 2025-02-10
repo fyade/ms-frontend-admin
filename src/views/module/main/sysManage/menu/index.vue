@@ -758,7 +758,6 @@ const setIpWhiteList = (row: MenuDto) => {
           :model="stateI2.filterForm"
           :inline="true"
           @keyup.enter="fEnterI2"
-          @submit.prevent
       >
         <!--在此下方添加表单项-->
         <!--<el-form-item :label="menuDictI2." prop="">-->
@@ -1441,7 +1440,6 @@ const setIpWhiteList = (row: MenuDto) => {
             :model="state.filterForm"
             :inline="true"
             @keyup.enter="fEnter"
-            @submit.prevent
         >
           <!--在此下方添加表单项-->
           <el-form-item :label="menuDict.perms" prop="perms">
@@ -1566,7 +1564,6 @@ const setIpWhiteList = (row: MenuDto) => {
             :model="stateInter.filterForm"
             :inline="true"
             @keyup.enter="fEnterInter"
-            @submit.prevent
         >
           <!--在此下方添加表单项-->
           <el-form-item :label="menuDictInter.perms" prop="perms">

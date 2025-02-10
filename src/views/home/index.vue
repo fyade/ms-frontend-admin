@@ -7,25 +7,15 @@ import { Refresh } from "@element-plus/icons-vue";
 import { goToSystem } from "@/views/home/homeUtilFunc.ts";
 import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 import { ElLoading } from "element-plus";
+import Content from "@/views/home/content.vue";
+
 
 let loading: LoadingInstance | null
-let intervalTimers: number[] = []
 onBeforeUnmount(() => {
   if (loading) {
     loading.close()
   }
-  intervalTimers.forEach(timer => clearInterval(timer))
 })
-
-// 服务器监控
-const serverMonitor = () => {
-  // const interval = setInterval(() => {
-  //   getSysInfo().then(res => {
-  //   })
-  // }, 1000);
-  // intervalTimers.push(interval)
-}
-serverMonitor()
 
 // 我的资源
 const systemsLoading = ref(false)
@@ -70,24 +60,33 @@ const goToSystem2 = (item: SysDto) => {
         </div>
       </div>
     </div>
+
+    <Content/>
   </div>
 </template>
 
 <style scoped>
 .el {
+  position: relative;
   min-height: 100vh;
+  height: auto;
   background-color: var(--theme-color-main-bg);
 
   > .box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin: 0 auto;
     padding: 20px 0;
     max-width: 1200px;
+
+    > * {
+      padding: 20px;
+      background-color: #fff;
+    }
   }
 
   .wdzy {
-    padding: 20px;
-    background-color: #fff;
-
     > .boxs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);

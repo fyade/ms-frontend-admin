@@ -4,6 +4,7 @@ class TypeUnitConversion {
   decimalDigits?: number
   addZero?: boolean
   showNuit?: boolean
+  unitSpace?: string
 }
 
 /**
@@ -14,13 +15,15 @@ class TypeUnitConversion {
  * @param decimalDigits
  * @param addZero
  * @param showNuit
+ * @param unitSpace
  */
 export function unitConversion(num: number, {
   scale = 1000,
   units = [],
   decimalDigits = 2,
   addZero = true,
-  showNuit = true
+  showNuit = true,
+  unitSpace = ''
 }: TypeUnitConversion = {}) {
   let ret = num, index = 0
   while (ret >= scale && index < units.length) {
@@ -28,7 +31,7 @@ export function unitConversion(num: number, {
     ret /= scale
   }
   const s = addZero ? ret.toFixed(decimalDigits) : Number(ret.toFixed(decimalDigits)).toString()
-  return `${s}${showNuit ? units[index] : ''}`
+  return `${s}${showNuit ? (unitSpace + units[index]) : ''}`
 }
 
 export function unitConversion_storage(num: number, config?: TypeUnitConversion) {

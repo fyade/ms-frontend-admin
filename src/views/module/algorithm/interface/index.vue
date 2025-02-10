@@ -353,7 +353,6 @@ provide('changeSelectInterfaceGroup', selectInterfaceGroups)
         :model="state.filterForm"
         :inline="true"
         @keyup.enter="fEnter"
-        @submit.prevent
     >
       <!--在此下方添加表单项-->
       <el-form-item :label="interfaceDict.label" prop="label">

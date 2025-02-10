@@ -226,7 +226,6 @@ const deleteUserDept = (userId: string) => {
         :inline="true"
         ref="filterFormRef"
         @keyup.enter="userDialogGetData"
-        @submit.prevent
     >
       <el-form-item :label="userDict.id" prop="id">
         <el-input v-model="state.dialogForm.id" :placeholder="userDict.id"/>

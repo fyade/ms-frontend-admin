@@ -262,7 +262,6 @@ const confirmAddInterfaceInterfaceGroup = () => {
         :model="interfaceInterfaceGroupState.filterForm"
         :inline="true"
         @keyup.enter="interfaceInterfaceGroupFEnter"
-        @submit.prevent
     >
       <!--在此下方添加表单项-->
       <!--<el-form-item :label="interfaceInterfaceGroupDict." prop="">-->
@@ -558,7 +557,6 @@ const confirmAddInterfaceInterfaceGroup = () => {
           :model="interfaceState.filterForm"
           :inline="true"
           @keyup.enter="interfaceFEnter"
-          @submit.prevent
       >
         <!--在此下方添加表单项-->
         <el-form-item :label="interfaceDict.label" prop="label">
