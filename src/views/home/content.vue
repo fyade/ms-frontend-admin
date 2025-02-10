@@ -63,7 +63,11 @@ const tips = [
         <el-row :gutter="20">
           <el-col :span="24">
             <!--硬盘-->
-            <el-card shadow="never" :body-style="{display: 'flex',flexDirection: 'column',gap: '8px'}">
+            <el-card
+                v-if="serverinfo.disk&&serverinfo.disk.length>0"
+                shadow="never"
+                :body-style="{display: 'flex',flexDirection: 'column',gap: '8px'}"
+            >
               <div v-for="(item,index) in serverinfo.disk" :key="index">
                 <div
                     style="height: 15px;border: 1px solid #bcbcbc;"
@@ -84,12 +88,17 @@ const tips = [
                 </p>
               </div>
             </el-card>
+            <el-card v-else shadow="never">
+              硬盘
+            </el-card>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <!--CPU-->
-            <el-card shadow="never">
+            <el-card v-if="serverinfo.cpu" shadow="never">
+            </el-card>
+            <el-card v-else shadow="never">
               CPU
             </el-card>
           </el-col>
@@ -99,6 +108,9 @@ const tips = [
               <span>内存已使用 {{ unitConversion_storage(serverinfo.memory.used, { showNuit: false }) }}</span>
               <span> / {{ unitConversion_storage(serverinfo.memory.total, { unitSpace: ' ' }) }}</span>
               <span> ({{ ((serverinfo.memory.used / serverinfo.memory.total) * 100).toFixed(2) }}%)</span>
+            </el-card>
+            <el-card v-else shadow="never">
+              内存
             </el-card>
           </el-col>
         </el-row>
