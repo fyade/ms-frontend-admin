@@ -338,7 +338,11 @@ const selectSysChange = (value: number | undefined) => {
 
 // 接口组
 const tableData3Inter = computed(() => {
-  return arr2ToDiguiObj(tableDataInter.value.filter(item => checkVisible(item.type, [T_IS])))
+  const diguiObj = arr2ToDiguiObj(tableDataInter.value);
+  if (diguiObj.length === 0 && tableDataInter.value.length > 0) {
+    return tableDataInter.value as typeof diguiObj
+  }
+  return diguiObj
 })
 const tInsInter = (id: number) => {
   stateInter.dialogForm.parentId = id
