@@ -10,8 +10,8 @@ import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'virtual:svg-icons-register'
 
-import './autoUpdate.ts'
-import './singleInputNoEnterSubmit.ts'
+import './loaded/autoUpdate.ts'
+import './loaded/singleInputNoEnterSubmit.ts'
 
 document.title = APP_NAME
 

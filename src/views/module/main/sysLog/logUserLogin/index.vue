@@ -479,6 +479,7 @@ const fCan2 = () => {
       <!--上面id列的宽度改一下-->
       <!--在此下方添加表格列-->
       <el-table-column prop="userId" :label="logUserLoginDict.userId" width="120"/>
+      <el-table-column prop="loginRole" :label="logUserLoginDict.loginRole" width="120"/>
       <el-table-column prop="loginIp" :label="logUserLoginDict.loginIp" width="200"/>
       <el-table-column prop="loginPosition" :label="logUserLoginDict.loginPosition" width="120"/>
       <el-table-column prop="loginBrowser" :label="logUserLoginDict.loginBrowser" width="200"/>
@@ -490,7 +491,6 @@ const fCan2 = () => {
         </template>
       </el-table-column>
       <el-table-column prop="failType" :label="logUserLoginDict.failType" width="160"/>
-      <el-table-column prop="loginRole" :label="logUserLoginDict.loginRole" width="120"/>
       <el-table-column prop="remark" :label="logUserLoginDict.remark" width='160'/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logUserLoginDict.createBy" width='120'/>-->

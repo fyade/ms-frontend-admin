@@ -525,6 +525,7 @@ const fCan2 = () => {
       <el-table-column prop="hostName" :label="logOperationDict.hostName" width="180"/>
       <el-table-column prop="perms" :label="logOperationDict.perms" width="240"/>
       <el-table-column prop="userId" :label="logOperationDict.userId" width="120"/>
+      <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="120"/>
       <el-table-column prop="reqParam" :label="logOperationDict.reqParam" width="360">
         <template #default="{row}">
           <div style="max-height: 100px;overflow: auto;">
@@ -545,7 +546,6 @@ const fCan2 = () => {
           {{ row.ifSuccess }}
         </template>
       </el-table-column>
-      <el-table-column prop="loginRole" :label="logOperationDict.loginRole" width="120"/>
       <el-table-column prop="remark" :label="logOperationDict.remark" width="120"/>
       <!--在此上方添加表格列-->
       <!--<el-table-column prop="createBy" :label="logOperationDict.createBy" width="120"/>-->

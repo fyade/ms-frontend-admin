@@ -10,14 +10,15 @@ const observer = new MutationObserver(() => {
     // 清除可能的旧事件
     form.removeEventListener('submit', handleFormSubmit)
     // 判断是否只有一个 input，如果符合条件，则添加事件
+    // 懒得判断了，全加上吧
     form.addEventListener('submit', handleFormSubmit)
   })
 });
 observer.observe(document.body, {
-  attributeOldValue: false,
+  subtree: true,
+  childList: true,
   attributes: false,
+  attributeOldValue: false,
   characterData: false,
   characterDataOldValue: false,
-  childList: true,
-  subtree: true,
 })
