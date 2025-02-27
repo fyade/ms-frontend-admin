@@ -1005,7 +1005,7 @@ const userGroupPermissionDCon2 = () => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .el {
   height: 100%;
 

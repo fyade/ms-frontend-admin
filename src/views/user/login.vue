@@ -79,7 +79,7 @@ refreshVerificationCode()
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .main {
   > .title {
     text-align: center;

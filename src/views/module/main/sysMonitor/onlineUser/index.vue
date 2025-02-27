@@ -12,6 +12,6 @@ export default {
   在线用户
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

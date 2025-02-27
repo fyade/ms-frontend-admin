@@ -195,5 +195,5 @@ const uploadFail = (msg?: string) => {
   </el-button>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 </style>

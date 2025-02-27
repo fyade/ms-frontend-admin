@@ -215,6 +215,6 @@ const beforeChange = (dto: SysDto2): boolean | Promise<boolean> => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

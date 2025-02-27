@@ -167,4 +167,4 @@ function concurRequest2(promises: (() => Promise<null>)[],
   </el-button>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped></style>

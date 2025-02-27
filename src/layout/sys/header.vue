@@ -114,7 +114,7 @@ if (props.ifShowBreadcrumb) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .header {
   display: flex;
   align-items: center;

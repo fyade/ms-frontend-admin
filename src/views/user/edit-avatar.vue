@@ -21,6 +21,6 @@ const uploadSuccess = (fileName: string) => {
   <ImageCrop @upload-success="uploadSuccess"/>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

@@ -30,7 +30,7 @@ watch(route, () => {
   </RightClickMenu>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .layout-public-index {
   width: 100%;
   height: 100%;

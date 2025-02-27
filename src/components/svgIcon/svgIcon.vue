@@ -51,7 +51,7 @@ nextTick(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .svgicon {
   overflow: hidden;
 

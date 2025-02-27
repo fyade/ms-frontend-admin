@@ -12,6 +12,6 @@ export default {
   algorithm/home
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .el {
   display: flex;
   justify-content: center;

@@ -124,7 +124,7 @@ const sysConfigStore = useSysConfigStore();
   </PublicIndex>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .aside {
   transition: width .3s;
 }

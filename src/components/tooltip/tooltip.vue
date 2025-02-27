@@ -22,12 +22,12 @@ const props = defineProps({
       <el-icon>
         <QuestionFilled/>
       </el-icon>
-      <slot></slot>
+      <slot/>
     </div>
   </el-tooltip>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .el {
   display: flex;
   align-items: center;

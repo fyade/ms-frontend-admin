@@ -63,5 +63,5 @@ icons.value = Object.keys(files).map((path) => {
   </el-select-v2>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 </style>

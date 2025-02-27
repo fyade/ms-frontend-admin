@@ -340,6 +340,6 @@ const deleteUserRole = (userId: string) => {
   />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

@@ -263,6 +263,6 @@ const selectSysChange = (value: number | undefined) => {
   </el-form>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

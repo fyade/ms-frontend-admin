@@ -144,7 +144,7 @@ const setCenter = () => {
   <el-button :disabled="isDisabled" type="primary" @click="upload">保存</el-button>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .c1 {
   background-image: linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0),
   linear-gradient(45deg, #eee 25%, transparent 0, transparent 75%, #eee 0);

@@ -9,7 +9,6 @@ import { LoadingInstance } from "element-plus/es/components/loading/src/loading"
 import { ElLoading } from "element-plus";
 import Content from "@/views/home/content.vue";
 
-
 let loading: LoadingInstance | null
 onBeforeUnmount(() => {
   if (loading) {

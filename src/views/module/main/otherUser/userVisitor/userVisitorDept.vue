@@ -178,6 +178,6 @@ const handleCheckChange = (
   </el-form>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

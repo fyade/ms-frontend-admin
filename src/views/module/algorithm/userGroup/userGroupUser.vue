@@ -335,6 +335,6 @@ const deleteUserUserGroup = (userId: string) => {
   />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

@@ -46,7 +46,7 @@ eventBus.on('right-click-close', hiddenRightClick)
 
 <template>
   <div class="right-click-container" @contextmenu.stop="rightClick" @click="leftClick">
-    <slot></slot>
+    <slot/>
     <div
         class="right-container"
         :style="{
@@ -65,7 +65,7 @@ eventBus.on('right-click-close', hiddenRightClick)
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .right-click-container {
   > .right-container {
     position: fixed;

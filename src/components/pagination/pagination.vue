@@ -47,7 +47,7 @@ const handleCurrentChange = (val: number) => {
   />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .my-pagination {
   display: flex;
   justify-content: flex-end;

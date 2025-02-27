@@ -107,7 +107,7 @@ defineExpose({
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .el {
   display: flex;
   flex-direction: column;

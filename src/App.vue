@@ -16,24 +16,9 @@ import { CONFIG } from "@/utils/base.ts";
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .el {
   width: 100%;
   height: 100%;
-
-  //::-webkit-scrollbar {
-  //  width: 10px;
-  //  background-color: transparent;
-  //}
-  //
-  //::-webkit-scrollbar-thumb {
-  //  background-color: var(--theme-color-menu-bg-active-lighten);
-  //  border-radius: 5px;
-  //  transition: all .2s;
-  //
-  //  &:hover {
-  //    background-color: var(--theme-color-menu-bg-active);
-  //  }
-  //}
 }
 </style>
