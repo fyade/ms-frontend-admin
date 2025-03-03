@@ -72,6 +72,7 @@ const ifParentMenuItem = (item: RouteRecordNormalized) => {
         ></AsideMenu>
       </el-sub-menu>
     </template>
+
     <template v-else>
       <el-menu-item
           class="elMenuItem"
@@ -93,6 +94,7 @@ const ifParentMenuItem = (item: RouteRecordNormalized) => {
             </div>
           </a>
         </template>
+
         <template v-else>
           <el-space class="elSpace">
             <SvgIcon :name="item.meta.icon as string"

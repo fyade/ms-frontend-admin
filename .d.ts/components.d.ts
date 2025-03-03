@@ -58,7 +58,6 @@ declare module 'vue' {
     FileUploadOneChunk: typeof import('./../src/components/fileUpload/button/fileUploadOneChunk.vue')['default']
     FileUploadOneChunkConcur: typeof import('./../src/components/fileUpload/button/fileUploadOneChunkConcur.vue')['default']
     FileUploadOneFull: typeof import('./../src/components/fileUpload/button/fileUploadOneFull.vue')['default']
-    FullScreen: typeof import('./../src/components/fullScreen/fullScreen.vue')['default']
     IconSelect: typeof import('./../src/components/iconSelect/iconSelect.vue')['default']
     ImageCrop: typeof import('./../src/components/imageCrop/imageCrop.vue')['default']
     Pagination: typeof import('./../src/components/pagination/pagination.vue')['default']
