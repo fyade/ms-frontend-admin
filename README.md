@@ -1,3 +1,9 @@
+
+# !!!注意!!!
+本项目现已整合至以下仓库，今后的所有更新与维护工作都将在此新仓库中进行。敬请关注新仓库的最新动态。
+- https://github.com/fyade/ms
+- https://gitee.com/fyade/ms
+
 ## 前言
 
 作为一个 TS 项目，我对这个项目中的编码规范、TS 的使用并不满意，并没有完全把 TS 的优势发挥出来，所以在此给希望或者正在使用本项目的小伙伴说声抱歉，我会尽量抽时间系统性地学习 TS，早日将次项目改的健壮一点！
@@ -32,12 +38,12 @@
 - Node 20.12.0
 
 前端开源地址：
-- https://github.com/fyade/ms-frontend-admin
-- https://gitee.com/fyade/ms-frontend-admin
+- ~~https://github.com/fyade/ms-frontend-admin~~ 请关注新仓库
+- ~~https://gitee.com/fyade/ms-frontend-admin~~ 请关注新仓库
 
 后端开源地址：
-- https://github.com/fyade/ms-backend
-- https://gitee.com/fyade/ms-backend
+- ~~https://github.com/fyade/ms-backend~~ 请关注新仓库
+- ~~https://gitee.com/fyade/ms-backend~~ 请关注新仓库
 
 ## 二开注意事项
 
